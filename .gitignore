@@ -1,0 +1,50 @@
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables & project files, folders
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+.cproject
+.project
+.settings/
+Debug/
+Release/
+
+*~
+.*~
+**.o
+**.a
+**.in
+**.dirstamp
+**/.deps/
+**/.libs/
+**/Makefile.in
+
+# Ignore doxygen built files
+documentation/doxyfile_version
+
+# Ignore generated folders
+**/generated/
