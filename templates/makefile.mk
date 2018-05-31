@@ -1,6 +1,6 @@
 #
 # Neon
-# Copyright (C) 2018   REAL-TIME CONSULTING
+# Copyright (C)  2017  Nenad Radulovic
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published by the Free
@@ -15,19 +15,3 @@
 # You should have received a copy of the GNU Lesser General Public License along with
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
-
-# The PROJECTS variable contains paths to all projects.
-PROJECTS += test
-PROJECTS += templates/app_template
-
-.PHONY: all
-all:
-	@for p in $(PROJECTS); do $(MAKE) -C $${p} all; done
- 
-.PHONY: clean
-clean:
-	@for p in $(PROJECTS); do $(MAKE) -C $${p} clean; done
-
-.PHONY: distclean
-distclean:
-	@for p in $(PROJECTS); do $(MAKE) -C $${p} distclean; done
