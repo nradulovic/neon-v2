@@ -16,11 +16,16 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define TEST_DISABLE_DEBUG
+
 #include <string.h>
 #include "testsuite/ntestsuite.h"
-#undef NCONFIG_ENABLE_NDEBUG
 #include "debug/ndebug.h"
 #include "test_ndebug_disabled.h"
+
+#if (NDEBUG_IS_ENABLED == 1)
+#error "Failed to disable debug for this translation module."
+#endif
 
 #define EXPECT(a_cpu_state)                                                 \
     do {                                                                    \

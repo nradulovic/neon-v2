@@ -26,4 +26,4 @@ CC_INCLUDES += lib/va_include/nport/arch_x86
 
 PREFIX =
 
-CFG_ARCH_X86 := 1
+NCONFIG_ARCH_X86 := 1

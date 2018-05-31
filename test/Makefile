@@ -34,6 +34,9 @@ include $(WS)/lib/build/ntestsuite.mk
 # Project name, this will be used as output binary file name.
 PROJECT_NAME := test
 
+# Project configuration header file.
+PROJECT_CONFIG := include/neon_config.h
+
 # List additional C header include paths.
 CC_INCLUDES += test/include
 

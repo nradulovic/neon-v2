@@ -36,6 +36,7 @@
 
 #include "logger/nlogger.h"
 #include "list/nlist_sll.h"
+#include "neon_config.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,7 +48,7 @@ extern "C" {
  *  @{
  */
 
-#if defined(NCONFIG_ENABLE_NLOGGER) && (NCONFIG_ENABLE_NLOGGER == 1)
+#if defined(NCONFIG_ENABLE_LOGGER) && (NCONFIG_ENABLE_LOGGER == 1)
 #define NLOGGER_IS_ENABLED 1
 #else
 /** @brief      Macro that returns current nlogger configuration

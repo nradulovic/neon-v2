@@ -26,6 +26,7 @@ CC_INCLUDES += lib/va_include/nport/platform_gcc
 CC_SOURCES += lib/va_source/nport/nport_platform_gcc.c
 CC_FLAGS += -std=c99 -fmessage-length=0
 CC_FLAGS += -Wall -Wextra -pedantic
+CC_FLAGS += $(addprefix -D,$(CC_DEFINES))
 
 # Builder variables
 CC              = $(PREFIX)gcc

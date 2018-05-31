@@ -16,4 +16,21 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
+NCONFIG_GIT_VERSION := "$(shell git describe --abbrev=7 --always --dirty --tags 2>/dev/null || echo unknown)"
+
 CC_INCLUDES += lib/include
+CC_INCLUDES += $(BUILD_DIR)
+CC_DEFINES += NCONFIG_GIT_VERSION=\"$(NCONFIG_GIT_VERSION)\"
+CC_CONFIG_FILE = $(BUILD_DIR)/neon_config.h
+
+.PHONY: config
+config: $(CC_CONFIG_FILE)
+
+$(CC_CONFIG_FILE): $(PROJECT_CONFIG)
+	$(PRINT) Project configuration file "$(PROJECT_CONFIG)"
+	$(VERBOSE)mkdir -p $(dir $@)
+	$(VERBOSE)cp $(PROJECT_CONFIG) $@
+
+.PHONY: config-clean
+config-clean:
+	$(VERBOSE)rm -f $(CC_CONFIG_FILE)

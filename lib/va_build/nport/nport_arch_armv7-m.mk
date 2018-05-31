@@ -27,7 +27,6 @@ CC_FLAGS += -march=armv7-m -mthumb
 
 # This is the default architecture
 ifeq ($(BUILD_MCU_FAM),generic)
-$(info Using default architecture.)
 CC_FLAGS += -mcpu=cortex-m3
 endif
 
@@ -47,4 +46,4 @@ endif
 
 PREFIX = arm-none-eabi-
 
-CFG_ARCH_ARMV7_M := 1
+NCONFIG_ARCH_ARMV7_M := 1

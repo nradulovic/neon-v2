@@ -1,6 +1,6 @@
 /*
  * Neon
- * Copyright (C) 2018   REAL-TIME CONSULTING
+ * Copyright (C)  2018  REAL-TIME CONSULTING
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the Free
@@ -16,12 +16,18 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "port/nport_platform.h"
+#ifndef NEON_DEFAULT_CONFIG_H_
+#define NEON_DEFAULT_CONFIG_H_
 
-#ifndef NCONFIG_GIT_VERSION
-#define NCONFIG_GIT_VERSION "undefined"
+#ifdef __cplusplus
+extern "C" {
 #endif
 
-const char * nplatform_id = "gcc";
-const char * nplatform_build = NCONFIG_GIT_VERSION;
+#ifdef __cplusplus
+}
+#endif
 
+/** @} */
+/** @} */
+/*---------------------------------------------------------------------------*/
+#endif /* NEON_DEFAULT_CONFIG_H_ */

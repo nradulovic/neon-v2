@@ -65,8 +65,3 @@ endif
 ifndef BUILD_OS
 $(error The '$(OS)' os definition does not exists in Neon Port)
 endif
-
-CFG_GIT_VERSION := $(shell git describe --abbrev=7 --always --dirty --tags 2>/dev/null || echo "unknown")
-
-$(foreach v, $(filter CFG_%,$(.VARIABLES)), $(info $(v) = $($(v))))
-

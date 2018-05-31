@@ -32,7 +32,7 @@
 #ifndef NEON_MODULE_LOGGER_H_
 #define NEON_MODULE_LOGGER_H_
 
-#include "nlogger_x.h"
+#include "logger/nlogger_x.h"
 
 #ifdef __cplusplus
 extern "C" {

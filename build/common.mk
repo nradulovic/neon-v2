@@ -46,6 +46,7 @@ DEPENDS          = $(patsubst %.o,%.d,$(OBJECTS))
 
 # Create possible targets
 PROJECT_NAME   ?= undefined
+PROJECT_CONFIG ?= $(WS)/lib/include/configs/default_config.h
 PROJECT_ELF     = $(BUILD_DIR)/$(PROJECT_NAME).elf
 PROJECT_LIB     = $(BUILD_DIR)/$(PROJECT_NAME).a
 PROJECT_FLASH   = $(BUILD_DIR)/$(PROJECT_NAME).hex
@@ -172,8 +173,15 @@ help:
 	@echo "  make PLATFORM=$(PLATFORM) ARCH=$(ARCH) CC_FLAGS='-pedantic' V=1"
 	@echo
 
+.PHONY: cc_include_paths
+cc_include_paths:
+	$(foreach i,$(CC_INCLUDES),$(info $(WS)/$(i)))
 
+.PHONY: c_sources
+cc_sources:
+	$(foreach i,$(CC_SOURCES),$(info $(WS)/$(i)))
 
-
-
+.PHONY: c_flags
+cc_flags:
+	$(foreach i,$(CC_FLAGS),$(info $(i)))
 

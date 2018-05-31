@@ -39,9 +39,18 @@
 #include "port/nport_platform.h"
 #include "port/nport_arch.h"
 #include "logger/nlogger.h"
+#include "neon_config.h"
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+#if defined(NCONFIG_ENABLE_DEBUG) && (NCONFIG_ENABLE_DEBUG == 1)
+#define NDEBUG_IS_ENABLED 1
+#else
+/** @brief      Macro that returns current ndebug configuration
+ */
+#define NDEBUG_IS_ENABLED 0
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -58,7 +67,7 @@ extern "C" {
  *              Expression : C expression : condition which must be 'true'.
  *  @api
  */
-#if defined(NCONFIG_ENABLE_NDEBUG) && (NCONFIG_ENABLE_NDEBUG == 1)
+#if (NDEBUG_IS_ENABLED == 1)
 #define NASSERT(expr)                                                     	\
     if (!(expr)) {                                                       	\
 		NASSERT_ALWAYS(# expr);												\
@@ -76,7 +85,7 @@ extern "C" {
  *              macro is executed.
  *  @api
  */
-#if defined(NCONFIG_ENABLE_NDEBUG) && (NCONFIG_ENABLE_NDEBUG == 1)
+#if (NDEBUG_IS_ENABLED == 1)
 #define NASSERT_ALWAYS(text)                                             	\
 	do {																	\
 		nlogger_err("Failed assert %s at %s:%u in %s\n", text, 				\
@@ -99,7 +108,7 @@ extern "C" {
  *              Expression : C expression : condition which must be 'true'.
  *  @api
  */
-#if defined(NCONFIG_ENABLE_NDEBUG) && (NCONFIG_ENABLE_NDEBUG == 1)
+#if (NDEBUG_IS_ENABLED == 1)
 #define NOBLIGATION(expr)               expr
 #else
 #define NOBLIGATION(expr)               (void)0
@@ -152,7 +161,7 @@ extern "C" {
 #define NSIGNATURE_SM                       ((unsigned int)0xdeadfeeeu)
 #define NSIGNATURE_DEFER                    ((unsigned int)0xdeadfeefu)
 
-#if defined(NCONFIG_ENABLE_NDEBUG) && (NCONFIG_ENABLE_NDEBUG == 1)
+#if (NDEBUG_IS_ENABLED == 1)
 #define NSIGNATURE_DECLARE                 	int _signature;
 #define NSIGNATURE_INITIALIZER(signature)   ._signature = signature,
 #else
