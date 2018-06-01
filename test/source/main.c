@@ -16,10 +16,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-
-#include "port/nport_platform.h"
-#include "logger/nlogger.h"
+#include "testsuite/ntestsuite.h"
 #include "test_narch.h"
 #include "test_nlist_sll.h"
 #include "test_nlist_dll.h"
@@ -30,8 +27,7 @@
 
 int main(void)
 {
-    nlogger_info("Port platform ID: %s\n", nplatform_id);
-    nlogger_info("Port platform build: %s\n", nplatform_build);
+    NTESTSUITE_PRINT_HEADER();
     test_narch();
     test_nlist_sll();
     test_nlist_dll();
@@ -39,6 +35,7 @@ int main(void)
     test_ndebug_disabled();
     test_nbits();
     test_nbitarray();
+    NTESTSUITE_PRINT_OVERVIEW();
     
     return 0;
 }

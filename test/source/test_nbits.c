@@ -195,7 +195,7 @@ void test_nbits(void)
     NTESTSUITE_RUN(empty, test_msb);
     NTESTSUITE_RUN(empty, test_lsb);
     NTESTSUITE_RUN(empty, test_ftou32_u32tof);
-    NTESTSUITE_PRINT_RESULTS();   
+    NTESTSUITE_PRINT_RESULTS(empty);   
 }
 
 

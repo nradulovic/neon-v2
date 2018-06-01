@@ -318,11 +318,12 @@ void test_nlist_sll(void)
     NTESTSUITE_RUN(empty, test_last);
     NTESTSUITE_RUN(empty, test_m_add_head);
     NTESTSUITE_RUN(empty, test_m_add_tail);
+    NTESTSUITE_PRINT_RESULTS(empty);   
     NTESTSUITE_FIXTURE(abcd, setup_abcd, teardown_abcd);
     NTESTSUITE_RUN(abcd, test_is_not_empty);
     NTESTSUITE_RUN(abcd, test_m_add_middle);
     NTESTSUITE_RUN(abcd, test_m_remove_middle);
-    NTESTSUITE_PRINT_RESULTS();   
+    NTESTSUITE_PRINT_RESULTS(abcd);   
 }
 
 

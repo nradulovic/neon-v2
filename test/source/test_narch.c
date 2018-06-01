@@ -130,7 +130,7 @@ void test_narch(void)
     NTESTSUITE_RUN(empty, test_log2_UINT8_MAX);
     NTESTSUITE_RUN(empty, test_log2_UINT16_MAX);
     NTESTSUITE_RUN(empty, test_log2_UINT32_MAX);
-    NTESTSUITE_PRINT_RESULTS();   
+    NTESTSUITE_PRINT_RESULTS(empty);   
 }
 
 

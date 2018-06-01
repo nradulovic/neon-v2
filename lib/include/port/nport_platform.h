@@ -144,6 +144,18 @@ extern const char * nplatform_build;
 #define NPLATFORM_ACCESS_ONCE(x)        (*(volatile typeof(x) *)&(x))
 #endif
 
+/** @brief      Returns current date.
+ */
+#ifndef NPLATFORM_DATE
+#define NPLATFORM_DATE                  __DATE__
+#endif
+
+/** @brief      Returns current time.
+ */
+#ifndef NPLATFORM_TIME
+#define NPLATFORM_TIME                  __TIME__
+#endif
+
 /** @} */
 #ifdef __cplusplus
 }

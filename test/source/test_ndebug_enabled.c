@@ -128,7 +128,7 @@ void test_ndebug_enabled(void)
     NTESTSUITE_RUN(empty, test_f_require);
     NTESTSUITE_RUN(empty, test_f_ensure);
     NTESTSUITE_RUN(empty, test_f_internal);
-    NTESTSUITE_PRINT_RESULTS();   
+    NTESTSUITE_PRINT_RESULTS(empty);   
 }
 
 

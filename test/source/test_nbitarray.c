@@ -163,7 +163,7 @@ void test_nbitarray(void)
     NTESTSUITE_RUN(empty, test_set_clr_get_1);
     NTESTSUITE_RUN(empty, test_set_clr_get_255);
     NTESTSUITE_RUN(empty, test_set_clr_get_255_m);
-    NTESTSUITE_PRINT_RESULTS();   
+    NTESTSUITE_PRINT_RESULTS(empty);   
 }
 
 

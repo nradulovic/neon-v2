@@ -38,6 +38,7 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include "port/nport_platform.h"
 #include "logger/nlogger.h"
 
 #ifdef __cplusplus
@@ -52,23 +53,40 @@ extern "C" {
     if (p_ntestsuite_context.should_exit) {                                 \
         return;                                                             \
     }                                                                       \
+    p_ntestsuite_context.total_asserts++;                                   \
     if (!(expr)) {                                                          \
         p_ntestsuite_context.should_exit = true;                            \
+        nlogger_debug("D: Failed assert %s\n", # expr);                     \
         return;                                                             \
     }
 
-#define NTESTSUITE_PRINT_RESULTS()                                          \
-    if (p_ntestsuite_failed_tests != 0u) {                                  \
-        nlogger_info("Test %s:%s\n  Total  %u\n  FAILED %u\n",              \
-            NPLATFORM_FILE, NPLATFORM_FUNC, p_ntestsuite_tests,             \
-            p_ntestsuite_failed_tests);                                     \
+#define NTESTSUITE_PRINT_RESULTS(a_fixture)                                 \
+    if (a_fixture.failed != 0u) {                                           \
+        nlogger_info("  Total  %u\n  FAILED %u\n",                          \
+            a_fixture.total, a_fixture.failed);                             \
     } else {                                                                \
-        nlogger_info("Test %s:%s\n  Total %u\n  OK\n",                      \
-                NPLATFORM_FILE, NPLATFORM_FUNC,                             \
-                p_ntestsuite_tests);                                        \
-    }                                                                       \
-    p_ntestsuite_tests = 0u;                                                \
-    p_ntestsuite_failed_tests = 0u;
+        nlogger_info("  Total %u  OK\n", a_fixture.total);                  \
+    }
+
+#define NTESTSUITE_PRINT_HEADER()                                           \
+    nlogger_info("Build info: %s - %s\n", NPLATFORM_DATE, NPLATFORM_TIME);  \
+    nlogger_info("Port platform ID: %s\n", nplatform_id);                   \
+    nlogger_info("Port platform build: %s\n", nplatform_build);
+
+#define NTESTSUITE_PRINT_OVERVIEW()                                         \
+    if (p_ntestsuite_context.total_failed_tests != 0u) {                    \
+        nlogger_info("\n\n  Total tests  : %u\n  Total FAILED : %u\n"       \
+            "  Total asserts: %u\n",                                        \
+            p_ntestsuite_context.total_tests,                               \
+            p_ntestsuite_context.total_failed_tests,                        \
+            p_ntestsuite_context.total_asserts);                            \
+    } else {                                                                \
+        nlogger_info("\n\n  Total tests  : %u\n"                            \
+            "  Total asserts: %u\n\n  OK\n",                                \
+            p_ntestsuite_context.total_tests,                               \
+            p_ntestsuite_context.total_asserts);                            \
+    }
+
 
 #define NTESTSUITE_ASSERT_EQUAL_INT(expected, actual)                       \
     P_NTESTSUITE_ASSERT_EQUAL(expected, actual, int32_t, d,                 \
@@ -92,7 +110,13 @@ extern "C" {
 
 #define NTESTSUITE_RUN(a_fixture, function)                                 \
     p_ntestsuite_context.fixture = &a_fixture;                              \
+    if (p_ntestsuite_context.fixture->total == 0u) {                        \
+        nlogger_info("Test (%s) %s:%s\n",                                   \
+            a_fixture.name, NPLATFORM_FILE, NPLATFORM_FUNC);                \
+    }                                                                       \
     p_ntestsuite_context.should_exit = false;                               \
+    p_ntestsuite_context.total_tests++;                                     \
+    p_ntestsuite_context.fixture->total++;                                  \
     if (a_fixture.setup) {                                                  \
         nlogger_debug("D: Setup fixture %s for test %s\n", a_fixture.name,  \
             # function);                                                    \
@@ -105,6 +129,10 @@ extern "C" {
     } else {                                                                \
         function();                                                         \
     }                                                                       \
+    if (p_ntestsuite_context.should_exit) {                                 \
+        p_ntestsuite_context.total_failed_tests++;                          \
+        p_ntestsuite_context.fixture->failed++;                             \
+    }                                                                       \
     if (a_fixture.teardown) {                                               \
         nlogger_debug("D: Teardown fixture %s for test %s\n",               \
                 a_fixture.name, # function);                                \
@@ -112,10 +140,12 @@ extern "C" {
     }
 
 #define NTESTSUITE_FIXTURE(a_name, a_setup, a_teardown)                     \
-    static const struct p_ntestsuite_fixture a_name = {                     \
+    struct p_ntestsuite_fixture a_name = {                                  \
         .name = # a_name,                                                   \
         .setup = a_setup,                                                   \
         .teardown = a_teardown,                                             \
+        .total = 0u,                                                        \
+        .failed = 0u,                                                       \
     }
 
 #define P_NTESTSUITE_CMP_PLAIN(a, b)        ((a) != (b))
@@ -129,18 +159,17 @@ extern "C" {
             NPLATFORM_FUNC, NPLATFORM_FILE,                                 \
             NPLATFORM_LINE);                                                \
 
-#define P_NTESTSUITE_ASSERT_EQUAL(expected, actual, type, format, cnv, compare)\
+#define P_NTESTSUITE_ASSERT_EQUAL(expect, actual, type, format, cnv, compare)\
     do {                                                                    \
         if (p_ntestsuite_context.should_exit) {                             \
             return;                                                         \
         }                                                                   \
-        type _expected = (type)(expected);                                  \
+        type _expected = (type)(expect);                                    \
         type _actual = (type)(actual);                                      \
-        p_ntestsuite_tests++;                                               \
+        p_ntestsuite_context.total_asserts++;                              \
         if (compare((_actual), (_expected))) {                              \
-            p_ntestsuite_failed_tests++;                                    \
             P_NTESTSUITE_PRINT_LOCATION();                                  \
-            nlogger_err("  Comparing: %s and %s\n", # expected, # actual);  \
+            nlogger_err("  Comparing: %s and %s\n", # expect, # actual);    \
             nlogger_err("  Expected : %" # format  "\n  Actual   : %"       \
                     # format "\n", cnv(_expected), cnv(_actual));           \
             p_ntestsuite_context.should_exit = true;                        \
@@ -153,16 +182,19 @@ struct p_ntestsuite_fixture
     const char * name;
     void (* setup)(void);
     void (* teardown)(void);
+    uint32_t total;
+    uint32_t failed;
 };
 
 struct p_ntestsuite_context
 {
-    const struct p_ntestsuite_fixture * fixture;
+    struct p_ntestsuite_fixture * fixture;
+    uint32_t total_tests;
+    uint32_t total_failed_tests;
+    uint32_t total_asserts;
     bool should_exit;
 };
 
-extern uint32_t p_ntestsuite_tests;
-extern uint32_t p_ntestsuite_failed_tests;
 extern struct p_ntestsuite_context p_ntestsuite_context;
 
 #ifdef __cplusplus
