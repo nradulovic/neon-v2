@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/nradulovic/neon-v2.svg?branch=master)](https://travis-ci.org/nradulovic/neon-v2)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5182921283394e1aa7c8d2cac9a955a5)](https://www.codacy.com/app/nradulovic/neon-v2?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=nradulovic/neon-v2&amp;utm_campaign=Badge_Grade)
 
 # Neon
 ## Contents
