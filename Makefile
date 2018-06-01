@@ -31,3 +31,7 @@ clean:
 .PHONY: distclean
 distclean:
 	@for p in $(PROJECTS); do $(MAKE) -C $${p} distclean; done
+
+.PHONY: test
+test: all
+	@./test/generated/test.elf
