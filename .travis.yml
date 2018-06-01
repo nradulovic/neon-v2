@@ -4,3 +4,5 @@ language: c
 before_install:
     - sudo apt-get update -qq
     - sudo apt-get install -qqy gcc-arm-none-eabi libnewlib-arm-none-eabi
+
+script: make
