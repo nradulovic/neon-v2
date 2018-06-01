@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/nradulovic/neon-v2.svg?branch=master)](https://travis-ci.org/nradulovic/neon-v2)
+
 # Neon
 ## Contents
 1. [Introduction](#1-introduction)
