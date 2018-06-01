@@ -31,9 +31,8 @@ struct nlogger_instance p_nlogger_global =
 void p_nlogger_x_print(struct nlogger_instance * instance, 
         uint32_t level, const char * msg, ...)
 {
-    va_list args;
-
     if (instance->level >= level) {
+        va_list args;
         va_start(args, msg);
         nlogger_va_vprintf(msg, args);
         va_end(args);
