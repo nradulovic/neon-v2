@@ -18,7 +18,7 @@
 
 # The PROJECTS variable contains paths to all projects.
 PROJECTS += test
-PROJECTS += templates/app_template
+PROJECTS += templates/app_hello_world
 
 .PHONY: all
 all:

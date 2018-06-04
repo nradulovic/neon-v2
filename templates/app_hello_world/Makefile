@@ -16,7 +16,7 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Relative path to common build directory.
+# Relative path to Neon common build directory.
 WS = ../..
 
 # Common build script, contains common build rules and variables.
@@ -28,14 +28,14 @@ include $(WS)/lib/build/nlib.mk
 include $(WS)/lib/build/nport.mk
 
 # Project name, this will be used as output binary file name.
-PROJECT_NAME := app_template
+PROJECT_NAME := app_hello_world
 
 # List additional C header include paths.
-CC_INCLUDES += templates/app_template/include
+CC_INCLUDES += templates/app_hello_world/include
 
 # List additional C source files. Files which are not listed here will not be
 # compiled.
-CC_SOURCES += templates/app_template/source/main.c
+CC_SOURCES += templates/app_hello_world/source/main.c
 
 # List additional archives. Use this when using an external static archive.
 AR_LIBS +=
