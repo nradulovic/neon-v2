@@ -30,6 +30,7 @@ include $(WS)/lib/build/nlogger.mk
 include $(WS)/lib/build/ndebug.mk
 include $(WS)/lib/build/nbits.mk
 include $(WS)/lib/build/ntestsuite.mk
+include $(WS)/lib/build/nqueue.mk
 
 # Project name, this will be used as output binary file name.
 PROJECT_NAME := test
@@ -50,6 +51,7 @@ CC_SOURCES += test/source/test_ndebug_enabled.c
 CC_SOURCES += test/source/test_ndebug_disabled.c
 CC_SOURCES += test/source/test_nbits.c
 CC_SOURCES += test/source/test_nbitarray.c
+CC_SOURCES += test/source/test_nlqueue.c
 
 # List additional archives. Use this when using an external static archive.
 AR_LIBS +=
