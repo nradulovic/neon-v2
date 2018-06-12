@@ -15,33 +15,33 @@
  * You should have received a copy of the GNU Lesser General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+/** @file
+ *  @author      Nenad Radulovic
+ *  @brief       Tests for nfiber
+ *
+ *  @addtogroup  module
+ *  @{
+ */
+/** @defgroup    mod_test_nthread Tests for nfiber
+ *  @brief       Tests for nfiber.
+ *  @{
+ */
+/*---------------------------------------------------------------------------*/
 
-#include "testsuite/ntestsuite.h"
-#include "test_narch.h"
-#include "test_nlist_sll.h"
-#include "test_nlist_dll.h"
-#include "test_ndebug_enabled.h"
-#include "test_ndebug_disabled.h"
-#include "test_nbits.h"
-#include "test_nbitarray.h"
-#include "test_nlqueue.h"
-#include "test_nos.h"
-#include "test_nfiber.h"
+#ifndef TEST_NFIBER_H_
+#define TEST_NFIBER_H_
 
-int main(void)
-{
-    NTESTSUITE_PRINT_HEADER();
-    test_narch();
-    test_nlist_sll();
-    test_nlist_dll();
-    test_ndebug_enabled();
-    test_ndebug_disabled();
-    test_nbits();
-    test_nbitarray();
-    test_nlqueue();
-    test_nos();
-    test_nfiber();
-    NTESTSUITE_PRINT_OVERVIEW();
-    
-    return 0;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void test_nfiber(void);
+
+#ifdef __cplusplus
 }
+#endif
+
+/** @} */
+/** @} */
+/*---------------------------------------------------------------------------*/
+#endif  /* TEST_NFIBER_H_ */

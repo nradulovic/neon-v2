@@ -15,33 +15,33 @@
  * You should have received a copy of the GNU Lesser General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+/** @file
+ *  @author      Nenad Radulovic
+ *  @brief       Tests for nos
+ *
+ *  @addtogroup  module
+ *  @{
+ */
+/** @defgroup    mod_test_nos Tests for nos
+ *  @brief       Tests for nos.
+ *  @{
+ */
+/*---------------------------------------------------------------------------*/
 
-#include "testsuite/ntestsuite.h"
-#include "test_narch.h"
-#include "test_nlist_sll.h"
-#include "test_nlist_dll.h"
-#include "test_ndebug_enabled.h"
-#include "test_ndebug_disabled.h"
-#include "test_nbits.h"
-#include "test_nbitarray.h"
-#include "test_nlqueue.h"
-#include "test_nos.h"
-#include "test_nfiber.h"
+#ifndef TEST_NOS_H
+#define TEST_NOS_H
 
-int main(void)
-{
-    NTESTSUITE_PRINT_HEADER();
-    test_narch();
-    test_nlist_sll();
-    test_nlist_dll();
-    test_ndebug_enabled();
-    test_ndebug_disabled();
-    test_nbits();
-    test_nbitarray();
-    test_nlqueue();
-    test_nos();
-    test_nfiber();
-    NTESTSUITE_PRINT_OVERVIEW();
-    
-    return 0;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void test_nos(void);
+
+#ifdef __cplusplus
 }
+#endif
+
+/** @} */
+/** @} */
+/*---------------------------------------------------------------------------*/
+#endif  /* TEST_NOS_H */

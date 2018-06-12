@@ -32,6 +32,7 @@
 #define NEON_QUEUE_LQUEUE_H_
 
 #include <stdint.h>
+#include <string.h>
 #include "port/nport_platform.h"
 #include "bits/nbits.h"
 
@@ -77,9 +78,9 @@ struct np_lqueue_base
  *  @api
  */
 #define nlqueue(T, elements) 												\
-	struct { 																\
+	struct nlqueue_ ## T { 													\
 		struct np_lqueue_base base; 										\
-		T np_qb_buffer[	((elements < 2) || !NBITS_IS_POWEROF_2(elements)) ? \
+		T np_qb_buffer[	((elements < 2) || !NBITS_IS_POWEROF2(elements)) ?  \
 			-1 : elements]; 												\
 	}
 
@@ -87,11 +88,8 @@ struct np_lqueue_base
  *  @api
  */
 #define NLQUEUE_INIT(Q) 													\
-	do {																	\
-		np_lqueue_base_init((Q)->base, 										\
-			sizeof((Q)->buffer) / sizeof((Q)->buffer[0]));					\
-		(Q)->np_qb_buffer = {0};											\
-	} while (0)
+	np_lqueue_base_init(&(Q)->base, 									    \
+			sizeof((Q)->np_qb_buffer) / sizeof((Q)->np_qb_buffer[0]))
 
 /** @brief      Put an item to queue in FIFO mode.
  *  @note       Before calling this function ensure that queue is not full, see
@@ -99,7 +97,7 @@ struct np_lqueue_base
  *  @api
  */
 #define NLQUEUE_PUT_FIFO(Q, item) 											\
-	(Q)->np_qb_buffer[np_lqueue_base_put_fifo((Q)->base)] = (item)
+	(Q)->np_qb_buffer[np_lqueue_base_put_fifo(&(Q)->base)] = (item)
 
 /** @brief      Put an item to queue in LIFO mode.
  *  @note       Before calling this function ensure that queue is not full, see
@@ -107,7 +105,7 @@ struct np_lqueue_base
  *  @api
  */
 #define NLQUEUE_PUT_LIFO(Q, item) 											\
-	(Q)->np_qb_buffer[np_lqueue_base_put_lifo((Q)->base)] = (item)
+	(Q)->np_qb_buffer[np_lqueue_base_put_lifo(&(Q)->base)] = (item)
 
 /** @brief      Get an item from the queue buffer.
  *  @note       Before calling this function ensure that queue has an item. See 
@@ -115,7 +113,7 @@ struct np_lqueue_base
  *  @api
  */ 
 #define NLQUEUE_GET(Q)														\
-	(Q)->np_qb_buffer[np_lqueue_base_get((Q)->base)]
+	(Q)->np_qb_buffer[np_lqueue_base_get(&(Q)->base)]
 
 /** @brief      Peek to queue head; the item is not removed from queue.
  *  
@@ -125,10 +123,10 @@ struct np_lqueue_base
  *  @api
  */
 #define NLQUEUE_HEAD(Q)														\
-	(Q)->np_qb_buffer[np_lqueue_base_head((Q)->base)]
+	(Q)->np_qb_buffer[np_lqueue_base_head(&(Q)->base)]
 
 #define NLQUEUE_TAIL(Q)														\
-	(Q)->np_qb_buffer[np_lqueue_base_tail((Q)->base)]
+	(Q)->np_qb_buffer[np_lqueue_base_tail(&(Q)->base)]
 
 /** @brief     	Returns the buffer size in number of elements.
  *  @api
@@ -149,7 +147,7 @@ struct np_lqueue_base
  * 	@api
  */
 #define NLQUEUE_IS_EMPTY(Q)													\
-	(NLQUEUE_EMPTY(Q) == NLQUEUE_SIZE(queue))
+	(NLQUEUE_EMPTY(Q) == NLQUEUE_SIZE(Q))
 
 NPLATFORM_INLINE
 void np_lqueue_base_init(struct np_lqueue_base * qb, uint32_t elements)

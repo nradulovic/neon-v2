@@ -1,0 +1,1720 @@
+# 1 "../test/source/test_nfiber.c"
+# 1 "/home/nenad/workspace/eclipse/neon/test//"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 1 "/usr/include/stdc-predef.h" 1 3 4
+# 1 "<command-line>" 2
+# 1 "../test/source/test_nfiber.c"
+# 19 "../test/source/test_nfiber.c"
+# 1 "/usr/include/stdio.h" 1 3 4
+# 27 "/usr/include/stdio.h" 3 4
+# 1 "/usr/include/features.h" 1 3 4
+# 367 "/usr/include/features.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/sys/cdefs.h" 1 3 4
+# 410 "/usr/include/x86_64-linux-gnu/sys/cdefs.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 411 "/usr/include/x86_64-linux-gnu/sys/cdefs.h" 2 3 4
+# 368 "/usr/include/features.h" 2 3 4
+# 391 "/usr/include/features.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/gnu/stubs.h" 1 3 4
+# 10 "/usr/include/x86_64-linux-gnu/gnu/stubs.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/gnu/stubs-64.h" 1 3 4
+# 11 "/usr/include/x86_64-linux-gnu/gnu/stubs.h" 2 3 4
+# 392 "/usr/include/features.h" 2 3 4
+# 28 "/usr/include/stdio.h" 2 3 4
+
+
+
+
+
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h" 1 3 4
+# 216 "/usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h" 3 4
+
+# 216 "/usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h" 3 4
+typedef long unsigned int size_t;
+# 34 "/usr/include/stdio.h" 2 3 4
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/types.h" 1 3 4
+# 27 "/usr/include/x86_64-linux-gnu/bits/types.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 28 "/usr/include/x86_64-linux-gnu/bits/types.h" 2 3 4
+
+
+typedef unsigned char __u_char;
+typedef unsigned short int __u_short;
+typedef unsigned int __u_int;
+typedef unsigned long int __u_long;
+
+
+typedef signed char __int8_t;
+typedef unsigned char __uint8_t;
+typedef signed short int __int16_t;
+typedef unsigned short int __uint16_t;
+typedef signed int __int32_t;
+typedef unsigned int __uint32_t;
+
+typedef signed long int __int64_t;
+typedef unsigned long int __uint64_t;
+
+
+
+
+
+
+
+typedef long int __quad_t;
+typedef unsigned long int __u_quad_t;
+# 121 "/usr/include/x86_64-linux-gnu/bits/types.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/typesizes.h" 1 3 4
+# 122 "/usr/include/x86_64-linux-gnu/bits/types.h" 2 3 4
+
+
+typedef unsigned long int __dev_t;
+typedef unsigned int __uid_t;
+typedef unsigned int __gid_t;
+typedef unsigned long int __ino_t;
+typedef unsigned long int __ino64_t;
+typedef unsigned int __mode_t;
+typedef unsigned long int __nlink_t;
+typedef long int __off_t;
+typedef long int __off64_t;
+typedef int __pid_t;
+typedef struct { int __val[2]; } __fsid_t;
+typedef long int __clock_t;
+typedef unsigned long int __rlim_t;
+typedef unsigned long int __rlim64_t;
+typedef unsigned int __id_t;
+typedef long int __time_t;
+typedef unsigned int __useconds_t;
+typedef long int __suseconds_t;
+
+typedef int __daddr_t;
+typedef int __key_t;
+
+
+typedef int __clockid_t;
+
+
+typedef void * __timer_t;
+
+
+typedef long int __blksize_t;
+
+
+
+
+typedef long int __blkcnt_t;
+typedef long int __blkcnt64_t;
+
+
+typedef unsigned long int __fsblkcnt_t;
+typedef unsigned long int __fsblkcnt64_t;
+
+
+typedef unsigned long int __fsfilcnt_t;
+typedef unsigned long int __fsfilcnt64_t;
+
+
+typedef long int __fsword_t;
+
+typedef long int __ssize_t;
+
+
+typedef long int __syscall_slong_t;
+
+typedef unsigned long int __syscall_ulong_t;
+
+
+
+typedef __off64_t __loff_t;
+typedef __quad_t *__qaddr_t;
+typedef char *__caddr_t;
+
+
+typedef long int __intptr_t;
+
+
+typedef unsigned int __socklen_t;
+# 36 "/usr/include/stdio.h" 2 3 4
+# 44 "/usr/include/stdio.h" 3 4
+struct _IO_FILE;
+
+
+
+typedef struct _IO_FILE FILE;
+
+
+
+
+
+# 64 "/usr/include/stdio.h" 3 4
+typedef struct _IO_FILE __FILE;
+# 74 "/usr/include/stdio.h" 3 4
+# 1 "/usr/include/libio.h" 1 3 4
+# 31 "/usr/include/libio.h" 3 4
+# 1 "/usr/include/_G_config.h" 1 3 4
+# 15 "/usr/include/_G_config.h" 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h" 1 3 4
+# 16 "/usr/include/_G_config.h" 2 3 4
+
+
+
+
+# 1 "/usr/include/wchar.h" 1 3 4
+# 82 "/usr/include/wchar.h" 3 4
+typedef struct
+{
+  int __count;
+  union
+  {
+
+    unsigned int __wch;
+
+
+
+    char __wchb[4];
+  } __value;
+} __mbstate_t;
+# 21 "/usr/include/_G_config.h" 2 3 4
+typedef struct
+{
+  __off_t __pos;
+  __mbstate_t __state;
+} _G_fpos_t;
+typedef struct
+{
+  __off64_t __pos;
+  __mbstate_t __state;
+} _G_fpos64_t;
+# 32 "/usr/include/libio.h" 2 3 4
+# 49 "/usr/include/libio.h" 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/5/include/stdarg.h" 1 3 4
+# 40 "/usr/lib/gcc/x86_64-linux-gnu/5/include/stdarg.h" 3 4
+typedef __builtin_va_list __gnuc_va_list;
+# 50 "/usr/include/libio.h" 2 3 4
+# 144 "/usr/include/libio.h" 3 4
+struct _IO_jump_t; struct _IO_FILE;
+
+
+
+
+
+typedef void _IO_lock_t;
+
+
+
+
+
+struct _IO_marker {
+  struct _IO_marker *_next;
+  struct _IO_FILE *_sbuf;
+
+
+
+  int _pos;
+# 173 "/usr/include/libio.h" 3 4
+};
+
+
+enum __codecvt_result
+{
+  __codecvt_ok,
+  __codecvt_partial,
+  __codecvt_error,
+  __codecvt_noconv
+};
+# 241 "/usr/include/libio.h" 3 4
+struct _IO_FILE {
+  int _flags;
+
+
+
+
+  char* _IO_read_ptr;
+  char* _IO_read_end;
+  char* _IO_read_base;
+  char* _IO_write_base;
+  char* _IO_write_ptr;
+  char* _IO_write_end;
+  char* _IO_buf_base;
+  char* _IO_buf_end;
+
+  char *_IO_save_base;
+  char *_IO_backup_base;
+  char *_IO_save_end;
+
+  struct _IO_marker *_markers;
+
+  struct _IO_FILE *_chain;
+
+  int _fileno;
+
+
+
+  int _flags2;
+
+  __off_t _old_offset;
+
+
+
+  unsigned short _cur_column;
+  signed char _vtable_offset;
+  char _shortbuf[1];
+
+
+
+  _IO_lock_t *_lock;
+# 289 "/usr/include/libio.h" 3 4
+  __off64_t _offset;
+
+
+
+
+
+
+
+  void *__pad1;
+  void *__pad2;
+  void *__pad3;
+  void *__pad4;
+
+  size_t __pad5;
+  int _mode;
+
+  char _unused2[15 * sizeof (int) - 4 * sizeof (void *) - sizeof (size_t)];
+
+};
+
+
+typedef struct _IO_FILE _IO_FILE;
+
+
+struct _IO_FILE_plus;
+
+extern struct _IO_FILE_plus _IO_2_1_stdin_;
+extern struct _IO_FILE_plus _IO_2_1_stdout_;
+extern struct _IO_FILE_plus _IO_2_1_stderr_;
+# 333 "/usr/include/libio.h" 3 4
+typedef __ssize_t __io_read_fn (void *__cookie, char *__buf, size_t __nbytes);
+
+
+
+
+
+
+
+typedef __ssize_t __io_write_fn (void *__cookie, const char *__buf,
+     size_t __n);
+
+
+
+
+
+
+
+typedef int __io_seek_fn (void *__cookie, __off64_t *__pos, int __w);
+
+
+typedef int __io_close_fn (void *__cookie);
+# 385 "/usr/include/libio.h" 3 4
+extern int __underflow (_IO_FILE *);
+extern int __uflow (_IO_FILE *);
+extern int __overflow (_IO_FILE *, int);
+# 429 "/usr/include/libio.h" 3 4
+extern int _IO_getc (_IO_FILE *__fp);
+extern int _IO_putc (int __c, _IO_FILE *__fp);
+extern int _IO_feof (_IO_FILE *__fp) __attribute__ ((__nothrow__ , __leaf__));
+extern int _IO_ferror (_IO_FILE *__fp) __attribute__ ((__nothrow__ , __leaf__));
+
+extern int _IO_peekc_locked (_IO_FILE *__fp);
+
+
+
+
+
+extern void _IO_flockfile (_IO_FILE *) __attribute__ ((__nothrow__ , __leaf__));
+extern void _IO_funlockfile (_IO_FILE *) __attribute__ ((__nothrow__ , __leaf__));
+extern int _IO_ftrylockfile (_IO_FILE *) __attribute__ ((__nothrow__ , __leaf__));
+# 459 "/usr/include/libio.h" 3 4
+extern int _IO_vfscanf (_IO_FILE * __restrict, const char * __restrict,
+   __gnuc_va_list, int *__restrict);
+extern int _IO_vfprintf (_IO_FILE *__restrict, const char *__restrict,
+    __gnuc_va_list);
+extern __ssize_t _IO_padn (_IO_FILE *, int, __ssize_t);
+extern size_t _IO_sgetn (_IO_FILE *, void *, size_t);
+
+extern __off64_t _IO_seekoff (_IO_FILE *, __off64_t, int, int);
+extern __off64_t _IO_seekpos (_IO_FILE *, __off64_t, int);
+
+extern void _IO_free_backup_area (_IO_FILE *) __attribute__ ((__nothrow__ , __leaf__));
+# 75 "/usr/include/stdio.h" 2 3 4
+# 108 "/usr/include/stdio.h" 3 4
+
+
+typedef _G_fpos_t fpos_t;
+
+
+
+
+# 164 "/usr/include/stdio.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/stdio_lim.h" 1 3 4
+# 165 "/usr/include/stdio.h" 2 3 4
+
+
+
+extern struct _IO_FILE *stdin;
+extern struct _IO_FILE *stdout;
+extern struct _IO_FILE *stderr;
+
+
+
+
+
+
+
+extern int remove (const char *__filename) __attribute__ ((__nothrow__ , __leaf__));
+
+extern int rename (const char *__old, const char *__new) __attribute__ ((__nothrow__ , __leaf__));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+extern FILE *tmpfile (void) ;
+# 209 "/usr/include/stdio.h" 3 4
+extern char *tmpnam (char *__s) __attribute__ ((__nothrow__ , __leaf__)) ;
+
+# 232 "/usr/include/stdio.h" 3 4
+
+
+
+
+
+extern int fclose (FILE *__stream);
+
+
+
+
+extern int fflush (FILE *__stream);
+
+# 266 "/usr/include/stdio.h" 3 4
+
+
+
+
+
+
+extern FILE *fopen (const char *__restrict __filename,
+      const char *__restrict __modes) ;
+
+
+
+
+extern FILE *freopen (const char *__restrict __filename,
+        const char *__restrict __modes,
+        FILE *__restrict __stream) ;
+# 295 "/usr/include/stdio.h" 3 4
+
+# 329 "/usr/include/stdio.h" 3 4
+
+
+
+extern void setbuf (FILE *__restrict __stream, char *__restrict __buf) __attribute__ ((__nothrow__ , __leaf__));
+
+
+
+extern int setvbuf (FILE *__restrict __stream, char *__restrict __buf,
+      int __modes, size_t __n) __attribute__ ((__nothrow__ , __leaf__));
+
+# 351 "/usr/include/stdio.h" 3 4
+
+
+
+
+
+extern int fprintf (FILE *__restrict __stream,
+      const char *__restrict __format, ...);
+
+
+
+
+extern int printf (const char *__restrict __format, ...);
+
+extern int sprintf (char *__restrict __s,
+      const char *__restrict __format, ...) __attribute__ ((__nothrow__));
+
+
+
+
+
+extern int vfprintf (FILE *__restrict __s, const char *__restrict __format,
+       __gnuc_va_list __arg);
+
+
+
+
+extern int vprintf (const char *__restrict __format, __gnuc_va_list __arg);
+
+extern int vsprintf (char *__restrict __s, const char *__restrict __format,
+       __gnuc_va_list __arg) __attribute__ ((__nothrow__));
+
+
+
+
+
+extern int snprintf (char *__restrict __s, size_t __maxlen,
+       const char *__restrict __format, ...)
+     __attribute__ ((__nothrow__)) __attribute__ ((__format__ (__printf__, 3, 4)));
+
+extern int vsnprintf (char *__restrict __s, size_t __maxlen,
+        const char *__restrict __format, __gnuc_va_list __arg)
+     __attribute__ ((__nothrow__)) __attribute__ ((__format__ (__printf__, 3, 0)));
+
+# 420 "/usr/include/stdio.h" 3 4
+
+
+
+
+
+extern int fscanf (FILE *__restrict __stream,
+     const char *__restrict __format, ...) ;
+
+
+
+
+extern int scanf (const char *__restrict __format, ...) ;
+
+extern int sscanf (const char *__restrict __s,
+     const char *__restrict __format, ...) __attribute__ ((__nothrow__ , __leaf__));
+# 443 "/usr/include/stdio.h" 3 4
+extern int fscanf (FILE *__restrict __stream, const char *__restrict __format, ...) __asm__ ("" "__isoc99_fscanf")
+
+                               ;
+extern int scanf (const char *__restrict __format, ...) __asm__ ("" "__isoc99_scanf")
+                              ;
+extern int sscanf (const char *__restrict __s, const char *__restrict __format, ...) __asm__ ("" "__isoc99_sscanf") __attribute__ ((__nothrow__ , __leaf__))
+
+                      ;
+# 463 "/usr/include/stdio.h" 3 4
+
+
+
+
+
+
+
+
+extern int vfscanf (FILE *__restrict __s, const char *__restrict __format,
+      __gnuc_va_list __arg)
+     __attribute__ ((__format__ (__scanf__, 2, 0))) ;
+
+
+
+
+
+extern int vscanf (const char *__restrict __format, __gnuc_va_list __arg)
+     __attribute__ ((__format__ (__scanf__, 1, 0))) ;
+
+
+extern int vsscanf (const char *__restrict __s,
+      const char *__restrict __format, __gnuc_va_list __arg)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__format__ (__scanf__, 2, 0)));
+# 494 "/usr/include/stdio.h" 3 4
+extern int vfscanf (FILE *__restrict __s, const char *__restrict __format, __gnuc_va_list __arg) __asm__ ("" "__isoc99_vfscanf")
+
+
+
+     __attribute__ ((__format__ (__scanf__, 2, 0))) ;
+extern int vscanf (const char *__restrict __format, __gnuc_va_list __arg) __asm__ ("" "__isoc99_vscanf")
+
+     __attribute__ ((__format__ (__scanf__, 1, 0))) ;
+extern int vsscanf (const char *__restrict __s, const char *__restrict __format, __gnuc_va_list __arg) __asm__ ("" "__isoc99_vsscanf") __attribute__ ((__nothrow__ , __leaf__))
+
+
+
+     __attribute__ ((__format__ (__scanf__, 2, 0)));
+# 522 "/usr/include/stdio.h" 3 4
+
+
+
+
+
+
+
+
+
+extern int fgetc (FILE *__stream);
+extern int getc (FILE *__stream);
+
+
+
+
+
+extern int getchar (void);
+
+# 565 "/usr/include/stdio.h" 3 4
+
+
+
+
+
+
+
+
+extern int fputc (int __c, FILE *__stream);
+extern int putc (int __c, FILE *__stream);
+
+
+
+
+
+extern int putchar (int __c);
+
+# 617 "/usr/include/stdio.h" 3 4
+
+
+
+
+
+extern char *fgets (char *__restrict __s, int __n, FILE *__restrict __stream)
+     ;
+# 638 "/usr/include/stdio.h" 3 4
+extern char *gets (char *__s) __attribute__ ((__deprecated__));
+
+
+# 684 "/usr/include/stdio.h" 3 4
+
+
+
+
+
+extern int fputs (const char *__restrict __s, FILE *__restrict __stream);
+
+
+
+
+
+extern int puts (const char *__s);
+
+
+
+
+
+
+extern int ungetc (int __c, FILE *__stream);
+
+
+
+
+
+
+extern size_t fread (void *__restrict __ptr, size_t __size,
+       size_t __n, FILE *__restrict __stream) ;
+
+
+
+
+extern size_t fwrite (const void *__restrict __ptr, size_t __size,
+        size_t __n, FILE *__restrict __s);
+
+# 744 "/usr/include/stdio.h" 3 4
+
+
+
+
+
+extern int fseek (FILE *__stream, long int __off, int __whence);
+
+
+
+
+extern long int ftell (FILE *__stream) ;
+
+
+
+
+extern void rewind (FILE *__stream);
+
+# 792 "/usr/include/stdio.h" 3 4
+
+
+
+
+
+
+extern int fgetpos (FILE *__restrict __stream, fpos_t *__restrict __pos);
+
+
+
+
+extern int fsetpos (FILE *__stream, const fpos_t *__pos);
+# 815 "/usr/include/stdio.h" 3 4
+
+# 824 "/usr/include/stdio.h" 3 4
+
+
+extern void clearerr (FILE *__stream) __attribute__ ((__nothrow__ , __leaf__));
+
+extern int feof (FILE *__stream) __attribute__ ((__nothrow__ , __leaf__)) ;
+
+extern int ferror (FILE *__stream) __attribute__ ((__nothrow__ , __leaf__)) ;
+
+# 841 "/usr/include/stdio.h" 3 4
+
+
+
+
+
+extern void perror (const char *__s);
+
+
+
+
+
+
+# 1 "/usr/include/x86_64-linux-gnu/bits/sys_errlist.h" 1 3 4
+# 854 "/usr/include/stdio.h" 2 3 4
+# 942 "/usr/include/stdio.h" 3 4
+
+# 20 "../test/source/test_nfiber.c" 2
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/5/include/stdint.h" 1 3 4
+# 9 "/usr/lib/gcc/x86_64-linux-gnu/5/include/stdint.h" 3 4
+# 1 "/usr/include/stdint.h" 1 3 4
+# 26 "/usr/include/stdint.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wchar.h" 1 3 4
+# 27 "/usr/include/stdint.h" 2 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/wordsize.h" 1 3 4
+# 28 "/usr/include/stdint.h" 2 3 4
+# 36 "/usr/include/stdint.h" 3 4
+typedef signed char int8_t;
+typedef short int int16_t;
+typedef int int32_t;
+
+typedef long int int64_t;
+
+
+
+
+
+
+
+typedef unsigned char uint8_t;
+typedef unsigned short int uint16_t;
+
+typedef unsigned int uint32_t;
+
+
+
+typedef unsigned long int uint64_t;
+# 65 "/usr/include/stdint.h" 3 4
+typedef signed char int_least8_t;
+typedef short int int_least16_t;
+typedef int int_least32_t;
+
+typedef long int int_least64_t;
+
+
+
+
+
+
+typedef unsigned char uint_least8_t;
+typedef unsigned short int uint_least16_t;
+typedef unsigned int uint_least32_t;
+
+typedef unsigned long int uint_least64_t;
+# 90 "/usr/include/stdint.h" 3 4
+typedef signed char int_fast8_t;
+
+typedef long int int_fast16_t;
+typedef long int int_fast32_t;
+typedef long int int_fast64_t;
+# 103 "/usr/include/stdint.h" 3 4
+typedef unsigned char uint_fast8_t;
+
+typedef unsigned long int uint_fast16_t;
+typedef unsigned long int uint_fast32_t;
+typedef unsigned long int uint_fast64_t;
+# 119 "/usr/include/stdint.h" 3 4
+typedef long int intptr_t;
+
+
+typedef unsigned long int uintptr_t;
+# 134 "/usr/include/stdint.h" 3 4
+typedef long int intmax_t;
+typedef unsigned long int uintmax_t;
+# 10 "/usr/lib/gcc/x86_64-linux-gnu/5/include/stdint.h" 2 3 4
+# 21 "../test/source/test_nfiber.c" 2
+# 1 "/usr/include/stdlib.h" 1 3 4
+# 32 "/usr/include/stdlib.h" 3 4
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h" 1 3 4
+# 328 "/usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h" 3 4
+typedef int wchar_t;
+# 33 "/usr/include/stdlib.h" 2 3 4
+
+
+# 95 "/usr/include/stdlib.h" 3 4
+
+
+typedef struct
+  {
+    int quot;
+    int rem;
+  } div_t;
+
+
+
+typedef struct
+  {
+    long int quot;
+    long int rem;
+  } ldiv_t;
+
+
+
+
+
+
+
+__extension__ typedef struct
+  {
+    long long int quot;
+    long long int rem;
+  } lldiv_t;
+
+
+# 139 "/usr/include/stdlib.h" 3 4
+extern size_t __ctype_get_mb_cur_max (void) __attribute__ ((__nothrow__ , __leaf__)) ;
+
+
+
+
+extern double atof (const char *__nptr)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;
+
+extern int atoi (const char *__nptr)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;
+
+extern long int atol (const char *__nptr)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;
+
+
+
+
+
+__extension__ extern long long int atoll (const char *__nptr)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1))) ;
+
+
+
+
+
+extern double strtod (const char *__restrict __nptr,
+        char **__restrict __endptr)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+extern float strtof (const char *__restrict __nptr,
+       char **__restrict __endptr) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+
+extern long double strtold (const char *__restrict __nptr,
+       char **__restrict __endptr)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+
+
+
+
+
+extern long int strtol (const char *__restrict __nptr,
+   char **__restrict __endptr, int __base)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+
+extern unsigned long int strtoul (const char *__restrict __nptr,
+      char **__restrict __endptr, int __base)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+
+# 206 "/usr/include/stdlib.h" 3 4
+
+
+__extension__
+extern long long int strtoll (const char *__restrict __nptr,
+         char **__restrict __endptr, int __base)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+
+__extension__
+extern unsigned long long int strtoull (const char *__restrict __nptr,
+     char **__restrict __endptr, int __base)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+
+# 372 "/usr/include/stdlib.h" 3 4
+
+
+extern int rand (void) __attribute__ ((__nothrow__ , __leaf__));
+
+extern void srand (unsigned int __seed) __attribute__ ((__nothrow__ , __leaf__));
+
+# 464 "/usr/include/stdlib.h" 3 4
+
+
+extern void *malloc (size_t __size) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__malloc__)) ;
+
+extern void *calloc (size_t __nmemb, size_t __size)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__malloc__)) ;
+
+
+
+
+
+
+
+
+
+
+extern void *realloc (void *__ptr, size_t __size)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__warn_unused_result__));
+
+extern void free (void *__ptr) __attribute__ ((__nothrow__ , __leaf__));
+
+# 513 "/usr/include/stdlib.h" 3 4
+
+
+extern void abort (void) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__noreturn__));
+
+
+
+extern int atexit (void (*__func) (void)) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+# 530 "/usr/include/stdlib.h" 3 4
+
+# 539 "/usr/include/stdlib.h" 3 4
+
+
+
+
+extern void exit (int __status) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__noreturn__));
+
+
+
+
+
+
+
+
+
+
+
+
+
+extern void _Exit (int __status) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__noreturn__));
+
+
+
+
+
+
+extern char *getenv (const char *__name) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1))) ;
+
+# 711 "/usr/include/stdlib.h" 3 4
+
+
+
+
+
+extern int system (const char *__command) ;
+
+# 741 "/usr/include/stdlib.h" 3 4
+typedef int (*__compar_fn_t) (const void *, const void *);
+# 751 "/usr/include/stdlib.h" 3 4
+
+
+
+extern void *bsearch (const void *__key, const void *__base,
+        size_t __nmemb, size_t __size, __compar_fn_t __compar)
+     __attribute__ ((__nonnull__ (1, 2, 5))) ;
+
+
+
+
+
+
+
+extern void qsort (void *__base, size_t __nmemb, size_t __size,
+     __compar_fn_t __compar) __attribute__ ((__nonnull__ (1, 4)));
+# 774 "/usr/include/stdlib.h" 3 4
+extern int abs (int __x) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__const__)) ;
+extern long int labs (long int __x) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__const__)) ;
+
+
+
+__extension__ extern long long int llabs (long long int __x)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__const__)) ;
+
+
+
+
+
+
+
+extern div_t div (int __numer, int __denom)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__const__)) ;
+extern ldiv_t ldiv (long int __numer, long int __denom)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__const__)) ;
+
+
+
+
+__extension__ extern lldiv_t lldiv (long long int __numer,
+        long long int __denom)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__const__)) ;
+
+# 859 "/usr/include/stdlib.h" 3 4
+
+
+
+extern int mblen (const char *__s, size_t __n) __attribute__ ((__nothrow__ , __leaf__));
+
+
+extern int mbtowc (wchar_t *__restrict __pwc,
+     const char *__restrict __s, size_t __n) __attribute__ ((__nothrow__ , __leaf__));
+
+
+extern int wctomb (char *__s, wchar_t __wchar) __attribute__ ((__nothrow__ , __leaf__));
+
+
+
+extern size_t mbstowcs (wchar_t *__restrict __pwcs,
+   const char *__restrict __s, size_t __n) __attribute__ ((__nothrow__ , __leaf__));
+
+extern size_t wcstombs (char *__restrict __s,
+   const wchar_t *__restrict __pwcs, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__));
+
+# 954 "/usr/include/stdlib.h" 3 4
+# 1 "/usr/include/x86_64-linux-gnu/bits/stdlib-float.h" 1 3 4
+# 955 "/usr/include/stdlib.h" 2 3 4
+# 967 "/usr/include/stdlib.h" 3 4
+
+# 22 "../test/source/test_nfiber.c" 2
+
+# 1 "../lib/include/testsuite/ntestsuite.h" 1
+# 37 "../lib/include/testsuite/ntestsuite.h"
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h" 1 3 4
+# 149 "/usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h" 3 4
+typedef long int ptrdiff_t;
+# 38 "../lib/include/testsuite/ntestsuite.h" 2
+# 1 "/usr/include/string.h" 1 3 4
+# 27 "/usr/include/string.h" 3 4
+
+
+
+
+
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h" 1 3 4
+# 33 "/usr/include/string.h" 2 3 4
+
+
+
+
+
+
+
+
+
+extern void *memcpy (void *__restrict __dest, const void *__restrict __src,
+       size_t __n) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern void *memmove (void *__dest, const void *__src, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+
+# 60 "/usr/include/string.h" 3 4
+
+
+extern void *memset (void *__s, int __c, size_t __n) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+
+
+extern int memcmp (const void *__s1, const void *__s2, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+# 92 "/usr/include/string.h" 3 4
+extern void *memchr (const void *__s, int __c, size_t __n)
+      __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+
+
+# 123 "/usr/include/string.h" 3 4
+
+
+extern char *strcpy (char *__restrict __dest, const char *__restrict __src)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+
+extern char *strncpy (char *__restrict __dest,
+        const char *__restrict __src, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern char *strcat (char *__restrict __dest, const char *__restrict __src)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+
+extern char *strncat (char *__restrict __dest, const char *__restrict __src,
+        size_t __n) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int strcmp (const char *__s1, const char *__s2)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+extern int strncmp (const char *__s1, const char *__s2, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern int strcoll (const char *__s1, const char *__s2)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+extern size_t strxfrm (char *__restrict __dest,
+         const char *__restrict __src, size_t __n)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (2)));
+
+# 206 "/usr/include/string.h" 3 4
+
+# 231 "/usr/include/string.h" 3 4
+extern char *strchr (const char *__s, int __c)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+# 258 "/usr/include/string.h" 3 4
+extern char *strrchr (const char *__s, int __c)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+
+
+# 277 "/usr/include/string.h" 3 4
+
+
+
+extern size_t strcspn (const char *__s, const char *__reject)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+extern size_t strspn (const char *__s, const char *__accept)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+# 310 "/usr/include/string.h" 3 4
+extern char *strpbrk (const char *__s, const char *__accept)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+# 337 "/usr/include/string.h" 3 4
+extern char *strstr (const char *__haystack, const char *__needle)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1, 2)));
+
+
+
+
+extern char *strtok (char *__restrict __s, const char *__restrict __delim)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (2)));
+
+
+
+
+extern char *__strtok_r (char *__restrict __s,
+    const char *__restrict __delim,
+    char **__restrict __save_ptr)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (2, 3)));
+# 392 "/usr/include/string.h" 3 4
+
+
+extern size_t strlen (const char *__s)
+     __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__pure__)) __attribute__ ((__nonnull__ (1)));
+
+# 406 "/usr/include/string.h" 3 4
+
+
+extern char *strerror (int __errnum) __attribute__ ((__nothrow__ , __leaf__));
+
+# 446 "/usr/include/string.h" 3 4
+extern void __bzero (void *__s, size_t __n) __attribute__ ((__nothrow__ , __leaf__)) __attribute__ ((__nonnull__ (1)));
+# 658 "/usr/include/string.h" 3 4
+
+# 39 "../lib/include/testsuite/ntestsuite.h" 2
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/5/include/stdbool.h" 1 3 4
+# 40 "../lib/include/testsuite/ntestsuite.h" 2
+
+# 1 "../lib/include/port/nport_platform.h" 1
+# 35 "../lib/include/port/nport_platform.h"
+# 1 "../lib/va_include/nport/platform_gcc/variant/platform.h" 1
+# 39 "../lib/va_include/nport/platform_gcc/variant/platform.h"
+# 1 "../lib/va_include/nport/platform_gcc/variant/gcc_c99.h" 1
+# 40 "../lib/va_include/nport/platform_gcc/variant/platform.h" 2
+# 36 "../lib/include/port/nport_platform.h" 2
+# 55 "../lib/include/port/nport_platform.h"
+
+# 55 "../lib/include/port/nport_platform.h"
+extern const char * nplatform_id;
+extern const char * nplatform_build;
+# 42 "../lib/include/testsuite/ntestsuite.h" 2
+# 1 "../lib/include/logger/nlogger.h" 1
+# 35 "../lib/include/logger/nlogger.h"
+# 1 "../lib/include/logger/nlogger_x.h" 1
+# 37 "../lib/include/logger/nlogger_x.h"
+# 1 "../lib/include/logger/nlogger.h" 1
+# 38 "../lib/include/logger/nlogger_x.h" 2
+# 1 "../lib/include/list/nlist_sll.h" 1
+# 37 "../lib/include/list/nlist_sll.h"
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h" 1 3 4
+# 38 "../lib/include/list/nlist_sll.h" 2
+
+
+# 1 "../lib/include/list/nlist.h" 1
+# 42 "../lib/include/list/nlist.h"
+# 1 "/usr/lib/gcc/x86_64-linux-gnu/5/include/stddef.h" 1 3 4
+# 43 "../lib/include/list/nlist.h" 2
+# 41 "../lib/include/list/nlist_sll.h" 2
+# 142 "../lib/include/list/nlist_sll.h"
+struct nlist_sll
+{
+    struct nlist_sll * next;
+};
+# 171 "../lib/include/list/nlist_sll.h"
+static inline
+struct nlist_sll * nlist_sll_init(struct nlist_sll * node)
+{
+    node->next = node;
+
+    return (node);
+}
+
+
+
+
+
+
+static inline
+struct nlist_sll * nlist_sll_next(const struct nlist_sll * node)
+{
+    return (node->next);
+}
+
+
+
+
+
+
+static inline
+struct nlist_sll * nlist_sll_prev(struct nlist_sll * const node)
+{
+    struct nlist_sll * tmp = node;
+
+    while (tmp->next != node) {
+        tmp = tmp->next;
+    }
+    return (tmp);
+}
+# 230 "../lib/include/list/nlist_sll.h"
+static inline
+void nlist_sll_add_after(struct nlist_sll * current, struct nlist_sll * node)
+{
+    struct nlist_sll * prev = nlist_sll_prev(current);
+
+    node->next = prev->next;
+    prev->next = node;
+}
+# 263 "../lib/include/list/nlist_sll.h"
+static inline
+struct nlist_sll * nlist_sll_add_before(struct nlist_sll * current,
+        struct nlist_sll * node)
+{
+    node->next = current->next;
+    current->next = node;
+
+    return (node);
+}
+# 296 "../lib/include/list/nlist_sll.h"
+static inline
+void nlist_sll_remove(struct nlist_sll * node)
+{
+    struct nlist_sll * prev = nlist_sll_prev(node);
+
+    prev->next = node->next;
+    node->next = node;
+}
+# 312 "../lib/include/list/nlist_sll.h"
+static inline
+
+# 313 "../lib/include/list/nlist_sll.h" 3 4
+_Bool 
+# 313 "../lib/include/list/nlist_sll.h"
+    nlist_sll_is_empty(const struct nlist_sll * node)
+{
+    return (!!(node->next == node));
+}
+# 39 "../lib/include/logger/nlogger_x.h" 2
+# 1 "../test/include/neon_config.h" 1
+# 40 "../lib/include/logger/nlogger_x.h" 2
+# 103 "../lib/include/logger/nlogger_x.h"
+struct nlogger_instance
+{
+    struct nlist_sll list;
+    const char * name;
+    uint32_t level;
+};
+
+extern struct nlogger_instance p_nlogger_global;
+
+void p_nlogger_x_print(struct nlogger_instance * instance,
+        uint32_t level, const char * msg, ...);
+void p_nlogger_x_set_level(struct nlogger_instance * instance, uint32_t level);
+# 36 "../lib/include/logger/nlogger.h" 2
+# 60 "../lib/include/logger/nlogger.h"
+enum nlogger_levels
+{
+    NLOGGER_LEVEL_DEBUG = 4,
+    NLOGGER_LEVEL_INFO = 3,
+    NLOGGER_LEVEL_WARN = 2,
+    NLOGGER_LEVEL_ERR = 1
+};
+# 43 "../lib/include/testsuite/ntestsuite.h" 2
+# 180 "../lib/include/testsuite/ntestsuite.h"
+struct p_ntestsuite_fixture
+{
+    const char * name;
+    void (* setup)(void);
+    void (* teardown)(void);
+    uint32_t total;
+    uint32_t failed;
+};
+
+struct p_ntestsuite_context
+{
+    struct p_ntestsuite_fixture * fixture;
+    uint32_t total_tests;
+    uint32_t total_failed_tests;
+    uint32_t total_asserts;
+    
+# 195 "../lib/include/testsuite/ntestsuite.h" 3 4
+   _Bool 
+# 195 "../lib/include/testsuite/ntestsuite.h"
+        should_exit;
+};
+
+extern struct p_ntestsuite_context p_ntestsuite_context;
+# 24 "../test/source/test_nfiber.c" 2
+# 1 "../lib/include/thread/thread_fiber.h" 1
+# 63 "../lib/include/thread/thread_fiber.h"
+struct nfiber
+{
+    uint32_t lc;
+};
+# 89 "../lib/include/thread/thread_fiber.h"
+static inline
+void nfiber_init(struct nfiber * fiber)
+{
+    fiber->lc = 0;;
+}
+# 25 "../test/source/test_nfiber.c" 2
+# 1 "../test/include/test_nfiber.h" 1
+# 38 "../test/include/test_nfiber.h"
+void test_nfiber(void);
+# 26 "../test/source/test_nfiber.c" 2
+# 34 "../test/source/test_nfiber.c"
+static uint32_t g_output;
+static uint32_t g_expected;
+
+static uint_fast8_t fiber_empty(struct nfiber *);
+
+static uint_fast8_t fiber_empty(struct nfiber * fb)
+{
+    switch((fb)->lc) { case 0:;
+    (fb)->lc = 42; case 42: return (2)};
+}
+
+static uint_fast8_t fiber_exit(struct nfiber *);
+
+static uint_fast8_t fiber_exit(struct nfiber * fb)
+{
+    switch((fb)->lc) { case 0:;
+    g_output = 1u;
+    do { (fb)->lc = 0;; return 2; } while(0);
+    g_output = 0u;
+    (fb)->lc = 53; case 53: return (2)};
+}
+
+static uint_fast8_t fiber_until(struct nfiber *);
+
+static uint_fast8_t fiber_until(struct nfiber * fb)
+{
+    switch((fb)->lc) { case 0:;
+    for (;;) {
+        g_output++;
+        do { while (!(g_output < 3)) { (fb)->lc = 63 + 0u; return (1); case 63 + 0u:; } } while(0);
+    }
+    (fb)->lc = 65; case 65: return (2)};
+}
+
+static uint_fast8_t fiber_while(struct nfiber *);
+
+static uint_fast8_t fiber_while(struct nfiber * fb)
+{
+    switch((fb)->lc) { case 0:;
+    for (;;) {
+        do { while (!(!(g_output > 2))) { ((fb))->lc = 74 + 0u; return (1); case 74 + 0u:; } } while(0);
+        g_output++;
+    }
+    (fb)->lc = 77; case 77: return (2)};
+}
+
+static uint_fast8_t fiber_waited_0(struct nfiber *);
+
+static uint_fast8_t fiber_waited_0(struct nfiber * fb)
+{
+    switch((fb)->lc) { case 0:;
+    g_output++;
+    (fb)->lc = 86; case 86: return (2)};
+}
+
+static uint_fast8_t fiber_wait_0(struct nfiber *);
+
+static uint_fast8_t fiber_wait_0(struct nfiber * fb)
+{
+    switch((fb)->lc) { case 0:;
+    static struct nfiber waited_0;
+
+    do { while (!(fiber_waited_0(&waited_0) == 2)) { ((fb))->lc = 96 + 0u; return (1); case 96 + 0u:; } } while(0);
+    do { while (!(fiber_waited_0(&waited_0) == 2)) { ((fb))->lc = 97 + 0u; return (1); case 97 + 0u:; } } while(0);
+    do { while (!(fiber_waited_0(&waited_0) == 2)) { ((fb))->lc = 98 + 0u; return (1); case 98 + 0u:; } } while(0);
+    (fb)->lc = 99; case 99: return (2)};
+}
+
+static uint_fast8_t fiber_yield_0(struct nfiber *);
+
+static uint_fast8_t fiber_yield_0(struct nfiber * fb)
+{
+    switch((fb)->lc) { case 0:;
+    static struct nfiber yielded_0;
+    static struct nfiber yielded_1;
+    static struct nfiber yielded_2;
+
+    do { while (!(fiber_waited_0(&waited_0) == 2)) { ((fb))->lc = 111 + 0u; return (1); case 111 + 0u:; } } while(0);
+    do { while (!(fiber_waited_0(&waited_0) == 2)) { ((fb))->lc = 112 + 0u; return (1); case 112 + 0u:; } } while(0);
+    do { while (!(fiber_waited_0(&waited_0) == 2)) { ((fb))->lc = 113 + 0u; return (1); case 113 + 0u:; } } while(0);
+    (fb)->lc = 114; case 114: return (2)};
+}
+
+static void test_empty(void)
+{
+    struct nfiber empty;
+    nfiber_init(&empty);
+    do { if (p_ntestsuite_context.should_exit) { return; } uint32_t _expected = (uint32_t)(2); uint32_t _actual = (uint32_t)(fiber_empty(&empty)); p_ntestsuite_context.total_asserts++; if ((((_actual)) != ((_expected)))) { do { struct nlogger_instance * _instance = (
+# 121 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 121 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "Test FAILED at %s() in %s:%u\n", __func__, "../test/source/test_nfiber.c", 122); } while (0);; do { struct nlogger_instance * _instance = (
+# 121 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 121 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "  Comparing: %s and %s\n", "2", "fiber_empty(&empty)"); } while (0); do { struct nlogger_instance * _instance = (
+# 121 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 121 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "  Expected : %" "u" "\n  Actual   : %" "u" "\n", (_expected), (_actual)); } while (0); p_ntestsuite_context.should_exit = 
+# 121 "../test/source/test_nfiber.c" 3 4
+   1
+# 121 "../test/source/test_nfiber.c"
+   ; return; } } while (0)
+                                             ;
+}
+
+static void test_exit(void)
+{
+    struct nfiber exit;
+    g_expected = (1u);
+
+    nfiber_init(&exit);
+    do { if (p_ntestsuite_context.should_exit) { return; } uint32_t _expected = (uint32_t)(2); uint32_t _actual = (uint32_t)(fiber_exit(&exit)); p_ntestsuite_context.total_asserts++; if ((((_actual)) != ((_expected)))) { do { struct nlogger_instance * _instance = (
+# 131 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 131 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "Test FAILED at %s() in %s:%u\n", __func__, "../test/source/test_nfiber.c", 132); } while (0);; do { struct nlogger_instance * _instance = (
+# 131 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 131 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "  Comparing: %s and %s\n", "2", "fiber_exit(&exit)"); } while (0); do { struct nlogger_instance * _instance = (
+# 131 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 131 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "  Expected : %" "u" "\n  Actual   : %" "u" "\n", (_expected), (_actual)); } while (0); p_ntestsuite_context.should_exit = 
+# 131 "../test/source/test_nfiber.c" 3 4
+   1
+# 131 "../test/source/test_nfiber.c"
+   ; return; } } while (0)
+                                           ;
+    do { do { if (p_ntestsuite_context.should_exit) { return; } uint32_t _expected = (uint32_t)((g_expected)); uint32_t _actual = (uint32_t)((g_output)); p_ntestsuite_context.total_asserts++; if ((((_actual)) != ((_expected)))) { do { struct nlogger_instance * _instance = (
+# 133 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 133 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "Test FAILED at %s() in %s:%u\n", __func__, "../test/source/test_nfiber.c", 133); } while (0);; do { struct nlogger_instance * _instance = (
+# 133 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 133 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "  Comparing: %s and %s\n", "(g_expected)", "(g_output)"); } while (0); do { struct nlogger_instance * _instance = (
+# 133 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 133 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "  Expected : %" "u" "\n  Actual   : %" "u" "\n", (_expected), (_actual)); } while (0); p_ntestsuite_context.should_exit = 
+# 133 "../test/source/test_nfiber.c" 3 4
+   1
+# 133 "../test/source/test_nfiber.c"
+   ; return; } } while (0); } while (0);
+}
+
+static void test_until(void)
+{
+    struct nfiber until;
+    g_expected = (3u);
+    nfiber_init(&until);
+    while (fiber_until(&until) != 1);
+    do { do { if (p_ntestsuite_context.should_exit) { return; } uint32_t _expected = (uint32_t)((g_expected)); uint32_t _actual = (uint32_t)((g_output)); p_ntestsuite_context.total_asserts++; if ((((_actual)) != ((_expected)))) { do { struct nlogger_instance * _instance = (
+# 142 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 142 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "Test FAILED at %s() in %s:%u\n", __func__, "../test/source/test_nfiber.c", 142); } while (0);; do { struct nlogger_instance * _instance = (
+# 142 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 142 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "  Comparing: %s and %s\n", "(g_expected)", "(g_output)"); } while (0); do { struct nlogger_instance * _instance = (
+# 142 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 142 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "  Expected : %" "u" "\n  Actual   : %" "u" "\n", (_expected), (_actual)); } while (0); p_ntestsuite_context.should_exit = 
+# 142 "../test/source/test_nfiber.c" 3 4
+   1
+# 142 "../test/source/test_nfiber.c"
+   ; return; } } while (0); } while (0);
+}
+
+static void test_while(void)
+{
+    struct nfiber while_ctx;
+    g_expected = (3u);
+    nfiber_init(&while_ctx);
+    while (fiber_while(&while_ctx) != 1);
+    do { do { if (p_ntestsuite_context.should_exit) { return; } uint32_t _expected = (uint32_t)((g_expected)); uint32_t _actual = (uint32_t)((g_output)); p_ntestsuite_context.total_asserts++; if ((((_actual)) != ((_expected)))) { do { struct nlogger_instance * _instance = (
+# 151 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 151 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "Test FAILED at %s() in %s:%u\n", __func__, "../test/source/test_nfiber.c", 151); } while (0);; do { struct nlogger_instance * _instance = (
+# 151 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 151 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "  Comparing: %s and %s\n", "(g_expected)", "(g_output)"); } while (0); do { struct nlogger_instance * _instance = (
+# 151 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 151 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "  Expected : %" "u" "\n  Actual   : %" "u" "\n", (_expected), (_actual)); } while (0); p_ntestsuite_context.should_exit = 
+# 151 "../test/source/test_nfiber.c" 3 4
+   1
+# 151 "../test/source/test_nfiber.c"
+   ; return; } } while (0); } while (0);
+}
+
+static void test_wait_0(void)
+{
+    struct nfiber wait;
+    g_expected = (3u);
+    nfiber_init(&wait);
+    while (fiber_wait_0(&wait) != 2);
+    do { do { if (p_ntestsuite_context.should_exit) { return; } uint32_t _expected = (uint32_t)((g_expected)); uint32_t _actual = (uint32_t)((g_output)); p_ntestsuite_context.total_asserts++; if ((((_actual)) != ((_expected)))) { do { struct nlogger_instance * _instance = (
+# 160 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 160 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "Test FAILED at %s() in %s:%u\n", __func__, "../test/source/test_nfiber.c", 160); } while (0);; do { struct nlogger_instance * _instance = (
+# 160 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 160 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "  Comparing: %s and %s\n", "(g_expected)", "(g_output)"); } while (0); do { struct nlogger_instance * _instance = (
+# 160 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 160 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "  Expected : %" "u" "\n  Actual   : %" "u" "\n", (_expected), (_actual)); } while (0); p_ntestsuite_context.should_exit = 
+# 160 "../test/source/test_nfiber.c" 3 4
+   1
+# 160 "../test/source/test_nfiber.c"
+   ; return; } } while (0); } while (0);
+}
+
+static void test_yield(void)
+{
+    struct nfiber yield;
+
+    g_expected = (3u);
+    nfiber_init(&yield);
+    while (fiber_yield_0(&yield) != 2);
+    do { do { if (p_ntestsuite_context.should_exit) { return; } uint32_t _expected = (uint32_t)((g_expected)); uint32_t _actual = (uint32_t)((g_output)); p_ntestsuite_context.total_asserts++; if ((((_actual)) != ((_expected)))) { do { struct nlogger_instance * _instance = (
+# 170 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 170 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "Test FAILED at %s() in %s:%u\n", __func__, "../test/source/test_nfiber.c", 170); } while (0);; do { struct nlogger_instance * _instance = (
+# 170 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 170 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "  Comparing: %s and %s\n", "(g_expected)", "(g_output)"); } while (0); do { struct nlogger_instance * _instance = (
+# 170 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 170 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "  Expected : %" "u" "\n  Actual   : %" "u" "\n", (_expected), (_actual)); } while (0); p_ntestsuite_context.should_exit = 
+# 170 "../test/source/test_nfiber.c" 3 4
+   1
+# 170 "../test/source/test_nfiber.c"
+   ; return; } } while (0); } while (0);
+}
+
+static void setup_empty(void)
+{
+    g_output = 0u;
+    g_expected = 0u;
+}
+
+static void teardown_empty(void)
+{
+}
+
+void test_nfiber(void)
+{
+    struct p_ntestsuite_fixture empty = { .name = "empty", .setup = setup_empty, .teardown = teardown_empty, .total = 0u, .failed = 0u, };
+    p_ntestsuite_context.fixture = &empty; if (p_ntestsuite_context.fixture->total == 0u) { do { struct nlogger_instance * _instance = (
+# 186 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 186 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_INFO, "Test (%s) %s:%s\n", empty.name, "../test/source/test_nfiber.c", __func__); } while (0); } p_ntestsuite_context.should_exit = 
+# 186 "../test/source/test_nfiber.c" 3 4
+   0
+# 186 "../test/source/test_nfiber.c"
+   ; p_ntestsuite_context.total_tests++; p_ntestsuite_context.fixture->total++; if (empty.setup) { do { struct nlogger_instance * _instance = (
+# 186 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 186 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_DEBUG, "D: Setup fixture %s for test %s\n", empty.name, "test_empty"); } while (0); empty.setup(); } if (p_ntestsuite_context.should_exit == 
+# 186 "../test/source/test_nfiber.c" 3 4
+   1
+# 186 "../test/source/test_nfiber.c"
+   ) { do { struct nlogger_instance * _instance = (
+# 186 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 186 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "Failed to setup fixture %s for test %s() at %s:%s\n", empty.name, "test_empty", "../test/source/test_nfiber.c", 186); } while (0); } else { test_empty(); } if (p_ntestsuite_context.should_exit) { p_ntestsuite_context.total_failed_tests++; p_ntestsuite_context.fixture->failed++; } if (empty.teardown) { do { struct nlogger_instance * _instance = (
+# 186 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 186 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_DEBUG, "D: Teardown fixture %s for test %s\n", empty.name, "test_empty"); } while (0); empty.teardown(); };
+    p_ntestsuite_context.fixture = &empty; if (p_ntestsuite_context.fixture->total == 0u) { do { struct nlogger_instance * _instance = (
+# 187 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 187 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_INFO, "Test (%s) %s:%s\n", empty.name, "../test/source/test_nfiber.c", __func__); } while (0); } p_ntestsuite_context.should_exit = 
+# 187 "../test/source/test_nfiber.c" 3 4
+   0
+# 187 "../test/source/test_nfiber.c"
+   ; p_ntestsuite_context.total_tests++; p_ntestsuite_context.fixture->total++; if (empty.setup) { do { struct nlogger_instance * _instance = (
+# 187 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 187 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_DEBUG, "D: Setup fixture %s for test %s\n", empty.name, "test_exit"); } while (0); empty.setup(); } if (p_ntestsuite_context.should_exit == 
+# 187 "../test/source/test_nfiber.c" 3 4
+   1
+# 187 "../test/source/test_nfiber.c"
+   ) { do { struct nlogger_instance * _instance = (
+# 187 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 187 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "Failed to setup fixture %s for test %s() at %s:%s\n", empty.name, "test_exit", "../test/source/test_nfiber.c", 187); } while (0); } else { test_exit(); } if (p_ntestsuite_context.should_exit) { p_ntestsuite_context.total_failed_tests++; p_ntestsuite_context.fixture->failed++; } if (empty.teardown) { do { struct nlogger_instance * _instance = (
+# 187 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 187 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_DEBUG, "D: Teardown fixture %s for test %s\n", empty.name, "test_exit"); } while (0); empty.teardown(); };
+    p_ntestsuite_context.fixture = &empty; if (p_ntestsuite_context.fixture->total == 0u) { do { struct nlogger_instance * _instance = (
+# 188 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 188 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_INFO, "Test (%s) %s:%s\n", empty.name, "../test/source/test_nfiber.c", __func__); } while (0); } p_ntestsuite_context.should_exit = 
+# 188 "../test/source/test_nfiber.c" 3 4
+   0
+# 188 "../test/source/test_nfiber.c"
+   ; p_ntestsuite_context.total_tests++; p_ntestsuite_context.fixture->total++; if (empty.setup) { do { struct nlogger_instance * _instance = (
+# 188 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 188 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_DEBUG, "D: Setup fixture %s for test %s\n", empty.name, "test_until"); } while (0); empty.setup(); } if (p_ntestsuite_context.should_exit == 
+# 188 "../test/source/test_nfiber.c" 3 4
+   1
+# 188 "../test/source/test_nfiber.c"
+   ) { do { struct nlogger_instance * _instance = (
+# 188 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 188 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "Failed to setup fixture %s for test %s() at %s:%s\n", empty.name, "test_until", "../test/source/test_nfiber.c", 188); } while (0); } else { test_until(); } if (p_ntestsuite_context.should_exit) { p_ntestsuite_context.total_failed_tests++; p_ntestsuite_context.fixture->failed++; } if (empty.teardown) { do { struct nlogger_instance * _instance = (
+# 188 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 188 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_DEBUG, "D: Teardown fixture %s for test %s\n", empty.name, "test_until"); } while (0); empty.teardown(); };
+    p_ntestsuite_context.fixture = &empty; if (p_ntestsuite_context.fixture->total == 0u) { do { struct nlogger_instance * _instance = (
+# 189 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 189 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_INFO, "Test (%s) %s:%s\n", empty.name, "../test/source/test_nfiber.c", __func__); } while (0); } p_ntestsuite_context.should_exit = 
+# 189 "../test/source/test_nfiber.c" 3 4
+   0
+# 189 "../test/source/test_nfiber.c"
+   ; p_ntestsuite_context.total_tests++; p_ntestsuite_context.fixture->total++; if (empty.setup) { do { struct nlogger_instance * _instance = (
+# 189 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 189 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_DEBUG, "D: Setup fixture %s for test %s\n", empty.name, "test_while"); } while (0); empty.setup(); } if (p_ntestsuite_context.should_exit == 
+# 189 "../test/source/test_nfiber.c" 3 4
+   1
+# 189 "../test/source/test_nfiber.c"
+   ) { do { struct nlogger_instance * _instance = (
+# 189 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 189 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "Failed to setup fixture %s for test %s() at %s:%s\n", empty.name, "test_while", "../test/source/test_nfiber.c", 189); } while (0); } else { test_while(); } if (p_ntestsuite_context.should_exit) { p_ntestsuite_context.total_failed_tests++; p_ntestsuite_context.fixture->failed++; } if (empty.teardown) { do { struct nlogger_instance * _instance = (
+# 189 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 189 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_DEBUG, "D: Teardown fixture %s for test %s\n", empty.name, "test_while"); } while (0); empty.teardown(); };
+    p_ntestsuite_context.fixture = &empty; if (p_ntestsuite_context.fixture->total == 0u) { do { struct nlogger_instance * _instance = (
+# 190 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 190 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_INFO, "Test (%s) %s:%s\n", empty.name, "../test/source/test_nfiber.c", __func__); } while (0); } p_ntestsuite_context.should_exit = 
+# 190 "../test/source/test_nfiber.c" 3 4
+   0
+# 190 "../test/source/test_nfiber.c"
+   ; p_ntestsuite_context.total_tests++; p_ntestsuite_context.fixture->total++; if (empty.setup) { do { struct nlogger_instance * _instance = (
+# 190 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 190 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_DEBUG, "D: Setup fixture %s for test %s\n", empty.name, "test_wait_0"); } while (0); empty.setup(); } if (p_ntestsuite_context.should_exit == 
+# 190 "../test/source/test_nfiber.c" 3 4
+   1
+# 190 "../test/source/test_nfiber.c"
+   ) { do { struct nlogger_instance * _instance = (
+# 190 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 190 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_ERR, "Failed to setup fixture %s for test %s() at %s:%s\n", empty.name, "test_wait_0", "../test/source/test_nfiber.c", 190); } while (0); } else { test_wait_0(); } if (p_ntestsuite_context.should_exit) { p_ntestsuite_context.total_failed_tests++; p_ntestsuite_context.fixture->failed++; } if (empty.teardown) { do { struct nlogger_instance * _instance = (
+# 190 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 190 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_DEBUG, "D: Teardown fixture %s for test %s\n", empty.name, "test_wait_0"); } while (0); empty.teardown(); };
+    if (empty.failed != 0u) { do { struct nlogger_instance * _instance = (
+# 191 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 191 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_INFO, "  Total  %u\n  FAILED %u\n", empty.total, empty.failed); } while (0); } else { do { struct nlogger_instance * _instance = (
+# 191 "../test/source/test_nfiber.c" 3 4
+   ((void *)0)
+# 191 "../test/source/test_nfiber.c"
+   ); p_nlogger_x_print(!_instance ? &p_nlogger_global : _instance, NLOGGER_LEVEL_INFO, "  Total %u  OK\n", empty.total); } while (0); };
+}

@@ -28,6 +28,9 @@ CC_FLAGS += -std=c99 -fmessage-length=0
 CC_FLAGS += -Wall -Wextra -pedantic
 CC_FLAGS += $(addprefix -D,$(CC_DEFINES))
 
+SIZ_FORMAT=Berkeley
+FLASH_FORMAT=ihex
+
 # Builder variables
 CC              = $(PREFIX)gcc
 LD              = $(PREFIX)gcc
@@ -54,10 +57,10 @@ $(BUILD_DIR)/%.o: $(WS)/%.c
 # Rule to generate HEX file from ELF executable.
 %.hex:
 	$(PRINT) " [OBJCOPY]: $@"
-	$(VERBOSE)$(OBJCOPY) -O $(OBJ_FLASH_FORMAT) $< $@
+	$(VERBOSE)$(OBJCOPY) -O $(FLASH_FORMAT) $< $@
 
 # Rule to generate size report from ELF executable.
 %.siz:
 	$(PRINT) " [SIZE]: $@"
-	$(VERBOSE)$(SIZE) --format=$(OBJ_SIZE_FORMAT) $<
+	$(VERBOSE)$(SIZE) --format=$(SIZ_FORMAT) $< > $@
 

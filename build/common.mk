@@ -97,6 +97,26 @@ html: $(DEF_DOXYFILE)
 	@echo
 	$(PRINT) "HTML generated in $(DEF_DOX_O)/$(DEF_DOX_HTML_O)"
 
+.PHONY: clean-lib
+clean-lib: clean-objects
+	$(PRINT) "Cleaning library..."
+	$(VERBOSE)rm -rf $(PROJECT_LIB)
+
+.PHONY: clean-elf
+clean-elf: clean-lib
+	$(PRINT) "Cleaning executable..."
+	$(VERBOSE)rm -rf $(PROJECT_ELF)
+
+.PHONY: clean-size
+clean-size: clean-elf
+	$(PRINT) "Cleaning size report..."
+	$(VERBOSE)rm -rf $(PROJECT_SIZE)
+
+.PHONY: clean-flash
+clean-flash: clean-elf
+	$(PRINT) "Cleaning flash binary file..."
+	$(VERBOSE)rm -rf $(PROJECT_FLASH)
+
 .PHONY: html-clean
 html-clean:
 	$(PRINT) "Cleaning HTML documentation..."
