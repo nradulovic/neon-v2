@@ -21,7 +21,7 @@
 #include <stdlib.h>
 
 #include "testsuite/ntestsuite.h"
-#include "thread/thread_fiber.h"
+#include "thread/nthread_fiber.h"
 #include "test_nfiber.h"
 
 #define EXPECT(a_num)           g_expected = (a_num)
