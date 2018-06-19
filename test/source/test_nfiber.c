@@ -78,15 +78,6 @@ static NFIBER(fiber_while(struct nfiber * fb))
     NFIBER_END(fb);
 }
 
-static NFIBER(fiber_waited_0(struct nfiber *));
-
-static NFIBER(fiber_waited_0(struct nfiber * fb))
-{
-    NFIBER_BEGIN(fb);
-    g_output++;
-    NFIBER_END(fb);
-}
-
 static NFIBER(fiber_yielded_0(struct nfiber *));
 
 static NFIBER(fiber_yielded_0(struct nfiber * fb))
@@ -121,6 +112,15 @@ static NFIBER(fiber_yielded_2(struct nfiber * fb))
         }
         NFIBER_YIELD(fb);
     }
+    NFIBER_END(fb);
+}
+
+static NFIBER(fiber_waited_0(struct nfiber *));
+
+static NFIBER(fiber_waited_0(struct nfiber * fb))
+{
+    NFIBER_BEGIN(fb);
+    g_output++;
     NFIBER_END(fb);
 }
 
