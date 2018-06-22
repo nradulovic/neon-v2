@@ -39,6 +39,7 @@ struct node_list
     char letter;
 };
 
+static void test_init(void);
 static void test_initialized(void);
 static void test_init_initialized(void);
 static void test_init_uninitialized(void);
@@ -109,6 +110,13 @@ static void node_delete_all(struct nlist_sll * sentinel)
         nlist_sll_remove(current);
         free(current_node);
     }
+}
+
+static void test_init(void)
+{
+    struct nlist_sll list;
+
+    NTESTSUITE_ASSERT_EQUAL_PTR(&list, nlist_sll_init(&list));
 }
 
 static void test_initialized(void)
@@ -278,10 +286,6 @@ static void setup_empty(void)
     g_expected = "";
 }
 
-static void teardown_empty(void)
-{
-}
-
 static void setup_abcd(void)
 {
     struct node_list * node;
@@ -305,7 +309,10 @@ static void teardown_abcd(void)
 
 void test_nlist_sll(void)
 {
-    NTESTSUITE_FIXTURE(empty, setup_empty, teardown_empty);
+    NTESTSUITE_FIXTURE(empty, setup_empty, NULL);
+    NTESTSUITE_FIXTURE(abcd, setup_abcd, teardown_abcd);
+
+    NTESTSUITE_RUN(empty, test_init);
     NTESTSUITE_RUN(empty, test_initialized);
     NTESTSUITE_RUN(empty, test_init_initialized);
     NTESTSUITE_RUN(empty, test_init_uninitialized);
@@ -319,7 +326,7 @@ void test_nlist_sll(void)
     NTESTSUITE_RUN(empty, test_m_add_head);
     NTESTSUITE_RUN(empty, test_m_add_tail);
     NTESTSUITE_PRINT_RESULTS(empty);   
-    NTESTSUITE_FIXTURE(abcd, setup_abcd, teardown_abcd);
+
     NTESTSUITE_RUN(abcd, test_is_not_empty);
     NTESTSUITE_RUN(abcd, test_m_add_middle);
     NTESTSUITE_RUN(abcd, test_m_remove_middle);

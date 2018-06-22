@@ -17,16 +17,18 @@
  */
 
 #include "testsuite/ntestsuite.h"
+
 #include "test_narch.h"
 #include "test_nlist_sll.h"
 #include "test_nlist_dll.h"
 #include "test_ndebug_enabled.h"
 #include "test_ndebug_disabled.h"
 #include "test_nbits.h"
-#include "test_nbitarray.h"
-#include "test_nlqueue.h"
+#include "test_nbits_bitarray.h"
+#include "test_nqueue_lqueue.h"
+#include "test_nqueue_pqueue.h"
 #include "test_nos.h"
-#include "test_nfiber.h"
+#include "test_nthread_fiber.h"
 
 int main(void)
 {
@@ -37,10 +39,11 @@ int main(void)
     test_ndebug_enabled();
     test_ndebug_disabled();
     test_nbits();
-    test_nbitarray();
-    test_nlqueue();
+    test_nbits_bitarray();
+    test_nqueue_lqueue();
+    test_nqueue_pqueue();
     test_nos();
-    test_nfiber();
+    test_nthread_fiber();
     NTESTSUITE_PRINT_OVERVIEW();
     
     return 0;

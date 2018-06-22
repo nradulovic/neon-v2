@@ -33,7 +33,6 @@
 #define NEON_THREAD_FIBER_H_
 
 #include <stdint.h>
-#include "port/nport_platform.h"
 
 /*---------------------------------------------------------------------------*/
 /** @defgroup   fiber_ctx Fiber context macros
@@ -104,11 +103,7 @@ struct nfiber
  *  @param      fb
  *              A pointer to the fiber control structure.
  */
-NPLATFORM_INLINE
-void nfiber_init(struct nfiber * fb)
-{
-    NP_FIBER_CTX_INIT(&fb->ctx);
-}
+#define NFIBER_INIT(fb) 					NP_FIBER_CTX_INIT(&(fb)->ctx)
 
 /** @} */
 
@@ -218,12 +213,10 @@ void nfiber_init(struct nfiber * fb)
  *
  * \hideinitializer
  */
-#define NFIBER_WAIT_UNTIL(fb, condition)	        \
-  do {						\
-    while (!(condition)) {				\
-        NP_FIBER_CTX_SAVE(&(fb)->ctx, NFIBER_WAITING, 0u);			\
-    }						\
-  } while(0)
+#define NFIBER_WAIT_UNTIL(fb, condition)	                                \
+    while (!(condition)) {				                                    \
+        NP_FIBER_CTX_SAVE(&(fb)->ctx, NFIBER_WAITING, 0u);			        \
+    }
 
 /**
  * Block and wait while condition is true.
@@ -284,16 +277,6 @@ void nfiber_init(struct nfiber * fb)
  */
 #define NFIBER_YIELD(fb)		                                            \
         NP_FIBER_CTX_SAVE(&(fb)->ctx, NFIBER_YIELDED, 1000u)
-
-#define NP_FIBER_EXEC(fb, preexec, condition, postexec, offset) \
-    do { \
-        if (preexec) { \
-            do { \
-                NP_FIBER_CTX_SAVE(&(fb)->ctx, NFIBER_WAITING, offset); \
-            } while (!condition); \
-            postexec; \
-        } \
-    } while (0)
 
 /** @} */
 

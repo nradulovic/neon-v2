@@ -39,6 +39,7 @@ struct node_list
     char letter;
 };
 
+static void test_init(void);
 static void test_initialized(void);
 static void test_init_initialized(void);
 static void test_init_uninitialized(void);
@@ -109,6 +110,13 @@ static void node_delete_all(struct nlist_dll * sentinel)
         nlist_dll_remove(current);
         free(current_node);
     }
+}
+
+static void test_init(void)
+{
+    struct nlist_dll list;
+
+    NTESTSUITE_ASSERT_EQUAL_PTR(&list, nlist_dll_init(&list));
 }
 
 static void test_initialized(void)
@@ -306,6 +314,7 @@ static void teardown_abcd(void)
 void test_nlist_dll(void)
 {
     NTESTSUITE_FIXTURE(empty, setup_empty, teardown_empty);
+    NTESTSUITE_RUN(empty, test_init);
     NTESTSUITE_RUN(empty, test_initialized);
     NTESTSUITE_RUN(empty, test_init_initialized);
     NTESTSUITE_RUN(empty, test_init_uninitialized);

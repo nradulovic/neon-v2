@@ -21,8 +21,7 @@
 #include <string.h>
 
 #include "testsuite/ntestsuite.h"
-#include "sched/nsched_bitarray.h"
-#include "test_nbitarray.h"
+#include "bits/nbits_bitarray.h"
 
 #define SETUP_SET(a_num)        nbitarray_set(&g_instance, (a_num))
 #define EXPECT(a_num)           g_expected = (a_num)
@@ -34,14 +33,13 @@
 static void test_init(void);
 static void test_set_get_0(void);
 static void test_set_get_1(void);
-static void test_set_get_127(void);
-static void test_set_get_255(void);
+static void test_set_get_31(void);
 static void test_set_clr_get_1(void);
-static void test_set_clr_get_255(void);
+static void test_set_clr_get_31(void);
 static void test_set_m_0(void);
 static void test_set_m_1(void);
-static void test_set_m_255(void);
-static void test_set_clr_get_255_m(void);
+static void test_set_m_31(void);
+static void test_set_clr_get_31_m(void);
 
 static uint32_t g_output;
 static uint32_t g_expected;
@@ -68,17 +66,10 @@ static void test_set_get_1(void)
     EVALUATE();
 }
 
-static void test_set_get_127(void)
+static void test_set_get_31(void)
 {
-    SETUP_SET(127);
-    EXPECT(127);
-    EVALUATE();
-}
-
-static void test_set_get_255(void)
-{
-    SETUP_SET(255);
-    EXPECT(255);
+    SETUP_SET(31);
+    EXPECT(31);
     EVALUATE();
 }
 
@@ -99,13 +90,13 @@ static void test_set_m_1(void)
     EVALUATE();
 }
 
-static void test_set_m_255(void)
+static void test_set_m_31(void)
 {
     SETUP_SET(0);
     SETUP_SET(1);
-    SETUP_SET(255);
-    EXPECT(255);
-    nbitarray_set(&g_instance, 255);
+    SETUP_SET(31);
+    EXPECT(31);
+    nbitarray_set(&g_instance, 31);
     EVALUATE();
 }
 
@@ -118,22 +109,22 @@ static void test_set_clr_get_1(void)
     EVALUATE();
 }
 
-static void test_set_clr_get_255(void)
+static void test_set_clr_get_31(void)
 {
     SETUP_SET(0);
     SETUP_SET(1);
-    SETUP_SET(255);
+    SETUP_SET(31);
     EXPECT(1);
-    nbitarray_clear(&g_instance, 255);
+    nbitarray_clear(&g_instance, 31);
     EVALUATE();
 }
 
-static void test_set_clr_get_255_m(void)
+static void test_set_clr_get_31_m(void)
 {
     SETUP_SET(0);
     SETUP_SET(1);
-    SETUP_SET(255);
-    EXPECT(255);
+    SETUP_SET(31);
+    EXPECT(31);
     nbitarray_clear(&g_instance, 1);
     EVALUATE();
 }
@@ -149,20 +140,19 @@ static void teardown_empty(void)
 {
 }
 
-void test_nbitarray(void)
+void test_nbits_bitarray(void)
 {
     NTESTSUITE_FIXTURE(empty, setup_empty, teardown_empty);
     NTESTSUITE_RUN(empty, test_init);
     NTESTSUITE_RUN(empty, test_set_get_0);
     NTESTSUITE_RUN(empty, test_set_get_1);
-    NTESTSUITE_RUN(empty, test_set_get_127);
-    NTESTSUITE_RUN(empty, test_set_get_255);
+    NTESTSUITE_RUN(empty, test_set_get_31);
     NTESTSUITE_RUN(empty, test_set_m_0);
     NTESTSUITE_RUN(empty, test_set_m_1);
-    NTESTSUITE_RUN(empty, test_set_m_255);
+    NTESTSUITE_RUN(empty, test_set_m_31);
     NTESTSUITE_RUN(empty, test_set_clr_get_1);
-    NTESTSUITE_RUN(empty, test_set_clr_get_255);
-    NTESTSUITE_RUN(empty, test_set_clr_get_255_m);
+    NTESTSUITE_RUN(empty, test_set_clr_get_31);
+    NTESTSUITE_RUN(empty, test_set_clr_get_31_m);
     NTESTSUITE_PRINT_RESULTS(empty);   
 }
 

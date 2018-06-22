@@ -22,7 +22,7 @@
 
 #include "testsuite/ntestsuite.h"
 #include "queue/nqueue_lqueue.h"
-#include "test_nlqueue.h"
+#include "test_nqueue_lqueue.h"
 
 #define EXPECT(a_num)           g_expected = (a_num)
 
@@ -162,6 +162,20 @@ static void test_m_fifo_tail(void)
     EVALUATE();
 }
 
+static void test_full_fifo_is_full(void)
+{
+	EXPECT(true);
+	g_output = NLQUEUE_IS_FULL(&g_test_queue);
+	EVALUATE();
+}
+
+static void test_full_fifo_is_empty(void)
+{
+	EXPECT(false);
+	g_output = NLQUEUE_IS_EMPTY(&g_test_queue);
+	EVALUATE();
+}
+
 static void setup_empty(void)
 {
     g_output = 0u;
@@ -173,12 +187,32 @@ static void teardown_empty(void)
 {
 }
 
-void test_nlqueue(void)
+static void setup_full(void)
+{
+	uint32_t i;
+
+    g_output = 0u;
+    g_expected = 0u;
+    NLQUEUE_INIT(&g_test_queue);
+
+	for (i = 0; i < QUEUE_SIZE; i++) {
+		NLQUEUE_PUT_FIFO(&g_test_queue, i);
+	}
+}
+
+static void teardown_full(void)
+{
+}
+
+void test_nqueue_lqueue(void)
 {
     NTESTSUITE_FIXTURE(none, NULL, NULL);
     NTESTSUITE_FIXTURE(empty, setup_empty, teardown_empty);
+    NTESTSUITE_FIXTURE(full, setup_full, teardown_full);
+
     NTESTSUITE_RUN(none, test_init);
-    NTESTSUITE_PRINT_RESULTS(none);   
+    NTESTSUITE_PRINT_RESULTS(none);
+
     NTESTSUITE_RUN(empty, test_empty_get_empty);
     NTESTSUITE_RUN(empty, test_empty_get_size);
     NTESTSUITE_RUN(empty, test_empty_is_full);
@@ -193,7 +227,11 @@ void test_nlqueue(void)
     NTESTSUITE_RUN(empty, test_m_fifo_is_empty);
     NTESTSUITE_RUN(empty, test_m_fifo_head);
     NTESTSUITE_RUN(empty, test_m_fifo_tail);
-    NTESTSUITE_PRINT_RESULTS(empty);   
+    NTESTSUITE_PRINT_RESULTS(empty);
+
+    NTESTSUITE_RUN(full, test_full_fifo_is_full);
+    NTESTSUITE_RUN(full, test_full_fifo_is_empty);
+    NTESTSUITE_PRINT_RESULTS(full);
 }
 
 

@@ -22,7 +22,8 @@
 
 #include "testsuite/ntestsuite.h"
 #include "thread/nthread_fiber.h"
-#include "test_nfiber.h"
+
+#include "../include/test_nthread_fiber.h"
 
 #define EXPECT(a_num)           g_expected = (a_num)
 
@@ -131,11 +132,11 @@ static NFIBER(fiber_wait_0(struct nfiber * fb))
     NFIBER_BEGIN(fb);
     static struct nfiber waited_0;
         
-    nfiber_init(&waited_0);
+    NFIBER_INIT(&waited_0);
     NFIBER_WAIT(fb, fiber_waited_0(&waited_0));
-    nfiber_init(&waited_0);
+    NFIBER_INIT(&waited_0);
     NFIBER_WAIT(fb, fiber_waited_0(&waited_0));
-    nfiber_init(&waited_0);
+    NFIBER_INIT(&waited_0);
     NFIBER_WAIT(fb, fiber_waited_0(&waited_0));
     NFIBER_END(fb);
 }
@@ -143,7 +144,7 @@ static NFIBER(fiber_wait_0(struct nfiber * fb))
 static void test_empty(void)
 {
     struct nfiber empty;
-    nfiber_init(&empty);
+    NFIBER_INIT(&empty);
     NTESTSUITE_ASSERT_EQUAL_UINT(NFIBER_TERMINATED,
         nfiber_dispatch(fiber_empty(&empty)));
 }
@@ -153,7 +154,7 @@ static void test_exit(void)
     struct nfiber exit;
     EXPECT(1u);
 
-    nfiber_init(&exit);
+    NFIBER_INIT(&exit);
     NTESTSUITE_ASSERT_EQUAL_UINT(NFIBER_TERMINATED,
         nfiber_dispatch(fiber_exit(&exit)));
     EVALUATE();
@@ -163,7 +164,7 @@ static void test_until(void)
 {
     struct nfiber until;
     EXPECT(3u);
-    nfiber_init(&until);
+    NFIBER_INIT(&until);
     while (nfiber_dispatch(fiber_until(&until)) != NFIBER_WAITING);
     EVALUATE();
 }
@@ -172,7 +173,7 @@ static void test_while(void)
 {
     struct nfiber while_ctx;
     EXPECT(3u);
-    nfiber_init(&while_ctx);
+    NFIBER_INIT(&while_ctx);
     while (nfiber_dispatch(fiber_while(&while_ctx)) != NFIBER_WAITING);
     EVALUATE();
 }
@@ -181,7 +182,7 @@ static void test_wait_0(void)
 {
     struct nfiber wait;
     EXPECT(3u);
-    nfiber_init(&wait);
+    NFIBER_INIT(&wait);
     while (nfiber_dispatch(fiber_wait_0(&wait)) != NFIBER_TERMINATED);
     EVALUATE();
 }
@@ -212,7 +213,7 @@ static void teardown_empty(void)
 {
 }
 
-void test_nfiber(void)
+void test_nthread_fiber(void)
 {
     NTESTSUITE_FIXTURE(empty, setup_empty, teardown_empty);
     NTESTSUITE_RUN(empty, test_empty);

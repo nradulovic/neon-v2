@@ -47,15 +47,16 @@ CC_INCLUDES += test/include
 # compiled.
 CC_SOURCES += test/source/main.c
 CC_SOURCES += test/source/test_narch.c
-CC_SOURCES += test/source/test_nlist_sll.c
-CC_SOURCES += test/source/test_nlist_dll.c
+CC_SOURCES += test/source/test_nbits.c
+CC_SOURCES += test/source/test_nbits_bitarray.c
 CC_SOURCES += test/source/test_ndebug_enabled.c
 CC_SOURCES += test/source/test_ndebug_disabled.c
-CC_SOURCES += test/source/test_nbits.c
-CC_SOURCES += test/source/test_nbitarray.c
-CC_SOURCES += test/source/test_nlqueue.c
+CC_SOURCES += test/source/test_nlist_dll.c
+CC_SOURCES += test/source/test_nlist_sll.c
 CC_SOURCES += test/source/test_nos.c
-CC_SOURCES += test/source/test_nfiber.c
+CC_SOURCES += test/source/test_nqueue_lqueue.c
+CC_SOURCES += test/source/test_nqueue_pqueue.c
+CC_SOURCES += test/source/test_nthread_fiber.c
 
 # List additional archives. Use this when using an external static archive.
 AR_LIBS +=

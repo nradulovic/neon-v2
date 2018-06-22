@@ -45,9 +45,9 @@ extern "C" {
  *  In case when we want speed, change the base type to some more optimal size.
  */
 #if defined(NPROFILE_SPEED)
-#define np_lqueue_base_TYPE uint_fast8_t
+#define NP_LQUEUE_BASE_TYPE uint_fast8_t
 #else
-#define np_lqueue_base_TYPE uint8_t
+#define NP_LQUEUE_BASE_TYPE uint8_t
 #endif
 
 /** @brief		Lightweight base structure.
@@ -55,13 +55,13 @@ extern "C" {
  */
 struct np_lqueue_base
 {
-	np_lqueue_base_TYPE head;
-    np_lqueue_base_TYPE tail;
-    np_lqueue_base_TYPE empty;
-	np_lqueue_base_TYPE mask;
+	NP_LQUEUE_BASE_TYPE head;
+    NP_LQUEUE_BASE_TYPE tail;
+    NP_LQUEUE_BASE_TYPE empty;
+	NP_LQUEUE_BASE_TYPE mask;
 };
 
-/** @brief		Lightweight custom structure.
+/** @brief		Lightweight queue custom structure.
  *  
  *  Contains the Base structure and buffer of type @a T with @a elements
  *  number of elements in that buffer. The buffer contains only pointers

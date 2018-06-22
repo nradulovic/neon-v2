@@ -1,6 +1,6 @@
 /*
  * Neon
- * Copyright (C)  2018  REAL-TIME CONSULTING
+ * Copyright (C) 2018   REAL-TIME CONSULTING
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the Free
@@ -16,47 +16,27 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /** @file
- *  @author      Developer name
- *  @brief       Template description header
+ *  @author      Nenad Radulovic
+ *  @brief       Tests for nbitarray
  *
  *  @addtogroup  module
  *  @{
  */
-/** @defgroup    mod_template Template
- *  @brief       Template.
+/** @defgroup    mod_test_nbitarray Tests for nbitarray
+ *  @brief       Tests for nbitarray.
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
-
-#ifndef NEON_MODULE_TEMPLATE_H_
-#define NEON_MODULE_TEMPLATE_H_
-
-#include <stdint.h>
+#ifndef TEST_NBITARRAY_H_
+#define TEST_NBITARRAY_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/*---------------------------------------------------------------------------*/
-/** @defgroup   templateid Template identification information
- *  @brief      Template identification information.
- *  @{
- */
+void test_nbits_bitarray(void);
 
-/** @brief      Some brief description.
- * 
- *  More details about the function.
- *
- *  @param      param1
- *              Some information about param1.
- *  @returns    Returns a status information.
- *  @retval     - ERANGE - Something has happened.
- *  @api
- */
-void some_function(uint32_t param1);
-
-/** @} */
 #ifdef __cplusplus
 }
 #endif
@@ -64,4 +44,4 @@ void some_function(uint32_t param1);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_MODULE_TEMPLATE_H_ */
+#endif  /* TEST_NBITARRAY_H_ */

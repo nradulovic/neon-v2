@@ -35,7 +35,7 @@
 extern "C" {
 #endif
 
-void test_nfiber(void);
+void test_nthread_fiber(void);
 
 #ifdef __cplusplus
 }

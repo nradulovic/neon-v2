@@ -17,25 +17,25 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Tests for nbitarray
+ *  @brief       Tests for nlist_dll
  *
  *  @addtogroup  module
  *  @{
  */
-/** @defgroup    mod_test_nbitarrat Tests for nbitarray
- *  @brief       Tests dor nbitarray.
+/** @defgroup    mod_test_nlist_dll Tests for nlist_dll
+ *  @brief       Tests for nlist_dll.
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
-#ifndef TEST_NBITARRAY_H_
-#define TEST_NBITARRAY_H_
+#ifndef TEST_NSCHED_PQUEUE_H_
+#define TEST_NSCHED_PQUEUE_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void test_nbitarray(void);
+void test_nqueue_pqueue(void);
 
 #ifdef __cplusplus
 }
@@ -44,4 +44,4 @@ void test_nbitarray(void);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif  /* TEST_NBITARRAY_H_ */
+#endif  /* TEST_NSCHED_PQUEUE_H_ */

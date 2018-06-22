@@ -111,8 +111,8 @@ extern "C" {
 #define NTESTSUITE_RUN(a_fixture, function)                                 \
     p_ntestsuite_context.fixture = &a_fixture;                              \
     if (p_ntestsuite_context.fixture->total == 0u) {                        \
-        nlogger_info("Test (%s) %s:%s\n",                                   \
-            a_fixture.name, NPLATFORM_FILE, NPLATFORM_FUNC);                \
+        nlogger_info("Test %s:%s:%s\n",                                     \
+            NPLATFORM_FILE, NPLATFORM_FUNC, a_fixture.name);                \
     }                                                                       \
     p_ntestsuite_context.should_exit = false;                               \
     p_ntestsuite_context.total_tests++;                                     \
