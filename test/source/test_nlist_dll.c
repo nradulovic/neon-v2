@@ -218,6 +218,7 @@ static void test_m_add_head(void)
     nlist_dll_add_head(&g_sentinel, &node->list);
 
     EVALUATE();
+    node_delete_all(&g_sentinel);
 }
 
 static void test_m_add_tail(void)
@@ -236,6 +237,7 @@ static void test_m_add_tail(void)
     nlist_dll_add_tail(&g_sentinel, &node->list);
     
     EVALUATE();
+    node_delete_all(&g_sentinel);
 }
 
 static void test_is_not_empty(void)
@@ -273,6 +275,7 @@ static void test_m_remove_middle(void)
 
         if (from_list(current)->letter == 'c') {
             nlist_dll_remove(current);
+            free(from_list(current));
         }
     }
 
