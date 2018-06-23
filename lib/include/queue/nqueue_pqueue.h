@@ -88,11 +88,11 @@ void npqueue_insert(struct npqueue * q, struct npqueue_node * node)
     struct nlist_dll * current;
 
     for (NLIST_DLL_EACH(current, &q->sentinel)) {
-        if (npqueue_from_list(current)->priority >= node->priority) {
+        if (npqueue_from_list(current)->priority < node->priority) {
             break;
         }
     }
-    nlist_dll_add_before(current, &node->node);
+    nlist_dll_add_after(current, &node->node);
 }
 
 NPLATFORM_INLINE
