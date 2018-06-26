@@ -89,24 +89,24 @@ extern "C" {
 
 
 #define NTESTSUITE_ASSERT_EQUAL_INT(expected, actual)                       \
-    P_NTESTSUITE_ASSERT_EQUAL(expected, actual, int32_t, d,                 \
-            P_NTESTSUITE_CNV_NONE, P_NTESTSUITE_CMP_PLAIN)
+    NP_TESTSUITE_ASSERT_EQUAL(expected, actual, int32_t, d,                 \
+            NP_TESTSUITE_CNV_NONE, NP_TESTSUITE_CMP_PLAIN)
 
 #define NTESTSUITE_ASSERT_EQUAL_UINT(expected, actual)                      \
-    P_NTESTSUITE_ASSERT_EQUAL(expected, actual, uint32_t, u,                \
-            P_NTESTSUITE_CNV_NONE, P_NTESTSUITE_CMP_PLAIN)
+    NP_TESTSUITE_ASSERT_EQUAL(expected, actual, uint32_t, u,                \
+            NP_TESTSUITE_CNV_NONE, NP_TESTSUITE_CMP_PLAIN)
 
 #define NTESTSUITE_ASSERT_EQUAL_PTR(expected, actual)                       \
-    P_NTESTSUITE_ASSERT_EQUAL(expected, actual, void *, p,                  \
-            P_NTESTSUITE_CNV_NONE, P_NTESTSUITE_CMP_PLAIN)
+    NP_TESTSUITE_ASSERT_EQUAL(expected, actual, void *, p,                  \
+            NP_TESTSUITE_CNV_NONE, NP_TESTSUITE_CMP_PLAIN)
 
 #define NTESTSUITE_ASSERT_EQUAL_BOOL(expected, actual)                      \
-    P_NTESTSUITE_ASSERT_EQUAL(expected, actual, bool, s,                    \
-            P_NTESTSUITE_CNV_BOOL, P_NTESTSUITE_CMP_PLAIN)
+    NP_TESTSUITE_ASSERT_EQUAL(expected, actual, bool, s,                    \
+            NP_TESTSUITE_CNV_BOOL, NP_TESTSUITE_CMP_PLAIN)
 
 #define NTESTSUITE_ASSERT_EQUAL_STRING(expected, actual)                    \
-    P_NTESTSUITE_ASSERT_EQUAL(expected, actual, const char *, s,            \
-            P_NTESTSUITE_CNV_NONE, P_NTESTSUITE_CMP_STRING)
+    NP_TESTSUITE_ASSERT_EQUAL(expected, actual, const char *, s,            \
+            NP_TESTSUITE_CNV_NONE, NP_TESTSUITE_CMP_STRING)
 
 #define NTESTSUITE_RUN(a_fixture, function)                                 \
     p_ntestsuite_context.fixture = &a_fixture;                              \
@@ -148,34 +148,146 @@ extern "C" {
         .failed = 0u,                                                       \
     }
 
-#define P_NTESTSUITE_CMP_PLAIN(a, b)        ((a) != (b))
-#define P_NTESTSUITE_CMP_STRING(a, b)       (strlen(a) != strlen(b))
+#define NTESTSUITE_ERROR(fmt, ...)                                          \
+    do {                                                                    \
+        NP_TESTSUITE_PRINT_LOCATION();                                      \
+        nlogger_err(fmt "\n", __VA_ARGS__);                                 \
+        p_ntestsuite_context.should_exit = true;                            \
+        return;                                                             \
+    } while (0)
 
-#define P_NTESTSUITE_CNV_BOOL(a_bool)       (a_bool) ? "true" : "false"
-#define P_NTESTSUITE_CNV_NONE(a_val)        (a_val)
+#define NTESTSUITE_EXPECT_UINT(a_number)                                    \
+    do {                                                                    \
+        p_ntestsuite_context.test_case.expected.ui = (a_number);                               \
+        p_ntestsuite_context.test_case.actual.ui = ~(a_number);                                \
+        p_ntestsuite_context.test_case.type = TEST_CASE_UINT;                                  \
+    } while (0u)
 
-#define P_NTESTSUITE_PRINT_LOCATION()                                       \
+#define NTESTSUITE_EXPECT_INT(a_number)                                     \
+    do {                                                                    \
+        p_ntestsuite_context.test_case.expected.i = (a_number);                                \
+        p_ntestsuite_context.test_case.actual.i = ~(a_number);                                 \
+        p_ntestsuite_context.test_case.type = TEST_CASE_INT;                                   \
+    } while (0u)
+
+#define NTESTSUITE_EXPECT_PTR(a_pointer)                                    \
+    do {                                                                    \
+        p_ntestsuite_context.test_case.expected.ptr = (a_pointer);                             \
+        p_ntestsuite_context.test_case.actual.ptr = NULL;                                      \
+        p_ntestsuite_context.test_case.type = TEST_CASE_PTR;                                   \
+    } while (0u)
+
+#define NTESTSUITE_EXPECT_BOOL(a_bool)                                      \
+    do {                                                                    \
+        p_ntestsuite_context.test_case.expected.b = (a_bool);                                  \
+        p_ntestsuite_context.test_case.actual.b = !(a_bool);                                   \
+        p_ntestsuite_context.test_case.type = TEST_CASE_BOOL;                                  \
+    } while (0u)
+    
+#define NTESTSUITE_ACTUAL_UINT(a_val)                                       \
+    do {                                                                    \
+        NP_TESTSUITE_TEST_CASE_VALIDATE_TYPE(TEST_CASE_UINT);                                    \
+        p_ntestsuite_context.test_case.actual.ui = (a_val);                                    \
+    } while (0)
+
+#define NTESTSUITE_ACTUAL_INT(a_val)                                        \
+    do {                                                                    \
+        NP_TESTSUITE_TEST_CASE_VALIDATE_TYPE(TEST_CASE_INT);                                     \
+        p_ntestsuite_context.test_case.actual.i = (a_val);                                     \
+    } while (0)
+                
+#define NTESTSUITE_ACTUAL_PTR(a_val)                                        \
+    do {                                                                    \
+        NP_TESTSUITE_TEST_CASE_VALIDATE_TYPE(TEST_CASE_PTR);                                     \
+        p_ntestsuite_context.test_case.actual.ptr = (a_val);                                   \
+    } while (0)
+
+#define NTESTSUITE_ACTUAL_BOOL(a_val)                                       \
+    do {                                                                    \
+        NP_TESTSUITE_TEST_CASE_VALIDATE_TYPE(TEST_CASE_BOOL);                                    \
+        p_ntestsuite_context.test_case.actual.b = (a_val);                                     \
+    } while (0)
+
+#define NTESTSUITE_EVALUATE()                                               \
+    do {                                                                    \
+        switch (p_ntestsuite_context.test_case.type) {                                         \
+            case TEST_CASE_UINT:                                            \
+                NTESTSUITE_ASSERT_EQUAL_UINT(p_ntestsuite_context.test_case.expected.ui,       \
+                        p_ntestsuite_context.test_case.actual.ui);                             \
+                break;                                                      \
+            case TEST_CASE_INT:                                             \
+                NTESTSUITE_ASSERT_EQUAL_INT(p_ntestsuite_context.test_case.expected.i,         \
+                        p_ntestsuite_context.test_case.actual.i);                              \
+                break;                                                      \
+            case TEST_CASE_PTR:                                             \
+                NTESTSUITE_ASSERT_EQUAL_PTR(p_ntestsuite_context.test_case.expected.ptr,       \
+                        p_ntestsuite_context.test_case.actual.ptr);                            \
+                break;                                                      \
+            case TEST_CASE_BOOL:                                            \
+                NTESTSUITE_ASSERT_EQUAL_BOOL(p_ntestsuite_context.test_case.expected.b,        \
+                        p_ntestsuite_context.test_case.actual.b);                              \
+                break;                                                      \
+        }                                                                   \
+    } while (0)
+
+#define NP_TESTSUITE_CMP_PLAIN(a, b)        ((a) != (b))
+#define NP_TESTSUITE_CMP_STRING(a, b)       (strlen(a) != strlen(b))
+
+#define NP_TESTSUITE_CNV_BOOL(a_bool)       (a_bool) ? "true" : "false"
+#define NP_TESTSUITE_CNV_NONE(a_val)        (a_val)
+
+#define NP_TESTSUITE_PRINT_LOCATION()                                       \
     nlogger_err("Test FAILED at %s() in %s:%u\n",                           \
             NPLATFORM_FUNC, NPLATFORM_FILE,                                 \
             NPLATFORM_LINE);                                                \
 
-#define P_NTESTSUITE_ASSERT_EQUAL(expect, actual, type, format, cnv, compare)\
+#define NP_TESTSUITE_ASSERT_EQUAL(expect, actual, type, format, cnv, compare)\
     do {                                                                    \
         if (p_ntestsuite_context.should_exit) {                             \
             return;                                                         \
         }                                                                   \
         type _expected = (type)(expect);                                    \
         type _actual = (type)(actual);                                      \
-        p_ntestsuite_context.total_asserts++;                              \
+        p_ntestsuite_context.total_asserts++;                               \
         if (compare((_actual), (_expected))) {                              \
-            P_NTESTSUITE_PRINT_LOCATION();                                  \
-            nlogger_err("  Comparing: %s and %s\n", # expect, # actual);    \
-            nlogger_err("  Expected : %" # format  "\n  Actual   : %"       \
-                    # format "\n", cnv(_expected), cnv(_actual));           \
-            p_ntestsuite_context.should_exit = true;                        \
-            return;                                                         \
+            NTESTSUITE_ERROR(                                               \
+                "  Expected : %" #format "\n  Actual   : %" #format "\n",   \
+                cnv(_expected), cnv(_actual));                              \
+            NP_TESTSUITE_PRINT_LOCATION();                                  \
         }                                                                   \
     } while (0)
+
+#define NP_TESTSUITE_TEST_CASE_VALIDATE_TYPE(a_type)                        \
+    if (p_ntestsuite_context.test_case.type != (a_type)) {                  \
+        const char * expected_type;                                         \
+        switch (p_ntestsuite_context.test_case.type) {                      \
+            case TEST_CASE_UINT:                                            \
+                expected_type = "TEST_CASE_UINT";                           \
+                break;                                                      \
+            case TEST_CASE_INT:                                             \
+                expected_type = "TEST_CASE_INT";                            \
+                break;                                                      \
+            case TEST_CASE_PTR:                                             \
+                expected_type = "TEST_CASE_PTR";                            \
+                break;                                                      \
+            case TEST_CASE_BOOL:                                            \
+                expected_type = "TEST_CASE_BOOL";                           \
+                break;                                                      \
+        }                                                                   \
+        NTESTSUITE_ERROR("MACRO TYPE MISMATCH!\n"                           \
+            "  Expected type (%s)\n"                                        \
+            "  Actual   type (%s)",                                         \
+            expected_type, # a_type);                                       \
+    }
+
+
+enum p_ntestsuite_test_case_type
+{
+    TEST_CASE_UINT,
+    TEST_CASE_INT,
+    TEST_CASE_PTR,
+    TEST_CASE_BOOL
+};
 
 struct p_ntestsuite_fixture
 {
@@ -189,6 +301,17 @@ struct p_ntestsuite_fixture
 struct p_ntestsuite_context
 {
     struct p_ntestsuite_fixture * fixture;
+    struct p_ntestsuite_test_case
+    {
+        union test_val
+        {
+            uint32_t ui;
+            int32_t i;
+            void * ptr;
+            bool b;
+        } actual, expected;
+        enum p_ntestsuite_test_case_type type;
+    } test_case;
     uint32_t total_tests;
     uint32_t total_failed_tests;
     uint32_t total_asserts;

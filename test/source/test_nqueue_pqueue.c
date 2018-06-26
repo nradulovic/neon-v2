@@ -19,20 +19,12 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include <test_nqueue_pqueue.h>
 
 #include "testsuite/ntestsuite.h"
 #include "queue/nqueue_pqueue.h"
 
-#define EXPECT(a_number)        g_expected = (a_number)
-
-#define EVALUATE()                                                          \
-    do {                                                                    \
-    	NTESTSUITE_ASSERT_EQUAL_INT(g_expected, g_actual);					\
-    } while (0)
-
-static uint32_t g_actual;
-static uint32_t g_expected;
 static struct npqueue g_queue;
 static struct npqueue_node g_node1;
 static struct npqueue_node g_node2;
@@ -46,165 +38,184 @@ static void test_none_init_queue(void)
 	 * Compile time test only. Ensure that the expected is equal to actual
 	 * value.
 	 */
-	EXPECT(g_actual);
-	npqueue_init(&my_queue);
-	EVALUATE();
+	NTESTSUITE_EXPECT_BOOL(true);
+	NTESTSUITE_ACTUAL_BOOL(true);
+    npqueue_init(&my_queue);
+	NTESTSUITE_EVALUATE();
 }
 
-static void test_none_init_queue_node(void)
+static void test_none_node_init(void)
 {
 	struct npqueue_node my_queue_node;
 
-	/* NOTE:
-	 * Compile time test only. Ensure that the expected is equal to actual
-	 * value.
-	 */
-	EXPECT(g_actual);
-	npqueue_node_init(&my_queue_node, 0);
-	EVALUATE();
+	NTESTSUITE_EXPECT_PTR(&my_queue_node);
+	NTESTSUITE_ACTUAL_PTR(npqueue_node_init(&my_queue_node, 0));
+	NTESTSUITE_EVALUATE();
 }
 
 static void test_none_node_priority(void)
 {
     struct npqueue_node node;
 
-    EXPECT(1);
+    NTESTSUITE_EXPECT_UINT(1);
     npqueue_node_init(&node, 1);
-    g_actual = npqueue_node_priority(&node);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_UINT(npqueue_node_priority(&node));
+    NTESTSUITE_EVALUATE();
+}
+
+static void test_none_node_mod_priority(void)
+{
+    struct npqueue_node node;
+    uint_fast8_t old_prio;
+
+    npqueue_node_init(&node, 1);
+    old_prio = npqueue_node_mod_priority(&node, 3);
+    NTESTSUITE_EXPECT_UINT(1);
+    NTESTSUITE_ACTUAL_UINT(old_prio);
+    NTESTSUITE_EVALUATE();
+    NTESTSUITE_EXPECT_UINT(3);
+    NTESTSUITE_ACTUAL_UINT(npqueue_node_priority(&node));
+    NTESTSUITE_EVALUATE();
+}
+
+static void test_none_node_term(void)
+{
+    struct npqueue_node my_queue_node;
+
+    NTESTSUITE_EXPECT_UINT(0);
+    npqueue_node_init(&my_queue_node, 1);
+    npqueue_node_term(&my_queue_node);
+    NTESTSUITE_ACTUAL_UINT(npqueue_node_priority(&my_queue_node));
+    NTESTSUITE_EVALUATE();
 }
 
 static void test_empty_is_empty(void)
 {
-	EXPECT(true);
-	g_actual = npqueue_is_empty(&g_queue);
-	EVALUATE();
+	NTESTSUITE_EXPECT_BOOL(true);
+	NTESTSUITE_ACTUAL_BOOL(npqueue_is_empty(&g_queue));
+	NTESTSUITE_EVALUATE();
 }
 
 static void test_empty_insert(void)
 {
     struct npqueue_node node;
 
-    EXPECT(g_actual);
+    NTESTSUITE_EXPECT_BOOL(true);
+    NTESTSUITE_ACTUAL_BOOL(true);
     npqueue_node_init(&node, 1);
     npqueue_insert(&g_queue, &node);
-    EVALUATE();
+    NTESTSUITE_EVALUATE();
 }
 
 static void test_single_is_empty(void)
 {
-    EXPECT(false);
-    g_actual = npqueue_is_empty(&g_queue);
-    EVALUATE();
+    NTESTSUITE_EXPECT_BOOL(false);
+    NTESTSUITE_ACTUAL_BOOL(npqueue_is_empty(&g_queue));
+    NTESTSUITE_EVALUATE();
 }
 
 static void test_single_first(void)
 {
-    EXPECT(1);
-    g_actual = npqueue_node_priority(npqueue_first(&g_queue));
-    EVALUATE();
+    NTESTSUITE_EXPECT_UINT(1);
+    NTESTSUITE_ACTUAL_UINT(npqueue_node_priority(npqueue_first(&g_queue)));
+    NTESTSUITE_EVALUATE();
 }
 
 static void test_single_remove(void)
 {
-    EXPECT(true);
+    NTESTSUITE_EXPECT_BOOL(true);
     npqueue_remove(npqueue_first(&g_queue));
-    g_actual = npqueue_is_empty(&g_queue);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_BOOL(npqueue_is_empty(&g_queue));
+    NTESTSUITE_EVALUATE();
 }
 
 static void test_single_insert(void)
 {
 	struct npqueue_node node;
 
+	NTESTSUITE_EXPECT_BOOL(false);
 	npqueue_node_init(&node, 1);
-	EXPECT(false);
 	npqueue_insert(&g_queue, &node);
 	npqueue_remove(npqueue_first(&g_queue));
-	g_actual = npqueue_is_empty(&g_queue);
-	EVALUATE();
+	NTESTSUITE_ACTUAL_BOOL(npqueue_is_empty(&g_queue));
+	NTESTSUITE_EVALUATE();
 }
 
 static void test_multi_is_empty(void)
 {
-	EXPECT(false);
-	g_actual = npqueue_is_empty(&g_queue);
-	EVALUATE();
+	NTESTSUITE_EXPECT_BOOL(false);
+	NTESTSUITE_ACTUAL_BOOL(npqueue_is_empty(&g_queue));
+	NTESTSUITE_EVALUATE();
 }
 
 static void test_multi_first(void)
 {
-	EXPECT(3);
-	g_actual = npqueue_node_priority(npqueue_first(&g_queue));
-	EVALUATE();
+	NTESTSUITE_EXPECT_UINT(3);
+	NTESTSUITE_ACTUAL_UINT(npqueue_node_priority(npqueue_first(&g_queue)));
+	NTESTSUITE_EVALUATE();
 }
 
 static void test_multi_remove(void)
 {
-	EXPECT(true);
+	NTESTSUITE_EXPECT_BOOL(true);
 	npqueue_remove(npqueue_first(&g_queue));
 	npqueue_remove(npqueue_first(&g_queue));
 	npqueue_remove(npqueue_first(&g_queue));
-	g_actual = npqueue_is_empty(&g_queue);
-	EVALUATE();
+	NTESTSUITE_ACTUAL_BOOL(npqueue_is_empty(&g_queue));
+	NTESTSUITE_EVALUATE();
 }
 
 static void test_multi_insert(void)
 {
 	struct npqueue_node node;
 
+	NTESTSUITE_EXPECT_BOOL(false);
 	npqueue_node_init(&node, 1);
-	EXPECT(false);
 	npqueue_insert(&g_queue, &node);
 	npqueue_remove(npqueue_first(&g_queue));
 	npqueue_remove(npqueue_first(&g_queue));
 	npqueue_remove(npqueue_first(&g_queue));
-	g_actual = npqueue_is_empty(&g_queue);
-	EVALUATE();
+	NTESTSUITE_ACTUAL_BOOL(npqueue_is_empty(&g_queue));
+	NTESTSUITE_EVALUATE();
 }
 
 static void test_multi_sort_first(void)
 {
-	NTESTSUITE_ASSERT_EQUAL_PTR(&g_node3, npqueue_first(&g_queue));
+    NTESTSUITE_EXPECT_PTR(&g_node3);
+	NTESTSUITE_ACTUAL_PTR(npqueue_first(&g_queue));
+    NTESTSUITE_EVALUATE();
 }
 
 static void test_multi_sort_duplicate(void)
 {
 	struct npqueue_node node3_1;
 
+    NTESTSUITE_EXPECT_PTR(&g_node3);
 	npqueue_node_init(&node3_1, 3);
 	npqueue_insert(&g_queue, &node3_1);
-	NTESTSUITE_ASSERT_EQUAL_PTR(&g_node3, npqueue_first(&g_queue));
+	NTESTSUITE_ACTUAL_PTR(npqueue_first(&g_queue));
+    NTESTSUITE_EVALUATE();
 }
 
 static void test_multi_sort_middle_duplicate(void)
 {
 	struct npqueue_node node2_1;
 
+    NTESTSUITE_EXPECT_PTR(&g_node2);
 	npqueue_node_init(&node2_1, 2);
 	npqueue_insert(&g_queue, &node2_1);
 	npqueue_remove(npqueue_first(&g_queue));
-	NTESTSUITE_ASSERT_EQUAL_PTR(&g_node2, npqueue_first(&g_queue));
-}
-
-static void setup_null(void)
-{
-	g_actual = 0u;
-	g_expected = 1u;
+	NTESTSUITE_ACTUAL_PTR(npqueue_first(&g_queue));
+    NTESTSUITE_EVALUATE();
 }
 
 static void setup_empty(void)
 {
-	g_actual = 0u;
-	g_expected = 1u;
 	npqueue_init(&g_queue);
 }
 
 static void setup_single(void)
 {
-
-	g_actual = 0u;
-	g_expected = 1u;
 	npqueue_init(&g_queue);
     npqueue_node_init(&g_node1, 1);
     npqueue_insert(&g_queue, &g_node1);
@@ -212,8 +223,6 @@ static void setup_single(void)
 
 static void setup_multi(void)
 {
-	g_actual = 0u;
-	g_expected = 1u;
 	npqueue_init(&g_queue);
 	npqueue_node_init(&g_node1, 1);
 	npqueue_node_init(&g_node2, 2);
@@ -225,14 +234,16 @@ static void setup_multi(void)
 
 void test_nqueue_pqueue(void)
 {
-	NTESTSUITE_FIXTURE(none, setup_null, NULL);
+	NTESTSUITE_FIXTURE(none, NULL, NULL);
     NTESTSUITE_FIXTURE(empty, setup_empty, NULL);
     NTESTSUITE_FIXTURE(single, setup_single, NULL);
     NTESTSUITE_FIXTURE(multi, setup_multi, NULL);
 
     NTESTSUITE_RUN(none, test_none_init_queue);
-    NTESTSUITE_RUN(none, test_none_init_queue_node);
+    NTESTSUITE_RUN(none, test_none_node_init);
     NTESTSUITE_RUN(none, test_none_node_priority);
+    NTESTSUITE_RUN(none, test_none_node_mod_priority);
+    NTESTSUITE_RUN(none, test_none_node_term);
     NTESTSUITE_PRINT_RESULTS(none);
 
     NTESTSUITE_RUN(empty, test_empty_is_empty);

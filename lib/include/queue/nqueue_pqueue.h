@@ -140,6 +140,9 @@ uint_fast8_t npqueue_node_priority(const struct npqueue_node * node)
  *  
  *  Return an old priority value and set a new priority.
  *
+ *  @note       DO NOT call this function while the node is in some queue. The
+ *              node priority can be modified only when the node is not
+ *              inserted in any queue.
  *  @param      node
  *              Pointer to a node structure.
  *  @param      priority
