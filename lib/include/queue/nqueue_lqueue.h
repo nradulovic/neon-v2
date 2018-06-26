@@ -161,6 +161,16 @@ void np_lqueue_base_init(struct np_lqueue_base * qb, uint32_t elements)
 NPLATFORM_INLINE
 uint32_t np_lqueue_base_put_fifo(struct np_lqueue_base * qb)
 {
+	qb->tail--;
+	qb->tail &= qb->mask;
+    qb->empty--;
+	
+	return (qb->tail);
+}
+
+NPLATFORM_INLINE
+uint32_t np_lqueue_base_put_lifo(struct np_lqueue_base * qb)
+{
 	uint32_t retval;
 	
 	retval = qb->head++;
@@ -168,16 +178,6 @@ uint32_t np_lqueue_base_put_fifo(struct np_lqueue_base * qb)
     qb->empty--;
 	
 	return (retval);
-}
-
-NPLATFORM_INLINE
-uint32_t np_lqueue_base_put_lifo(struct np_lqueue_base * qb)
-{
-	qb->tail--;
-	qb->tail &= qb->mask;
-    qb->empty--;
-	
-	return (qb->tail);
 }
 
 NPLATFORM_INLINE

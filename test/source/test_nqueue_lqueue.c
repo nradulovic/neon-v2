@@ -24,213 +24,227 @@
 #include "queue/nqueue_lqueue.h"
 #include "test_nqueue_lqueue.h"
 
-#define EXPECT(a_num)           g_expected = (a_num)
+#define QUEUE_SIZE 4
 
-#define EVALUATE()                                                          \
-    do {                                                                    \
-        NTESTSUITE_ASSERT_EQUAL_UINT((g_expected), (g_output)); \
-    } while (0)
-
-#define QUEUE_SIZE              16
-
-static void test_init(void);
-
-static uint32_t g_output;
-static uint32_t g_expected;
 static nlqueue(uint32_t, QUEUE_SIZE) g_test_queue;
 
-static void test_init(void)
+static void test_none_init(void)
 {
-    EXPECT(0);
     static nlqueue(uint32_t, 16) my_queue;
 
+	/* NOTE:
+	 * Compile time test only. Ensure that the expected is equal to actual
+	 * value.
+	 */
+    NTESTSUITE_EXPECT_BOOL(true);
+    NTESTSUITE_ACTUAL_BOOL(true);
     NLQUEUE_INIT(&my_queue);
-    EVALUATE();
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_get_empty(void)
+static void test_empty_empty(void)
 {
-    EXPECT(QUEUE_SIZE);
-    g_output = NLQUEUE_EMPTY(&g_test_queue);
-    EVALUATE();
+    NTESTSUITE_EXPECT_UINT(QUEUE_SIZE);
+    NTESTSUITE_ACTUAL_UINT(NLQUEUE_EMPTY(&g_test_queue));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_get_size(void)
+static void test_empty_size(void)
 {
-    EXPECT(QUEUE_SIZE);
-    g_output = NLQUEUE_SIZE(&g_test_queue);
-    EVALUATE();
+    NTESTSUITE_EXPECT_UINT(QUEUE_SIZE);
+    NTESTSUITE_ACTUAL_UINT(NLQUEUE_SIZE(&g_test_queue));
+    NTESTSUITE_EVALUATE();
 }
 
 static void test_empty_is_full(void)
 {
-    EXPECT(false);
-    g_output = NLQUEUE_IS_FULL(&g_test_queue);
-    EVALUATE();
+    NTESTSUITE_EXPECT_BOOL(false);
+    NTESTSUITE_ACTUAL_BOOL(NLQUEUE_IS_FULL(&g_test_queue));
+    NTESTSUITE_EVALUATE();
 }
 
 static void test_empty_is_empty(void)
 {
-    EXPECT(true);
-    g_output = NLQUEUE_IS_EMPTY(&g_test_queue);
-    EVALUATE();
+    NTESTSUITE_EXPECT_BOOL(true);
+    NTESTSUITE_ACTUAL_BOOL(NLQUEUE_IS_EMPTY(&g_test_queue));
+    NTESTSUITE_EVALUATE();
 }
 
 static void test_empty_fifo_head(void)
 {
-    EXPECT(234);
+    NTESTSUITE_EXPECT_UINT(234);
     NLQUEUE_PUT_FIFO(&g_test_queue, 234);
-    g_output = NLQUEUE_HEAD(&g_test_queue);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_UINT(NLQUEUE_HEAD(&g_test_queue));
+    NTESTSUITE_EVALUATE();
 }
 
 static void test_empty_fifo_tail(void)
 {
-    EXPECT(234);
+    NTESTSUITE_EXPECT_UINT(234);
     NLQUEUE_PUT_FIFO(&g_test_queue, 234);
-    g_output = NLQUEUE_TAIL(&g_test_queue);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_UINT(NLQUEUE_TAIL(&g_test_queue));
+    NTESTSUITE_EVALUATE();
 }
 
 static void test_empty_lifo_head(void)
 {
-    EXPECT(234);
+    NTESTSUITE_EXPECT_UINT(234);
     NLQUEUE_PUT_LIFO(&g_test_queue, 234);
-    g_output = NLQUEUE_HEAD(&g_test_queue);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_UINT(NLQUEUE_HEAD(&g_test_queue));
+    NTESTSUITE_EVALUATE();
 }
 
 static void test_empty_lifo_tail(void)
 {
-    EXPECT(234);
+    NTESTSUITE_EXPECT_UINT(234);
     NLQUEUE_PUT_LIFO(&g_test_queue, 234);
-    g_output = NLQUEUE_TAIL(&g_test_queue);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_UINT(NLQUEUE_TAIL(&g_test_queue));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_m_fifo_get_empty(void)
+static void test_nonempty_empty(void)
 {
-    EXPECT(QUEUE_SIZE - 2u);
+    NTESTSUITE_EXPECT_UINT(QUEUE_SIZE - 2u);
+    NTESTSUITE_ACTUAL_UINT(NLQUEUE_EMPTY(&g_test_queue));
+    NTESTSUITE_EVALUATE();
+}
+
+static void test_nonempty_size(void)
+{
+    NTESTSUITE_EXPECT_UINT(QUEUE_SIZE);
+    NTESTSUITE_ACTUAL_UINT(NLQUEUE_SIZE(&g_test_queue));
+    NTESTSUITE_EVALUATE();
+}
+
+static void test_nonempty_is_full(void)
+{
+    NTESTSUITE_EXPECT_BOOL(false);
+    NTESTSUITE_ACTUAL_BOOL(NLQUEUE_IS_FULL(&g_test_queue));
+    NTESTSUITE_EVALUATE();
+}
+
+static void test_nonempty_is_empty(void)
+{
+    NTESTSUITE_EXPECT_BOOL(false);
+    NTESTSUITE_ACTUAL_BOOL(NLQUEUE_IS_EMPTY(&g_test_queue));
+    NTESTSUITE_EVALUATE();
+}
+
+static void test_nonempty_fifo_head(void)
+{
+    NTESTSUITE_EXPECT_UINT(1);
     NLQUEUE_PUT_FIFO(&g_test_queue, 233);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 234);
-    g_output = NLQUEUE_EMPTY(&g_test_queue);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_UINT(NLQUEUE_HEAD(&g_test_queue));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_m_fifo_get_size(void)
+static void test_nonempty_fifo_tail(void)
 {
-    EXPECT(QUEUE_SIZE);
+    NTESTSUITE_EXPECT_UINT(233);
     NLQUEUE_PUT_FIFO(&g_test_queue, 233);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 234);
-    g_output = NLQUEUE_SIZE(&g_test_queue);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_UINT(NLQUEUE_TAIL(&g_test_queue));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_m_fifo_is_full(void)
+static void test_nonempty_lifo_head(void)
 {
-    EXPECT(false);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 233);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 234);
-    g_output = NLQUEUE_IS_FULL(&g_test_queue);
-    EVALUATE();
+    NTESTSUITE_EXPECT_UINT(234);
+    NLQUEUE_PUT_LIFO(&g_test_queue, 234);
+    NTESTSUITE_ACTUAL_UINT(NLQUEUE_HEAD(&g_test_queue));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_m_fifo_is_empty(void)
+static void test_nonempty_lifo_tail(void)
 {
-    EXPECT(false);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 233);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 234);
-    g_output = NLQUEUE_IS_EMPTY(&g_test_queue);
-    EVALUATE();
+    NTESTSUITE_EXPECT_UINT(2);
+    NLQUEUE_PUT_LIFO(&g_test_queue, 234);
+    NTESTSUITE_ACTUAL_UINT(NLQUEUE_TAIL(&g_test_queue));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_m_fifo_head(void)
+static void test_full_empty(void)
 {
-    EXPECT(234);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 233);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 234);
-    g_output = NLQUEUE_HEAD(&g_test_queue);
-    EVALUATE();
+    NTESTSUITE_EXPECT_UINT(0);
+    NTESTSUITE_ACTUAL_UINT(NLQUEUE_EMPTY(&g_test_queue));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_m_fifo_tail(void)
+static void test_full_size(void)
 {
-    EXPECT(233);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 233);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 234);
-    g_output = NLQUEUE_TAIL(&g_test_queue);
-    EVALUATE();
+    NTESTSUITE_EXPECT_UINT(QUEUE_SIZE);
+    NTESTSUITE_ACTUAL_UINT(NLQUEUE_SIZE(&g_test_queue));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_full_fifo_is_full(void)
+static void test_full_is_full(void)
 {
-	EXPECT(true);
-	g_output = NLQUEUE_IS_FULL(&g_test_queue);
-	EVALUATE();
+	NTESTSUITE_EXPECT_BOOL(true);
+    NTESTSUITE_ACTUAL_BOOL(NLQUEUE_IS_FULL(&g_test_queue));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_full_fifo_is_empty(void)
+static void test_full_is_empty(void)
 {
-	EXPECT(false);
-	g_output = NLQUEUE_IS_EMPTY(&g_test_queue);
-	EVALUATE();
+	NTESTSUITE_EXPECT_BOOL(false);
+	NTESTSUITE_ACTUAL_BOOL(NLQUEUE_IS_EMPTY(&g_test_queue));
+    NTESTSUITE_EVALUATE();
 }
 
 static void setup_empty(void)
 {
-    g_output = 0u;
-    g_expected = 0u;
     NLQUEUE_INIT(&g_test_queue);
 }
 
-static void teardown_empty(void)
+static void setup_nonempty(void)
 {
+    NLQUEUE_INIT(&g_test_queue);
+	NLQUEUE_PUT_FIFO(&g_test_queue, 1);
+	NLQUEUE_PUT_FIFO(&g_test_queue, 2);
 }
 
 static void setup_full(void)
 {
-	uint32_t i;
-
-    g_output = 0u;
-    g_expected = 0u;
     NLQUEUE_INIT(&g_test_queue);
-
-	for (i = 0; i < QUEUE_SIZE; i++) {
-		NLQUEUE_PUT_FIFO(&g_test_queue, i);
-	}
-}
-
-static void teardown_full(void)
-{
+	NLQUEUE_PUT_FIFO(&g_test_queue, 1);
+	NLQUEUE_PUT_FIFO(&g_test_queue, 2);
+	NLQUEUE_PUT_FIFO(&g_test_queue, 3);
+	NLQUEUE_PUT_FIFO(&g_test_queue, 4);
 }
 
 void test_nqueue_lqueue(void)
 {
     NTESTSUITE_FIXTURE(none, NULL, NULL);
-    NTESTSUITE_FIXTURE(empty, setup_empty, teardown_empty);
-    NTESTSUITE_FIXTURE(full, setup_full, teardown_full);
+    NTESTSUITE_FIXTURE(empty, setup_empty, NULL);
+    NTESTSUITE_FIXTURE(nonempty, setup_nonempty, NULL);
+    NTESTSUITE_FIXTURE(full, setup_full, NULL);
 
-    NTESTSUITE_RUN(none, test_init);
+    NTESTSUITE_RUN(none, test_none_init);
     NTESTSUITE_PRINT_RESULTS(none);
 
-    NTESTSUITE_RUN(empty, test_empty_get_empty);
-    NTESTSUITE_RUN(empty, test_empty_get_size);
+    NTESTSUITE_RUN(empty, test_empty_empty);
+    NTESTSUITE_RUN(empty, test_empty_size);
     NTESTSUITE_RUN(empty, test_empty_is_full);
     NTESTSUITE_RUN(empty, test_empty_is_empty);
     NTESTSUITE_RUN(empty, test_empty_fifo_head);
     NTESTSUITE_RUN(empty, test_empty_fifo_tail);
     NTESTSUITE_RUN(empty, test_empty_lifo_head);
     NTESTSUITE_RUN(empty, test_empty_lifo_tail);
-    NTESTSUITE_RUN(empty, test_m_fifo_get_empty);
-    NTESTSUITE_RUN(empty, test_m_fifo_get_size);
-    NTESTSUITE_RUN(empty, test_m_fifo_is_full);
-    NTESTSUITE_RUN(empty, test_m_fifo_is_empty);
-    NTESTSUITE_RUN(empty, test_m_fifo_head);
-    NTESTSUITE_RUN(empty, test_m_fifo_tail);
     NTESTSUITE_PRINT_RESULTS(empty);
 
-    NTESTSUITE_RUN(full, test_full_fifo_is_full);
-    NTESTSUITE_RUN(full, test_full_fifo_is_empty);
+    NTESTSUITE_RUN(nonempty, test_nonempty_empty);
+    NTESTSUITE_RUN(nonempty, test_nonempty_size);
+    NTESTSUITE_RUN(nonempty, test_nonempty_is_full);
+    NTESTSUITE_RUN(nonempty, test_nonempty_is_empty);
+    NTESTSUITE_RUN(nonempty, test_nonempty_fifo_head);
+    NTESTSUITE_RUN(nonempty, test_nonempty_fifo_tail);
+    NTESTSUITE_RUN(nonempty, test_nonempty_lifo_head);
+    NTESTSUITE_RUN(nonempty, test_nonempty_lifo_tail);
+    NTESTSUITE_PRINT_RESULTS(nonempty);
+
+    NTESTSUITE_RUN(full, test_full_empty);
+    NTESTSUITE_RUN(full, test_full_size);
+    NTESTSUITE_RUN(full, test_full_is_full);
+    NTESTSUITE_RUN(full, test_full_is_empty);
     NTESTSUITE_PRINT_RESULTS(full);
 }
 
