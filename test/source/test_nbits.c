@@ -22,143 +22,209 @@
 #include "bits/nbits.h"
 #include "test_nbits.h"
 
-static void test_array_size(void);
-static void test_bit_size(void);
-static void test_divide_round_1_15(void);
-static void test_divide_round_5_27(void);
-static void test_divide_round_5_28(void);
-static void test_divide_roundup_1_15(void);
-static void test_divide_roundup_5_27(void);
-static void test_divide_roundup_5_28(void);
-static void test_align_4_149(void);
-static void test_alignup_4_149(void);
-static void test_log2_0(void);
-static void test_log2_x(void);
-static void test_log2_256(void);
-static void test_is_powerof2_0(void);
-static void test_is_powerof2_1(void);
-static void test_is_powerof2_4(void);
-static void test_xbn(void);
-static void test_msb(void);
-static void test_lsb(void);
-static void test_ftou32_u32tof(void);
+static void test_none_array_size(void);
+static void test_none_bit_size(void);
+static void test_none_divide_round(void);
+static void test_none_divide_roundup(void);
+static void test_none_align(void);
+static void test_none_alignup(void);
+static void test_none_log2_0(void);
+static void test_none_log2_x(void);
+static void test_none_log2_UINT32_MAX(void);
+static void test_none_is_powerof2_0(void);
+static void test_none_is_powerof2_1(void);
+static void test_none_is_powerof2_4(void);
+static void test_none_xbn(void);
+static void test_none_msb(void);
+static void test_none_lsb(void);
+static void test_none_ftou32_u32tof(void);
 
-static void test_array_size(void)
+static void test_none_array_size(void)
 {
-    const char array[10];
+    const char small_array[1];
+    const char big_array[10];
 
-    NTESTSUITE_ASSERT_EQUAL_UINT(10, NBITS_ARRAY_SIZE(array));
+    NTESTSUITE_EXPECT_UINT(1);
+    NTESTSUITE_ACTUAL_UINT(NBITS_ARRAY_SIZE(small_array));
+    NTESTSUITE_EVALUATE();
+
+    NTESTSUITE_EXPECT_UINT(10);
+    NTESTSUITE_ACTUAL_UINT(NBITS_ARRAY_SIZE(big_array));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_bit_size(void)
+static void test_none_bit_size(void)
 {
-    uint32_t i;
-    NTESTSUITE_ASSERT_EQUAL_UINT(32u, NBITS_BIT_SIZE(i));
+    uint8_t small_var;
+    uint32_t big_var;
+    
+    NTESTSUITE_EXPECT_UINT(8);
+    NTESTSUITE_ACTUAL_UINT(NBITS_BIT_SIZE(small_var));
+    NTESTSUITE_EVALUATE();
+
+    NTESTSUITE_EXPECT_UINT(32);
+    NTESTSUITE_ACTUAL_UINT(NBITS_BIT_SIZE(big_var));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_divide_round_1_15(void)
+static void test_none_divide_round(void)
 {
-    NTESTSUITE_ASSERT_EQUAL_UINT(15, NBITS_DIVIDE_ROUND(15, 1));
+    NTESTSUITE_EXPECT_UINT(15);
+    NTESTSUITE_ACTUAL_UINT(NBITS_DIVIDE_ROUND(15, 1));
+    NTESTSUITE_EVALUATE();
+
+    NTESTSUITE_EXPECT_UINT(5);
+    NTESTSUITE_ACTUAL_UINT(NBITS_DIVIDE_ROUND(27, 5));
+    NTESTSUITE_EVALUATE();
+
+    NTESTSUITE_EXPECT_UINT(6);
+    NTESTSUITE_ACTUAL_UINT(NBITS_DIVIDE_ROUND(28, 5));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_divide_round_5_27(void)
+static void test_none_divide_roundup(void)
 {
-    NTESTSUITE_ASSERT_EQUAL_UINT(5, NBITS_DIVIDE_ROUND(27, 5));
+    NTESTSUITE_EXPECT_UINT(15);
+    NTESTSUITE_ACTUAL_UINT(NBITS_DIVIDE_ROUNDUP(15, 1));
+    NTESTSUITE_EVALUATE();
+
+    NTESTSUITE_EXPECT_UINT(6);
+    NTESTSUITE_ACTUAL_UINT(NBITS_DIVIDE_ROUNDUP(27, 5));
+    NTESTSUITE_EVALUATE();
+
+    NTESTSUITE_EXPECT_UINT(6);
+    NTESTSUITE_ACTUAL_UINT(NBITS_DIVIDE_ROUNDUP(28, 5));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_divide_round_5_28(void)
+static void test_none_align(void)
 {
-    NTESTSUITE_ASSERT_EQUAL_UINT(6, NBITS_DIVIDE_ROUND(28, 5));
+    NTESTSUITE_EXPECT_UINT(148);
+    NTESTSUITE_ACTUAL_UINT(NBITS_ALIGN(149, 4));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_divide_roundup_1_15(void)
+static void test_none_alignup(void)
 {
-    NTESTSUITE_ASSERT_EQUAL_UINT(15, NBITS_DIVIDE_ROUNDUP(15, 1));
+    NTESTSUITE_EXPECT_UINT(152);
+    NTESTSUITE_ACTUAL_UINT(NBITS_ALIGN_UP(149, 4));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_divide_roundup_5_27(void)
+static void test_none_log2_0(void)
 {
-    NTESTSUITE_ASSERT_EQUAL_UINT(6, NBITS_DIVIDE_ROUNDUP(27, 5));
+    NTESTSUITE_EXPECT_UINT(0);
+    NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(0));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_divide_roundup_5_28(void)
+static void test_none_log2_x(void)
 {
-    NTESTSUITE_ASSERT_EQUAL_UINT(6, NBITS_DIVIDE_ROUNDUP(28, 5));
+    NTESTSUITE_EXPECT_UINT(0);
+    NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(1));
+    NTESTSUITE_EVALUATE();
+
+    NTESTSUITE_EXPECT_UINT(1);
+    NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(2));
+    NTESTSUITE_EVALUATE();
+
+    NTESTSUITE_EXPECT_UINT(2);
+    NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(4));
+    NTESTSUITE_EVALUATE();
+
+    NTESTSUITE_EXPECT_UINT(3);
+    NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(8));
+    NTESTSUITE_EVALUATE();
+
+    NTESTSUITE_EXPECT_UINT(4);
+    NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(16));
+    NTESTSUITE_EVALUATE();
+
+    NTESTSUITE_EXPECT_UINT(5);
+    NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(32));
+    NTESTSUITE_EVALUATE();
+
+    NTESTSUITE_EXPECT_UINT(6);
+    NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(64));
+    NTESTSUITE_EVALUATE();
+
+    NTESTSUITE_EXPECT_UINT(7);
+    NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(128));
+    NTESTSUITE_EVALUATE();
+
+    NTESTSUITE_EXPECT_UINT(7);
+    NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(255));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_align_4_149(void)
+static void test_none_log2_UINT32_MAX(void)
 {
-    NTESTSUITE_ASSERT_EQUAL_UINT(148, NBITS_ALIGN(149, 4));
+    NTESTSUITE_EXPECT_UINT(7);
+    NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(UINT32_MAX));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_alignup_4_149(void)
+static void test_none_is_powerof2_0(void)
 {
-    NTESTSUITE_ASSERT_EQUAL_UINT(152, NBITS_ALIGN_UP(149, 4));
+    NTESTSUITE_EXPECT_BOOL(false);
+    NTESTSUITE_ACTUAL_BOOL(NBITS_IS_POWEROF2(0));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_log2_0(void)
+static void test_none_is_powerof2_1(void)
 {
-    NTESTSUITE_ASSERT_EQUAL_UINT(0, NBITS_LOG2_8(0));
+    NTESTSUITE_EXPECT_BOOL(true);
+    NTESTSUITE_ACTUAL_BOOL(NBITS_IS_POWEROF2(1));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_log2_x(void)
+static void test_none_is_powerof2_4(void)
 {
-    NTESTSUITE_ASSERT_EQUAL_UINT(0, NBITS_LOG2_8(1));
-    NTESTSUITE_ASSERT_EQUAL_UINT(1, NBITS_LOG2_8(2));
-    NTESTSUITE_ASSERT_EQUAL_UINT(2, NBITS_LOG2_8(4));
-    NTESTSUITE_ASSERT_EQUAL_UINT(3, NBITS_LOG2_8(8));
-    NTESTSUITE_ASSERT_EQUAL_UINT(4, NBITS_LOG2_8(16));
-    NTESTSUITE_ASSERT_EQUAL_UINT(5, NBITS_LOG2_8(32));
-    NTESTSUITE_ASSERT_EQUAL_UINT(6, NBITS_LOG2_8(64));
-    NTESTSUITE_ASSERT_EQUAL_UINT(7, NBITS_LOG2_8(128));
-    NTESTSUITE_ASSERT_EQUAL_UINT(7, NBITS_LOG2_8(255));
+    NTESTSUITE_EXPECT_BOOL(true);
+    NTESTSUITE_ACTUAL_BOOL(NBITS_IS_POWEROF2(4));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_log2_256(void)
-{
-    NTESTSUITE_ASSERT_EQUAL_UINT(7, NBITS_LOG2_8(UINT32_MAX));
-}
-
-static void test_is_powerof2_0(void)
-{
-    NTESTSUITE_ASSERT_EQUAL_BOOL(false, NBITS_IS_POWEROF2(0));
-}
-
-static void test_is_powerof2_1(void)
-{
-    NTESTSUITE_ASSERT_EQUAL_BOOL(true, NBITS_IS_POWEROF2(1));
-}
-
-static void test_is_powerof2_4(void)
-{
-    NTESTSUITE_ASSERT_EQUAL_BOOL(true, NBITS_IS_POWEROF2(4));
-}
-
-static void test_xbn(void)
+static void test_none_xbn(void)
 {
     uint32_t i = 0xdeadbeef;
 
-    NTESTSUITE_ASSERT_EQUAL_UINT(0xde, nbits_xb4(i));
-    NTESTSUITE_ASSERT_EQUAL_UINT(0xad, nbits_xb3(i));
-    NTESTSUITE_ASSERT_EQUAL_UINT(0xbe, nbits_xb2(i));
-    NTESTSUITE_ASSERT_EQUAL_UINT(0xef, nbits_xb1(i));
+    NTESTSUITE_EXPECT_UINT(0xde);
+    NTESTSUITE_ACTUAL_UINT(nbits_xb4(i));
+    NTESTSUITE_EVALUATE();
+
+    NTESTSUITE_EXPECT_UINT(0xad);
+    NTESTSUITE_ACTUAL_UINT(nbits_xb3(i));
+    NTESTSUITE_EVALUATE();
+
+    NTESTSUITE_EXPECT_UINT(0xbe);
+    NTESTSUITE_ACTUAL_UINT(nbits_xb2(i));
+    NTESTSUITE_EVALUATE();
+
+    NTESTSUITE_EXPECT_UINT(0xef);
+    NTESTSUITE_ACTUAL_UINT(nbits_xb1(i));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_msb(void) 
+static void test_none_msb(void) 
 {
     uint32_t i = 0xdeadbeef;
 
-    NTESTSUITE_ASSERT_EQUAL_UINT(0xde, nbits_msb_32(i));
+    NTESTSUITE_EXPECT_UINT(0xde);
+    NTESTSUITE_ACTUAL_UINT(nbits_msb_32(i));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_lsb(void) 
+static void test_none_lsb(void) 
 {
     uint32_t i = 0xdeadbeef;
 
-    NTESTSUITE_ASSERT_EQUAL_UINT(0xef, nbits_lsb_32(i));
+    NTESTSUITE_EXPECT_UINT(0xef);
+    NTESTSUITE_ACTUAL_UINT(nbits_lsb_32(i));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_ftou32_u32tof(void)
+static void test_none_ftou32_u32tof(void)
 {
     uint32_t itestval = 0xdeadbeef;
     uint32_t igiven = itestval;
@@ -169,33 +235,31 @@ static void test_ftou32_u32tof(void)
     intermediatte = nbits_u32tof(igiven);
     ioutput = nbits_ftou32(intermediatte);
 
-    NTESTSUITE_ASSERT_EQUAL_UINT(iexpect, ioutput);
+    NTESTSUITE_EXPECT_UINT(iexpect);
+    NTESTSUITE_ACTUAL_UINT(ioutput);
+    NTESTSUITE_EVALUATE();
 }
 
 void test_nbits(void)
 {
-    NTESTSUITE_FIXTURE(empty, NULL, NULL);
-    NTESTSUITE_RUN(empty, test_array_size);
-    NTESTSUITE_RUN(empty, test_bit_size);
-    NTESTSUITE_RUN(empty, test_divide_round_1_15);
-    NTESTSUITE_RUN(empty, test_divide_round_5_27);
-    NTESTSUITE_RUN(empty, test_divide_round_5_28);
-    NTESTSUITE_RUN(empty, test_divide_roundup_1_15);
-    NTESTSUITE_RUN(empty, test_divide_roundup_5_27);
-    NTESTSUITE_RUN(empty, test_divide_roundup_5_28);
-    NTESTSUITE_RUN(empty, test_align_4_149);
-    NTESTSUITE_RUN(empty, test_alignup_4_149);
-    NTESTSUITE_RUN(empty, test_log2_0);
-    NTESTSUITE_RUN(empty, test_log2_x);
-    NTESTSUITE_RUN(empty, test_log2_256);
-    NTESTSUITE_RUN(empty, test_is_powerof2_0);
-    NTESTSUITE_RUN(empty, test_is_powerof2_1);
-    NTESTSUITE_RUN(empty, test_is_powerof2_4);
-    NTESTSUITE_RUN(empty, test_xbn);
-    NTESTSUITE_RUN(empty, test_msb);
-    NTESTSUITE_RUN(empty, test_lsb);
-    NTESTSUITE_RUN(empty, test_ftou32_u32tof);
-    NTESTSUITE_PRINT_RESULTS(empty);   
+    NTESTSUITE_FIXTURE(none, NULL, NULL);
+    NTESTSUITE_RUN(none, test_none_array_size);
+    NTESTSUITE_RUN(none, test_none_bit_size);
+    NTESTSUITE_RUN(none, test_none_divide_round);
+    NTESTSUITE_RUN(none, test_none_divide_roundup);
+    NTESTSUITE_RUN(none, test_none_align);
+    NTESTSUITE_RUN(none, test_none_alignup);
+    NTESTSUITE_RUN(none, test_none_log2_0);
+    NTESTSUITE_RUN(none, test_none_log2_x);
+    NTESTSUITE_RUN(none, test_none_log2_UINT32_MAX);
+    NTESTSUITE_RUN(none, test_none_is_powerof2_0);
+    NTESTSUITE_RUN(none, test_none_is_powerof2_1);
+    NTESTSUITE_RUN(none, test_none_is_powerof2_4);
+    NTESTSUITE_RUN(none, test_none_xbn);
+    NTESTSUITE_RUN(none, test_none_msb);
+    NTESTSUITE_RUN(none, test_none_lsb);
+    NTESTSUITE_RUN(none, test_none_ftou32_u32tof);
+    NTESTSUITE_PRINT_RESULTS(none);   
 }
 
 
