@@ -50,12 +50,12 @@ extern "C" {
 #endif
 
 #define NTESTSUITE_ASSERT(expr)                                             \
-    if (p_ntestsuite_context.should_exit) {                                 \
+    if (g_np_testsuite_context.should_exit) {                               \
         return;                                                             \
     }                                                                       \
-    p_ntestsuite_context.total_asserts++;                                   \
+    g_np_testsuite_context.total_asserts++;                                 \
     if (!(expr)) {                                                          \
-        p_ntestsuite_context.should_exit = true;                            \
+        g_np_testsuite_context.should_exit = true;                          \
         nlogger_debug("D: Failed assert %s\n", # expr);                     \
         return;                                                             \
     }
@@ -74,17 +74,17 @@ extern "C" {
     nlogger_info("Port platform build: %s\n", nplatform_build);
 
 #define NTESTSUITE_PRINT_OVERVIEW()                                         \
-    if (p_ntestsuite_context.total_failed_tests != 0u) {                    \
+    if (g_np_testsuite_context.total_failed_tests != 0u) {                  \
         nlogger_info("\n\n  Total tests  : %u\n  Total FAILED : %u\n"       \
             "  Total asserts: %u\n",                                        \
-            p_ntestsuite_context.total_tests,                               \
-            p_ntestsuite_context.total_failed_tests,                        \
-            p_ntestsuite_context.total_asserts);                            \
+            g_np_testsuite_context.total_tests,                             \
+            g_np_testsuite_context.total_failed_tests,                      \
+            g_np_testsuite_context.total_asserts);                          \
     } else {                                                                \
         nlogger_info("\n\n  Total tests  : %u\n"                            \
             "  Total asserts: %u\n\n  OK\n",                                \
-            p_ntestsuite_context.total_tests,                               \
-            p_ntestsuite_context.total_asserts);                            \
+            g_np_testsuite_context.total_tests,                             \
+            g_np_testsuite_context.total_asserts);                          \
     }
 
 
@@ -109,29 +109,29 @@ extern "C" {
             NP_TESTSUITE_CNV_NONE, NP_TESTSUITE_CMP_STRING)
 
 #define NTESTSUITE_RUN(a_fixture, function)                                 \
-    p_ntestsuite_context.fixture = &a_fixture;                              \
-    if (p_ntestsuite_context.fixture->total == 0u) {                        \
+    g_np_testsuite_context.fixture = &a_fixture;                            \
+    if (g_np_testsuite_context.fixture->total == 0u) {                      \
         nlogger_info("Test %s:%s:%s\n",                                     \
             NPLATFORM_FILE, NPLATFORM_FUNC, a_fixture.name);                \
     }                                                                       \
-    p_ntestsuite_context.should_exit = false;                               \
-    p_ntestsuite_context.total_tests++;                                     \
-    p_ntestsuite_context.fixture->total++;                                  \
+    g_np_testsuite_context.should_exit = false;                             \
+    g_np_testsuite_context.total_tests++;                                   \
+    g_np_testsuite_context.fixture->total++;                                \
     if (a_fixture.setup) {                                                  \
         nlogger_debug("D: Setup fixture %s for test %s\n", a_fixture.name,  \
             # function);                                                    \
         a_fixture.setup();                                                  \
     }                                                                       \
-    if (p_ntestsuite_context.should_exit == true) {                         \
+    if (g_np_testsuite_context.should_exit == true) {                       \
         nlogger_err("Failed to setup fixture %s for test %s() at %s:%s\n",  \
                 a_fixture.name, # function, NPLATFORM_FILE,                 \
                 NPLATFORM_LINE);                                            \
     } else {                                                                \
         function();                                                         \
     }                                                                       \
-    if (p_ntestsuite_context.should_exit) {                                 \
-        p_ntestsuite_context.total_failed_tests++;                          \
-        p_ntestsuite_context.fixture->failed++;                             \
+    if (g_np_testsuite_context.should_exit) {                               \
+        g_np_testsuite_context.total_failed_tests++;                        \
+        g_np_testsuite_context.fixture->failed++;                           \
     }                                                                       \
     if (a_fixture.teardown) {                                               \
         nlogger_debug("D: Teardown fixture %s for test %s\n",               \
@@ -140,7 +140,7 @@ extern "C" {
     }
 
 #define NTESTSUITE_FIXTURE(a_name, a_setup, a_teardown)                     \
-    struct p_ntestsuite_fixture a_name = {                                  \
+    struct np_testsuite_fixture a_name = {                                  \
         .name = # a_name,                                                   \
         .setup = a_setup,                                                   \
         .teardown = a_teardown,                                             \
@@ -152,80 +152,124 @@ extern "C" {
     do {                                                                    \
         NP_TESTSUITE_PRINT_LOCATION();                                      \
         nlogger_err(fmt "\n", __VA_ARGS__);                                 \
-        p_ntestsuite_context.should_exit = true;                            \
+        g_np_testsuite_context.should_exit = true;                          \
         return;                                                             \
     } while (0)
 
 #define NTESTSUITE_EXPECT_UINT(a_number)                                    \
     do {                                                                    \
-        p_ntestsuite_context.test_case.expected.ui = (a_number);                               \
-        p_ntestsuite_context.test_case.actual.ui = ~(a_number);                                \
-        p_ntestsuite_context.test_case.type = TEST_CASE_UINT;                                  \
+        if ((g_np_testsuite_context.state != NP_TESTSUITE_STATE_INIT) &&    \
+            (g_np_testsuite_context.state != NP_TESTSUITE_STATE_EVALUATE)) {\
+            NTESTSUITE_ERROR("%s", "Didn't finish previous evaluation.");   \
+        }                                                                   \
+        g_np_testsuite_context.state = NP_TESTSUITE_STATE_EXPECT;           \
+        g_np_testsuite_context.test_case.expected.ui = (a_number);          \
+        g_np_testsuite_context.test_case.actual.ui = ~(a_number);           \
+        g_np_testsuite_context.test_case.type = NP_TESTSUITE_TYPE_UINT;     \
     } while (0u)
 
 #define NTESTSUITE_EXPECT_INT(a_number)                                     \
     do {                                                                    \
-        p_ntestsuite_context.test_case.expected.i = (a_number);                                \
-        p_ntestsuite_context.test_case.actual.i = ~(a_number);                                 \
-        p_ntestsuite_context.test_case.type = TEST_CASE_INT;                                   \
+        if ((g_np_testsuite_context.state != NP_TESTSUITE_STATE_INIT) &&    \
+            (g_np_testsuite_context.state != NP_TESTSUITE_STATE_EVALUATE)) {\
+            NTESTSUITE_ERROR("%s", "Didn't finish previous evaluation.");   \
+        }                                                                   \
+        g_np_testsuite_context.state = NP_TESTSUITE_STATE_EXPECT;           \
+        g_np_testsuite_context.test_case.expected.i = (a_number);           \
+        g_np_testsuite_context.test_case.actual.i = ~(a_number);            \
+        g_np_testsuite_context.test_case.type = NP_TESTSUITE_TYPE_INT;      \
     } while (0u)
 
 #define NTESTSUITE_EXPECT_PTR(a_pointer)                                    \
     do {                                                                    \
-        p_ntestsuite_context.test_case.expected.ptr = (a_pointer);                             \
-        p_ntestsuite_context.test_case.actual.ptr = NULL;                                      \
-        p_ntestsuite_context.test_case.type = TEST_CASE_PTR;                                   \
+        if ((g_np_testsuite_context.state != NP_TESTSUITE_STATE_INIT) &&    \
+            (g_np_testsuite_context.state != NP_TESTSUITE_STATE_EVALUATE)) {\
+            NTESTSUITE_ERROR("%s", "Didn't finish previous evaluation.");   \
+        }                                                                   \
+        g_np_testsuite_context.state = NP_TESTSUITE_STATE_EXPECT;           \
+        g_np_testsuite_context.test_case.expected.ptr = (a_pointer);        \
+        g_np_testsuite_context.test_case.actual.ptr = NULL;                 \
+        g_np_testsuite_context.test_case.type = NP_TESTSUITE_TYPE_PTR;      \
     } while (0u)
 
 #define NTESTSUITE_EXPECT_BOOL(a_bool)                                      \
     do {                                                                    \
-        p_ntestsuite_context.test_case.expected.b = (a_bool);                                  \
-        p_ntestsuite_context.test_case.actual.b = !(a_bool);                                   \
-        p_ntestsuite_context.test_case.type = TEST_CASE_BOOL;                                  \
+        if ((g_np_testsuite_context.state != NP_TESTSUITE_STATE_INIT) &&    \
+            (g_np_testsuite_context.state != NP_TESTSUITE_STATE_EVALUATE)) {\
+            NTESTSUITE_ERROR("%s", "Didn't finish previous evaluation.");   \
+        }                                                                   \
+        g_np_testsuite_context.state = NP_TESTSUITE_STATE_EXPECT;           \
+        g_np_testsuite_context.test_case.expected.b = (a_bool);             \
+        g_np_testsuite_context.test_case.actual.b = !(a_bool);              \
+        g_np_testsuite_context.test_case.type = NP_TESTSUITE_TYPE_BOOL;     \
     } while (0u)
     
 #define NTESTSUITE_ACTUAL_UINT(a_val)                                       \
     do {                                                                    \
-        NP_TESTSUITE_TEST_CASE_VALIDATE_TYPE(TEST_CASE_UINT);                                    \
-        p_ntestsuite_context.test_case.actual.ui = (a_val);                                    \
+        if (g_np_testsuite_context.state != NP_TESTSUITE_STATE_EXPECT) {    \
+            NTESTSUITE_ERROR("%s", "Didn't specified the expected value!"); \
+        }                                                                   \
+        g_np_testsuite_context.state = NP_TESTSUITE_STATE_ACTUAL;           \
+        NP_TESTSUITE_TEST_CASE_VALIDATE_TYPE(NP_TESTSUITE_TYPE_UINT);       \
+        g_np_testsuite_context.test_case.actual.ui = (a_val);               \
     } while (0)
 
 #define NTESTSUITE_ACTUAL_INT(a_val)                                        \
     do {                                                                    \
-        NP_TESTSUITE_TEST_CASE_VALIDATE_TYPE(TEST_CASE_INT);                                     \
-        p_ntestsuite_context.test_case.actual.i = (a_val);                                     \
+        if (g_np_testsuite_context.state != NP_TESTSUITE_STATE_EXPECT) {    \
+            NTESTSUITE_ERROR("%s", "Didn't specified the expected value!"); \
+        }                                                                   \
+        g_np_testsuite_context.state = NP_TESTSUITE_STATE_ACTUAL;           \
+        NP_TESTSUITE_TEST_CASE_VALIDATE_TYPE(NP_TESTSUITE_TYPE_INT);        \
+        g_np_testsuite_context.test_case.actual.i = (a_val);                \
     } while (0)
                 
 #define NTESTSUITE_ACTUAL_PTR(a_val)                                        \
     do {                                                                    \
-        NP_TESTSUITE_TEST_CASE_VALIDATE_TYPE(TEST_CASE_PTR);                                     \
-        p_ntestsuite_context.test_case.actual.ptr = (a_val);                                   \
+        if (g_np_testsuite_context.state != NP_TESTSUITE_STATE_EXPECT) {    \
+            NTESTSUITE_ERROR("%s", "Didn't specified the expected value!"); \
+        }                                                                   \
+        g_np_testsuite_context.state = NP_TESTSUITE_STATE_ACTUAL;           \
+        NP_TESTSUITE_TEST_CASE_VALIDATE_TYPE(NP_TESTSUITE_TYPE_PTR);        \
+        g_np_testsuite_context.test_case.actual.ptr = (a_val);              \
     } while (0)
 
 #define NTESTSUITE_ACTUAL_BOOL(a_val)                                       \
     do {                                                                    \
-        NP_TESTSUITE_TEST_CASE_VALIDATE_TYPE(TEST_CASE_BOOL);                                    \
-        p_ntestsuite_context.test_case.actual.b = (a_val);                                     \
+        if (g_np_testsuite_context.state != NP_TESTSUITE_STATE_EXPECT) {    \
+            NTESTSUITE_ERROR("%s", "Didn't specified the expected value!"); \
+        }                                                                   \
+        g_np_testsuite_context.state = NP_TESTSUITE_STATE_ACTUAL;           \
+        NP_TESTSUITE_TEST_CASE_VALIDATE_TYPE(NP_TESTSUITE_TYPE_BOOL);       \
+        g_np_testsuite_context.test_case.actual.b = (a_val);                \
     } while (0)
 
 #define NTESTSUITE_EVALUATE()                                               \
     do {                                                                    \
-        switch (p_ntestsuite_context.test_case.type) {                                         \
-            case TEST_CASE_UINT:                                            \
-                NTESTSUITE_ASSERT_EQUAL_UINT(p_ntestsuite_context.test_case.expected.ui,       \
-                        p_ntestsuite_context.test_case.actual.ui);                             \
+        if (g_np_testsuite_context.state != NP_TESTSUITE_STATE_ACTUAL) {    \
+            NTESTSUITE_ERROR("%s", "Didn't specified the actual value!");   \
+        }                                                                   \
+        g_np_testsuite_context.state = NP_TESTSUITE_STATE_EVALUATE;         \
+        switch (g_np_testsuite_context.test_case.type) {                    \
+            case NP_TESTSUITE_TYPE_UINT:                                    \
+                NTESTSUITE_ASSERT_EQUAL_UINT(                               \
+                        g_np_testsuite_context.test_case.expected.ui,       \
+                        g_np_testsuite_context.test_case.actual.ui);        \
                 break;                                                      \
-            case TEST_CASE_INT:                                             \
-                NTESTSUITE_ASSERT_EQUAL_INT(p_ntestsuite_context.test_case.expected.i,         \
-                        p_ntestsuite_context.test_case.actual.i);                              \
+            case NP_TESTSUITE_TYPE_INT:                                     \
+                NTESTSUITE_ASSERT_EQUAL_INT(                                \
+                        g_np_testsuite_context.test_case.expected.i,        \
+                        g_np_testsuite_context.test_case.actual.i);         \
                 break;                                                      \
-            case TEST_CASE_PTR:                                             \
-                NTESTSUITE_ASSERT_EQUAL_PTR(p_ntestsuite_context.test_case.expected.ptr,       \
-                        p_ntestsuite_context.test_case.actual.ptr);                            \
+            case NP_TESTSUITE_TYPE_PTR:                                     \
+                NTESTSUITE_ASSERT_EQUAL_PTR(                                \
+                        g_np_testsuite_context.test_case.expected.ptr,      \
+                        g_np_testsuite_context.test_case.actual.ptr);       \
                 break;                                                      \
-            case TEST_CASE_BOOL:                                            \
-                NTESTSUITE_ASSERT_EQUAL_BOOL(p_ntestsuite_context.test_case.expected.b,        \
-                        p_ntestsuite_context.test_case.actual.b);                              \
+            case NP_TESTSUITE_TYPE_BOOL:                                    \
+                NTESTSUITE_ASSERT_EQUAL_BOOL(                               \
+                        g_np_testsuite_context.test_case.expected.b,        \
+                        g_np_testsuite_context.test_case.actual.b);         \
                 break;                                                      \
         }                                                                   \
     } while (0)
@@ -243,12 +287,12 @@ extern "C" {
 
 #define NP_TESTSUITE_ASSERT_EQUAL(expect, actual, type, format, cnv, compare)\
     do {                                                                    \
-        if (p_ntestsuite_context.should_exit) {                             \
+        if (g_np_testsuite_context.should_exit) {                           \
             return;                                                         \
         }                                                                   \
         type _expected = (type)(expect);                                    \
         type _actual = (type)(actual);                                      \
-        p_ntestsuite_context.total_asserts++;                               \
+        g_np_testsuite_context.total_asserts++;                             \
         if (compare((_actual), (_expected))) {                              \
             NTESTSUITE_ERROR(                                               \
                 "  Expected : %" #format "\n  Actual   : %" #format "\n",   \
@@ -258,20 +302,20 @@ extern "C" {
     } while (0)
 
 #define NP_TESTSUITE_TEST_CASE_VALIDATE_TYPE(a_type)                        \
-    if (p_ntestsuite_context.test_case.type != (a_type)) {                  \
+    if (g_np_testsuite_context.test_case.type != (a_type)) {                \
         const char * expected_type;                                         \
-        switch (p_ntestsuite_context.test_case.type) {                      \
-            case TEST_CASE_UINT:                                            \
-                expected_type = "TEST_CASE_UINT";                           \
+        switch (g_np_testsuite_context.test_case.type) {                    \
+            case NP_TESTSUITE_TYPE_UINT:                                    \
+                expected_type = "NP_TESTSUITE_TYPE_UINT";                   \
                 break;                                                      \
-            case TEST_CASE_INT:                                             \
-                expected_type = "TEST_CASE_INT";                            \
+            case NP_TESTSUITE_TYPE_INT:                                     \
+                expected_type = "NP_TESTSUITE_TYPE_INT";                    \
                 break;                                                      \
-            case TEST_CASE_PTR:                                             \
-                expected_type = "TEST_CASE_PTR";                            \
+            case NP_TESTSUITE_TYPE_PTR:                                     \
+                expected_type = "NP_TESTSUITE_TYPE_PTR";                    \
                 break;                                                      \
-            case TEST_CASE_BOOL:                                            \
-                expected_type = "TEST_CASE_BOOL";                           \
+            case NP_TESTSUITE_TYPE_BOOL:                                    \
+                expected_type = "NP_TESTSUITE_TYPE_BOOL";                   \
                 break;                                                      \
         }                                                                   \
         NTESTSUITE_ERROR("MACRO TYPE MISMATCH!\n"                           \
@@ -281,15 +325,23 @@ extern "C" {
     }
 
 
-enum p_ntestsuite_test_case_type
+enum np_testsuite_type
 {
-    TEST_CASE_UINT,
-    TEST_CASE_INT,
-    TEST_CASE_PTR,
-    TEST_CASE_BOOL
+    NP_TESTSUITE_TYPE_UINT,
+    NP_TESTSUITE_TYPE_INT,
+    NP_TESTSUITE_TYPE_PTR,
+    NP_TESTSUITE_TYPE_BOOL
 };
 
-struct p_ntestsuite_fixture
+enum np_testsuite_state
+{
+    NP_TESTSUITE_STATE_INIT,
+    NP_TESTSUITE_STATE_EXPECT,
+    NP_TESTSUITE_STATE_ACTUAL,
+    NP_TESTSUITE_STATE_EVALUATE,
+};
+
+struct np_testsuite_fixture
 {
     const char * name;
     void (* setup)(void);
@@ -298,10 +350,10 @@ struct p_ntestsuite_fixture
     uint32_t failed;
 };
 
-struct p_ntestsuite_context
+struct np_testsuite_context
 {
-    struct p_ntestsuite_fixture * fixture;
-    struct p_ntestsuite_test_case
+    struct np_testsuite_fixture * fixture;
+    struct np_testsuite_test_case
     {
         union test_val
         {
@@ -310,15 +362,16 @@ struct p_ntestsuite_context
             void * ptr;
             bool b;
         } actual, expected;
-        enum p_ntestsuite_test_case_type type;
+        enum np_testsuite_type type;
     } test_case;
+    enum np_testsuite_state state;
     uint32_t total_tests;
     uint32_t total_failed_tests;
     uint32_t total_asserts;
     bool should_exit;
 };
 
-extern struct p_ntestsuite_context p_ntestsuite_context;
+extern struct np_testsuite_context g_np_testsuite_context;
 
 #ifdef __cplusplus
 }
