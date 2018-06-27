@@ -44,7 +44,7 @@ extern "C" {
  *  @{
  */
 #ifndef NARCH_ID
-#define NARCH_ID                "unkown"
+#define NARCH_ID                "unknown"
 #endif
 
 /** @brief      Each port defines a macro named NARCH_xxx.
