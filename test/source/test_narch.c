@@ -16,121 +16,98 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stddef.h>
 
 #include "testsuite/ntestsuite.h"
 #include "port/nport_arch.h"
 #include "test_narch.h"
 
-#define EXPECT(a_num)           g_expected = (a_num)
+static void test_none_exp2_0(void);
+static void test_none_exp2_1(void);
+static void test_none_exp2_7(void);
+static void test_none_exp2_31(void);
+static void test_none_log2_1(void);
+static void test_none_log2_3(void);
+static void test_none_log2_UINT8_MAX(void);
+static void test_none_log2_UINT16_MAX(void);
+static void test_none_log2_UINT32_MAX(void);
 
-#define EVALUATE()                                                          \
-    do {                                                                    \
-        NTESTSUITE_ASSERT_EQUAL_UINT((g_expected), (g_output)); \
-    } while (0)
-
-static void test_exp2_0(void);
-static void test_exp2_1(void);
-static void test_exp2_7(void);
-static void test_exp2_31(void);
-static void test_log2_1(void);
-static void test_log2_3(void);
-static void test_log2_UINT8_MAX(void);
-static void test_log2_UINT16_MAX(void);
-static void test_log2_UINT32_MAX(void);
-
-static uint32_t g_output;
-static uint32_t g_expected;
-
-
-static void test_exp2_0(void)
+static void test_none_exp2_0(void)
 {
-    EXPECT(0x01);
-    g_output = narch_exp2(0);
-    EVALUATE();
+    NTESTSUITE_EXPECT_UINT(0x01u);
+    NTESTSUITE_ACTUAL_UINT(narch_exp2(0));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_exp2_1(void)
+static void test_none_exp2_1(void)
 {
-    EXPECT(0x02);
-    g_output = narch_exp2(1);
-    EVALUATE();
+    NTESTSUITE_EXPECT_UINT(0x02u);
+    NTESTSUITE_ACTUAL_UINT(narch_exp2(1));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_exp2_7(void)
+static void test_none_exp2_7(void)
 {
-    EXPECT(0x80);
-    g_output = narch_exp2(7);
-    EVALUATE();
+    NTESTSUITE_EXPECT_UINT(0x80u);
+    NTESTSUITE_ACTUAL_UINT(narch_exp2(7));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_exp2_31(void)
+static void test_none_exp2_31(void)
 {
-    EXPECT(0x80000000);
-    g_output = narch_exp2(31);
-    EVALUATE();
+    NTESTSUITE_EXPECT_UINT(0x80000000);
+    NTESTSUITE_ACTUAL_UINT(narch_exp2(31));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_log2_1(void)
+static void test_none_log2_1(void)
 {
-    EXPECT(0);
-    g_output = narch_log2(0x01);
-    EVALUATE();
+    NTESTSUITE_EXPECT_UINT(0);
+    NTESTSUITE_ACTUAL_UINT(narch_log2(0x01));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_log2_3(void)
+static void test_none_log2_3(void)
 {
-    EXPECT(1);
-    g_output = narch_log2(0x03);
-    EVALUATE();
+    NTESTSUITE_EXPECT_UINT(1);
+    NTESTSUITE_ACTUAL_UINT(narch_log2(0x03));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_log2_UINT8_MAX(void)
+static void test_none_log2_UINT8_MAX(void)
 {
-    EXPECT(7);
-    g_output = narch_log2(0xff);
-    EVALUATE();
+    NTESTSUITE_EXPECT_UINT(7);
+    NTESTSUITE_ACTUAL_UINT(narch_log2(0xff));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_log2_UINT16_MAX(void)
+static void test_none_log2_UINT16_MAX(void)
 {
-    EXPECT(15);
-    g_output = narch_log2(0xffff);
-    EVALUATE();
+    NTESTSUITE_EXPECT_UINT(15);
+    NTESTSUITE_ACTUAL_UINT(narch_log2(0xffff));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_log2_UINT32_MAX(void)
+static void test_none_log2_UINT32_MAX(void)
 {
-    EXPECT(31);
-    g_output = narch_log2(0xffffffff);
-    EVALUATE();
-}
-
-static void setup_empty(void)
-{
-    g_output = 0u;
-    g_expected = 0u;
-}
-
-static void teardown_empty(void)
-{
+    NTESTSUITE_EXPECT_UINT(31);
+    NTESTSUITE_ACTUAL_UINT(narch_log2(0xffffffff));
+    NTESTSUITE_EVALUATE();
 }
 
 void test_narch(void)
 {
-    NTESTSUITE_FIXTURE(empty, setup_empty, teardown_empty);
-    NTESTSUITE_RUN(empty, test_exp2_0);
-    NTESTSUITE_RUN(empty, test_exp2_1);
-    NTESTSUITE_RUN(empty, test_exp2_7);
-    NTESTSUITE_RUN(empty, test_exp2_31);
-    NTESTSUITE_RUN(empty, test_log2_1);
-    NTESTSUITE_RUN(empty, test_log2_3);
-    NTESTSUITE_RUN(empty, test_log2_UINT8_MAX);
-    NTESTSUITE_RUN(empty, test_log2_UINT16_MAX);
-    NTESTSUITE_RUN(empty, test_log2_UINT32_MAX);
-    NTESTSUITE_PRINT_RESULTS(empty);   
+    NTESTSUITE_FIXTURE(none, NULL, NULL);
+    NTESTSUITE_RUN(none, test_none_exp2_0);
+    NTESTSUITE_RUN(none, test_none_exp2_1);
+    NTESTSUITE_RUN(none, test_none_exp2_7);
+    NTESTSUITE_RUN(none, test_none_exp2_31);
+    NTESTSUITE_RUN(none, test_none_log2_1);
+    NTESTSUITE_RUN(none, test_none_log2_3);
+    NTESTSUITE_RUN(none, test_none_log2_UINT8_MAX);
+    NTESTSUITE_RUN(none, test_none_log2_UINT16_MAX);
+    NTESTSUITE_RUN(none, test_none_log2_UINT32_MAX);
+    NTESTSUITE_PRINT_RESULTS(none);   
 }
 
 
