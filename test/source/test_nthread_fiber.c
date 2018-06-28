@@ -16,25 +16,16 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
 #include <stdint.h>
-#include <stdlib.h>
+#include <stdbool.h>
 
 #include "testsuite/ntestsuite.h"
 #include "thread/nthread_fiber.h"
 
 #include "../include/test_nthread_fiber.h"
 
-#define EXPECT(a_num)           g_expected = (a_num)
-
-#define EVALUATE()                                                          \
-    do {                                                                    \
-        NTESTSUITE_ASSERT_EQUAL_UINT((g_expected), (g_output)); \
-    } while (0)
-
 static uint32_t g_output;
-static uint32_t g_expected;
-static uint32_t g_should_stop;
+static bool g_should_stop;
 
 static NFIBER(fiber_empty(struct nfiber *));
 
@@ -108,8 +99,8 @@ static NFIBER(fiber_yielded_2(struct nfiber * fb))
 {
     NFIBER_BEGIN(fb);
     for (;;) {
-        if (g_output == g_expected) {
-            g_should_stop = 1;
+        if (g_output == 3u) {
+            g_should_stop = true;
         }
         NFIBER_YIELD(fb);
     }
@@ -141,88 +132,96 @@ static NFIBER(fiber_wait_0(struct nfiber * fb))
     NFIBER_END(fb);
 }
 
-static void test_empty(void)
+static void test_none_empty(void)
 {
     struct nfiber empty;
+
+    NTESTSUITE_EXPECT_UINT(NFIBER_TERMINATED);
     NFIBER_INIT(&empty);
-    NTESTSUITE_ASSERT_EQUAL_UINT(NFIBER_TERMINATED,
-        nfiber_dispatch(fiber_empty(&empty)));
+    NTESTSUITE_ACTUAL_UINT(nfiber_dispatch(fiber_empty(&empty)));
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_exit(void)
+static void test_none_exit(void)
 {
     struct nfiber exit;
-    EXPECT(1u);
 
+    NTESTSUITE_EXPECT_UINT(1u);
     NFIBER_INIT(&exit);
-    NTESTSUITE_ASSERT_EQUAL_UINT(NFIBER_TERMINATED,
-        nfiber_dispatch(fiber_exit(&exit)));
-    EVALUATE();
+    nfiber_dispatch(fiber_exit(&exit));
+    NTESTSUITE_ACTUAL_UINT(g_output);
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_until(void)
+static void test_none_until(void)
 {
     struct nfiber until;
-    EXPECT(3u);
+
+    NTESTSUITE_EXPECT_UINT(3u);
     NFIBER_INIT(&until);
     while (nfiber_dispatch(fiber_until(&until)) != NFIBER_WAITING);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_UINT(g_output);
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_while(void)
+static void test_none_while(void)
 {
     struct nfiber while_ctx;
-    EXPECT(3u);
+
+    NTESTSUITE_EXPECT_UINT(3u);
     NFIBER_INIT(&while_ctx);
     while (nfiber_dispatch(fiber_while(&while_ctx)) != NFIBER_WAITING);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_UINT(g_output);
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_wait_0(void)
+static void test_none_wait(void)
 {
     struct nfiber wait;
-    EXPECT(3u);
+
+    NTESTSUITE_EXPECT_UINT(3u);
     NFIBER_INIT(&wait);
     while (nfiber_dispatch(fiber_wait_0(&wait)) != NFIBER_TERMINATED);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_UINT(g_output);
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_yield(void)
+static void test_none_yield(void)
 {
-    static struct nfiber yielded_0;
-    static struct nfiber yielded_1;
-    static struct nfiber yielded_2;
-    EXPECT(3u);
-    g_should_stop = 0u;
+    struct nfiber yielded_0;
+    struct nfiber yielded_1;
+    struct nfiber yielded_2;
+
+    NTESTSUITE_EXPECT_UINT(3u);
+    NFIBER_INIT(&yielded_0);
+    NFIBER_INIT(&yielded_1);
+    NFIBER_INIT(&yielded_2);
+    g_should_stop = false;
         
     while (!g_should_stop) {
         nfiber_dispatch(fiber_yielded_0(&yielded_0));
         nfiber_dispatch(fiber_yielded_1(&yielded_1));
         nfiber_dispatch(fiber_yielded_2(&yielded_2));
     }
-    EVALUATE();
+    NTESTSUITE_ACTUAL_UINT(g_output);
+    NTESTSUITE_EVALUATE();
 }
 
-static void setup_empty(void)
+static void setup_none(void)
 {
     g_output = 0u;
-    g_expected = 0u;
-}
-
-static void teardown_empty(void)
-{
 }
 
 void test_nthread_fiber(void)
 {
-    NTESTSUITE_FIXTURE(empty, setup_empty, teardown_empty);
-    NTESTSUITE_RUN(empty, test_empty);
-    NTESTSUITE_RUN(empty, test_exit);
-    NTESTSUITE_RUN(empty, test_until);
-    NTESTSUITE_RUN(empty, test_while);
-    NTESTSUITE_RUN(empty, test_wait_0);
-    NTESTSUITE_RUN(empty, test_yield);
-    NTESTSUITE_PRINT_RESULTS(empty);   
+    NTESTSUITE_FIXTURE(none, setup_none, NULL);
+    NTESTSUITE_RUN(none, test_none_empty);
+    NTESTSUITE_RUN(none, test_none_exit);
+    NTESTSUITE_RUN(none, test_none_until);
+    NTESTSUITE_RUN(none, test_none_while);
+    NTESTSUITE_RUN(none, test_none_wait);
+    NTESTSUITE_RUN(none, test_none_yield);
+    NTESTSUITE_PRINT_RESULTS(none);   
 }
 
 

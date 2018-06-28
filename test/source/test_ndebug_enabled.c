@@ -16,95 +16,93 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
+#include <stddef.h>
 #include "testsuite/ntestsuite.h"
 #include "debug/ndebug.h"
 #include "test_ndebug_enabled.h"
 
-#define EXPECT(a_cpu_state)                                                 \
-    do {                                                                    \
-        g_expected_cpu_state = (a_cpu_state);                               \
-    } while (0)
-
-#define EVALUATE()                                                          \
-    do {                                                                    \
-        NTESTSUITE_ASSERT_EQUAL_BOOL(g_expected_cpu_state,                  \
-                g_cpu_state_output);                                        \
-    } while (0)
-
 #define narch_cpu_stop()        g_cpu_state_output = false
 
-static void test_obligation(void);
-static void test_assert(void);
-static void test_require(void);
-static void test_ensure(void);
-static void test_internal(void);
+static void test_empty_obligation(void);
+static void test_empty_assert(void);
+static void test_empty_require(void);
+static void test_empty_ensure(void);
+static void test_empty_internal(void);
 
 static bool g_cpu_state_output;
-static bool g_expected_cpu_state;
 
-static void test_obligation(void)
+static void test_empty_obligation(void)
 {
     uint32_t n = 0;
 
+    NTESTSUITE_EXPECT_UINT(1);
     NOBLIGATION(n = 1);
-    NTESTSUITE_ASSERT_EQUAL_INT(1, n);
+    NTESTSUITE_ACTUAL_UINT(n);
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_assert(void)
+static void test_empty_assert(void)
 {
-    EXPECT(true);
+    NTESTSUITE_EXPECT_BOOL(true);
     NASSERT(true);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_require(void)
+static void test_empty_require(void)
 {
-    EXPECT(true);
+    NTESTSUITE_EXPECT_BOOL(true);
     NREQUIRE(true);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_ensure(void)
+static void test_empty_ensure(void)
 {
-    EXPECT(true);
+    NTESTSUITE_EXPECT_BOOL(true);
     NENSURE(true);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_internal(void)
+static void test_empty_internal(void)
 {
-    EXPECT(true);
+    NTESTSUITE_EXPECT_BOOL(true);
     NASSERT_INTERNAL(true);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_f_assert(void)
+static void test_empty_f_assert(void)
 {
-    EXPECT(false);
+    NTESTSUITE_EXPECT_BOOL(false);
     NASSERT(false);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_f_require(void)
+static void test_empty_f_require(void)
 {
-    EXPECT(false);
+    NTESTSUITE_EXPECT_BOOL(false);
     NREQUIRE(false);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_f_ensure(void)
+static void test_empty_f_ensure(void)
 {
-    EXPECT(false);
+    NTESTSUITE_EXPECT_BOOL(false);
     NENSURE(false);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
+    NTESTSUITE_EVALUATE();
 }
 
-static void test_f_internal(void)
+static void test_empty_f_internal(void)
 {
-    EXPECT(false);
+    NTESTSUITE_EXPECT_BOOL(false);
     NASSERT_INTERNAL(false);
-    EVALUATE();
+    NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
+    NTESTSUITE_EVALUATE();
 }
 
 static void setup_empty(void)
@@ -112,22 +110,18 @@ static void setup_empty(void)
     g_cpu_state_output = true;
 }
 
-static void teardown_empty(void)
-{
-}
-
 void test_ndebug_enabled(void)
 {
-    NTESTSUITE_FIXTURE(empty, setup_empty, teardown_empty);
-    NTESTSUITE_RUN(empty, test_obligation);
-    NTESTSUITE_RUN(empty, test_assert);
-    NTESTSUITE_RUN(empty, test_require);
-    NTESTSUITE_RUN(empty, test_ensure);
-    NTESTSUITE_RUN(empty, test_internal);
-    NTESTSUITE_RUN(empty, test_f_assert);
-    NTESTSUITE_RUN(empty, test_f_require);
-    NTESTSUITE_RUN(empty, test_f_ensure);
-    NTESTSUITE_RUN(empty, test_f_internal);
+    NTESTSUITE_FIXTURE(empty, setup_empty, NULL);
+    NTESTSUITE_RUN(empty, test_empty_obligation);
+    NTESTSUITE_RUN(empty, test_empty_assert);
+    NTESTSUITE_RUN(empty, test_empty_require);
+    NTESTSUITE_RUN(empty, test_empty_ensure);
+    NTESTSUITE_RUN(empty, test_empty_internal);
+    NTESTSUITE_RUN(empty, test_empty_f_assert);
+    NTESTSUITE_RUN(empty, test_empty_f_require);
+    NTESTSUITE_RUN(empty, test_empty_f_ensure);
+    NTESTSUITE_RUN(empty, test_empty_f_internal);
     NTESTSUITE_PRINT_RESULTS(empty);   
 }
 
