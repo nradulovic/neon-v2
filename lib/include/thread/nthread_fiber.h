@@ -84,9 +84,9 @@ struct nfiber
  *  @{
  */
 
-#define NFIBER_YIELDED                      0
-#define NFIBER_WAITING                      1
-#define NFIBER_TERMINATED                   2
+#define NFIBER_TERMINATED                   0
+#define NFIBER_YIELDED                      1
+#define NFIBER_WAITING                      2
 
 /** @} */
 /*---------------------------------------------------------------------------*/
@@ -103,7 +103,7 @@ struct nfiber
  *  @param      fb
  *              A pointer to the fiber control structure.
  */
-#define NFIBER_INIT(fb) 					NP_FIBER_CTX_INIT(&(fb)->ctx)
+#define NFIBER_INIT(fb)                      NP_FIBER_CTX_INIT(&(fb)->ctx)
 
 /** @} */
 
@@ -138,7 +138,10 @@ struct nfiber
  *
  * \hideinitializer
  */
-#define NFIBER_BEGIN(fb)                    NP_FIBER_CTX_BEGIN(&(fb)->ctx)
+#define NFIBER_BEGIN(fb)                                                    \
+    do {                                                                    \
+        struct nfiber * np_lfb = (fb);                                      \
+        NP_FIBER_CTX_BEGIN(&(fb)->ctx)
 
 /**
  * Declare the end of a fiber.
@@ -150,8 +153,9 @@ struct nfiber
  *
  * \hideinitializer
  */
-#define NFIBER_END(fb)                                                      \
-    NP_FIBER_CTX_END(&(fb)->ctx, NFIBER_TERMINATED)
+#define NFIBER_END()                                                        \
+        NP_FIBER_CTX_END(&np_lfb->ctx, NFIBER_TERMINATED);                  \
+    } while (0)
 
 /** @} */
 
@@ -171,8 +175,8 @@ struct nfiber
  *
  * \hideinitializer
  */
-#define NFIBER_EXIT(fb)				\
-    NP_FIBER_CTX_SAVE(&(fb)->ctx, NFIBER_TERMINATED, 2000u);
+#define NFIBER_EXIT()				                                        \
+    NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_TERMINATED, 2000u);
 
 /** @} */
 
@@ -213,9 +217,9 @@ struct nfiber
  *
  * \hideinitializer
  */
-#define NFIBER_WAIT_UNTIL(fb, condition)	                                \
+#define NFIBER_WAIT_UNTIL(condition)	                                    \
     while (!(condition)) {				                                    \
-        NP_FIBER_CTX_SAVE(&(fb)->ctx, NFIBER_WAITING, 0u);			        \
+        NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_WAITING, 0u);			    \
     }
 
 /**
@@ -229,7 +233,7 @@ struct nfiber
  *
  * \hideinitializer
  */
-#define NFIBER_WAIT_WHILE(fb, cond)  NFIBER_WAIT_UNTIL((fb), !(cond))
+#define NFIBER_WAIT_WHILE(cond)         NFIBER_WAIT_UNTIL(!(cond))
 
 /** @} */
 
@@ -255,8 +259,8 @@ struct nfiber
  *
  * \hideinitializer
  */
-#define NFIBER_WAIT(fb, fiber_fn)                                           \
-    NFIBER_WAIT_UNTIL((fb), nfiber_dispatch(fiber_fn) == NFIBER_TERMINATED)
+#define NFIBER_WAIT(fiber_fn)                                               \
+    NFIBER_WAIT_UNTIL(nfiber_dispatch(fiber_fn) == NFIBER_TERMINATED)
 
 /** @} */
 
@@ -275,8 +279,8 @@ struct nfiber
  *
  * \hideinitializer
  */
-#define NFIBER_YIELD(fb)		                                            \
-        NP_FIBER_CTX_SAVE(&(fb)->ctx, NFIBER_YIELDED, 1000u)
+#define NFIBER_YIELD()		                                                \
+        NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_YIELDED, 1000u)
 
 /** @} */
 

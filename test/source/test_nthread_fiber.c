@@ -32,7 +32,7 @@ static NFIBER(fiber_empty(struct nfiber *));
 static NFIBER(fiber_empty(struct nfiber * fb))
 {
     NFIBER_BEGIN(fb);
-    NFIBER_END(fb);
+    NFIBER_END();
 }
 
 static NFIBER(fiber_exit(struct nfiber *));
@@ -41,9 +41,9 @@ static NFIBER(fiber_exit(struct nfiber * fb))
 {
     NFIBER_BEGIN(fb);
     g_output = 1u;
-    NFIBER_EXIT(fb);
+    NFIBER_EXIT();
     g_output = 0u;
-    NFIBER_END(fb);
+    NFIBER_END();
 }
 
 static NFIBER(fiber_until(struct nfiber *));
@@ -53,9 +53,9 @@ static NFIBER(fiber_until(struct nfiber * fb))
     NFIBER_BEGIN(fb);
     for (;;) {
         g_output++;
-        NFIBER_WAIT_UNTIL(fb, g_output < 3);
+        NFIBER_WAIT_UNTIL(g_output < 3);
     }
-    NFIBER_END(fb);
+    NFIBER_END();
 }
 
 static NFIBER(fiber_while(struct nfiber *));
@@ -64,10 +64,10 @@ static NFIBER(fiber_while(struct nfiber * fb))
 {
     NFIBER_BEGIN(fb);
     for (;;) {
-        NFIBER_WAIT_WHILE(fb, g_output > 2);
+        NFIBER_WAIT_WHILE(g_output > 2);
         g_output++;
     }
-    NFIBER_END(fb);
+    NFIBER_END();
 }
 
 static NFIBER(fiber_yielded_0(struct nfiber *));
@@ -77,9 +77,9 @@ static NFIBER(fiber_yielded_0(struct nfiber * fb))
     NFIBER_BEGIN(fb);
     for (;;) {
         g_output++;
-        NFIBER_YIELD(fb);
+        NFIBER_YIELD();
     }
-    NFIBER_END(fb);
+    NFIBER_END();
 }
 
 static NFIBER(fiber_yielded_1(struct nfiber *));
@@ -88,9 +88,9 @@ static NFIBER(fiber_yielded_1(struct nfiber * fb))
 {
     NFIBER_BEGIN(fb);
     for (;;) {
-        NFIBER_YIELD(fb);
+        NFIBER_YIELD();
     }
-    NFIBER_END(fb);
+    NFIBER_END();
 }
 
 static NFIBER(fiber_yielded_2(struct nfiber *));
@@ -102,9 +102,9 @@ static NFIBER(fiber_yielded_2(struct nfiber * fb))
         if (g_output == 3u) {
             g_should_stop = true;
         }
-        NFIBER_YIELD(fb);
+        NFIBER_YIELD();
     }
-    NFIBER_END(fb);
+    NFIBER_END();
 }
 
 static NFIBER(fiber_waited_0(struct nfiber *));
@@ -113,7 +113,7 @@ static NFIBER(fiber_waited_0(struct nfiber * fb))
 {
     NFIBER_BEGIN(fb);
     g_output++;
-    NFIBER_END(fb);
+    NFIBER_END();
 }
 
 static NFIBER(fiber_wait_0(struct nfiber *));
@@ -124,12 +124,12 @@ static NFIBER(fiber_wait_0(struct nfiber * fb))
     static struct nfiber waited_0;
         
     NFIBER_INIT(&waited_0);
-    NFIBER_WAIT(fb, fiber_waited_0(&waited_0));
+    NFIBER_WAIT(fiber_waited_0(&waited_0));
     NFIBER_INIT(&waited_0);
-    NFIBER_WAIT(fb, fiber_waited_0(&waited_0));
+    NFIBER_WAIT(fiber_waited_0(&waited_0));
     NFIBER_INIT(&waited_0);
-    NFIBER_WAIT(fb, fiber_waited_0(&waited_0));
-    NFIBER_END(fb);
+    NFIBER_WAIT(fiber_waited_0(&waited_0));
+    NFIBER_END();
 }
 
 static void test_none_empty(void)
@@ -220,6 +220,7 @@ void test_nthread_fiber(void)
     NTESTSUITE_RUN(none, test_none_until);
     NTESTSUITE_RUN(none, test_none_while);
     NTESTSUITE_RUN(none, test_none_wait);
+    NTESTSUITE_RUN(none, test_none_yield);
     NTESTSUITE_RUN(none, test_none_yield);
     NTESTSUITE_PRINT_RESULTS(none);   
 }
