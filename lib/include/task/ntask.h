@@ -17,26 +17,38 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Tests for nfiber
+ *  @brief       Linked lists header
  *
- *  @addtogroup  module
+ *  @addtogroup  lib
  *  @{
  */
-/** @defgroup    mod_test_nthread Tests for nfiber
- *  @brief       Tests for nfiber.
+/** @defgroup    lib_list Linked lists
+ *  @brief       Single Linked Lists (SLL) and Doubly Linked Lists (DLL).
+ *
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
-#ifndef TEST_NFIBER_H_
-#define TEST_NFIBER_H_
+
+#ifndef NEON_MODULE_THREAD_H_
+#define NEON_MODULE_THREAD_H_
+
+#include <stdint.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+#include "thread/nthread_fiber.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void test_nthread_fiber(void);
-
+struct ntask
+{
+	struct nthread_fiber fiber;
+	uint_fast8_t state;
+};
+    
 #ifdef __cplusplus
 }
 #endif
@@ -44,4 +56,4 @@ void test_nthread_fiber(void);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif  /* TEST_NFIBER_H_ */
+#endif /* NEON_MODULE_THREAD_H_ */

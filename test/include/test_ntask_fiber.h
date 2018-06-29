@@ -17,37 +17,26 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Linked lists header
+ *  @brief       Tests for nfiber
  *
- *  @addtogroup  lib
+ *  @addtogroup  module
  *  @{
  */
-/** @defgroup    lib_list Linked lists
- *  @brief       Single Linked Lists (SLL) and Doubly Linked Lists (DLL).
- *
- *  There are three different linked lists:
- *  - single linked list `sll`
- *  - doubly linked list `dll`
- *
+/** @defgroup    mod_test_ntask Tests for nfiber
+ *  @brief       Tests for nfiber.
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
-
-#ifndef NEON_MODULE_THREAD_H_
-#define NEON_MODULE_THREAD_H_
-
-#include <stdint.h>
-#include <stdbool.h>
-#include <stddef.h>
-
-#include "port/nport_platform.h"
+#ifndef TEST_NFIBER_H_
+#define TEST_NFIBER_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-    
+void test_ntask_fiber(void);
+
 #ifdef __cplusplus
 }
 #endif
@@ -55,4 +44,4 @@ extern "C" {
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_MODULE_THREAD_H_ */
+#endif  /* TEST_NFIBER_H_ */

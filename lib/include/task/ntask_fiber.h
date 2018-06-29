@@ -17,20 +17,20 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Thread Fiber header
+ *  @brief       Task Fiber header
  *
  *  @addtogroup  lib
  *  @{
  */
-/** @defgroup    lib_fiber Thread Fiber
- *  @brief       Thread Fiber
+/** @defgroup    lib_fiber Task Fiber
+ *  @brief       Task Fiber
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_THREAD_FIBER_H_
-#define NEON_THREAD_FIBER_H_
+#ifndef NEON_TASK_FIBER_H_
+#define NEON_TASK_FIBER_H_
 
 #include <stdint.h>
 
@@ -149,8 +149,6 @@ struct nfiber
  * This macro is used for declaring that a fiber ends. It must
  * always be used together with a matching PT_BEGIN() macro.
  *
- * \param pt A pointer to the fiber control structure.
- *
  * \hideinitializer
  */
 #define NFIBER_END()                                                        \
@@ -171,8 +169,6 @@ struct nfiber
  * spawned by another fiber, the parent fiber will become
  * unblocked and can continue to run.
  *
- * \param pt A pointer to the fiber control structure.
- *
  * \hideinitializer
  */
 #define NFIBER_EXIT()				                                        \
@@ -192,7 +188,7 @@ struct nfiber
  * function is non-zero if the fiber is running or zero if the
  * fiber has exited.
  *
- * \param f The call to the C function implementing the fiber to
+ * \param fiber_fn The call to the C function implementing the fiber to
  * be scheduled
  *
  * \hideinitializer
@@ -212,7 +208,6 @@ struct nfiber
  * This macro blocks the fiber until the specified condition is
  * true.
  *
- * \param pt A pointer to the fiber control structure.
  * \param condition The condition.
  *
  * \hideinitializer
@@ -228,7 +223,6 @@ struct nfiber
  * This function blocks and waits while condition is true. See
  * PT_WAIT_UNTIL().
  *
- * \param pt A pointer to the fiber control structure.
  * \param cond The condition.
  *
  * \hideinitializer
@@ -252,10 +246,7 @@ struct nfiber
  * \note The child fiber must be manually initialized with the
  * PT_INIT() function before this function is used.
  *
- * \param pt A pointer to the fiber control structure.
- * \param thread The child fiber with arguments
- *
- * \sa PT_SPAWN()
+ * \param fiber_fn The child fiber with arguments
  *
  * \hideinitializer
  */
@@ -275,8 +266,6 @@ struct nfiber
  * This function will yield the fiber, thereby allowing other
  * processing to take place in the system.
  *
- * \param pt A pointer to the fiber control structure.
- *
  * \hideinitializer
  */
 #define NFIBER_YIELD()		                                                \
@@ -284,5 +273,5 @@ struct nfiber
 
 /** @} */
 
-#endif /* NEON_THREAD_FIBER_H_ */
+#endif /* NEON_TASK_FIBER_H_ */
 

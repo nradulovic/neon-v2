@@ -20,9 +20,9 @@
 #include <stdbool.h>
 
 #include "testsuite/ntestsuite.h"
-#include "thread/nthread_fiber.h"
+#include "task/ntask_fiber.h"
 
-#include "../include/test_nthread_fiber.h"
+#include "test_ntask_fiber.h"
 
 static uint32_t g_output;
 static bool g_should_stop;
@@ -212,7 +212,7 @@ static void setup_none(void)
     g_output = 0u;
 }
 
-void test_nthread_fiber(void)
+void test_ntask_fiber(void)
 {
     NTESTSUITE_FIXTURE(none, setup_none, NULL);
     NTESTSUITE_RUN(none, test_none_empty);

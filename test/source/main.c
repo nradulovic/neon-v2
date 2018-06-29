@@ -28,7 +28,7 @@
 #include "test_nqueue_lqueue.h"
 #include "test_nqueue_pqueue.h"
 #include "test_nos.h"
-#include "test_nthread_fiber.h"
+#include "test_ntask_fiber.h"
 
 int main(void)
 {
@@ -43,7 +43,7 @@ int main(void)
     test_nqueue_lqueue();
     test_nqueue_pqueue();
     test_nos();
-    test_nthread_fiber();
+    test_ntask_fiber();
     NTESTSUITE_PRINT_OVERVIEW();
     
     return 0;

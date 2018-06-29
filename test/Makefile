@@ -1,6 +1,4 @@
 #
-# Neon
-# Copyright (C) 2018   REAL-TIME CONSULTING
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published by the Free
@@ -32,7 +30,7 @@ include $(WS)/lib/build/nbits.mk
 include $(WS)/lib/build/ntestsuite.mk
 include $(WS)/lib/build/nqueue.mk
 include $(WS)/lib/build/nos.mk
-include $(WS)/lib/build/nfiber.mk
+include $(WS)/lib/build/ntask.mk
 
 # Project name, this will be used as output binary file name.
 PROJECT_NAME := test
@@ -56,7 +54,7 @@ CC_SOURCES += test/source/test_nlist_sll.c
 CC_SOURCES += test/source/test_nos.c
 CC_SOURCES += test/source/test_nqueue_lqueue.c
 CC_SOURCES += test/source/test_nqueue_pqueue.c
-CC_SOURCES += test/source/test_nthread_fiber.c
+CC_SOURCES += test/source/test_ntask_fiber.c
 
 # List additional archives. Use this when using an external static archive.
 AR_LIBS +=
