@@ -16,35 +16,25 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "testsuite/ntestsuite.h"
 #include "task/ntask.h"
 #include "test_ntask.h"
 
-static void test_ntask_init(void);
-
-static NTASK(my_task_fn(struct ntask * ts));
-
-static NTASK(my_task_fn(struct ntask * ts))
+static NTASK(task_init(struct ntask * ts, void * arg))
 {
-
+	NTASK_BEGIN(ts);
+	NTASK_END();
 }
 
-static void test_ntask_init(void)
+static void test_init(void)
 {
-	struct ntask my_task;
-
-
 }
 
-void test_nos(void)
+void test_ntask(void)
 {
     NTESTSUITE_FIXTURE(none, NULL, NULL);
-    NTESTSUITE_RUN(none, test_ntask_init);
-    NTESTSUITE_PRINT_RESULTS(none);
+    NTESTSUITE_RUN(none, test_init);
+    NTESTSUITE_PRINT_RESULTS(none);   
 }
 
 

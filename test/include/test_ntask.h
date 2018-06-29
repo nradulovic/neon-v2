@@ -22,14 +22,14 @@
  *  @addtogroup  module
  *  @{
  */
-/** @defgroup    mod_test_bits Tests for ntask
+/** @defgroup    mod_test_ntask Tests for ntask
  *  @brief       Tests for ntask.
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
-#ifndef TEST_NTASK_H_
-#define TEST_NTASK_H_
+#ifndef TEST_NTASK_H
+#define TEST_NTASK_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,4 +44,4 @@ void test_ntask(void);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif  /* TEST_NTASK_H_ */
+#endif  /* TEST_NTASK_H */

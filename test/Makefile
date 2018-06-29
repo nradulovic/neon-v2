@@ -29,7 +29,6 @@ include $(WS)/lib/build/ndebug.mk
 include $(WS)/lib/build/nbits.mk
 include $(WS)/lib/build/ntestsuite.mk
 include $(WS)/lib/build/nqueue.mk
-include $(WS)/lib/build/nos.mk
 include $(WS)/lib/build/ntask.mk
 
 # Project name, this will be used as output binary file name.
@@ -51,10 +50,10 @@ CC_SOURCES += test/source/test_ndebug_enabled.c
 CC_SOURCES += test/source/test_ndebug_disabled.c
 CC_SOURCES += test/source/test_nlist_dll.c
 CC_SOURCES += test/source/test_nlist_sll.c
-CC_SOURCES += test/source/test_nos.c
 CC_SOURCES += test/source/test_nqueue_lqueue.c
 CC_SOURCES += test/source/test_nqueue_pqueue.c
 CC_SOURCES += test/source/test_ntask_fiber.c
+CC_SOURCES += test/source/test_ntask.c
 
 # List additional archives. Use this when using an external static archive.
 AR_LIBS +=

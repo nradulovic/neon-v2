@@ -17,25 +17,22 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Linked lists header
+ *  @brief       Task header
  *
  *  @addtogroup  lib
  *  @{
  */
-/** @defgroup    lib_list Linked lists
- *  @brief       Single Linked Lists (SLL) and Doubly Linked Lists (DLL).
- *
+/** @defgroup    lib_task Task
+ *  @brief       Task
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_MODULE_THREAD_H_
-#define NEON_MODULE_THREAD_H_
+#ifndef NEON_MODULE_TASK_H_
+#define NEON_MODULE_TASK_H_
 
 #include <stdint.h>
-#include <stdbool.h>
-#include <stddef.h>
 
 #include "task/ntask_fiber.h"
 
@@ -45,13 +42,16 @@ extern "C" {
 
 struct ntask
 {
-	struct ntask_fiber fiber;
+	struct nfiber fiber;
 	uint_fast8_t state;
 };
-
-#define NTASK(task_proto) 				NFIBER(task_proto)
     
-#define NTASK_BEGIN(ts)					NFIBER_BEGIN(&(ts)->fiber)
+#define NTASK(func_call)    		NFIBER(func_call)
+
+#define NTASK_BEGIN(task)   		NFIBER_BEGIN(&(task)->fiber)
+
+#define NTASK_END()			NFIBER_END()
+
 #ifdef __cplusplus
 }
 #endif
@@ -59,4 +59,4 @@ struct ntask
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_MODULE_THREAD_H_ */
+#endif /* NEON_MODULE_TASK_H_ */
