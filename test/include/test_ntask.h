@@ -17,41 +17,26 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Linked lists header
+ *  @brief       Tests for ntask
  *
- *  @addtogroup  lib
+ *  @addtogroup  module
  *  @{
  */
-/** @defgroup    lib_list Linked lists
- *  @brief       Single Linked Lists (SLL) and Doubly Linked Lists (DLL).
- *
+/** @defgroup    mod_test_bits Tests for ntask
+ *  @brief       Tests for ntask.
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
-
-#ifndef NEON_MODULE_THREAD_H_
-#define NEON_MODULE_THREAD_H_
-
-#include <stdint.h>
-#include <stdbool.h>
-#include <stddef.h>
-
-#include "task/ntask_fiber.h"
+#ifndef TEST_NTASK_H_
+#define TEST_NTASK_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-struct ntask
-{
-	struct ntask_fiber fiber;
-	uint_fast8_t state;
-};
+void test_ntask(void);
 
-#define NTASK(task_proto) 				NFIBER(task_proto)
-    
-#define NTASK_BEGIN(ts)					NFIBER_BEGIN(&(ts)->fiber)
 #ifdef __cplusplus
 }
 #endif
@@ -59,4 +44,4 @@ struct ntask
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_MODULE_THREAD_H_ */
+#endif  /* TEST_NTASK_H_ */

@@ -21,41 +21,30 @@
 #include <string.h>
 
 #include "testsuite/ntestsuite.h"
-#include "os/cocoos.h"
-#include "test_nos.h"
+#include "task/ntask.h"
+#include "test_ntask.h"
 
-#define EXPECT(a_num)           g_expected = (a_num)
+static void test_ntask_init(void);
 
-#define EVALUATE()                                                          \
-    do {                                                                    \
-        NTESTSUITE_ASSERT_EQUAL_UINT((g_expected), (g_output)); \
-    } while (0)
+static NTASK(my_task_fn(struct ntask * ts));
 
-static void test_exp2_0(void);
-
-static uint32_t g_output;
-static uint32_t g_expected;
-
-
-static void test_exp2_0(void)
+static NTASK(my_task_fn(struct ntask * ts))
 {
+
 }
 
-static void setup_empty(void)
+static void test_ntask_init(void)
 {
-    g_output = 0u;
-    g_expected = 0u;
-}
+	struct ntask my_task;
 
-static void teardown_empty(void)
-{
+
 }
 
 void test_nos(void)
 {
-    NTESTSUITE_FIXTURE(empty, setup_empty, teardown_empty);
-    NTESTSUITE_RUN(empty, test_exp2_0);
-    NTESTSUITE_PRINT_RESULTS(empty);   
+    NTESTSUITE_FIXTURE(none, NULL, NULL);
+    NTESTSUITE_RUN(none, test_ntask_init);
+    NTESTSUITE_PRINT_RESULTS(none);
 }
 
 

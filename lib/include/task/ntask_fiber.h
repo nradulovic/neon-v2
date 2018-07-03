@@ -42,22 +42,26 @@
  */
 
 /** @brief      Initialize the fiber context.
+ *  @hideinitializer
  *  @notapi
  */
 #define NP_FIBER_CTX_INIT(ctx)              *(ctx) = 0;
 
 /** @brief      Retrieve previously saved context.
+ *  @hideinitializer
  *  @notapi
  */
 #define NP_FIBER_CTX_BEGIN(ctx)             switch(*(ctx)) { case 0:
 
 /** @brief      Save the context.
+ *  @hideinitializer
  *  @notapi
  */
 #define NP_FIBER_CTX_SAVE(ctx, r, offset)                                   \
     *(ctx) = __LINE__ + offset; return (r); case __LINE__ + offset:
 
 /** @brief      End the current execution context.
+ *  @hideinitializer
  *  @notapi
  */
 #define NP_FIBER_CTX_END(ctx, r)                                            \
@@ -102,64 +106,62 @@ struct nfiber
  *
  *  @param      fb
  *              A pointer to the fiber control structure.
+ *
+ *  @hideinitializer
  */
-#define NFIBER_INIT(fb)                      NP_FIBER_CTX_INIT(&(fb)->ctx)
+#define nfiber_init(fb)                      NP_FIBER_CTX_INIT(&(fb)->ctx)
 
 /** @} */
-
-/**
- * \name Declaration and definition
- * @{
+/*---------------------------------------------------------------------------*/
+/** @name       Declaration and definition
+ *  @{
  */
 
-/**
- * Declaration of a fiber.
+/** @brief      Declaration of a fiber.
  *
- * This macro is used to declare a fiber. All fibers must
- * be declared with this macro.
+ *  This macro is used to declare a fiber. All fibers must be declared with
+ *  this macro.
  *
- * \param name_args The name and arguments of the C function
- * implementing the fiber.
+ *  @param      fiber_proto
+ *              The name and arguments of the C function implementing the
+ *              fiber.
  *
- * \hideinitializer
+ *  @hideinitializer
  */
-#define NFIBER(name_args) uint_fast8_t name_args
+#define NFIBER(fiber_proto) uint_fast8_t fiber_proto
 
-/**
- * Declare the start of a fiber inside the C function
- * implementing the fiber.
+/** @brief      Declare the start of a fiber inside the C function.
  *
- * This macro is used to declare the starting point of a
- * fiber. It should be placed at the start of the function in
- * which the fiber runs. All C statements above the PT_BEGIN()
- * invokation will be executed each time the fiber is scheduled.
+ *  This macro is used to declare the starting point of a fiber. It should be
+ *  placed at the start of the function in which the fiber runs. All C
+ *  statements above the NFIBER_BEGIN() invokation will be executed each time
+ *  the fiber is scheduled.
  *
- * \param pt A pointer to the fiber control structure.
+ *  @param      fb
+ *              A pointer to the fiber control structure.
  *
- * \hideinitializer
+ *  @hideinitializer
  */
 #define NFIBER_BEGIN(fb)                                                    \
     do {                                                                    \
         struct nfiber * np_lfb = (fb);                                      \
-        NP_FIBER_CTX_BEGIN(&(fb)->ctx)
+        NP_FIBER_CTX_BEGIN(&np_lfb->ctx)
 
-/**
- * Declare the end of a fiber.
+/** @brief      Declare the end of a fiber.
  *
- * This macro is used for declaring that a fiber ends. It must
- * always be used together with a matching PT_BEGIN() macro.
+ *  This macro is used for declaring that a fiber ends. It must always be used
+ *  together with a matching NFIBER_BEGIN() macro.
  *
- * \hideinitializer
+ *  @hideinitializer
  */
 #define NFIBER_END()                                                        \
         NP_FIBER_CTX_END(&np_lfb->ctx, NFIBER_TERMINATED);                  \
     } while (0)
 
 /** @} */
-
-/**
- * \name Exiting and restarting
- * @{
+/*---------------------------------------------------------------------------*/
+/** @name Exiting and restarting
+ *  @{
  */
 
 /**
@@ -171,7 +173,7 @@ struct nfiber
  *
  * \hideinitializer
  */
-#define NFIBER_EXIT()				                                        \
+#define nfiber_exit()				                                        \
     NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_TERMINATED, 2000u);
 
 /** @} */
@@ -212,7 +214,7 @@ struct nfiber
  *
  * \hideinitializer
  */
-#define NFIBER_WAIT_UNTIL(condition)	                                    \
+#define nfiber_wait_until(condition)	                                    \
     while (!(condition)) {				                                    \
         NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_WAITING, 0u);			    \
     }
@@ -227,7 +229,7 @@ struct nfiber
  *
  * \hideinitializer
  */
-#define NFIBER_WAIT_WHILE(cond)         NFIBER_WAIT_UNTIL(!(cond))
+#define nfiber_wait_while(cond)         nfiber_wait_until(!(cond))
 
 /** @} */
 
@@ -250,8 +252,8 @@ struct nfiber
  *
  * \hideinitializer
  */
-#define NFIBER_WAIT(fiber_fn)                                               \
-    NFIBER_WAIT_UNTIL(nfiber_dispatch(fiber_fn) == NFIBER_TERMINATED)
+#define nfiber_call(fiber_fn)                                               \
+    nfiber_wait_until(nfiber_dispatch(fiber_fn) == NFIBER_TERMINATED)
 
 /** @} */
 
@@ -268,7 +270,7 @@ struct nfiber
  *
  * \hideinitializer
  */
-#define NFIBER_YIELD()		                                                \
+#define nfiber_yield()		                                                \
         NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_YIELDED, 1000u)
 
 /** @} */

@@ -38,11 +38,11 @@
 extern "C" {
 #endif
 
-struct nthread;
+struct ntask;
 
 struct np_thread_dispatch
 {
-    struct nthread * current;
+    struct ntask * current;
 };
 
 extern struct np_thread_dispatch ng_thread_dispatch;
