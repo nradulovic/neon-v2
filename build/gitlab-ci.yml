@@ -1,0 +1,38 @@
+
+stages:
+    - prepare
+    - build
+    - cleanup_build
+    - test
+    - cleanup
+
+before_script:
+    - sudo apt-get update -qq
+    - sudo apt-get install -qqy gcc-arm-none-eabi libnewlib-arm-none-eabi
+
+prepare_job:
+    stage: prepare
+    script:
+        - make cc_flags
+
+build_job:
+    stage: build
+    script:
+        - make
+
+cleanup_build_job:
+    stage: cleanup_build
+    script:
+        - make distclean
+    when: on_failure
+
+test_job:
+    stage: test
+    script:
+        - make test
+
+cleanup_job:
+    stage: cleanup
+    script:
+        - make clean
+    
