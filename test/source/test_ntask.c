@@ -20,19 +20,28 @@
 #include "task/ntask.h"
 #include "test_ntask.h"
 
-static NTASK(task_init(struct ntask * ts, void * arg))
+static struct ntask g_task_init;
+
+static NTASK(task_init_fn(struct ntask * task, void * arg))
 {
-	NTASK_BEGIN(ts);
+    (void)arg;
+
+	NTASK_BEGIN(task);
 	NTASK_END();
 }
 
 static void test_init(void)
 {
+    NTESTSUITE_EXPECT_UINT(NTASK_DORMANT);
+    ntask_init(&g_task_init, task_init_fn, NULL);
+    NTESTSUITE_ACTUAL_UINT(ntask_state(&g_task_init));
+    NTESTSUITE_EVALUATE();
 }
 
 void test_ntask(void)
 {
     NTESTSUITE_FIXTURE(none, NULL, NULL);
+
     NTESTSUITE_RUN(none, test_init);
     NTESTSUITE_PRINT_RESULTS(none);   
 }

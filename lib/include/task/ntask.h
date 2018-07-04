@@ -40,17 +40,46 @@
 extern "C" {
 #endif
 
+struct ntask;
+
+typedef uint_fast8_t (task_fn)(struct ntask * task, void * arg);
+
 struct ntask
 {
-	struct nfiber fiber;
-	uint_fast8_t state;
+    struct nfiber fiber;
+    task_fn * fn;
+    void * arg;
+    uint_fast8_t state;
 };
+
+#define NTASK_DORMANT               NFIBER_TERMINATED
+#define NTASK_READY                 NFIBER_YIELDED
+#define NTASK_BLOCKED               NFIBER_WAITING
     
-#define NTASK(func_call)    		NFIBER(func_call)
+#define NTASK(func_call)            NFIBER(func_call)
 
-#define NTASK_BEGIN(task)   		NFIBER_BEGIN(&(task)->fiber)
+#define NTASK_BEGIN(task)           NFIBER_BEGIN(&(task)->fiber)
 
-#define NTASK_END()			NFIBER_END()
+#define NTASK_END()                 NFIBER_END()
+
+#define ntask_yield()               nfiber_yield()
+
+#define ntask_init(a_task, a_task_fn, a_task_arg)                           \
+    do {                                                                    \
+        struct ntask * _self = (a_task);                                    \
+        nfiber_init(&_self->fiber);                                         \
+        _self->fn = (a_task_fn);                                            \
+        _self->arg = (a_task_arg);                                          \
+        _self->state = NFIBER_TERMINATED;                                   \
+    } while (0)
+
+#define ntask_dispatch(task)                                                \
+    do {                                                                    \
+        struct ntask * _self = (task);                                      \
+        _self->state = nfiber_dispatch(_self->fn(_self, _self->arg));       \
+    } while (0)
+
+#define ntask_state(task)           ((const struct ntask *)(task))->state
 
 #ifdef __cplusplus
 }
