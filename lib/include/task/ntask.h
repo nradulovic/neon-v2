@@ -34,6 +34,7 @@
 
 #include <stdint.h>
 
+#include "queue/nqueue_pqueue.h"
 #include "task/ntask_fiber.h"
 
 #ifdef __cplusplus
@@ -47,6 +48,7 @@ typedef uint_fast8_t (task_fn)(struct ntask * task, void * arg);
 struct ntask
 {
     struct nfiber fiber;
+    struct npqueue_node pnode;
     task_fn * fn;
     void * arg;
     uint_fast8_t state;
@@ -64,10 +66,11 @@ struct ntask
 
 #define ntask_yield()               nfiber_yield()
 
-#define ntask_init(a_task, a_task_fn, a_task_arg)                           \
+#define ntask_init(a_task, a_task_fn, a_task_arg, a_prio)                   \
     do {                                                                    \
         struct ntask * _self = (a_task);                                    \
         nfiber_init(&_self->fiber);                                         \
+        npqueue_node_init(&_self->pnode, (a_prio));                         \
         _self->fn = (a_task_fn);                                            \
         _self->arg = (a_task_arg);                                          \
         _self->state = NFIBER_TERMINATED;                                   \
@@ -80,6 +83,8 @@ struct ntask
     } while (0)
 
 #define ntask_state(task)           ((const struct ntask *)(task))->state
+
+#define ntask_priority(task)        npqueue_node_priority(&(task)->pnode)
 
 #ifdef __cplusplus
 }
