@@ -34,6 +34,7 @@
 
 #include <stdint.h>
 
+#include "port/nport_platform.h"
 #include "queue/nqueue_pqueue.h"
 #include "task/ntask_fiber.h"
 
@@ -66,25 +67,30 @@ struct ntask
 
 #define ntask_yield()               nfiber_yield()
 
-#define ntask_init(a_task, a_task_fn, a_task_arg, a_prio)                   \
-    do {                                                                    \
-        struct ntask * _self = (a_task);                                    \
-        nfiber_init(&_self->fiber);                                         \
-        npqueue_node_init(&_self->pnode, (a_prio));                         \
-        _self->fn = (a_task_fn);                                            \
-        _self->arg = (a_task_arg);                                          \
-        _self->state = NFIBER_TERMINATED;                                   \
-    } while (0)
+void ntask_init(struct ntask * task, task_fn * fn, void * arg, 
+        uint_fast8_t prio);
 
-#define ntask_dispatch(task)                                                \
-    do {                                                                    \
-        struct ntask * _self = (task);                                      \
-        _self->state = nfiber_dispatch(_self->fn(_self, _self->arg));       \
-    } while (0)
+NPLATFORM_INLINE
+void ntask_dispatch(struct ntask * task)
+{
+    task->state = nfiber_dispatch(task->fn(task, task->arg));
+}
 
-#define ntask_state(task)           ((const struct ntask *)(task))->state
+NPLATFORM_INLINE
+uint_fast8_t ntask_state(const struct ntask * task)
+{
+    return (task->state);
+}
 
-#define ntask_priority(task)        npqueue_node_priority(&(task)->pnode)
+NPLATFORM_INLINE
+uint_fast8_t ntask_priority(const struct ntask * task)
+{
+    return (npqueue_node_priority(&(task)->pnode));
+}
+
+void ntask_ready(struct ntask * task);
+
+struct ntask * ntask_block(struct ntask * task);
 
 #ifdef __cplusplus
 }

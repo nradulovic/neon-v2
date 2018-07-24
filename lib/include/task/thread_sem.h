@@ -3,20 +3,22 @@
 #define NEON_THREAD_SEM_H_
 
 #include "port/nport_platform.h"
-#include "thread/nthread.h"
+#include "task/ntask.h"
+#include "queue/nqueue_pqueue.h"
 
-enum np_thread_sem_state
+enum nsem_state
 {
-    NP_THREAD_SEM_STATE_INIT,
-    NP_THREAD_SEM_STATE_ACTIVE,
-    NP_THREAD_SEM_STATE_INACTIVE,
-    NP_THREAD_SEM_STATE_TERMINATED
+    NSEM_STATE_INIT,
+    NSEM_STATE_ACTIVE = 0x1,
+    NSEM_STATE_INACTIVE = 0x2,
+    NSEM_STATE_TERMINATED = 0xDEADC0DE,
 };
 
-struct pt_sem
+struct nsem
 {
     int32_t count;
-    enum np_thread_sem_state state;
+    struct npqueue queue;
+    enum nsem_state state;
 };
 
 /**
@@ -27,17 +29,18 @@ struct pt_sem
  * represent the counter, and therefore the "count" argument should be
  * within range of an unsigned int.
  *
- * \param s (struct pt_sem *) A pointer to the pt_sem struct
+ * \param s (struct nsem *) A pointer to the nsem struct
  * representing the semaphore
  *
  * \param c (unsigned int) The initial count of the semaphore.
  * \hideinitializer
  */
 NPLATFORM_INLINE
-void pt_sem_init(struct pt_sem * sem, uint32_t count)
+void nsem_init(struct nsem * sem, uint32_t count)
 {
     sem->count = count;
-    sem->state = NP_THREAD_SEM_STATE_ACTIVE;
+    npqueue_init(&sem->queue);
+    sem->state = NSEM_STATE_ACTIVE;
 }
 
 /**
@@ -51,24 +54,30 @@ void pt_sem_init(struct pt_sem * sem, uint32_t count)
  * \param pt (struct pt *) A pointer to the protothread (struct pt) in
  * which the operation is executed.
  *
- * \param s (struct pt_sem *) A pointer to the pt_sem struct
+ * \param s (struct nsem *) A pointer to the nsem struct
  * representing the semaphore
  *
  * \hideinitializer
  */
-#define PT_SEM_WAIT(s)	\
-    NP_FIBER_EXEC(np_pt_sem_wait_preexec(s), true, np_pt_sem_wait_postexec(s))
+#define nsem_wait(s)            nfiber_wait_while(np_sem_wait(s))
 
 #define nerror ((struct nthread_tls * )pt_tls)->error
 
 NPLATFORM_INLINE
-bool np_pt_sem_wait(struct pt_sem * sem)
+bool np_sem_wait(struct nsem * sem)
 {
     bool is_switch_pending = false;
     
-    if (false/*TODO: Maybe semaphore was deleted in the mean time? */) {
-        nerror = -ESTD_ABORT;
-        return (is_switch_pending);
+    switch (sem->state) {
+        case NSEM_STATE_ACTIVE:
+        case NSEM_STATE_INACTIVE:
+            break;
+        case NSEM_STATE_TERMINATED:
+            nerror = -ESTD_ABORT;
+            return (is_switch_pending);
+        default:
+            nerror = -ESTD_INVAL;
+            return (is_switch_pending);
     }
     
     if (sem->count > 0) {
@@ -98,17 +107,18 @@ struct nthread_tls
  * \param pt (struct pt *) A pointer to the protothread (struct pt) in
  * which the operation is executed.
  *
- * \param s (struct pt_sem *) A pointer to the pt_sem struct
+ * \param s (struct nsem *) A pointer to the nsem struct
  * representing the semaphore
  *
  * \hideinitializer
  */
 #define PT_SEM_SIGNAL(s)                                                    \
     do {                                                                    \
-        struct pt_sem * l_npt_sem = (s);                                    \
+        struct nsem * l_npt_sem = (s);                                    \
         l_npt_sem->count++; \
         if (l_npt_sem->count > 1) {                                        \
         }                                                                   \
+        if (false/* Ask scheduler should we yield */) \
         PT_YIELD();                                                         \
     } while (0)
 

@@ -40,7 +40,7 @@
 extern "C" {
 #endif
 
-/** @brief		Base type.
+/** @brief    	Base type.
  * 
  *  In case when we want speed, change the base type to some more optimal size.
  */
@@ -50,70 +50,70 @@ extern "C" {
 #define NP_LQUEUE_BASE_TYPE uint8_t
 #endif
 
-/** @brief		Lightweight base structure.
+/** @brief    	Lightweight base structure.
  *  @notapi
  */
 struct np_lqueue_base
 {
-	NP_LQUEUE_BASE_TYPE head;
+    NP_LQUEUE_BASE_TYPE head;
     NP_LQUEUE_BASE_TYPE tail;
     NP_LQUEUE_BASE_TYPE empty;
-	NP_LQUEUE_BASE_TYPE mask;
+    NP_LQUEUE_BASE_TYPE mask;
 };
 
-/** @brief		Lightweight queue custom structure.
+/** @brief    	Lightweight queue custom structure.
  *  
  *  Contains the Base structure and buffer of type @a T with @a elements
  *  number of elements in that buffer. The buffer contains only pointers
  *  to items, not the actual items. This macro should be used to define a
  *  custom @a nlqueue structure.
  *  
- *  @param		T
- *				Type of items in this queue.
- *  @param		elements
- *				Number of elements in queue buffer.
+ *  @param    	T
+ *    			Type of items in this queue.
+ *  @param    	elements
+ *    			Number of elements in queue buffer.
  *
- *  @note		The macro can accept the parameter @a elements which is
+ *  @note    	The macro can accept the parameter @a elements which is
  *              greater than 2 and equal to a number which is power of 2.
  *  @api
  */
-#define nlqueue(T, elements) 												\
-	struct nlqueue_ ## T { 													\
-		struct np_lqueue_base base; 										\
-		T np_qb_buffer[	((elements < 2) || !NBITS_IS_POWEROF2(elements)) ?  \
-			-1 : elements]; 												\
-	}
+#define nlqueue(T, elements)     											\
+    struct nlqueue_ ## T { 													\
+    	struct np_lqueue_base base; 										\
+    	T np_qb_buffer[	((elements < 2) || !NBITS_IS_POWEROF2(elements)) ?  \
+    		-1 : elements]; 												\
+    }
 
 /** @brief      Initialize a queue structure
  *  @api
  */
-#define NLQUEUE_INIT(Q) 													\
-	np_lqueue_base_init(&(Q)->base, 									    \
-			sizeof((Q)->np_qb_buffer) / sizeof((Q)->np_qb_buffer[0]))
+#define NLQUEUE_INIT(Q)     												\
+    np_lqueue_base_init(&(Q)->base, 									    \
+    		sizeof((Q)->np_qb_buffer) / sizeof((Q)->np_qb_buffer[0]))
 
 /** @brief      Put an item to queue in FIFO mode.
  *  @note       Before calling this function ensure that queue is not full, see
- * 				@ref nqueue_is_full.
+ *     			@ref nqueue_is_full.
  *  @api
  */
-#define NLQUEUE_PUT_FIFO(Q, item) 											\
-	(Q)->np_qb_buffer[np_lqueue_base_put_fifo(&(Q)->base)] = (item)
+#define NLQUEUE_PUT_FIFO(Q, item)     										\
+    (Q)->np_qb_buffer[np_lqueue_base_put_fifo(&(Q)->base)] = (item)
 
 /** @brief      Put an item to queue in LIFO mode.
  *  @note       Before calling this function ensure that queue is not full, see
- * 				@ref nqueue_is_full.
+ *     			@ref nqueue_is_full.
  *  @api
  */
-#define NLQUEUE_PUT_LIFO(Q, item) 											\
-	(Q)->np_qb_buffer[np_lqueue_base_put_lifo(&(Q)->base)] = (item)
+#define NLQUEUE_PUT_LIFO(Q, item)     										\
+    (Q)->np_qb_buffer[np_lqueue_base_put_lifo(&(Q)->base)] = (item)
 
 /** @brief      Get an item from the queue buffer.
  *  @note       Before calling this function ensure that queue has an item. See 
  *              @ref nqueue_is_empty.
  *  @api
  */ 
-#define NLQUEUE_GET(Q)														\
-	(Q)->np_qb_buffer[np_lqueue_base_get(&(Q)->base)]
+#define NLQUEUE_GET(Q)    													\
+    (Q)->np_qb_buffer[np_lqueue_base_get(&(Q)->base)]
 
 /** @brief      Peek to queue head; the item is not removed from queue.
  *  
@@ -122,70 +122,70 @@ struct np_lqueue_base
  *
  *  @api
  */
-#define NLQUEUE_HEAD(Q)														\
-	(Q)->np_qb_buffer[np_lqueue_base_head(&(Q)->base)]
+#define NLQUEUE_HEAD(Q)    													\
+    (Q)->np_qb_buffer[np_lqueue_base_head(&(Q)->base)]
 
-#define NLQUEUE_TAIL(Q)														\
-	(Q)->np_qb_buffer[np_lqueue_base_tail(&(Q)->base)]
+#define NLQUEUE_TAIL(Q)    													\
+    (Q)->np_qb_buffer[np_lqueue_base_tail(&(Q)->base)]
 
-/** @brief     	Returns the buffer size in number of elements.
+/** @brief         Returns the buffer size in number of elements.
  *  @api
  */
-#define NLQUEUE_SIZE(Q)					(Q)->base.mask + 1u
+#define NLQUEUE_SIZE(Q)    				(Q)->base.mask + 1u
 
 /** @brief      Returns the current number of free elements in queue buffer.
  *  @api
  */
-#define NLQUEUE_EMPTY(Q)				(Q)->base.empty
+#define NLQUEUE_EMPTY(Q)    			(Q)->base.empty
 
 /** @brief      Return true if queue is full else false.
  *  @api
  */
-#define NLQUEUE_IS_FULL(Q)				(!NLQUEUE_EMPTY(Q))
+#define NLQUEUE_IS_FULL(Q)    			(!NLQUEUE_EMPTY(Q))
 
-/** @brief   	Return true if queue is empty else false.
- * 	@api
+/** @brief       Return true if queue is empty else false.
+ *     @api
  */
-#define NLQUEUE_IS_EMPTY(Q)													\
-	(NLQUEUE_EMPTY(Q) == NLQUEUE_SIZE(Q))
+#define NLQUEUE_IS_EMPTY(Q)    												\
+    (NLQUEUE_EMPTY(Q) == NLQUEUE_SIZE(Q))
 
 NPLATFORM_INLINE
 void np_lqueue_base_init(struct np_lqueue_base * qb, uint32_t elements)
 {
-	qb->head = 0u;
-	qb->tail = 0u;
-	qb->empty = elements;
-	qb->mask = elements - 1u;
+    qb->head = 0u;
+    qb->tail = 0u;
+    qb->empty = elements;
+    qb->mask = elements - 1u;
 }
 
 NPLATFORM_INLINE
 uint32_t np_lqueue_base_put_fifo(struct np_lqueue_base * qb)
 {
-	qb->tail--;
-	qb->tail &= qb->mask;
+    qb->tail--;
+    qb->tail &= qb->mask;
     qb->empty--;
-	
-	return (qb->tail);
+    
+    return (qb->tail);
 }
 
 NPLATFORM_INLINE
 uint32_t np_lqueue_base_put_lifo(struct np_lqueue_base * qb)
 {
-	uint32_t retval;
-	
-	retval = qb->head++;
+    uint32_t retval;
+    
+    retval = qb->head++;
     qb->head &= qb->mask;
     qb->empty--;
-	
-	return (retval);
+    
+    return (retval);
 }
 
 NPLATFORM_INLINE
 uint32_t np_lqueue_base_get(struct np_lqueue_base * qb)
 {
-	uint32_t retval;
+    uint32_t retval;
 
-	retval = qb->tail++;
+    retval = qb->tail++;
     qb->tail &= qb->mask;
     qb->empty++;
 
@@ -197,7 +197,7 @@ uint32_t np_lqueue_base_head(const struct np_lqueue_base * qb)
 {
     uint32_t real_head;
     
-	real_head = qb->head;
+    real_head = qb->head;
     real_head--;
     real_head &= qb->mask;
     

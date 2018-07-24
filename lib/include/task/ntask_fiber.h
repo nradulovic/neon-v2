@@ -173,7 +173,7 @@ struct nfiber
  *
  * \hideinitializer
  */
-#define nfiber_exit()				                                        \
+#define nfiber_exit()    			                                        \
     NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_TERMINATED, 2000u);
 
 /** @} */
@@ -214,9 +214,9 @@ struct nfiber
  *
  * \hideinitializer
  */
-#define nfiber_wait_until(condition)	                                    \
-    while (!(condition)) {				                                    \
-        NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_WAITING, 0u);			    \
+#define nfiber_wait_until(condition)                                        \
+    while (!(condition)) {    			                                    \
+        NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_WAITING, 0u);    		    \
     }
 
 /**
@@ -270,7 +270,7 @@ struct nfiber
  *
  * \hideinitializer
  */
-#define nfiber_yield()		                                                \
+#define nfiber_yield()    	                                                \
         NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_YIELDED, 1000u)
 
 /** @} */

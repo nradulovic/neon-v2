@@ -46,7 +46,7 @@ extern "C" {
  *  @{
  */
 
-/** @brief		Priority sorted queue structure.
+/** @brief    	Priority sorted queue structure.
  *  @api
  */
 struct npqueue
@@ -54,7 +54,7 @@ struct npqueue
     struct nlist_dll sentinel;
 };
 
-/** @brief		Priority sorted queue node structure.
+/** @brief    	Priority sorted queue node structure.
  *
  *  Each node has a priority attribute. The attribute type is 8-bit unsigned
  *  integer. The highest priority has the value 255. The lowest priority has
@@ -75,10 +75,10 @@ struct npqueue_node
  *  @{
  */
 
-/** @brief		Convert a list entry to node entry.
- *  @param 		node
- *  			Pointer to node member of priority sorted queue node structure.
- *  @return		Pointer to priority queue node structure.
+/** @brief    	Convert a list entry to node entry.
+ *  @param     	node
+ *      		Pointer to node member of priority sorted queue node structure.
+ *  @return    	Pointer to priority queue node structure.
  *  @api
  */
 NPLATFORM_INLINE
@@ -87,18 +87,18 @@ struct npqueue_node * npqueue_from_list(struct nlist_dll * node)
     return (NLIST_ENTRY(node, struct npqueue_node, node));
 }
 
-/** @brief		Initialize a node and define its priority.
+/** @brief    	Initialize a node and define its priority.
  *
  *  A node structure needs to be initialized before it can be used within a
  *  queue.
  *
- *  @param 		node
- *  			Pointer to a node structure.
+ *  @param     	node
+ *      		Pointer to a node structure.
  *  @param      priority
- *  			An 8-bit unsigned integer number specifying this node priority.
- *  			The highest priority has the value 255. The lowest priority has
- *  			the value is 0.
- *  @return		The pointer @a node.
+ *      		An 8-bit unsigned integer number specifying this node priority.
+ *      		The highest priority has the value 255. The lowest priority has
+ *      		the value is 0.
+ *  @return    	The pointer @a node.
  */
 NPLATFORM_INLINE
 struct npqueue_node * npqueue_node_init(struct npqueue_node * node,
@@ -109,12 +109,12 @@ struct npqueue_node * npqueue_node_init(struct npqueue_node * node,
     return (node);
 }
 
-/** @brief		Terminate a node.
+/** @brief    	Terminate a node.
  *
  *  The function will re-initialize the node and set the priority to zero.
  *
- *  @param 		node
- *  			Pointer to a node structure.
+ *  @param     	node
+ *      		Pointer to a node structure.
  */
 NPLATFORM_INLINE
 void npqueue_node_term(struct npqueue_node * node)
@@ -152,7 +152,7 @@ uint_fast8_t npqueue_node_priority(const struct npqueue_node * node)
  */
 NPLATFORM_INLINE
 uint_fast8_t npqueue_node_mod_priority(struct npqueue_node * node,
-		uint_fast8_t priority)
+    	uint_fast8_t priority)
 {
     uint_fast8_t retval;
     
@@ -187,18 +187,7 @@ void npqueue_init(struct npqueue * queue)
  *              Pointer to node structure.
  *  @api
  */
-NPLATFORM_INLINE
-void npqueue_insert(struct npqueue * queue, struct npqueue_node * node)
-{
-    struct nlist_dll * current;
-
-    for (NLIST_DLL_EACH(current, &queue->sentinel)) {
-        if (npqueue_from_list(current)->priority < node->priority) {
-            break;
-        }
-    }
-    nlist_dll_add_after(current, &node->node);
-}
+void npqueue_insert(struct npqueue * queue, struct npqueue_node * node);
 
 /** @brief      Remove the node from queue.
  *  @param      node
@@ -222,7 +211,7 @@ void npqueue_remove(struct npqueue_node * node)
 NPLATFORM_INLINE
 bool npqueue_is_empty(const struct npqueue * queue)
 {
-	return (nlist_dll_is_empty(&queue->sentinel));
+    return (nlist_dll_is_empty(&queue->sentinel));
 }
 
 /** @brief      Return a pointer to a node with highest priority node in queue.

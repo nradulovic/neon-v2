@@ -32,10 +32,10 @@ static void test_none_init(void)
 {
     static nlqueue(uint32_t, 16) my_queue;
 
-	/* NOTE:
-	 * Compile time test only. Ensure that the expected is equal to actual
-	 * value.
-	 */
+    /* NOTE:
+     * Compile time test only. Ensure that the expected is equal to actual
+     * value.
+     */
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(true);
     NLQUEUE_INIT(&my_queue);
@@ -178,15 +178,15 @@ static void test_full_size(void)
 
 static void test_full_is_full(void)
 {
-	NTESTSUITE_EXPECT_BOOL(true);
+    NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(NLQUEUE_IS_FULL(&g_test_queue));
     NTESTSUITE_EVALUATE();
 }
 
 static void test_full_is_empty(void)
 {
-	NTESTSUITE_EXPECT_BOOL(false);
-	NTESTSUITE_ACTUAL_BOOL(NLQUEUE_IS_EMPTY(&g_test_queue));
+    NTESTSUITE_EXPECT_BOOL(false);
+    NTESTSUITE_ACTUAL_BOOL(NLQUEUE_IS_EMPTY(&g_test_queue));
     NTESTSUITE_EVALUATE();
 }
 
@@ -198,17 +198,17 @@ static void setup_empty(void)
 static void setup_nonempty(void)
 {
     NLQUEUE_INIT(&g_test_queue);
-	NLQUEUE_PUT_FIFO(&g_test_queue, 1);
-	NLQUEUE_PUT_FIFO(&g_test_queue, 2);
+    NLQUEUE_PUT_FIFO(&g_test_queue, 1);
+    NLQUEUE_PUT_FIFO(&g_test_queue, 2);
 }
 
 static void setup_full(void)
 {
     NLQUEUE_INIT(&g_test_queue);
-	NLQUEUE_PUT_FIFO(&g_test_queue, 1);
-	NLQUEUE_PUT_FIFO(&g_test_queue, 2);
-	NLQUEUE_PUT_FIFO(&g_test_queue, 3);
-	NLQUEUE_PUT_FIFO(&g_test_queue, 4);
+    NLQUEUE_PUT_FIFO(&g_test_queue, 1);
+    NLQUEUE_PUT_FIFO(&g_test_queue, 2);
+    NLQUEUE_PUT_FIFO(&g_test_queue, 3);
+    NLQUEUE_PUT_FIFO(&g_test_queue, 4);
 }
 
 void test_nqueue_lqueue(void)

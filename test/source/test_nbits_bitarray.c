@@ -37,10 +37,10 @@ static void test_none_init(void)
 {
     struct nbitarray a_instance;
 
-	/* NOTE:
-	 * Compile time test only. Ensure that the expected is equal to actual
-	 * value.
-	 */
+    /* NOTE:
+     * Compile time test only. Ensure that the expected is equal to actual
+     * value.
+     */
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(true);
     nbitarray_init(&a_instance);

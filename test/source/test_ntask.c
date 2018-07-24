@@ -27,17 +27,17 @@ static NTASK(task_init_fn(struct ntask * task, void * arg))
 {
     (void)arg;
 
-	NTASK_BEGIN(task);
-	NTASK_END();
+    NTASK_BEGIN(task);
+    NTASK_END();
 }
 
 static NTASK(task_yield_fn(struct ntask * task, void * arg))
 {
     (void)arg;
 
-	NTASK_BEGIN(task);
+    NTASK_BEGIN(task);
     ntask_yield();
-	NTASK_END();
+    NTASK_END();
 }
 
 static void test_init(void)

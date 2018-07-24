@@ -68,12 +68,12 @@ extern "C" {
  *  @api
  */
 #if (NDEBUG_IS_ENABLED == 1)
-#define NASSERT(expr)                                                     	\
-    if (!(expr)) {                                                       	\
-		NASSERT_ALWAYS(# expr);												\
+#define NASSERT(expr)                                                         \
+    if (!(expr)) {                                                           \
+    	NASSERT_ALWAYS(# expr);												\
     }
 #else
-#define NASSERT(expr)               	(void)0
+#define NASSERT(expr)                   (void)0
 #endif
 
 /** @brief      Assert macro that will always execute (no conditional).
@@ -86,14 +86,14 @@ extern "C" {
  *  @api
  */
 #if (NDEBUG_IS_ENABLED == 1)
-#define NASSERT_ALWAYS(text)                                             	\
-	do {																	\
-		nlogger_err("Failed assert %s at %s:%u in %s\n", text, 				\
-			NPLATFORM_FUNC, NPLATFORM_LINE, NPLATFORM_FILE);				\
-		narch_cpu_stop();													\
-	} while (0)
+#define NASSERT_ALWAYS(text)                                                 \
+    do {																	\
+    	nlogger_err("Failed assert %s at %s:%u in %s\n", text, 				\
+    		NPLATFORM_FUNC, NPLATFORM_LINE, NPLATFORM_FILE);				\
+    	narch_cpu_stop();													\
+    } while (0)
 #else
-#define NASSERT_ALWAYS(text)         	(void)0
+#define NASSERT_ALWAYS(text)             (void)0
 #endif
 
 /**@} */
@@ -119,7 +119,7 @@ extern "C" {
  *              Expression : C expression : condition which must be 'true'.
  *  @api
  */
-#define NREQUIRE(expr)               	NASSERT(expr)
+#define NREQUIRE(expr)                   NASSERT(expr)
 
 /** @brief      Make sure the callee has fulfilled all contract postconditions
  *  @param      expr
@@ -130,7 +130,7 @@ extern "C" {
 
 /**@} */
 /*---------------------------------------------------------------------------*/
-/** @defgroup	debug_internal Internal checking
+/** @defgroup    debug_internal Internal checking
  *  @brief      These macros are enabled/disabled using the option
  *              @ref NCONFIG_ENABLE_NDEBUG.
  *  @{ */
@@ -140,7 +140,7 @@ extern "C" {
  *              Expression : C expression : condition which must be 'true'.
  *  @api
  */
-#define NASSERT_INTERNAL(expr)        	NASSERT(expr)
+#define NASSERT_INTERNAL(expr)            NASSERT(expr)
 
 /**@} */
 /*---------------------------------------------------------------------------*/
@@ -162,15 +162,15 @@ extern "C" {
 #define NSIGNATURE_DEFER                    ((unsigned int)0xdeadfeefu)
 
 #if (NDEBUG_IS_ENABLED == 1)
-#define NSIGNATURE_DECLARE                 	int _signature;
+#define NSIGNATURE_DECLARE                     int _signature;
 #define NSIGNATURE_INITIALIZER(signature)   ._signature = signature,
 #else
 #define NSIGNATURE_DECLARE
 #define NSIGNATURE_INITIALIZER(signature)   
 #endif
 
-#define NSIGNATURE_OF(object)				((object) ? (object)->_signature : 0)
-#define NSIGNATURE_IS(object, signature)	(object)->_signature = (signature)
+#define NSIGNATURE_OF(object)    			((object) ? (object)->_signature : 0)
+#define NSIGNATURE_IS(object, signature)    (object)->_signature = (signature)
 
 /** @} */
 #ifdef __cplusplus
