@@ -48,3 +48,6 @@ documentation/doxyfile_version
 
 # Ignore generated folders
 **/generated/
+
+# Ignore application related folders
+app_*/
