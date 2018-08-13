@@ -16,22 +16,68 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# The PROJECTS variable contains paths to all projects.
-PROJECTS += test
-PROJECTS += templates/app_hello_world
+# Generic rules
 
 .PHONY: all
-all:
-	@for p in $(PROJECTS); do $(MAKE) -C $${p} all; done
+all: apps templates tests
  
 .PHONY: clean
-clean:
-	@for p in $(PROJECTS); do $(MAKE) -C $${p} clean; done
+clean: apps-clean templates-clean tests-clean
 
 .PHONY: distclean
-distclean:
-	@for p in $(PROJECTS); do $(MAKE) -C $${p} distclean; done
+distclean: apps-distclean templates-distclean tests-distclean
 
 .PHONY: test
 test: all
 	@./test/generated/test.elf
+
+# Application handling
+
+.PHONY: apps
+apps:
+	@for app in apps/app_*/; \
+    do \
+        if [ -d $app ]; then $(MAKE) -C $${app} all; fi; \
+    done
+
+.PHONY: apps-clean
+apps-clean:
+	@for app in apps/app_*/; \
+    do \
+        if [ -d $app ]; then $(MAKE) -C $${app} clean; fi; \
+    done
+
+.PHONY: apps-distclean
+apps-distclean:
+	@for app in apps/app_*/; \
+    do \
+        if [ -d $app ]; then $(MAKE) -C $${app} distclean; fi; \
+    done
+
+# Template handling
+
+.PHONY: templates
+templates:
+	@for template in templates/app_*/; do $(MAKE) -C $${template} all; done
+
+.PHONY: templates-clean
+templates-clean:
+	@for template in templates/app_*/; do $(MAKE) -C $${template} clean; done
+
+.PHONY: templates-distclean
+templates-distclean:
+	@for template in templates/app_*/; do $(MAKE) -C $${template} distclean; done
+
+# Tests handling
+
+.PHONY: tests
+tests:
+	@$(MAKE) -C test all; done
+
+.PHONY: tests-clean
+tests-clean:
+	@$(MAKE) -C test clean; done
+
+.PHONY: tests-distclean
+tests-distclean:
+	@$(MAKE) -C test distclean; done
