@@ -16,3 +16,6 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
+$(call check_defined, INCLUDE_LIB_NPORT, Include library component NPORT)
+
+INCLUDE_LIB_DEBUG=1

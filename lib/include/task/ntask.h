@@ -53,7 +53,20 @@ struct ntask
     task_fn * fn;
     void * arg;
     uint_fast8_t state;
+    struct ntask_tls
+    {
+        uint32_t error;
+    } tls;
 };
+
+struct np_thread_dispatch
+{
+    struct ntask * current;
+};
+
+extern struct np_thread_dispatch ng_thread_dispatch;
+
+#define ng_current  ng_thread_dispatch.current
 
 #define NTASK_DORMANT               NFIBER_TERMINATED
 #define NTASK_READY                 NFIBER_YIELDED
@@ -85,12 +98,14 @@ uint_fast8_t ntask_state(const struct ntask * task)
 NPLATFORM_INLINE
 uint_fast8_t ntask_priority(const struct ntask * task)
 {
-    return (npqueue_node_priority(&(task)->pnode));
+    return (npqueue_node_priority(&task->pnode));
 }
 
 void ntask_ready(struct ntask * task);
 
 struct ntask * ntask_block(struct ntask * task);
+
+#define nerror  ng_current->tls.error
 
 #ifdef __cplusplus
 }

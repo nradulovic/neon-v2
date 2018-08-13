@@ -37,21 +37,21 @@ test: all
 apps:
 	@for app in apps/app_*/; \
     do \
-        if [ -d $app ]; then $(MAKE) -C $${app} all; fi; \
+        if [ -d $${app} ]; then $(MAKE) -C $${app} all; fi; \
     done
 
 .PHONY: apps-clean
 apps-clean:
 	@for app in apps/app_*/; \
     do \
-        if [ -d $app ]; then $(MAKE) -C $${app} clean; fi; \
+        if [ -d $${app} ]; then $(MAKE) -C $${app} clean; fi; \
     done
 
 .PHONY: apps-distclean
 apps-distclean:
 	@for app in apps/app_*/; \
     do \
-        if [ -d $app ]; then $(MAKE) -C $${app} distclean; fi; \
+        if [ -d $${app} ]; then $(MAKE) -C $${app} distclean; fi; \
     done
 
 # Template handling

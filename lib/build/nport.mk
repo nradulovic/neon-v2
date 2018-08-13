@@ -16,6 +16,8 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
+INCLUDE_LIB_NPORT=1
+
 # Some defaults if they are not alredy given.
 BOARD ?= generic
 MCU ?= generic

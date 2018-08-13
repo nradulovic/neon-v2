@@ -100,14 +100,8 @@ struct npqueue_node * npqueue_from_list(struct nlist_dll * node)
  *      		the value is 0.
  *  @return    	The pointer @a node.
  */
-NPLATFORM_INLINE
 struct npqueue_node * npqueue_node_init(struct npqueue_node * node,
-        uint_fast8_t priority)
-{
-    npqueue_from_list(nlist_dll_init(&node->node))->priority = priority;
-
-    return (node);
-}
+        uint_fast8_t priority);
 
 /** @brief    	Terminate a node.
  *
@@ -116,12 +110,7 @@ struct npqueue_node * npqueue_node_init(struct npqueue_node * node,
  *  @param     	node
  *      		Pointer to a node structure.
  */
-NPLATFORM_INLINE
-void npqueue_node_term(struct npqueue_node * node)
-{
-    nlist_dll_init(&node->node);
-    node->priority = 0u;
-}
+void npqueue_node_term(struct npqueue_node * node);
 
 /** @brief      Get a node priority.
  *  @param      node

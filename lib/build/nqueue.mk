@@ -16,4 +16,6 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
+ENABLE_LIB_NQUEUE=1
+
 CC_SOURCES += lib/source/npqueue.c

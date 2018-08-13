@@ -41,6 +41,11 @@
 extern "C" {
 #endif
 
+/** @brief      Maximum number of bits in bitarray.
+ *  @api
+ */
+#define NBITARRAY_BITS 32
+
 struct nbitarray
 {
     uint32_t bits;

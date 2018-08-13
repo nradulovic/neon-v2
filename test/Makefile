@@ -29,6 +29,7 @@ include $(WS)/lib/build/ndebug.mk
 include $(WS)/lib/build/nbits.mk
 include $(WS)/lib/build/ntestsuite.mk
 include $(WS)/lib/build/nqueue.mk
+include $(WS)/lib/build/nerror.mk
 include $(WS)/lib/build/ntask.mk
 
 # Project name, this will be used as output binary file name.

@@ -16,8 +16,6 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-$(call check_defined, ENABLE_LIB_NPORT, Include library component NPORT)
-$(call check_defined, ENABLE_LIB_NQUEUE, Include library component NQUEUE)
-$(call check_defined, ENABLE_LIB_NERROR, Include library component NERROR)
+$(call check_defined, INCLUDE_LIB_NPORT, Include library component NPORT)
 
-CC_SOURCES += lib/source/ntask.c
+INCLUDE_LIB_NERROR=1

@@ -16,17 +16,30 @@
 
 ## 1. Introduction
 Neon is a real-time kernel for deply embedded microcontrollers. For
-details about Neon design refer to [documentation/neon_design.md].
+details about Neon design refer to [documentation/neon_design.md]. It
+enforces a specific coding scheme and programming paradigm.
+
+The documentation is currently minimal so refer to `template` folder for
+examples.
+
+Neon software provides:
+ - multithreaded like execution using cooperative scheduling. The mechanics to
+   provide the concurent execution is heavilly inspired by Adam Dunkels 
+   protothreads.
+ - dynamic memory allocation. It tries not to replace the standard C library
+   malloc, but adds other ways of managing RAM memory.
+ - Hardware Abstraction Layer
+ - Virtual Timers
 
 ---
 ## 2. License
-The software is distributed under open source GNU LESSER GENERAL PUBLIC LICENSE
-Version 3. A copy of license file is found in [lgpl-3.0.md].
+The software is distributed under open source GNU LESSER GENERAL PUBLIC
+LICENSE Version 3. A copy of license file is found in [lgpl-3.0.md].
 
 ---
 ## 3. Platforms supported
-Several platforms are supported. In order to manage different configurations, a
-few flags have been introduced:
+Several platforms are supported. In order to manage different
+configurations, a few flags are available:
  - `PLATFORM` - describes the development platfrom being used. For example,
    GCC or ARM CC compiler.
  - `ARCH` - describes the target MCU CPU core architecture, like x86 or 
@@ -58,8 +71,8 @@ Information on coding standard used in the project can be found in
 ## 6. Documentation
 The documentations consists of multiple ``.md`` files (plain text) and Doxygen
 related files. The doxygen tools is used to generate API reference in HTML and
-PDF documents. Please, refer to [documentation/documentation.md] for build
-instructions.
+PDF documents. Please, refer to [documentation/documentation.md] for
+instructions how to build additional documentation files.
 
 ---
 ## 7. Support
