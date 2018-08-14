@@ -29,7 +29,7 @@ check_defined = \
         $(if $(value $1),, \
               $(error Undefined $1$(if $2, ($2))))
 
-$(call check_defined, WS, WS is relative path to nbase project)
+$(call check_defined, WS, WS is relative path to Neon build directory)
 
 # Documentation defaults
 DEF_DOX_O        = documentation/generated

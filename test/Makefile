@@ -15,6 +15,7 @@
 #
 
 # Relative path to common build directory.
+ROOT_DIR = test
 WS = ..
 
 # Common build script, contains common build rules and variables.
@@ -36,10 +37,10 @@ include $(WS)/lib/build/ntask.mk
 PROJECT_NAME := test
 
 # Project configuration header file.
-PROJECT_CONFIG := include/neon_config.h
+PROJECT_CONFIG := test/include/neon_config.h
 
 # List additional C header include paths.
-CC_INCLUDES += test/include
+CC_INCLUDES += include
 
 # List additional C source files. Files which are not listed here will not be
 # compiled.

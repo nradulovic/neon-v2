@@ -22,7 +22,7 @@ LIB_BUILD_NLIB_MK=1
 
 NCONFIG_GIT_VERSION := "$(shell git describe --abbrev=7 --always --dirty --tags 2>/dev/null || echo unknown)"
 
-CC_INCLUDES += lib/include
+CC_INCLUDES += $(WS)/lib/include
 CC_INCLUDES += $(BUILD_DIR)
 CC_DEFINES += NCONFIG_GIT_VERSION=\"$(NCONFIG_GIT_VERSION)\"
 CC_CONFIG_FILE = $(BUILD_DIR)/neon_config.h

@@ -19,13 +19,13 @@
 # Generic rules
 
 .PHONY: all
-all: apps templates tests
+all: apps tests
  
 .PHONY: clean
-clean: apps-clean templates-clean tests-clean
+clean: apps-clean tests-clean
 
 .PHONY: distclean
-distclean: apps-distclean templates-distclean tests-distclean
+distclean: apps-distclean tests-distclean
 
 .PHONY: test
 test: all
@@ -53,20 +53,6 @@ apps-distclean:
     do \
         if [ -d $${app} ]; then $(MAKE) -C $${app} distclean; fi; \
     done
-
-# Template handling
-
-.PHONY: templates
-templates:
-	@for template in templates/app_*/; do $(MAKE) -C $${template} all; done
-
-.PHONY: templates-clean
-templates-clean:
-	@for template in templates/app_*/; do $(MAKE) -C $${template} clean; done
-
-.PHONY: templates-distclean
-templates-distclean:
-	@for template in templates/app_*/; do $(MAKE) -C $${template} distclean; done
 
 # Tests handling
 
