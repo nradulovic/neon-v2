@@ -16,6 +16,12 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-$(call check_defined, INCLUDE_LIB_NPORT, Include library component NPORT)
+# Include guard
+ifndef LIB_BUILD_NERROR_MK
+LIB_BUILD_NERROR_MK=1
 
-INCLUDE_LIB_NERROR=1
+# Dependencies
+include $(WS)/lib/build/nlib.mk
+include $(WS)/lib/build/nport.mk
+
+endif

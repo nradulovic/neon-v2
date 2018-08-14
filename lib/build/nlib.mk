@@ -16,6 +16,10 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
+# Include guard
+ifndef LIB_BUILD_NLIB_MK
+LIB_BUILD_NLIB_MK=1
+
 NCONFIG_GIT_VERSION := "$(shell git describe --abbrev=7 --always --dirty --tags 2>/dev/null || echo unknown)"
 
 CC_INCLUDES += lib/include
@@ -34,3 +38,5 @@ $(CC_CONFIG_FILE): $(PROJECT_CONFIG)
 .PHONY: config-clean
 config-clean:
 	$(VERBOSE)rm -f $(CC_CONFIG_FILE)
+
+endif

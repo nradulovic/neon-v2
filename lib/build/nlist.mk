@@ -16,3 +16,12 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
+# Include guard
+ifndef LIB_BUILD_NLIST_MK
+LIB_BUILD_NLIST_MK=1
+
+# Dependencies
+include $(WS)/lib/build/nlib.mk
+include $(WS)/lib/build/nport.mk
+
+endif

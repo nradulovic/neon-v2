@@ -16,6 +16,14 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-ENABLE_LIB_NQUEUE=1
+# Include guard
+ifndef LIB_BUILD_NQUEUE_MK
+LIB_BUILD_NQUEUE_MK=1
+
+# Dependencies
+include $(WS)/lib/build/nlib.mk
+include $(WS)/lib/build/nport.mk
 
 CC_SOURCES += lib/source/npqueue.c
+
+endif

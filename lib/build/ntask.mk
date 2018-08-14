@@ -16,8 +16,17 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-$(call check_defined, ENABLE_LIB_NPORT, Include library component NPORT)
-$(call check_defined, ENABLE_LIB_NQUEUE, Include library component NQUEUE)
-$(call check_defined, ENABLE_LIB_NERROR, Include library component NERROR)
+# Include guard
+ifndef LIB_BUILD_NTASK_MK
+LIB_BUILD_NTASK_MK=1
+
+# Dependencies
+include $(WS)/lib/build/nlib.mk
+include $(WS)/lib/build/nport.mk
+include $(WS)/lib/build/nqueue.mk
+include $(WS)/lib/build/nlist.mk
+include $(WS)/lib/build/nerror.mk
 
 CC_SOURCES += lib/source/ntask.c
+
+endif

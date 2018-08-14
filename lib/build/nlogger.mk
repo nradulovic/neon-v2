@@ -16,4 +16,14 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
+# Include guard
+ifndef BUILD_NLOGGER_MK
+BUILD_NLOGGER_MK=1
+
+# Dependencies
+include $(WS)/lib/build/nlib.mk
+include $(WS)/lib/build/nport.mk
+
 CC_SOURCES += lib/va_source/nlogger/nlogger_os_$(OS)_printers.c
+
+endif

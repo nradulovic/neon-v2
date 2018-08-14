@@ -16,7 +16,12 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-INCLUDE_LIB_NPORT=1
+# Include guard
+ifndef LIB_BUILD_NPORT_MK
+LIB_BUILD_NPORT_MK=1
+
+# Dependencies
+include $(WS)/lib/build/nlib.mk
 
 # Some defaults if they are not alredy given.
 BOARD ?= generic
@@ -66,4 +71,6 @@ endif
 
 ifndef BUILD_OS
 $(error The '$(OS)' os definition does not exists in Neon Port)
+endif
+
 endif
