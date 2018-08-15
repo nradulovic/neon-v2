@@ -53,3 +53,11 @@ documentation/doxyfile_version
 apps/*
 !apps/app_hello_world
 !apps/README.md
+
+# Ignore extension related folders
+ext/*
+!ext/stm32cubef4
+ext/stm32cubef4/*
+!ext/stm32cubef4/Makefile
+!ext/stm32cubef4/README.md
+
