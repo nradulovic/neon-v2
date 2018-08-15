@@ -22,8 +22,8 @@ BUILD_PLATFORM = gcc
 # Platform description
 BUILD_PLATFORM_DESC = "GCC, the GNU Lesser Compiler Collection"
 
-CC_INCLUDES += $(WS)/lib/va_include/nport/platform_gcc
-CC_SOURCES += $(WS)/lib/va_source/nport/nport_platform_gcc.c
+CC_INCLUDES += lib/va_include/nport/platform_gcc
+CC_SOURCES += lib/va_source/nport/nport_platform_gcc.c
 CC_FLAGS += -std=c99 -fmessage-length=0
 CC_FLAGS += -Wall -Wextra -pedantic
 
@@ -38,15 +38,22 @@ SIZE            = $(PREFIX)size
 AR              = $(PREFIX)ar
 
 # Rule to compile to object files.
-$(BUILD_DIR)/%.o: %.c
+$(BUILD_DIR)/%.o: $(WS)/%.c
 	$(PRINT) " [CC]: $@"
 	$(VERBOSE)mkdir -p $(dir $@)
-	$(VERBOSE)$(CC) $(CC_FLAGS) $(addprefix -D, $(CC_DEFINES)) $(addprefix -I, $(CC_INCLUDES)) -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" -o $@ -c $<
+	$(VERBOSE)$(CC) $(CC_FLAGS) \
+        $(addprefix -D, $(CC_DEFINES)) \
+        $(addprefix -I$(WS)/, $(CC_INCLUDES)) \
+        -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" \
+        -o $@ \
+        -c $<
 
 # Rule to link object files to library.
 %.a:
 	$(PRINT) " [AR]: $@"
-	$(VERBOSE)$(AR) rcs $@ $^ $(AR_LIBS)
+	$(VERBOSE)$(AR) rcs $@ \
+        $^ \
+        $(AR_LIBS)
 
 # Rule to link object files to ELF executable.
 %.elf: $(LD_LIBS) $(AR_LIBS)

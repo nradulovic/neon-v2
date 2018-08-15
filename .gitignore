@@ -50,4 +50,6 @@ documentation/doxyfile_version
 **/generated/
 
 # Ignore application related folders
-app_*/
+apps/*
+!apps/app_hello_world
+!apps/README.md

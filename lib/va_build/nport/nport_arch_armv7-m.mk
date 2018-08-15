@@ -22,7 +22,7 @@ BUILD_ARCH = armv7-m
 # Additional board description
 BUILD_ARCH_DESC = "ARMv7-M Architecture"
 
-CC_INCLUDES += $(WS)/lib/va_include/nport/arch_armv7-m
+CC_INCLUDES += lib/va_include/nport/arch_armv7-m
 CC_FLAGS += -march=armv7-m -mthumb
 
 # This is the default architecture

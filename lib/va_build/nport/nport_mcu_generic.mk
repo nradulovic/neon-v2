@@ -30,5 +30,5 @@ BUILD_MCU_DESC := "Generic MCU"
 BUILD_MCU_FAM := generic
 BUILD_MCU_ATTR :=
 
-CC_SOURCES += $(WS)/lib/va_source/nport/nport_mcu_generic.c
-CC_INCLUDES += $(WS)/lib/va_include/nport/mcu_generic
+CC_SOURCES += lib/va_source/nport/nport_mcu_generic.c
+CC_INCLUDES += lib/va_include/nport/mcu_generic

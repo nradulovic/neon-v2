@@ -19,6 +19,12 @@
 # Relative path to Neon common build directory.
 WS = ../..
 
+# Relative path to this project directory.
+PROJECT_DIR = apps/app_hello_world
+
+# Project name, this will be used as output binary file name.
+PROJECT_NAME := app_hello_world
+
 # Common build script, contains common build rules and variables.
 include $(WS)/build/common.mk
 
@@ -27,18 +33,15 @@ include $(WS)/build/common.mk
 include $(WS)/lib/build/nlib.mk
 include $(WS)/lib/build/nport.mk
 
-# Project name, this will be used as output binary file name.
-PROJECT_NAME := app_hello_world
-
 # Project configuration header file.
-PROJECT_CONFIG := include/neon_config.h
+PROJECT_CONFIG := $(PROJECT_DIR)/include/neon_config.h
 
 # List additional C header include paths.
-CC_INCLUDES += apps/app_hello_world/include
+CC_INCLUDES += $(PROJECT_DIR)/include
 
 # List additional C source files. Files which are not listed here will not be
 # compiled.
-CC_SOURCES += apps/app_hello_world/source/main.c
+CC_SOURCES += $(PROJECT_DIR)/source/main.c
 
 # List additional archives. Use this when using an external static archive.
 AR_LIBS +=

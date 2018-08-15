@@ -22,7 +22,7 @@ BUILD_ARCH = x86
 # Additional board description
 BUILD_ARCH_DESC = "x86 Architecture"
 
-CC_INCLUDES += $(WS)/lib/va_include/nport/arch_x86
+CC_INCLUDES += lib/va_include/nport/arch_x86
 
 PREFIX =
 

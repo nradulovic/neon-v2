@@ -15,8 +15,13 @@
 #
 
 # Relative path to common build directory.
-ROOT_DIR = test
 WS = ..
+
+# Relative path to this project directory.
+PROJECT_DIR = test
+
+# Project name, this will be used as output binary file name.
+PROJECT_NAME := test
 
 # Common build script, contains common build rules and variables.
 include $(WS)/build/common.mk
@@ -33,29 +38,26 @@ include $(WS)/lib/build/nqueue.mk
 include $(WS)/lib/build/nerror.mk
 include $(WS)/lib/build/ntask.mk
 
-# Project name, this will be used as output binary file name.
-PROJECT_NAME := test
-
 # Project configuration header file.
-PROJECT_CONFIG := test/include/neon_config.h
+PROJECT_CONFIG := $(PROJECT_DIR)/include/neon_config.h
 
 # List additional C header include paths.
-CC_INCLUDES += include
+CC_INCLUDES += $(PROJECT_DIR)/include
 
 # List additional C source files. Files which are not listed here will not be
 # compiled.
-CC_SOURCES += test/source/main.c
-CC_SOURCES += test/source/test_narch.c
-CC_SOURCES += test/source/test_nbits.c
-CC_SOURCES += test/source/test_nbits_bitarray.c
-CC_SOURCES += test/source/test_ndebug_enabled.c
-CC_SOURCES += test/source/test_ndebug_disabled.c
-CC_SOURCES += test/source/test_nlist_dll.c
-CC_SOURCES += test/source/test_nlist_sll.c
-CC_SOURCES += test/source/test_nqueue_lqueue.c
-CC_SOURCES += test/source/test_nqueue_pqueue.c
-CC_SOURCES += test/source/test_ntask_fiber.c
-CC_SOURCES += test/source/test_ntask.c
+CC_SOURCES += $(PROJECT_DIR)/source/main.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_narch.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_nbits.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_nbits_bitarray.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_ndebug_enabled.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_ndebug_disabled.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_nlist_dll.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_nlist_sll.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_nqueue_lqueue.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_nqueue_pqueue.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_ntask_fiber.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_ntask.c
 
 # List additional archives. Use this when using an external static archive.
 AR_LIBS +=

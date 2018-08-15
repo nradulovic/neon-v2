@@ -26,6 +26,6 @@ BUILD_BOARD := generic
 # Additional board description
 BUILD_BOARD_DESC := "Generic board"
 
-CC_SOURCES += $(WS)/lib/va_source/nport/nport_board_generic.c
-CC_SOURCES += $(WS)/lib/va_source/nport/nport_board_generic_bsp.c
-CC_INCLUDES += $(WS)/lib/va_include/nport/board_generic
+CC_SOURCES += lib/va_source/nport/nport_board_generic.c
+CC_SOURCES += lib/va_source/nport/nport_board_generic_bsp.c
+CC_INCLUDES += lib/va_include/nport/board_generic

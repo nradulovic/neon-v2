@@ -22,18 +22,25 @@ LIB_BUILD_NLIB_MK=1
 
 NCONFIG_GIT_VERSION := "$(shell git describe --abbrev=7 --always --dirty --tags 2>/dev/null || echo unknown)"
 
-CC_INCLUDES += $(WS)/lib/include
-CC_INCLUDES += $(BUILD_DIR)
+# Add common library include folder
+CC_INCLUDES += lib/include
+
+# Add generated folder include folder
+CC_INCLUDES += $(PROJECT_DIR)/$(BUILD_DIR)
+
+# Common defines for the library
 CC_DEFINES += NCONFIG_GIT_VERSION=\"$(NCONFIG_GIT_VERSION)\"
+
+# Library configuration
 CC_CONFIG_FILE = $(BUILD_DIR)/neon_config.h
 
 .PHONY: config
 config: $(CC_CONFIG_FILE)
 
-$(CC_CONFIG_FILE): $(PROJECT_CONFIG)
-	$(PRINT) Project configuration file "$(PROJECT_CONFIG)"
+$(CC_CONFIG_FILE): $(WS)/$(PROJECT_CONFIG)
+	$(PRINT) Project configuration file "$(WS)/$(PROJECT_CONFIG)"
 	$(VERBOSE)mkdir -p $(dir $@)
-	$(VERBOSE)cp $(PROJECT_CONFIG) $@
+	$(VERBOSE)cp -v $(WS)/$(PROJECT_CONFIG) $@
 
 .PHONY: config-clean
 config-clean:

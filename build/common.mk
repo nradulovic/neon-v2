@@ -30,13 +30,15 @@ check_defined = \
               $(error Undefined $1$(if $2, ($2))))
 
 $(call check_defined, WS, WS is relative path to Neon build directory)
+$(call check_defined, PROJECT_DIR, PROJECT_DIR is project root source directory)
+$(call check_defined, PROJECT_NAME, PROJECT_NAME is project name)
 
 # Documentation defaults
 DEF_DOX_O        = documentation/generated
 DEF_DOX_HTML_O   = html
 DEF_DOX_LATEX_O  = latex
 DEF_DOX_PROJECT  = documentation/$(MOD_NAME)_doxyfile
-DEF_DOX_BASE     = $(BUILD_SRC)/../documentation/base_doxyfile
+DEF_DOX_BASE     = $(WS)/documentation/base_doxyfile
 DEF_DOXYFILE	 = $(DEF_DOX_O)/doxyfile
 
 # Builder helper variables
@@ -44,17 +46,16 @@ OBJECTS          = $(patsubst %.c,$(BUILD_DIR)/%.o,$(CC_SOURCES))
 OBJECTS         += $(patsubst %.s,$(BUILD_DIR)/%.o,$(AS_SOURCES))
 DEPENDS          = $(patsubst %.o,%.d,$(OBJECTS))
 
+# Common build variables
+BUILD_DIR        = generated
+
 # Create possible targets
 PROJECT_NAME   ?= undefined
-PROJECT_CONFIG ?= $(WS)/lib/include/configs/default_config.h
+PROJECT_CONFIG ?= lib/include/configs/default_config.h
 PROJECT_ELF     = $(BUILD_DIR)/$(PROJECT_NAME).elf
 PROJECT_LIB     = $(BUILD_DIR)/$(PROJECT_NAME).a
 PROJECT_FLASH   = $(BUILD_DIR)/$(PROJECT_NAME).hex
 PROJECT_SIZE    = $(BUILD_DIR)/$(PROJECT_NAME).siz
-
-# Common build variables
-BUILD_SRC        = $(WS)/build
-BUILD_DIR        = generated
 
 # Handle the verbosity argument
 # If the argument is not given assume that verbosity is off.

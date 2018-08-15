@@ -2,8 +2,5 @@
 Application folders
 ===================
 
-Create folders of your application inside this directory. The root folder which
-contains main Makefile must reside inside of folder which is named as:
-  'apps_'.
-
-
+The purpose of this folder is to set up applications that use the Neon library.
+Each application is located in a sub-folder which is named with prefix 'app_'.
