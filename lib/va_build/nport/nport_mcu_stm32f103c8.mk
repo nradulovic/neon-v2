@@ -16,14 +16,27 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Include guard
-ifndef BUILD_NLOGGER_MK
-BUILD_NLOGGER_MK=1
+# ARM 32-bit Cortex-M3 CPU Core
+#
+# * 72 MHz maximum frequency, 1.25 DMIPS/MHz (Dhrystone 2.1) performance at 0 
+#   wait state memory access
+# * Single-cycle multiplication and hardware division
+# 
+# Memories
+#
+# * 64 or 128 Kbytes of Flash memory
+# * 20 Kbytes of SRAM
+#
 
-# Dependencies
-include $(WS)/lib/build/nlib.mk
-include $(WS)/lib/build/nport.mk
+# MCU identifier
+BUILD_MCU := stm32f103c8
 
-CC_SOURCES += lib/va_source/nlogger_os_$(OS)_printers.c
+# Additional MCU description
+BUILD_MCU_DESC := "STM32F103C8"
 
-endif
+# Additional MCU information
+BUILD_MCU_FAM := generic
+BUILD_MCU_ATTR :=
+
+CC_SOURCES += lib/va_source/nport/nport_mcu_generic.c
+CC_INCLUDES += lib/va_include/nport/mcu_stm32f103c8

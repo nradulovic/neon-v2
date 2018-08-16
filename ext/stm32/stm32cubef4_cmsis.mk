@@ -17,24 +17,11 @@
 #
 
 # Include guard
-ifndef EXT_STM32CUBE_FW_F4
-EXT_STM32CUBE_FW_F4=1
+ifndef EXT_STM32CUBE_FW_F4_CMSIS
+EXT_STM32CUBE_FW_F4_CMSIS=1
 
-STM32CUBEF4_NAME := STM32 Cube F4
+include $(WS)/ext/stm32/stm32cubef4.mk
 
-#
-# WARNING WARNING WARNING
-#
-# We are using firstword function here. This means that the STM32CUBEF4_PATH
-# variable will fail to resolve properly if there is a space in path.
-STM32CUBEF4_PATH = $(firstword $(wildcard $(WS)/ext/stm32cubef4/STM32Cube_FW_F4*))
-
-ifeq ("$(STM32CUBEF4_PATH)", "")
-$(error [EXT]: No $(STM32CUBEF4_NAME) library was found in ext/stm32cubef4)
-endif
-
-ifeq ("$(V)", "1")
-$(info $(STM32CUBEF4_NAME) in $(STM32CUBEF4_PATH))
-endif
+CC_INCLUDES += $(STM32CUBEF4_PATH)/Drivers/CMSIS/Include
 
 endif

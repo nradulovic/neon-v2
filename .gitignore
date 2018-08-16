@@ -56,9 +56,9 @@ apps/*
 
 # Ignore extension related folders
 ext/*
-!ext/stm32cubef4
-ext/stm32cubef4/*
-!ext/stm32cubef4/stm32cubef4.mk
-!ext/stm32cubef4/stm32cubef4_cmsis.mk
-!ext/stm32cubef4/README.md
+ext/stm32/*
+!ext/stm32
+!ext/stm32/stm32cubef?.mk
+!ext/stm32/stm32cubef?_*.mk
+!ext/stm32/README.md
 

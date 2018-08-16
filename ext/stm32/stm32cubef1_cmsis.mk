@@ -1,6 +1,6 @@
 #
 # Neon
-# Copyright (C) 2018   REAL-TIME CONSULTING
+# Copyright (C)  2017  Nenad Radulovic
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published by the Free
@@ -17,13 +17,11 @@
 #
 
 # Include guard
-ifndef BUILD_NLOGGER_MK
-BUILD_NLOGGER_MK=1
+ifndef EXT_STM32_STM32CUBE_FW_F1_CMSIS
+EXT_STM32_STM32CUBE_FW_F1_CMSIS=1
 
-# Dependencies
-include $(WS)/lib/build/nlib.mk
-include $(WS)/lib/build/nport.mk
+include $(WS)/ext/stm32/stm32cubef1.mk
 
-CC_SOURCES += lib/va_source/nlogger_os_$(OS)_printers.c
+CC_INCLUDES += $(STM32CUBEF1_PATH)/Drivers/CMSIS/Include
 
 endif

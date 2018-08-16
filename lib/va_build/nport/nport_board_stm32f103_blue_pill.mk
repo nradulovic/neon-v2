@@ -16,14 +16,20 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Include guard
-ifndef BUILD_NLOGGER_MK
-BUILD_NLOGGER_MK=1
+# From: https://wiki.stm32duino.com/index.php?title=Blue_Pill
+#
+# Blue pill is the nickname given to the most popular, ultra-cheap and compact
+# STM32F103 board. 
 
-# Dependencies
-include $(WS)/lib/build/nlib.mk
-include $(WS)/lib/build/nport.mk
+# Board identifier
+BUILD_BOARD := stm32f103_blue_pill
 
-CC_SOURCES += lib/va_source/nlogger_os_$(OS)_printers.c
+# Additional board description
+BUILD_BOARD_DESC := "STM32F103 Blue Pill"
 
-endif
+# This board will define the MCU
+MCU := stm32f103c8
+
+CC_SOURCES += lib/va_source/nport/nport_board_stm32f103_blue_pill.c
+CC_SOURCES += lib/va_source/nport/nport_board_stm32f103_blue_pill_bsp.c
+CC_INCLUDES += lib/va_include/nport/board_stm32f103_blue_pill
