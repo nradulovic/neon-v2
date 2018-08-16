@@ -16,15 +16,13 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-.PHONY: all
-all:
-	@if [ ! -d STM32Cube_FW_F4* ]; then \
-        echo "The Neon needs STM32 Cube F4 library in order to support"; \
-        echo "the requested port."; \
-        echo ""; \
-        echo "Please, download the library from www.st.com and extract"; \
-        echo "the archive to 'ext/stm32cubef4' folder."; \
-    fi;
-	@exit 1
+# Include guard
+ifndef EXT_STM32CUBE_FW_F4_CMSIS
+EXT_STM32CUBE_FW_F4_CMSIS=1
 
+include $(WS)/ext/stm32cubef4/stm32cubef4.mk
 
+CC_INCLUDES += $(STM32CUBEF4_PATH)/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+CC_INCLUDES += $(STM32CUBEF4_PATH)/Drivers/CMSIS/Include
+
+endif

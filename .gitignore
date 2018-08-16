@@ -58,6 +58,7 @@ apps/*
 ext/*
 !ext/stm32cubef4
 ext/stm32cubef4/*
-!ext/stm32cubef4/Makefile
+!ext/stm32cubef4/stm32cubef4.mk
+!ext/stm32cubef4/stm32cubef4_cmsis.mk
 !ext/stm32cubef4/README.md
 
