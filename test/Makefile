@@ -37,7 +37,6 @@ include $(WS)/lib/build/ntestsuite.mk
 include $(WS)/lib/build/nqueue.mk
 include $(WS)/lib/build/nerror.mk
 include $(WS)/lib/build/ntask.mk
-include $(WS)/ext/stm32cubef4/stm32cubef4_cmsis.mk
 
 # Project configuration header file.
 PROJECT_CONFIG := $(PROJECT_DIR)/include/neon_config.h

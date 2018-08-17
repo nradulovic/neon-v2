@@ -16,27 +16,16 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# ARM 32-bit Cortex-M3 CPU Core
-#
-# * 72 MHz maximum frequency, 1.25 DMIPS/MHz (Dhrystone 2.1) performance at 0 
-#   wait state memory access
-# * Single-cycle multiplication and hardware division
-# 
-# Memories
-#
-# * 64 or 128 Kbytes of Flash memory
-# * 20 Kbytes of SRAM
-#
+# NOTE:
+# This is a generic board placeholder. It does not provide any functionality,
+# it just creates dummy BSP implementation to satisfy linking.
 
-# MCU identifier
-BUILD_MCU := stm32f103c8
+# Board identifier
+BUILD_BOARD := generic
 
-# Additional MCU description
-BUILD_MCU_DESC := "STM32F103C8"
+# Additional board description
+BUILD_BOARD_DESC := "Generic board"
 
-# Additional MCU information
-BUILD_MCU_FAM := generic
-BUILD_MCU_ATTR :=
-
-CC_SOURCES += lib/va_source/nport/nport_mcu_generic.c
-CC_INCLUDES += lib/va_include/nport/mcu_stm32f103c8
+CC_SOURCES += lib/va_source/nport_board_generic.c
+CC_SOURCES += lib/va_source/nport_board_generic_bsp.c
+CC_INCLUDES += lib/va_include/nport/board_generic

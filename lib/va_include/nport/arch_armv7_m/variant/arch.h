@@ -16,45 +16,54 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /** @file
- *  @author      Developer name
- *  @brief       Template description header
+ *  @author      Nenad Radulovic
+ *  @brief       Variant architecture for ARMv7-M header
  *
- *  @addtogroup  module
+ *  @addtogroup  port
  *  @{
  */
-/** @defgroup    mod_template Template
- *  @brief       Template.
+/** @defgroup    port_armv7_m_variant_arch Variant architecture for ARMv7-M
+ *  @brief       Variant architecture for ARMv7-M.
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_MODULE_TEMPLATE_H_
-#define NEON_MODULE_TEMPLATE_H_
+#ifndef NEON_ARMV7_M_VARIANT_ARCH_H_
+#define NEON_ARMV7_M_VARIANT_ARCH_H_
 
 #include <stdint.h>
+#include "port/nport_platform.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /*---------------------------------------------------------------------------*/
-/** @defgroup   templateid Template identification information
- *  @brief      Template identification information.
+/** @defgroup   ARMv7-M_variant_arch_cpu Architecture CPU (ARMv7-M) operations
+ *  @brief      Architecture CPU (ARMv7-M) operations.
  *  @{
  */
 
-/** @brief      Some brief description.
- * 
- *  More details about the function.
- *
- *  @param      param1
- *              Some information about param1.
- *  @returns    Returns a status information.
- *  @retval     - ERANGE - Something has happened.
- *  @api
- */
-void some_function(uint32_t param1);
+NPLATFORM_INLINE
+uint32_t narch_exp2(uint_fast8_t x)
+{
+    return (0x1u << x);
+}
+
+NPLATFORM_INLINE
+uint_fast8_t narch_log2(uint32_t x)
+{
+    uint_fast8_t clz;
+
+    __asm__ __volatile__ (
+        "@  ncore_log2                                      \n"
+        "   clz    %0, %1                                   \n"
+        : "=r"(clz)
+        : "r"(x));
+
+    return (31u - clz);
+}
 
 /** @} */
 #ifdef __cplusplus
@@ -64,4 +73,4 @@ void some_function(uint32_t param1);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_MODULE_TEMPLATE_H_ */
+#endif /* NEON_ARMV7_M_VARIANT_ARCH_H_ */

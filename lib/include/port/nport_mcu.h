@@ -15,5 +15,26 @@
  * You should have received a copy of the GNU Lesser General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+/** @file
+ *  @author      Nenad Radulovic
+ *  @brief       MCU header
+ *
+ *  @addtogroup  lib
+ *  @{
+ */
+/** @defgroup    lib_mcu MCU
+ *  @brief       MCU
+ *  @{
+ */
+/*---------------------------------------------------------------------------*/
 
-#include "port/nport_mcu.h"
+
+#ifndef NEON_MODULE_NPORT_MCU_H_
+#define NEON_MODULE_NPORT_MCU_H_
+
+#include "variant/mcu.h"
+
+/** @} */
+/** @} */
+/*---------------------------------------------------------------------------*/
+#endif /* NEON_MODULE_NPORT_MCU_H_ */

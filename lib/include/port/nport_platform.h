@@ -19,10 +19,10 @@
  *  @author      Nenad Radulovic
  *  @brief       Platform header
  *
- *  @addtogroup  module
+ *  @addtogroup  lib
  *  @{
  */
-/** @defgroup    mod_platform Platform
+/** @defgroup    lib_platform Platform
  *  @brief       Platform
  *  @{
  */

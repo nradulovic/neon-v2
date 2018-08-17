@@ -16,34 +16,20 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Architecture identifier
-BUILD_ARCH = armv7-m
+# From: https://wiki.stm32duino.com/index.php?title=Blue_Pill
+#
+# Blue pill is the nickname given to the most popular, ultra-cheap and compact
+# STM32F103 board. 
+
+# Board identifier
+BUILD_BOARD := stm32f103_blue_pill
 
 # Additional board description
-BUILD_ARCH_DESC = "ARMv7-M Architecture"
+BUILD_BOARD_DESC := "STM32F103 Blue Pill"
 
-CC_INCLUDES += lib/va_include/nport/arch_armv7-m
-CC_FLAGS += -march=armv7-m -mthumb
+# This board will define the MCU
+MCU := stm32f103c8
 
-# This is the default architecture
-ifeq ($(BUILD_MCU_FAM),generic)
-CC_FLAGS += -mcpu=cortex-m3
-endif
-
-ifeq ($(BUILD_MCU_FAM),cortex-m3)
-CC_FLAGS += -mcpu=cortex-m3
-endif
-
-ifeq ($(BUILD_MCU_FAM),cortex-m4)
-CC_FLAGS += -mcpu=cortex-m4
-endif
-
-ifneq ($(filter fp=,$(BUILD_MCU_ATTR)),hard)
-    $(info Using Hard floating pointer arithmetic.)
-else
-    $(info $(ENV_PARAM) does not exist in $(PARAMS))
-endif
-
-PREFIX = arm-none-eabi-
-
-NCONFIG_ARCH_ARMV7_M := 1
+CC_SOURCES += lib/va_source/nport_board_stm32f103_blue_pill.c
+CC_SOURCES += lib/va_source/nport_board_stm32f103_blue_pill_bsp.c
+CC_INCLUDES += lib/va_include/nport/board_stm32f103_blue_pill

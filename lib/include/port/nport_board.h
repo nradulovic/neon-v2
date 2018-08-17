@@ -15,5 +15,26 @@
  * You should have received a copy of the GNU Lesser General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+/** @file
+ *  @author      Nenad Radulovic
+ *  @brief       Board header
+ *
+ *  @addtogroup  lib
+ *  @{
+ */
+/** @defgroup    lib_board Board
+ *  @brief       Board
+ *  @{
+ */
+/*---------------------------------------------------------------------------*/
 
-#include "port/nport_mcu.h"
+
+#ifndef NEON_MODULE_BOARD_H_
+#define NEON_MODULE_BOARD_H_
+
+#include "variant/board.h"
+
+/** @} */
+/** @} */
+/*---------------------------------------------------------------------------*/
+#endif /* NEON_MODULE_BOARD_H_ */

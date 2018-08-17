@@ -16,20 +16,40 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# From: https://wiki.stm32duino.com/index.php?title=Blue_Pill
-#
-# Blue pill is the nickname given to the most popular, ultra-cheap and compact
-# STM32F103 board. 
+# Include guard
+ifndef VA_BUILD_NPORT_ARCH_ARMV7_M_MK
+VA_BUILD_NPORT_ARCH_ARMV7_M_MK=1
 
-# Board identifier
-BUILD_BOARD := stm32f103_blue_pill
+# Architecture identifier
+BUILD_ARCH = armv7_m
 
 # Additional board description
-BUILD_BOARD_DESC := "STM32F103 Blue Pill"
+BUILD_ARCH_DESC = "ARMv7-M Architecture"
 
-# This board will define the MCU
-MCU := stm32f103c8
+CC_INCLUDES += lib/va_include/nport/arch_armv7_m
+CC_FLAGS += -march=armv7-m -mthumb
 
-CC_SOURCES += lib/va_source/nport/nport_board_stm32f103_blue_pill.c
-CC_SOURCES += lib/va_source/nport/nport_board_stm32f103_blue_pill_bsp.c
-CC_INCLUDES += lib/va_include/nport/board_stm32f103_blue_pill
+# This is the default architecture
+ifeq ($(BUILD_MCU_FAM),generic)
+CC_FLAGS += -mcpu=cortex-m3
+endif
+
+ifeq ($(BUILD_MCU_FAM),cortex-m3)
+CC_FLAGS += -mcpu=cortex-m3
+endif
+
+ifeq ($(BUILD_MCU_FAM),cortex-m4)
+CC_FLAGS += -mcpu=cortex-m4
+endif
+
+ifneq ($(filter fp=,$(BUILD_MCU_ATTR)),hard)
+    $(info Using Hard floating pointer arithmetic.)
+else
+    $(info $(ENV_PARAM) does not exist in $(PARAMS))
+endif
+
+PREFIX = arm-none-eabi-
+
+NCONFIG_ARCH_ARMV7_M := 1
+
+endif

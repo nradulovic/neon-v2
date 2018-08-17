@@ -19,10 +19,10 @@
  *  @author      Nenad Radulovic
  *  @brief       Architecture header
  *
- *  @addtogroup  module
+ *  @addtogroup  lib
  *  @{
  */
-/** @defgroup    mod_arch Architecture
+/** @defgroup    lib_arch Architecture
  *  @brief       Architecture
  *  @{
  */

@@ -24,6 +24,6 @@ LIB_BUILD_NQUEUE_MK=1
 include $(WS)/lib/build/nlib.mk
 include $(WS)/lib/build/nport.mk
 
-CC_SOURCES += lib/source/npqueue.c
+CC_SOURCES += lib/source/nqueue_pqueue.c
 
 endif

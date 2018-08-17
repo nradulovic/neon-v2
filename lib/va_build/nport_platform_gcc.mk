@@ -23,7 +23,7 @@ BUILD_PLATFORM = gcc
 BUILD_PLATFORM_DESC = "GCC, the GNU Lesser Compiler Collection"
 
 CC_INCLUDES += lib/va_include/nport/platform_gcc
-CC_SOURCES += lib/va_source/nport/nport_platform_gcc.c
+CC_SOURCES += lib/va_source/nport_platform_gcc.c
 CC_FLAGS += -std=c99 -fmessage-length=0
 CC_FLAGS += -Wall -Wextra -pedantic
 

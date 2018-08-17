@@ -32,42 +32,42 @@ PROFILE ?= debug
 OS ?= linux
 
 # Try to load specified board
--include $(WS)/lib/va_build/nport/nport_board_$(BOARD).mk
+-include $(WS)/lib/va_build/nport_board_$(BOARD).mk
 
 ifndef BUILD_BOARD
 $(error The '$(BOARD)' board definition does not exists in Neon Port)
 endif
 
 # Try to load specified MCU
--include $(WS)/lib/va_build/nport/nport_mcu_$(MCU).mk
+-include $(WS)/lib/va_build/nport_mcu_$(MCU).mk
 
 ifndef BUILD_MCU
 $(error The '$(MCU)' MCU definition does not exists in Neon Port)
 endif
 
 # Try to load specified ARCH
--include $(WS)/lib/va_build/nport/nport_arch_$(ARCH).mk
+-include $(WS)/lib/va_build/nport_arch_$(ARCH).mk
 
 ifndef BUILD_ARCH
 $(error The '$(ARCH)' architecture definition does not exists in Neon Port)
 endif
 
 # Try to load specified PLATFORM
--include $(WS)/lib/va_build/nport/nport_platform_$(PLATFORM).mk
+-include $(WS)/lib/va_build/nport_platform_$(PLATFORM).mk
 
 ifndef BUILD_PLATFORM
 $(error The '$(PLATFORM)' platform definition does not exists in Neon Port)
 endif
 
 # Try to load specified PROFILE
--include $(WS)/lib/va_build/nport/nport_profile_$(PLATFORM)_$(PROFILE).mk
+-include $(WS)/lib/va_build/nport_profile_$(PLATFORM)_$(PROFILE).mk
 
 ifndef BUILD_PROFILE
 $(error The '$(PROFILE)' profile definition does not exists in Neon Port)
 endif
 
 # Try to load specified OS
--include $(WS)/lib/va_build/nport/nport_os_$(OS).mk
+-include $(WS)/lib/va_build/nport_os_$(OS).mk
 
 ifndef BUILD_OS
 $(error The '$(OS)' os definition does not exists in Neon Port)

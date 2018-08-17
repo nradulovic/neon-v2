@@ -29,8 +29,8 @@
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_MODULE_TEMPLATE_H_
-#define NEON_MODULE_TEMPLATE_H_
+#ifndef VA_INCLUDE_NPORT_VARIANT_MCU_H_
+#define VA_INCLUDE_NPORT_VARIANT_MCU_H_
 
 #include <stdint.h>
 
@@ -64,4 +64,4 @@ void some_function(uint32_t param1);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_MODULE_TEMPLATE_H_ */
+#endif /* VA_INCLUDE_NPORT_VARIANT_MCU_H_ */

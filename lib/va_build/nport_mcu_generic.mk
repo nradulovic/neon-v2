@@ -17,15 +17,18 @@
 #
 
 # NOTE:
-# This is a generic board placeholder. It does not provide any functionality,
+# This is a generic MCU placeholder. It does not provide any functionality,
 # it just creates dummy BSP implementation to satisfy linking.
 
-# Board identifier
-BUILD_BOARD := generic
+# MCU identifier
+BUILD_MCU := generic
 
-# Additional board description
-BUILD_BOARD_DESC := "Generic board"
+# Additional MCU description
+BUILD_MCU_DESC := "Generic MCU"
 
-CC_SOURCES += lib/va_source/nport/nport_board_generic.c
-CC_SOURCES += lib/va_source/nport/nport_board_generic_bsp.c
-CC_INCLUDES += lib/va_include/nport/board_generic
+# Additional MCU information
+BUILD_MCU_FAM := generic
+BUILD_MCU_ATTR :=
+
+CC_SOURCES += lib/va_source/nport_mcu_generic.c
+CC_INCLUDES += lib/va_include/nport/mcu_generic

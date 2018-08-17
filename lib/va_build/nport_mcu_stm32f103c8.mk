@@ -16,19 +16,33 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# NOTE:
-# This is a generic MCU placeholder. It does not provide any functionality,
-# it just creates dummy BSP implementation to satisfy linking.
+# ARM 32-bit Cortex-M3 CPU Core
+#
+# * 72 MHz maximum frequency, 1.25 DMIPS/MHz (Dhrystone 2.1) performance at 0 
+#   wait state memory access
+# * Single-cycle multiplication and hardware division
+# 
+# Memories
+#
+# * 64 or 128 Kbytes of Flash memory
+# * 20 Kbytes of SRAM
+#
 
 # MCU identifier
-BUILD_MCU := generic
+BUILD_MCU := stm32f103c8
 
 # Additional MCU description
-BUILD_MCU_DESC := "Generic MCU"
+BUILD_MCU_DESC := "STM32F103C8"
 
 # Additional MCU information
 BUILD_MCU_FAM := generic
 BUILD_MCU_ATTR :=
 
-CC_SOURCES += lib/va_source/nport/nport_mcu_generic.c
-CC_INCLUDES += lib/va_include/nport/mcu_generic
+CC_SOURCES += lib/va_source/nport_mcu_generic.c
+CC_INCLUDES += lib/va_include/nport/mcu_stm32f103c8
+
+# This board will define the ARCH
+ARCH = armv7_m
+
+# Include MCU specific header paths and defines
+include $(WS)/ext/stm32/stm32cubef1_stm32f103c8.mk
