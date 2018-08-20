@@ -46,3 +46,4 @@ ARCH = armv7_m
 
 # Include MCU specific header paths and defines
 include $(WS)/ext/stm32/stm32cubef1_stm32f103c8.mk
+include $(WS)/ext/stm32/stm32cubef1_cmsis.mk

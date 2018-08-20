@@ -43,7 +43,7 @@ DEF_DOXYFILE	 = $(DEF_DOX_O)/doxyfile
 
 # Builder helper variables
 OBJECTS          = $(patsubst %.c,$(BUILD_DIR)/%.o,$(CC_SOURCES))
-OBJECTS         += $(patsubst %.s,$(BUILD_DIR)/%.o,$(AS_SOURCES))
+OBJECTS         += $(patsubst %.S,$(BUILD_DIR)/%.o,$(AS_SOURCES))
 DEPENDS          = $(patsubst %.o,%.d,$(OBJECTS))
 
 # Common build variables

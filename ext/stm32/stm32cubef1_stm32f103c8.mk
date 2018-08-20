@@ -22,12 +22,29 @@ EXT_STM32_STM32CUBE_FW_F1_STM32F103C8=1
 
 include $(WS)/ext/stm32/stm32cubef1.mk
 
+# Add folder to common MCU headers
 CC_INCLUDES += $(STM32CUBEF1_PATH)/Drivers/CMSIS/Device/ST/STM32F1xx/Include
+CC_INCLUDES += $(STM32CUBEF1_PATH)/Drivers/STM32F1xx_HAL_Driver/Inc
+CC_SOURCES += $(STM32CUBEF1_PATH)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.c
 
 # Select appropriate STM32 header
 CC_DEFINES += STM32F103xB  
 
 # Enable STM32 HAL Driver
 CC_DEFINES += USE_HAL_DRIVER  
+
+# Add startup code
+
+ifeq ($(PLATFORM), gcc)
+LD_FLAGS += -T $(WS)/$(STM32CUBEF1_PATH)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/linker/STM32F103XB_FLASH.ld
+AS_SOURCES += $(STM32CUBEF1_PATH)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.S
+else ifeq ($(PLATFORM), arm)
+AS_SOURCES += $(STM32CUBEF1_PATH)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/arm/startup_stm32f103xb.S
+else ifeq ($(PLATFORM), iar)
+AS_SOURCES += $(STM32CUBEF1_PATH)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/iar/startup_stm32f103xb.S
+LD_FLAGS += -T $(WS)/$(STM32CUBEF1_PATH)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/iar/linker/stm32f103xb_flash.icf
+else
+$(error Selected platform $(PLATFORM) is not supported by $(STM32CUBEF1_NAME))
+endif
 
 endif

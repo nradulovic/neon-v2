@@ -37,9 +37,20 @@ OBJCOPY         = $(PREFIX)objcopy
 SIZE            = $(PREFIX)size
 AR              = $(PREFIX)ar
 
-# Rule to compile to object files.
+# Rule to compile C sources to object files.
 $(BUILD_DIR)/%.o: $(WS)/%.c
 	$(PRINT) " [CC]: $@"
+	$(VERBOSE)mkdir -p $(dir $@)
+	$(VERBOSE)$(CC) $(CC_FLAGS) \
+        $(addprefix -D, $(CC_DEFINES)) \
+        $(addprefix -I$(WS)/, $(CC_INCLUDES)) \
+        -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" \
+        -o $@ \
+        -c $<
+
+# Rule to compile Assembly sources to object files.
+$(BUILD_DIR)/%.o: $(WS)/%.S
+	$(PRINT) " [AS]: $@"
 	$(VERBOSE)mkdir -p $(dir $@)
 	$(VERBOSE)$(CC) $(CC_FLAGS) \
         $(addprefix -D, $(CC_DEFINES)) \

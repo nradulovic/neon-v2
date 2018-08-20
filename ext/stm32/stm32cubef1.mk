@@ -27,7 +27,9 @@ STM32CUBEF1_NAME := STM32 Cube F1
 #
 # We are using firstword function here. This means that the STM32CUBEF1_PATH
 # variable will fail to resolve properly if there is a space in path.
-STM32CUBEF1_PATH = $(firstword $(wildcard $(WS)/ext/stm32/STM32Cube_FW_F1*))
+STM32CUBEF1_PATH_ABS = $(firstword $(wildcard $(WS)/ext/stm32/STM32Cube_FW_F1*))
+STM32CUBEF1_PATH = $(STM32CUBEF1_PATH_ABS:$(WS)/%=%)
+$(info $(STM32CUBEF1_PATH))
 
 ifeq ("$(STM32CUBEF1_PATH)", "")
 $(error [EXT]: No $(STM32CUBEF1_NAME) library was found in ext/stm32)
