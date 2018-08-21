@@ -202,12 +202,15 @@ help:
 cc_include_paths:
 	$(foreach i,$(CC_INCLUDES),$(info $(WS)/$(i)))
 
-.PHONY: c_sources
+.PHONY: cc_sources
 cc_sources:
 	$(foreach i,$(CC_SOURCES),$(info $(WS)/$(i)))
 
-.PHONY: c_flags
+.PHONY: cc_flags
 cc_flags:
 	$(foreach i,$(CC_FLAGS),$(info $(i)))
 
+.PHONY: cc_defines
+cc_defines:
+	$(foreach i,$(CC_DEFINES),$(info $(i)))
 endif

@@ -17,31 +17,14 @@
 #
 
 # Include guard
-ifndef VA_BUILD_NPORT_ARCH_ARMV7_M_MK
-VA_BUILD_NPORT_ARCH_ARMV7_M_MK=1
+ifndef LIB_VA_BUILD_NPORT_FEATURE_GCC_ARM_FPV4_SP_D16_MK
+LIB_VA_BUILD_NPORT_FEATURE_GCC_ARM_FPV4_SP_D16_MK = 1
 
-# Architecture identifier
-BUILD_ARCH = armv7_m
-
-# Additional board description
-BUILD_ARCH_DESC = "ARMv7-M Architecture"
-
-CC_INCLUDES += lib/va_include/nport/arch_armv7_m
-
-ifeq ($(BUILD_MCU_FAM),cortex-m3)
-ADD_PLATFORM_FEATURE += cortex_m3
-else ifeq ($(BUILD_MCU_FAM),cortex-m4)
-ADD_PLATFORM_FEATURE += cortex_m4
-else ifeq ($(BUILD_MCU_FAM),cortex-m7)
-ADD_PLATFORM_FEATURE += cortex_m7
-else
-$(error Internal build error no such BUILD_MCU_FAM := $(BUILD_MCU_FAM))
-endif
-
-ifneq (,$(findstring fphard,$(BUILD_MCU_ATTR)))
-ADD_PLATFORM_FEATURE += arm_fpv4_sp_d16
-endif
-
-NCONFIG_ARCH_ARMV7_M := 1
+# Enable 
+# mfloat-abi=hard: Uses floating-point instructions and the floating-point ABI
+# fpv4: VFP version
+# sp: single precision
+# d16: 16 64-bit FPU registers
+CC_FLAGS += --mfloat-abi=hard -mfpu=fpv4-sp-d16
 
 endif

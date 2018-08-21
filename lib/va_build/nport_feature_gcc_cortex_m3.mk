@@ -17,31 +17,16 @@
 #
 
 # Include guard
-ifndef VA_BUILD_NPORT_ARCH_ARMV7_M_MK
-VA_BUILD_NPORT_ARCH_ARMV7_M_MK=1
+ifndef LIB_VA_BUILD_NPORT_FEATURE_GCC_CORTEX_M3_MK
+LIB_VA_BUILD_NPORT_FEATURE_GCC_CORTEX_M3_MK = 1
 
-# Architecture identifier
-BUILD_ARCH = armv7_m
+# Common flags for Cortex-M processors
+CC_FLAGS += -march=armv7-m -mthumb
 
-# Additional board description
-BUILD_ARCH_DESC = "ARMv7-M Architecture"
+# Specifix flag for Cortex-M3 processor
+CC_FLAGS += -mcpu=cortex-m3
 
-CC_INCLUDES += lib/va_include/nport/arch_armv7_m
-
-ifeq ($(BUILD_MCU_FAM),cortex-m3)
-ADD_PLATFORM_FEATURE += cortex_m3
-else ifeq ($(BUILD_MCU_FAM),cortex-m4)
-ADD_PLATFORM_FEATURE += cortex_m4
-else ifeq ($(BUILD_MCU_FAM),cortex-m7)
-ADD_PLATFORM_FEATURE += cortex_m7
-else
-$(error Internal build error no such BUILD_MCU_FAM := $(BUILD_MCU_FAM))
-endif
-
-ifneq (,$(findstring fphard,$(BUILD_MCU_ATTR)))
-ADD_PLATFORM_FEATURE += arm_fpv4_sp_d16
-endif
-
-NCONFIG_ARCH_ARMV7_M := 1
+# GCC tools name prefix 
+PREFIX = arm-none-eabi-
 
 endif

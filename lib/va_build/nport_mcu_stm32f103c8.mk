@@ -35,7 +35,7 @@ BUILD_MCU := stm32f103c8
 BUILD_MCU_DESC := "STM32F103C8"
 
 # Additional MCU information
-BUILD_MCU_FAM := generic
+BUILD_MCU_FAM := cortex-m3
 BUILD_MCU_ATTR :=
 
 CC_SOURCES += lib/va_source/nport_mcu_generic.c
