@@ -73,8 +73,10 @@ ifndef BUILD_OS
 $(error The '$(OS)' os definition does not exists in Neon Port)
 endif
 
-PLATFORM_FEATURES_FILT = $(filter-out $(DEL_PLATFORM_FEATURE), $(sort, $(ADD_PLATFORM_FEATURE)))
+# From ADD_PLATFORM_FEATURE set substracy DEL_PLATFORM_FEATURE
+PLATFORM_FEATURES_FILT = $(filter-out $(sort, $(DEL_PLATFORM_FEATURE)), $(sort, $(ADD_PLATFORM_FEATURE)))
 
+# Include all filtered include files
 PLATFORM_FEATURES = $(PLATFORM_FEATURES_FILT:%=$(WS)/lib/va_build/nport_feature_$(PLATFORM)_%.mk)
 
 endif
