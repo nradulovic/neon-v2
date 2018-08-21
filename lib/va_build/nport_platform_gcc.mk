@@ -80,4 +80,6 @@ $(BUILD_DIR)/%.o: $(WS)/%.S
 %.siz:
 	$(PRINT) " [SIZE]: $@"
 	$(VERBOSE)$(SIZE) --format=$(SIZ_FORMAT) $< > $@
+	$(VERBOSE)cat $@
 
+# TODO: See https://launchpadlibrarian.net/170926122/readme.txt

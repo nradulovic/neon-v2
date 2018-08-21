@@ -17,9 +17,9 @@
 #
 
 # Profile identifier
-BUILD_PROFILE := release
+BUILD_PROFILE := release_1
 
 # Additional profile description
-BUILD_PROFILE_DESC = "No debug / no optimizations"
+BUILD_PROFILE_DESC = "No debug / most optimizations"
 
-CC_FLAGS += -O0
+ADD_PLATFORM_FEATURE += optimize_2

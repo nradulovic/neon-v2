@@ -16,12 +16,10 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Profile identifier
-BUILD_PROFILE := debug
+# Include guard
+ifndef LIB_VA_BUILD_NPORT_FEATURE_GCC_OPTIMIZE_SIZE_MK
+LIB_VA_BUILD_NPORT_FEATURE_GCC_OPTIMIZE_SIZE_MK = 1
 
-# Additional profile description
-BUILD_PROFILE_DESC = "Debug / no optimizations"
+CC_FLAGS += -Os
 
-CC_FLAGS += -g -O0
-
-
+endif

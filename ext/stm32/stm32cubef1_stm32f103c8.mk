@@ -33,6 +33,9 @@ CC_DEFINES += STM32F103xB
 # Enable STM32 HAL Driver
 CC_DEFINES += USE_HAL_DRIVER  
 
+# HAL driver needs support files
+CC_INCLUDES += $(STM32CUBEF1_PATH)/../support/stm32f1
+
 # Add startup code
 
 ifeq ($(PLATFORM), gcc)
@@ -47,4 +50,5 @@ else
 $(error Selected platform $(PLATFORM) is not supported by $(STM32CUBEF1_NAME))
 endif
 
+LD_FLAGS += --specs=nosys.specs
 endif

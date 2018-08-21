@@ -25,7 +25,7 @@ void ntask_init(struct ntask * task, task_fn * fn, void * arg,
         is_initialized = true;
         nbitarray_init(&g_task_ready_queue.prio_group);
 
-        for (uint32_t i; i < NBITARRAY_BITS; i++) {
+        for (uint32_t i = 0u; i < NBITARRAY_BITS; i++) {
             npqueue_init(&g_task_ready_queue.group_lists[i]);
         }
     }

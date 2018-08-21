@@ -49,8 +49,11 @@ AR_LIBS +=
 # List additional libraries. Use this when using an external static library.
 LD_LIBS +=
 
+# Include configurable platform feature makefiles
+include $(PLATFORM_FEATURES)
+
 # Define ALL rule.
-all: $(PROJECT_ELF)
+all: $(PROJECT_FLASH) $(PROJECT_SIZE)
 
 clean: clean-flash clean-size
 

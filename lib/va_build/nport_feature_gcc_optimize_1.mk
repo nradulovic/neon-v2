@@ -1,6 +1,6 @@
 #
 # Neon
-# Copyright (C)  2017  Nenad Radulovic
+# Copyright (C) 2018   REAL-TIME CONSULTING
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published by the Free
@@ -17,25 +17,9 @@
 #
 
 # Include guard
-ifndef EXT_STM32_STM32CUBE_FW_F1
-EXT_STM32_STM32CUBE_FW_F1=1
+ifndef LIB_VA_BUILD_NPORT_FEATURE_GCC_OPTIMIZE_1_MK
+LIB_VA_BUILD_NPORT_FEATURE_GCC_OPTIMIZE_1_MK = 1
 
-STM32CUBEF1_NAME := STM32 Cube F1
-
-#
-# WARNING WARNING WARNING
-#
-# We are using firstword function here. This means that the STM32CUBEF1_PATH
-# variable will fail to resolve properly if there is a space in path.
-STM32CUBEF1_PATH_ABS = $(firstword $(wildcard $(WS)/ext/stm32/STM32Cube_FW_F1*))
-STM32CUBEF1_PATH = $(STM32CUBEF1_PATH_ABS:$(WS)/%=%)
-
-ifeq ("$(STM32CUBEF1_PATH)", "")
-$(error [EXT]: No $(STM32CUBEF1_NAME) library was found in ext/stm32)
-endif
-
-ifeq ("$(V)", "1")
-$(info $(STM32CUBEF1_NAME) in $(STM32CUBEF1_PATH))
-endif
+CC_FLAGS += -O1
 
 endif

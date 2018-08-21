@@ -15,6 +15,10 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
+# Include guard
+ifndef BUILD_COMMON_MK
+BUILD_COMMON_MK = 1
+
 # == Functions ==
 # Check that given variables are set and all have non-empty values,
 # die with an error otherwise.
@@ -206,3 +210,4 @@ cc_sources:
 cc_flags:
 	$(foreach i,$(CC_FLAGS),$(info $(i)))
 
+endif

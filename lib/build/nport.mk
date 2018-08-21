@@ -60,7 +60,7 @@ $(error The '$(PLATFORM)' platform definition does not exists in Neon Port)
 endif
 
 # Try to load specified PROFILE
--include $(WS)/lib/va_build/nport_profile_$(PLATFORM)_$(PROFILE).mk
+-include $(WS)/lib/va_build/nport_profile_$(PROFILE).mk
 
 ifndef BUILD_PROFILE
 $(error The '$(PROFILE)' profile definition does not exists in Neon Port)
@@ -72,5 +72,9 @@ endif
 ifndef BUILD_OS
 $(error The '$(OS)' os definition does not exists in Neon Port)
 endif
+
+PLATFORM_FEATURES_FILT = $(ADD_PLATFORM_FEATURE)
+
+PLATFORM_FEATURES = $(PLATFORM_FEATURES_FILT:%=$(WS)/lib/va_build/nport_feature_$(PLATFORM)_%.mk)
 
 endif

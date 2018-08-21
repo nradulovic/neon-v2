@@ -32,6 +32,13 @@
 #ifndef NEON_GCC_VARIANT_GCC_COMMON_H_
 #define NEON_GCC_VARIANT_GCC_COMMON_H_
 
+#define GCC_VERSION                                                         \
+    (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+
+#if GCC_VERSION < 40900
+#error "GCC_VARIANT: Your compiler is too old - please upgrade it."
+#endif
+
 #if (defined(__STDC_VERSION__))
 #if (__STDC_VERSION__ >= 201112L)
 #include "variant/gcc_c11.h"

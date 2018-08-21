@@ -23,7 +23,12 @@ cleanup_build_job:
 test_job:
     stage: test
     script:
-        - make test
+        - make PROFILE=debug clean test
+        - make PROFILE=release_0 clean test
+        - make PROFILE=release_1 clean test
+        - make PROFILE=release_2 clean test
+        - make PROFILE=release_3 clean test
+        - make PROFILE=release_size clean test
 
 cleanup_job:
     stage: cleanup

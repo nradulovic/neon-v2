@@ -31,7 +31,7 @@ CC_INCLUDES += $(PROJECT_DIR)/$(BUILD_DIR)
 # Common defines for the library
 CC_DEFINES += NCONFIG_GIT_VERSION=\"$(NCONFIG_GIT_VERSION)\"
 
-# Library configuration
+# Library header configuration
 CC_CONFIG_FILE = $(BUILD_DIR)/neon_config.h
 
 .PHONY: config
@@ -40,7 +40,7 @@ config: $(CC_CONFIG_FILE)
 $(CC_CONFIG_FILE): $(WS)/$(PROJECT_CONFIG)
 	$(PRINT) Project configuration file "$(WS)/$(PROJECT_CONFIG)"
 	$(VERBOSE)mkdir -p $(dir $@)
-	$(VERBOSE)cp -v $(WS)/$(PROJECT_CONFIG) $@
+	$(VERBOSE)cp $(WS)/$(PROJECT_CONFIG) $@
 
 .PHONY: config-clean
 config-clean:
