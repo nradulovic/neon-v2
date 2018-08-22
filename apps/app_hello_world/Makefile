@@ -53,9 +53,9 @@ LD_LIBS +=
 include $(PLATFORM_FEATURES)
 
 # Define ALL rule.
-all: $(PROJECT_FLASH) $(PROJECT_SIZE)
+all: config $(PROJECT_FLASH) $(PROJECT_SIZE)
 
-clean: clean-flash clean-size
+clean: clean-size clean-flash config-clean
 
 distclean: 
 	$(VERBOSE)rm -rf $(BUILD_DIR)

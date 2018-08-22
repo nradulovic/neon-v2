@@ -16,9 +16,13 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Additional board description
-BUILD_ARCH_DESC = "ARMv7-M Architecture"
+# Additional MCU description
+BUILD_CORE_DESC := "Cortex-M3"
 
 # Includes and sources
-CC_INCLUDES += lib/va_include/nport/arch_armv7_m
+
+# Include MCU specific header paths and defines
+
+# This mcu will define the architecture
+ARCH = armv7_m
 

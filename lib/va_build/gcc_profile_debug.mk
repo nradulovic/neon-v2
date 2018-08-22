@@ -16,17 +16,4 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Include guard
-ifndef LIB_VA_BUILD_NPORT_FEATURE_GCC_CORTEX_M3_MK
-LIB_VA_BUILD_NPORT_FEATURE_GCC_CORTEX_M3_MK = 1
-
-# Common flags for Cortex-M processors
-CC_FLAGS += -march=armv7-m -mthumb
-
-# Specifix flag for Cortex-M3 processor
-CC_FLAGS += -mcpu=cortex-m3
-
-# GCC tools name prefix 
-PREFIX = arm-none-eabi-
-
-endif
+CC_FLAGS += -g -O0

@@ -28,22 +28,17 @@
 # * 20 Kbytes of SRAM
 #
 
-# MCU identifier
-BUILD_MCU := stm32f103c8
-
 # Additional MCU description
 BUILD_MCU_DESC := "STM32F103C8"
 
-# Additional MCU information
-BUILD_MCU_FAM := cortex-m3
-BUILD_MCU_ATTR :=
-
+# Includes and sources
 CC_SOURCES += lib/va_source/nport_mcu_generic.c
 CC_INCLUDES += lib/va_include/nport/mcu_stm32f103c8
-
-# This board will define the ARCH
-ARCH = armv7_m
 
 # Include MCU specific header paths and defines
 include $(WS)/ext/stm32/stm32cubef1_stm32f103c8.mk
 include $(WS)/ext/stm32/stm32cubef1_cmsis.mk
+
+# This mcu will define the core
+CORE = cortex_m3
+

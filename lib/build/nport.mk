@@ -26,57 +26,44 @@ include $(WS)/lib/build/nlib.mk
 # Some defaults if they are not alredy given.
 BOARD ?= generic
 MCU ?= generic
+CORE ?= x86
 ARCH ?= x86
 PLATFORM ?= gcc
 PROFILE ?= debug
 OS ?= linux
 
-# Try to load specified board
--include $(WS)/lib/va_build/nport_board_$(BOARD).mk
+# NOTE: Load specified board
+# If building fails to include the next Makefile then that means the board is 
+# not supported.
+include $(WS)/lib/va_build/nport_board_$(BOARD).mk
 
-ifndef BUILD_BOARD
-$(error The '$(BOARD)' board definition does not exists in Neon Port)
-endif
+# NOTE: Load specified MCU
+include $(WS)/lib/va_build/nport_mcu_$(MCU).mk
+-include $(WS)/lib/va_build/$(PLATFORM)_mcu_$(MCU).mk
 
-# Try to load specified MCU
--include $(WS)/lib/va_build/nport_mcu_$(MCU).mk
+# NOTE: Load specified CORE
+include $(WS)/lib/va_build/nport_core_$(CORE).mk
+-include $(WS)/lib/va_build/$(PLATFORM)_core_$(CORE).mk
 
-ifndef BUILD_MCU
-$(error The '$(MCU)' MCU definition does not exists in Neon Port)
-endif
+# NOTE: Load specified ARCH
+include $(WS)/lib/va_build/nport_arch_$(ARCH).mk
+-include $(WS)/lib/va_build/$(PLATFORM)_arch_$(ARCH).mk
 
-# Try to load specified ARCH
--include $(WS)/lib/va_build/nport_arch_$(ARCH).mk
+# NOTE: Load specified OS
+include $(WS)/lib/va_build/nport_os_$(OS).mk
+-include $(WS)/lib/va_build/$(PLATFORM)_os_$(OS).mk
 
-ifndef BUILD_ARCH
-$(error The '$(ARCH)' architecture definition does not exists in Neon Port)
-endif
+# NOTE: Load specified PROFILE
+include $(WS)/lib/va_build/nport_profile_$(PROFILE).mk
+-include $(WS)/lib/va_build/$(PLATFORM)_profile_$(PROFILE).mk
 
-# Try to load specified PLATFORM
--include $(WS)/lib/va_build/nport_platform_$(PLATFORM).mk
-
-ifndef BUILD_PLATFORM
-$(error The '$(PLATFORM)' platform definition does not exists in Neon Port)
-endif
-
-# Try to load specified PROFILE
--include $(WS)/lib/va_build/nport_profile_$(PROFILE).mk
-
-ifndef BUILD_PROFILE
-$(error The '$(PROFILE)' profile definition does not exists in Neon Port)
-endif
-
-# Try to load specified OS
--include $(WS)/lib/va_build/nport_os_$(OS).mk
-
-ifndef BUILD_OS
-$(error The '$(OS)' os definition does not exists in Neon Port)
-endif
+# NOTE: Load specified PLATFORM
+include $(WS)/lib/va_build/nport_platform_$(PLATFORM).mk
 
 # From ADD_PLATFORM_FEATURE set substracy DEL_PLATFORM_FEATURE
-PLATFORM_FEATURES_FILT = $(filter-out $(sort, $(DEL_PLATFORM_FEATURE)), $(sort, $(ADD_PLATFORM_FEATURE)))
+NPORT_FEATURE_LIST = $(filter-out $(sort, $(DEL_NPORT_FEATURE)), $(sort, $(ADD_NPORT_FEATURE)))
 
 # Include all filtered include files
-PLATFORM_FEATURES = $(PLATFORM_FEATURES_FILT:%=$(WS)/lib/va_build/nport_feature_$(PLATFORM)_%.mk)
+NPORT_FEATURES = $(NPORT_FEATURE_LIST:%=$(WS)/lib/va_build/$(PLATFORM)_feature_%.mk)
 
 endif

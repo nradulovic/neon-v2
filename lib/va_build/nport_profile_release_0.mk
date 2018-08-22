@@ -16,10 +16,6 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Profile identifier
-BUILD_PROFILE := release
-
 # Additional profile description
 BUILD_PROFILE_DESC = "No debug / no optimizations"
 
-ADD_PLATFORM_FEATURE += optimize_0

@@ -16,9 +16,16 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Additional board description
-BUILD_ARCH_DESC = "ARMv7-M Architecture"
+# Include guard
+ifndef LIB_VA_BUILD_NPORT_FEATURE_GCC_ARM_FPV4_SP_D16_MK
+LIB_VA_BUILD_NPORT_FEATURE_GCC_ARM_FPV4_SP_D16_MK = 1
 
-# Includes and sources
-CC_INCLUDES += lib/va_include/nport/arch_armv7_m
+# Enable 
+# mfloat-abi=hard: Uses floating-point instructions and the floating-point ABI
+# fpv4: VFP version
+# sp: single precision
+# d16: 16 64-bit FPU registers
+CC_FLAGS += --mfloat-abi=hard -mfpu=fpv4-sp-d16
+LD_LIBS += m
 
+endif

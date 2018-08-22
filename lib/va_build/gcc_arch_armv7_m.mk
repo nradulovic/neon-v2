@@ -16,9 +16,8 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Additional board description
-BUILD_ARCH_DESC = "ARMv7-M Architecture"
+# Common flags for Cortex-M processors
+CC_FLAGS += -march=armv7-m -mthumb
 
-# Includes and sources
-CC_INCLUDES += lib/va_include/nport/arch_armv7_m
-
+# Set compiler prefix
+PREFIX = arm-none-eabi

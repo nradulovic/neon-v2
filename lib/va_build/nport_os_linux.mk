@@ -16,8 +16,5 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# OS identifier
-BUILD_OS = linux
-
 # Additional OS description
 BUILD_OS_DESC = "Linux"

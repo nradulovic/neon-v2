@@ -16,10 +16,7 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Profile identifier
-BUILD_PROFILE := debug
-
 # Additional profile description
 BUILD_PROFILE_DESC = "Debug / no optimizations"
 
-ADD_PLATFORM_FEATURE += debug gc_sections
+ADD_NPORT_FEATURE += gc_sections

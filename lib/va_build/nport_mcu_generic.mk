@@ -20,15 +20,12 @@
 # This is a generic MCU placeholder. It does not provide any functionality,
 # it just creates dummy BSP implementation to satisfy linking.
 
-# MCU identifier
-BUILD_MCU := generic
-
 # Additional MCU description
 BUILD_MCU_DESC := "Generic MCU"
 
-# Additional MCU information
-BUILD_MCU_FAM := generic
-BUILD_MCU_ATTR :=
-
+# Includes and sources
 CC_SOURCES += lib/va_source/nport_mcu_generic.c
 CC_INCLUDES += lib/va_include/nport/mcu_generic
+
+# Define core
+CORE := x86

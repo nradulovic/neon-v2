@@ -16,10 +16,13 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Include guard
-ifndef LIB_VA_BUILD_NPORT_FEATURE_GCC_DEBUG_MK
-LIB_VA_BUILD_NPORT_FEATURE_GCC_DEBUG_MK = 1
+# Additional MCU description
+BUILD_CORE_DESC := "x86"
 
-CC_FLAGS += -g -O0
+# Includes and sources
 
-endif
+# Include MCU specific header paths and defines
+
+# This mcu will define the architecture
+ARCH = x86
+

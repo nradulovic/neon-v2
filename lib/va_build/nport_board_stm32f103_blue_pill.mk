@@ -21,15 +21,14 @@
 # Blue pill is the nickname given to the most popular, ultra-cheap and compact
 # STM32F103 board. 
 
-# Board identifier
-BUILD_BOARD := stm32f103_blue_pill
-
 # Additional board description
 BUILD_BOARD_DESC := "STM32F103 Blue Pill"
+
+# Includes and sources
+CC_SOURCES += lib/va_source/nport_board_stm32f103_blue_pill.c
+CC_SOURCES += lib/va_source/nport_board_stm32f103_blue_pill_bsp.c
+CC_INCLUDES += lib/va_include/nport/board_stm32f103_blue_pill
 
 # This board will define the MCU
 MCU := stm32f103c8
 
-CC_SOURCES += lib/va_source/nport_board_stm32f103_blue_pill.c
-CC_SOURCES += lib/va_source/nport_board_stm32f103_blue_pill_bsp.c
-CC_INCLUDES += lib/va_include/nport/board_stm32f103_blue_pill

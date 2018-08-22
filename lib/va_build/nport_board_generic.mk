@@ -20,12 +20,13 @@
 # This is a generic board placeholder. It does not provide any functionality,
 # it just creates dummy BSP implementation to satisfy linking.
 
-# Board identifier
-BUILD_BOARD := generic
-
 # Additional board description
 BUILD_BOARD_DESC := "Generic board"
 
+# Includes and sources
 CC_SOURCES += lib/va_source/nport_board_generic.c
 CC_SOURCES += lib/va_source/nport_board_generic_bsp.c
 CC_INCLUDES += lib/va_include/nport/board_generic
+
+# Defined MCU
+MCU := generic

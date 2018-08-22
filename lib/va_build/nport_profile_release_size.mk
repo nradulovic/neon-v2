@@ -16,10 +16,6 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Profile identifier
-BUILD_PROFILE := release_size
-
 # Additional profile description
 BUILD_PROFILE_DESC = "No debug / optimizations for size"
 
-ADD_PLATFORM_FEATURE += gc_sections optimize_size

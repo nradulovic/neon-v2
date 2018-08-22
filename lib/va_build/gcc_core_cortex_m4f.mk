@@ -16,10 +16,7 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Include guard
-ifndef LIB_VA_BUILD_NPORT_FEATURE_GCC_OPTIMIZE_3_MK
-LIB_VA_BUILD_NPORT_FEATURE_GCC_OPTIMIZE_3_MK = 1
+# Common flags for Cortex-M4 processors
+include $(WS)/lib/va_build/core_gcc_cortex_m4.mk
 
-CC_FLAGS += -O3
-
-endif
+ADD_PLATFORM_FEATURE += arm_fpv4_sp_d16

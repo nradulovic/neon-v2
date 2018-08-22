@@ -16,10 +16,5 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Include guard
-ifndef LIB_VA_BUILD_NPORT_FEATURE_GCC_OPTIMIZE_1_MK
-LIB_VA_BUILD_NPORT_FEATURE_GCC_OPTIMIZE_1_MK = 1
-
-CC_FLAGS += -O1
-
-endif
+# GCC flags
+CC_FLAGS += -Os 
