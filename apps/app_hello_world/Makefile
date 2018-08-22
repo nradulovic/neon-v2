@@ -49,8 +49,8 @@ AR_LIBS +=
 # List additional libraries. Use this when using an external static library.
 LD_LIBS +=
 
-# Include configurable platform feature makefiles
-include $(PLATFORM_FEATURES)
+# Include configurable nport feature makefiles
+include $(NPORT_FEATURES)
 
 # Define ALL rule.
 all: config $(PROJECT_FLASH) $(PROJECT_SIZE)

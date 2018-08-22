@@ -19,4 +19,3 @@
 # Additional profile description
 BUILD_PROFILE_DESC = "Debug / no optimizations"
 
-ADD_NPORT_FEATURE += gc_sections

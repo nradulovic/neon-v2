@@ -20,4 +20,4 @@
 CC_FLAGS += -march=armv7-m -mthumb
 
 # Set compiler prefix
-PREFIX = arm-none-eabi
+PREFIX = arm-none-eabi-

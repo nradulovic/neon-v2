@@ -60,8 +60,8 @@ include $(WS)/lib/va_build/nport_profile_$(PROFILE).mk
 # NOTE: Load specified PLATFORM
 include $(WS)/lib/va_build/nport_platform_$(PLATFORM).mk
 
-# From ADD_PLATFORM_FEATURE set substracy DEL_PLATFORM_FEATURE
-NPORT_FEATURE_LIST = $(filter-out $(sort, $(DEL_NPORT_FEATURE)), $(sort, $(ADD_NPORT_FEATURE)))
+# From ADD_NPORT_FEATURE set substract DEL_NPORT_FEATURE set
+NPORT_FEATURE_LIST = $(filter-out $(sort $(DEL_NPORT_FEATURE)), $(sort $(ADD_NPORT_FEATURE)))
 
 # Include all filtered include files
 NPORT_FEATURES = $(NPORT_FEATURE_LIST:%=$(WS)/lib/va_build/$(PLATFORM)_feature_%.mk)

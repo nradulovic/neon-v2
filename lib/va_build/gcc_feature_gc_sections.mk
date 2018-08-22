@@ -16,11 +16,6 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Include guard
-ifndef LIB_VA_BUILD_NPORT_FEATURE_GCC_GC_SECTIONS_MK
-LIB_VA_BUILD_NPORT_FEATURE_GCC_GC_SECTIONS_MK = 1
-
 CC_FLAGS += -fdata-sections -ffunction-sections
 LD_FLAGS += -Wl,--gc-sections
 
-endif
