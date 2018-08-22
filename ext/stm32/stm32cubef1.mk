@@ -31,7 +31,13 @@ STM32CUBEF1_PATH_ABS = $(firstword $(wildcard $(WS)/ext/stm32/STM32Cube_FW_F1*))
 STM32CUBEF1_PATH = $(STM32CUBEF1_PATH_ABS:$(WS)/%=%)
 
 ifeq ("$(STM32CUBEF1_PATH)", "")
-$(error [EXT]: No $(STM32CUBEF1_NAME) library was found in ext/stm32)
+$(shell echo "[BUILD]: No $(STM32CUBEF1_NAME) library was found in 'ext/stm32'\n" \
+			 "\n" \
+			 "Please, try the following steps:\n" \
+			 " 1. Download the $(STM32CUBEF1_NAME) archive from www.st.com site\n" \
+			 " 2. Extract downloaded archive into the 'ext/stm32' folder\n" \
+			 " 3. Execute the build again." > /dev/stderr)
+$(error No $(STM32CUBEF1_NAME) library was found in 'ext/stm32')
 endif
 
 ifeq ("$(V)", "1")

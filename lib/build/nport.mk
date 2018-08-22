@@ -33,9 +33,17 @@ PROFILE ?= debug
 OS ?= linux
 
 # NOTE: Load specified board
-# If building fails to include the next Makefile then that means the board is 
-# not supported.
-include $(WS)/lib/va_build/nport_board_$(BOARD).mk
+err=$(call safe_include, $(WS)/lib/va_build/nport_board_$(BOARD).mk)
+
+ifneq ($(err),)
+$(shell echo "[BUILD]: No board support was found for '$(BOARD)'\n" \
+			 "\n" \
+			 "Please, try any of the following steps:\n" \
+			 " * Create the board from nport_board_generic.mk\n" \
+			 " * Create ticket to upstream for support\n" \
+			 " * Check if the board name is correctly typed" > /dev/stderr)
+$(error No board support was found for '$(BOARD)')
+endif
 
 # NOTE: Load specified MCU
 include $(WS)/lib/va_build/nport_mcu_$(MCU).mk

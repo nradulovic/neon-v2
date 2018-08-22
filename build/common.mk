@@ -39,9 +39,8 @@ check_defined = \
 # Params:
 #   1. Include file name
 safe_include = \
-    $(if $(shell if [ -e $1 ]; then echo 1; fi), \
-        $(eval include $1), \
-        $(shell echo 'No such file$1'))
+    $(if $(shell if [ -e $1 ]; then echo 1; fi),$(eval include $1), \
+        $(shell echo $1))
 
 $(call check_defined, WS, WS is relative path to Neon build directory)
 $(call check_defined, PROJECT_DIR, PROJECT_DIR is project root source directory)
