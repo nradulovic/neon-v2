@@ -33,6 +33,16 @@ check_defined = \
         $(if $(value $1),, \
               $(error Undefined $1$(if $2, ($2))))
 
+# Try to include a file given in the first argument. The function will return
+# the status which must be checked.
+#
+# Params:
+#   1. Include file name
+safe_include = \
+    $(if $(shell if [ -e $1 ]; then echo 1; fi), \
+        $(eval include $1), \
+        $(shell echo 'No such file$1'))
+
 $(call check_defined, WS, WS is relative path to Neon build directory)
 $(call check_defined, PROJECT_DIR, PROJECT_DIR is project root source directory)
 $(call check_defined, PROJECT_NAME, PROJECT_NAME is project name)
