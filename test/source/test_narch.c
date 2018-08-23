@@ -22,73 +22,63 @@
 #include "port/nport_arch.h"
 #include "test_narch.h"
 
-static void test_none_exp2_0(void);
-static void test_none_exp2_1(void);
-static void test_none_exp2_7(void);
-static void test_none_exp2_31(void);
-static void test_none_log2_1(void);
-static void test_none_log2_3(void);
-static void test_none_log2_UINT8_MAX(void);
-static void test_none_log2_UINT16_MAX(void);
-static void test_none_log2_UINT32_MAX(void);
-
-static void test_none_exp2_0(void)
+NTESTSUITE_TEST(test_none_exp2_0)
 {
     NTESTSUITE_EXPECT_UINT(0x01u);
     NTESTSUITE_ACTUAL_UINT(narch_exp2(0));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_exp2_1(void)
+NTESTSUITE_TEST(test_none_exp2_1)
 {
     NTESTSUITE_EXPECT_UINT(0x02u);
     NTESTSUITE_ACTUAL_UINT(narch_exp2(1));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_exp2_7(void)
+NTESTSUITE_TEST(test_none_exp2_7)
 {
     NTESTSUITE_EXPECT_UINT(0x80u);
     NTESTSUITE_ACTUAL_UINT(narch_exp2(7));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_exp2_31(void)
+NTESTSUITE_TEST(test_none_exp2_31)
 {
     NTESTSUITE_EXPECT_UINT(0x80000000);
     NTESTSUITE_ACTUAL_UINT(narch_exp2(31));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_log2_1(void)
+NTESTSUITE_TEST(test_none_log2_1)
 {
     NTESTSUITE_EXPECT_UINT(0);
     NTESTSUITE_ACTUAL_UINT(narch_log2(0x01));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_log2_3(void)
+NTESTSUITE_TEST(test_none_log2_3)
 {
     NTESTSUITE_EXPECT_UINT(1);
     NTESTSUITE_ACTUAL_UINT(narch_log2(0x03));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_log2_UINT8_MAX(void)
+NTESTSUITE_TEST(test_none_log2_UINT8_MAX)
 {
     NTESTSUITE_EXPECT_UINT(7);
     NTESTSUITE_ACTUAL_UINT(narch_log2(0xff));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_log2_UINT16_MAX(void)
+NTESTSUITE_TEST(test_none_log2_UINT16_MAX)
 {
     NTESTSUITE_EXPECT_UINT(15);
     NTESTSUITE_ACTUAL_UINT(narch_log2(0xffff));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_log2_UINT32_MAX(void)
+NTESTSUITE_TEST(test_none_log2_UINT32_MAX)
 {
     NTESTSUITE_EXPECT_UINT(31);
     NTESTSUITE_ACTUAL_UINT(narch_log2(0xffffffff));
@@ -107,7 +97,7 @@ void test_narch(void)
     NTESTSUITE_RUN(none, test_none_log2_UINT8_MAX);
     NTESTSUITE_RUN(none, test_none_log2_UINT16_MAX);
     NTESTSUITE_RUN(none, test_none_log2_UINT32_MAX);
-    NTESTSUITE_PRINT_RESULTS(none);   
+    NTESTSUITE_PRINT_RESULTS(none);
 }
 
 

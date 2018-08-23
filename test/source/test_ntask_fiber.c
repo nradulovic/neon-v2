@@ -132,7 +132,7 @@ static NFIBER(fiber_wait_0(struct nfiber * fb))
     NFIBER_END();
 }
 
-static void test_none_empty(void)
+NTESTSUITE_TEST(test_none_empty)
 {
     struct nfiber empty;
 
@@ -142,7 +142,7 @@ static void test_none_empty(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_exit(void)
+NTESTSUITE_TEST(test_none_exit)
 {
     struct nfiber exit;
 
@@ -153,7 +153,7 @@ static void test_none_exit(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_until(void)
+NTESTSUITE_TEST(test_none_until)
 {
     struct nfiber until;
 
@@ -164,7 +164,7 @@ static void test_none_until(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_while(void)
+NTESTSUITE_TEST(test_none_while)
 {
     struct nfiber while_ctx;
 
@@ -175,7 +175,7 @@ static void test_none_while(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_wait(void)
+NTESTSUITE_TEST(test_none_wait)
 {
     struct nfiber wait;
 
@@ -186,7 +186,7 @@ static void test_none_wait(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_yield(void)
+NTESTSUITE_TEST(test_none_yield)
 {
     struct nfiber yielded_0;
     struct nfiber yielded_1;

@@ -40,7 +40,7 @@ static NTASK(task_yield_fn(struct ntask * task, void * arg))
     NTASK_END();
 }
 
-static void test_init(void)
+NTESTSUITE_TEST(test_init)
 {
     NTESTSUITE_EXPECT_UINT(NTASK_DORMANT);
     ntask_init(&g_task_init, task_init_fn, NULL, 0);
@@ -48,7 +48,7 @@ static void test_init(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_priority(void)
+NTESTSUITE_TEST(test_priority)
 {
     NTESTSUITE_EXPECT_UINT(1);
     ntask_init(&g_task_init, task_init_fn, NULL, 1);
@@ -56,7 +56,7 @@ static void test_priority(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_yield(void)
+NTESTSUITE_TEST(test_yield)
 {
     NTESTSUITE_EXPECT_UINT(NTASK_READY);
     ntask_init(&g_task_yield, task_yield_fn, NULL, 0);

@@ -22,24 +22,7 @@
 #include "bits/nbits.h"
 #include "test_nbits.h"
 
-static void test_none_array_size(void);
-static void test_none_bit_size(void);
-static void test_none_divide_round(void);
-static void test_none_divide_roundup(void);
-static void test_none_align(void);
-static void test_none_alignup(void);
-static void test_none_log2_0(void);
-static void test_none_log2_x(void);
-static void test_none_log2_UINT32_MAX(void);
-static void test_none_is_powerof2_0(void);
-static void test_none_is_powerof2_1(void);
-static void test_none_is_powerof2_4(void);
-static void test_none_xbn(void);
-static void test_none_msb(void);
-static void test_none_lsb(void);
-static void test_none_ftou32_u32tof(void);
-
-static void test_none_array_size(void)
+NTESTSUITE_TEST(test_none_array_size)
 {
     const char small_array[1];
     const char big_array[10];
@@ -53,7 +36,7 @@ static void test_none_array_size(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_bit_size(void)
+NTESTSUITE_TEST(test_none_bit_size)
 {
     uint8_t small_var;
     uint32_t big_var;
@@ -67,7 +50,7 @@ static void test_none_bit_size(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_divide_round(void)
+NTESTSUITE_TEST(test_none_divide_round)
 {
     NTESTSUITE_EXPECT_UINT(15);
     NTESTSUITE_ACTUAL_UINT(NBITS_DIVIDE_ROUND(15, 1));
@@ -82,7 +65,7 @@ static void test_none_divide_round(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_divide_roundup(void)
+NTESTSUITE_TEST(test_none_divide_roundup)
 {
     NTESTSUITE_EXPECT_UINT(15);
     NTESTSUITE_ACTUAL_UINT(NBITS_DIVIDE_ROUNDUP(15, 1));
@@ -97,28 +80,28 @@ static void test_none_divide_roundup(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_align(void)
+NTESTSUITE_TEST(test_none_align)
 {
     NTESTSUITE_EXPECT_UINT(148);
     NTESTSUITE_ACTUAL_UINT(NBITS_ALIGN(149, 4));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_alignup(void)
+NTESTSUITE_TEST(test_none_alignup)
 {
     NTESTSUITE_EXPECT_UINT(152);
     NTESTSUITE_ACTUAL_UINT(NBITS_ALIGN_UP(149, 4));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_log2_0(void)
+NTESTSUITE_TEST(test_none_log2_0)
 {
     NTESTSUITE_EXPECT_UINT(0);
     NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(0));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_log2_x(void)
+NTESTSUITE_TEST(test_none_log2_x)
 {
     NTESTSUITE_EXPECT_UINT(0);
     NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(1));
@@ -157,35 +140,35 @@ static void test_none_log2_x(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_log2_UINT32_MAX(void)
+NTESTSUITE_TEST(test_none_log2_UINT32_MAX)
 {
     NTESTSUITE_EXPECT_UINT(7);
     NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(UINT32_MAX));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_is_powerof2_0(void)
+NTESTSUITE_TEST(test_none_is_powerof2_0)
 {
     NTESTSUITE_EXPECT_BOOL(false);
     NTESTSUITE_ACTUAL_BOOL(NBITS_IS_POWEROF2(0));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_is_powerof2_1(void)
+NTESTSUITE_TEST(test_none_is_powerof2_1)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(NBITS_IS_POWEROF2(1));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_is_powerof2_4(void)
+NTESTSUITE_TEST(test_none_is_powerof2_4)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(NBITS_IS_POWEROF2(4));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_xbn(void)
+NTESTSUITE_TEST(test_none_xbn)
 {
     uint32_t i = 0xdeadbeef;
 
@@ -206,7 +189,7 @@ static void test_none_xbn(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_msb(void) 
+NTESTSUITE_TEST(test_none_msb) 
 {
     uint32_t i = 0xdeadbeef;
 
@@ -215,7 +198,7 @@ static void test_none_msb(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_lsb(void) 
+NTESTSUITE_TEST(test_none_lsb) 
 {
     uint32_t i = 0xdeadbeef;
 
@@ -224,7 +207,7 @@ static void test_none_lsb(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_ftou32_u32tof(void)
+NTESTSUITE_TEST(test_none_ftou32_u32tof)
 {
     uint32_t itestval = 0xdeadbeef;
     uint32_t igiven = itestval;

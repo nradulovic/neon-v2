@@ -29,15 +29,9 @@
 
 #define narch_cpu_stop()        g_cpu_state_output = false
 
-static void test_empty_obligation(void);
-static void test_empty_assert(void);
-static void test_empty_require(void);
-static void test_empty_ensure(void);
-static void test_empty_internal(void);
-
 static bool g_cpu_state_output;
 
-static void test_empty_obligation(void)
+NTESTSUITE_TEST(test_empty_obligation)
 {
     uint32_t n = 5;
 
@@ -47,7 +41,7 @@ static void test_empty_obligation(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_assert(void)
+NTESTSUITE_TEST(test_empty_assert)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NASSERT(true);
@@ -55,7 +49,7 @@ static void test_empty_assert(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_require(void)
+NTESTSUITE_TEST(test_empty_require)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NREQUIRE(true);
@@ -63,7 +57,7 @@ static void test_empty_require(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_ensure(void)
+NTESTSUITE_TEST(test_empty_ensure)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NENSURE(true);
@@ -71,7 +65,7 @@ static void test_empty_ensure(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_internal(void)
+NTESTSUITE_TEST(test_empty_internal)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NASSERT_INTERNAL(true);
@@ -79,7 +73,7 @@ static void test_empty_internal(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_f_assert(void)
+NTESTSUITE_TEST(test_empty_f_assert)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NASSERT(false);
@@ -87,7 +81,7 @@ static void test_empty_f_assert(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_f_require(void)
+NTESTSUITE_TEST(test_empty_f_require)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NREQUIRE(false);
@@ -95,7 +89,7 @@ static void test_empty_f_require(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_f_ensure(void)
+NTESTSUITE_TEST(test_empty_f_ensure)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NENSURE(false);
@@ -103,7 +97,7 @@ static void test_empty_f_ensure(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_f_internal(void)
+NTESTSUITE_TEST(test_empty_f_internal)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NASSERT_INTERNAL(false);

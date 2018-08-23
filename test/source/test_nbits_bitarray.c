@@ -20,20 +20,9 @@
 #include "testsuite/ntestsuite.h"
 #include "bits/nbits_bitarray.h"
 
-static void test_none_init(void);
-static void test_empty_set_0(void);
-static void test_empty_set_get_1(void);
-static void test_empty_set_get_31(void);
-static void test_empty_set_clr_get_1(void);
-static void test_empty_set_clr_get_31(void);
-static void test_empty_set_m_0(void);
-static void test_empty_set_m_1(void);
-static void test_empty_set_m_31(void);
-static void test_empty_set_clr_get_31_m(void);
-
 static struct nbitarray g_instance;
 
-static void test_none_init(void)
+NTESTSUITE_TEST(test_none_init)
 {
     struct nbitarray a_instance;
 
@@ -47,7 +36,7 @@ static void test_none_init(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_set_0(void)
+NTESTSUITE_TEST(test_empty_set_0)
 {
     NTESTSUITE_EXPECT_UINT(0);
     nbitarray_set(&g_instance, 0u);
@@ -55,7 +44,7 @@ static void test_empty_set_0(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_set_get_1(void)
+NTESTSUITE_TEST(test_empty_set_get_1)
 {
     NTESTSUITE_EXPECT_UINT(1);
     nbitarray_set(&g_instance, 1u);
@@ -63,7 +52,7 @@ static void test_empty_set_get_1(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_set_get_31(void)
+NTESTSUITE_TEST(test_empty_set_get_31)
 {
     NTESTSUITE_EXPECT_UINT(31);
     nbitarray_set(&g_instance, 31u);
@@ -71,7 +60,7 @@ static void test_empty_set_get_31(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_set_m_0(void)
+NTESTSUITE_TEST(test_empty_set_m_0)
 {
     NTESTSUITE_EXPECT_UINT(0);
     nbitarray_set(&g_instance, 0u);
@@ -80,7 +69,7 @@ static void test_empty_set_m_0(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_set_m_1(void)
+NTESTSUITE_TEST(test_empty_set_m_1)
 {
     NTESTSUITE_EXPECT_UINT(1);
     nbitarray_set(&g_instance, 0u);
@@ -89,7 +78,7 @@ static void test_empty_set_m_1(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_set_m_31(void)
+NTESTSUITE_TEST(test_empty_set_m_31)
 {
     NTESTSUITE_EXPECT_UINT(31);
     nbitarray_set(&g_instance, 0u);
@@ -99,7 +88,7 @@ static void test_empty_set_m_31(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_set_clr_get_1(void)
+NTESTSUITE_TEST(test_empty_set_clr_get_1)
 {
     NTESTSUITE_EXPECT_UINT(0);
     nbitarray_set(&g_instance, 0u);
@@ -109,7 +98,7 @@ static void test_empty_set_clr_get_1(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_set_clr_get_31(void)
+NTESTSUITE_TEST(test_empty_set_clr_get_31)
 {
     NTESTSUITE_EXPECT_UINT(1);
     nbitarray_set(&g_instance, 0u);
@@ -120,7 +109,7 @@ static void test_empty_set_clr_get_31(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_set_clr_get_31_m(void)
+NTESTSUITE_TEST(test_empty_set_clr_get_31_m)
 {
     NTESTSUITE_EXPECT_UINT(31);
     nbitarray_set(&g_instance, 0u);

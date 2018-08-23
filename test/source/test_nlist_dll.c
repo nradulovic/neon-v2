@@ -55,7 +55,7 @@ static struct node_list g_node_0 =
 
 static struct nlist_dll g_sentinel;
 
-static void test_none_init(void)
+NTESTSUITE_TEST(test_none_init)
 {
     struct nlist_dll list;
 
@@ -64,7 +64,7 @@ static void test_none_init(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_init_is_null_true(void)
+NTESTSUITE_TEST(test_none_init_is_null_true)
 {
     struct nlist_dll list = {0};
 
@@ -73,7 +73,7 @@ static void test_none_init_is_null_true(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_init_is_null_false(void)
+NTESTSUITE_TEST(test_none_init_is_null_false)
 {
     struct nlist_dll list = {0};
 
@@ -83,7 +83,7 @@ static void test_none_init_is_null_false(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_none_is_null_false(void)
+NTESTSUITE_TEST(test_none_is_null_false)
 {
     struct nlist_dll list;
 
@@ -93,42 +93,42 @@ static void test_none_is_null_false(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_is_empty(void)
+NTESTSUITE_TEST(test_empty_is_empty)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(nlist_dll_is_empty(&g_sentinel));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_next(void)
+NTESTSUITE_TEST(test_empty_next)
 {
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_prev(void)
+NTESTSUITE_TEST(test_empty_prev)
 {
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_first(void)
+NTESTSUITE_TEST(test_empty_first)
 {
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_dll_first(&g_sentinel));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_last(void)
+NTESTSUITE_TEST(test_empty_last)
 {
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_dll_last(&g_sentinel));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_add_after(void)
+NTESTSUITE_TEST(test_empty_add_after)
 {
     nlist_dll_add_after(&g_sentinel, &g_node_a.list);
 
@@ -149,7 +149,7 @@ static void test_empty_add_after(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_add_before(void)
+NTESTSUITE_TEST(test_empty_add_before)
 {
     nlist_dll_add_before(&g_sentinel, &g_node_a.list);
 
@@ -170,7 +170,7 @@ static void test_empty_add_before(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_add_head(void)
+NTESTSUITE_TEST(test_empty_add_head)
 {
     nlist_dll_add_head(&g_sentinel, &g_node_a.list);
    
@@ -191,7 +191,7 @@ static void test_empty_add_head(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_add_tail(void)
+NTESTSUITE_TEST(test_empty_add_tail)
 {
     nlist_dll_add_tail(&g_sentinel, &g_node_a.list);
     
@@ -212,7 +212,7 @@ static void test_empty_add_tail(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_empty_remove(void)
+NTESTSUITE_TEST(test_empty_remove)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     nlist_dll_remove(&g_sentinel);
@@ -220,42 +220,42 @@ static void test_empty_remove(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_single_is_empty(void)
+NTESTSUITE_TEST(test_single_is_empty)
 {
     NTESTSUITE_EXPECT_BOOL(false);
     NTESTSUITE_ACTUAL_BOOL(nlist_dll_is_empty(&g_sentinel));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_single_next(void)
+NTESTSUITE_TEST(test_single_next)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_single_prev(void)
+NTESTSUITE_TEST(test_single_prev)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_single_first(void)
+NTESTSUITE_TEST(test_single_first)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_dll_first(&g_sentinel));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_single_last(void)
+NTESTSUITE_TEST(test_single_last)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_dll_last(&g_sentinel));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_single_add_after(void)
+NTESTSUITE_TEST(test_single_add_after)
 {
     nlist_dll_add_after(&g_sentinel, &g_node_b.list);
     
@@ -284,7 +284,7 @@ static void test_single_add_after(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_single_add_before(void)
+NTESTSUITE_TEST(test_single_add_before)
 {
     nlist_dll_add_before(&g_sentinel, &g_node_b.list);
     
@@ -313,7 +313,7 @@ static void test_single_add_before(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_single_add_head(void)
+NTESTSUITE_TEST(test_single_add_head)
 {
     nlist_dll_add_head(&g_sentinel, &g_node_b.list);
     
@@ -342,7 +342,7 @@ static void test_single_add_head(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_single_add_tail(void)
+NTESTSUITE_TEST(test_single_add_tail)
 {
     nlist_dll_add_tail(&g_sentinel, &g_node_b.list);
     
@@ -371,7 +371,7 @@ static void test_single_add_tail(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_single_remove(void)
+NTESTSUITE_TEST(test_single_remove)
 {
     nlist_dll_remove(&g_node_a.list);
     NTESTSUITE_EXPECT_BOOL(true);
@@ -379,42 +379,42 @@ static void test_single_remove(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_abcd_is_empty(void)
+NTESTSUITE_TEST(test_abcd_is_empty)
 {
     NTESTSUITE_EXPECT_BOOL(false);
     NTESTSUITE_ACTUAL_BOOL(nlist_dll_is_empty(&g_sentinel));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_abcd_next(void)
+NTESTSUITE_TEST(test_abcd_next)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_abcd_prev(void)
+NTESTSUITE_TEST(test_abcd_prev)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_d.list);
     NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_abcd_first(void)
+NTESTSUITE_TEST(test_abcd_first)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_dll_first(&g_sentinel));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_abcd_last(void)
+NTESTSUITE_TEST(test_abcd_last)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_d.list);
     NTESTSUITE_ACTUAL_PTR(nlist_dll_last(&g_sentinel));
     NTESTSUITE_EVALUATE();
 }
 
-static void test_abcd_add_after(void)
+NTESTSUITE_TEST(test_abcd_add_after)
 {
     nlist_dll_add_after(&g_sentinel, &g_node_0.list);
     
@@ -443,7 +443,7 @@ static void test_abcd_add_after(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_abcd_add_before(void)
+NTESTSUITE_TEST(test_abcd_add_before)
 {
     nlist_dll_add_before(&g_sentinel, &g_node_0.list);
     
@@ -472,7 +472,7 @@ static void test_abcd_add_before(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_abcd_add_head(void)
+NTESTSUITE_TEST(test_abcd_add_head)
 {
     nlist_dll_add_head(&g_sentinel, &g_node_0.list);
     
@@ -501,7 +501,7 @@ static void test_abcd_add_head(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_abcd_add_tail(void)
+NTESTSUITE_TEST(test_abcd_add_tail)
 {
     nlist_dll_add_tail(&g_sentinel, &g_node_0.list);
     
@@ -530,7 +530,7 @@ static void test_abcd_add_tail(void)
     NTESTSUITE_EVALUATE();
 }
 
-static void test_abcd_remove(void)
+NTESTSUITE_TEST(test_abcd_remove)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     nlist_dll_remove(&g_node_a.list);
