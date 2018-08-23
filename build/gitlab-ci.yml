@@ -1,7 +1,7 @@
 
 stages:
+    - info
     - build
-    - cleanup_build
     - test
     - cleanup
 
@@ -9,16 +9,18 @@ before_script:
     - apt-get update -qq
     - apt-get install -qqy gcc-arm-none-eabi libnewlib-arm-none-eabi
 
+info_job:
+    stage: info
+    script:
+        - gcc --version
+        - make --version
+        - ld -v
+        - cp --version
+
 build_job:
     stage: build
     script:
-        - make
-
-cleanup_build_job:
-    stage: cleanup_build
-    script:
-        - make distclean
-    when: on_failure
+        - make all
 
 test_job:
     stage: test
@@ -33,5 +35,5 @@ test_job:
 cleanup_job:
     stage: cleanup
     script:
-        - make clean
+        - make distclean
     

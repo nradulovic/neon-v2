@@ -41,7 +41,7 @@ For ARM Cortex-M processor (armv7-m) install the toolchain:
 
     sudo apt install gcc-arm-none-eabi
 
-#### 2.1.2 Making an application
+#### 3.1.2 Making an application
 
 To build an Neon application go to respective root folder of the applications
 located in 'apps/' folder. The Makefile of the application should be setup in
@@ -54,7 +54,7 @@ To build the application invoke the make command:
 The compiled binaries and other output files may be found in 'generated' 
 subfolder of the current folder.
     
-#### 2.1.3 Making a library
+#### 3.1.3 Making a library
 
 __NOTE__: The following functionallity is yet to be implemented.
 
@@ -66,7 +66,7 @@ This will build the static library in build directory. The compiled binaries
 and other output files may be found in 'generated' subfolder of the current 
 folder.
 
-#### 2.1.4 Making a package
+#### 3.1.4 Making a package
 
 __NOTE__: The following functionallity is yet to be implemented.
 
@@ -79,6 +79,8 @@ necessary header files use:
 The package directory is located in `generated/package`. Copy this folder to
 your project to use it.
 
+#### 3.1.5 Making the documentation
+
 The command:
 
     make documentation
@@ -87,4 +89,12 @@ Will make the API reference documentation in HTML and PDF format in build
 directory for this operation you need doxygen, graphviz and doxygen-latex tools
 (see prerequisities above). The build directory is 'documentation/generated'.
 
+#### 3.1.6 Making preprocessor files
 
+During debugging and troubleshooting it is beneficial to see the contents of
+'.c' and '.S' preprocessed files. To generate preprocessed '.i' files execute
+the command:
+
+    make preprocess
+
+This will create '.i' preprocessed files inside 'generated' directory.
