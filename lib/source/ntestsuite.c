@@ -111,7 +111,7 @@ bool np_testsuite_actual(union np_testsuite_test_val * value, enum np_testsuite_
     }
 
     if (g_np_testsuite_context.test_case.type != type) {
-        const char * expected_type;
+        const char * expected_type = "unknown";
         switch (g_np_testsuite_context.test_case.type) {
             case NP_TESTSUITE_TYPE_BOOL:
                 expected_type = "NP_TESTSUITE_TYPE_BOOL";
