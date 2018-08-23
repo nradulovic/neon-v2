@@ -48,6 +48,26 @@ $(BUILD_DIR)/%.o: $(WS)/%.c
         -o $@ \
         -c $<
 
+# Rule to compile C sources to preprocessed files.
+$(BUILD_DIR)/%.i: $(WS)/%.c
+	$(PRINT) " [CC]: $@"
+	$(VERBOSE)mkdir -p $(dir $@)
+	$(VERBOSE)$(CC) $(CC_FLAGS) \
+        $(addprefix -D, $(CC_DEFINES)) \
+        $(addprefix -I$(WS)/, $(CC_INCLUDES)) \
+        -o $@ \
+        -E $<
+
+# Rule to compile Assembly sources to preprocessed files.
+$(BUILD_DIR)/%.i: $(WS)/%.S
+	$(PRINT) " [AS]: $@"
+	$(VERBOSE)mkdir -p $(dir $@)
+	$(VERBOSE)$(CC) $(CC_FLAGS) \
+        $(addprefix -D, $(CC_DEFINES)) \
+        $(addprefix -I$(WS)/, $(CC_INCLUDES)) \
+        -o $@ \
+        -E $<
+
 # Rule to compile Assembly sources to object files.
 $(BUILD_DIR)/%.o: $(WS)/%.S
 	$(PRINT) " [AS]: $@"

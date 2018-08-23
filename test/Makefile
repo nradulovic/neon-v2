@@ -76,6 +76,8 @@ clean: clean-flash clean-size
 distclean: 
 	$(VERBOSE)rm -rf $(BUILD_DIR)
 
+preprocess: $(PREPROCESSED)
+
 $(PROJECT_LIB): $(OBJECTS)
 
 $(PROJECT_ELF): $(PROJECT_LIB)

@@ -58,6 +58,7 @@ DEF_DOXYFILE	 = $(DEF_DOX_O)/doxyfile
 OBJECTS          = $(patsubst %.c,$(BUILD_DIR)/%.o,$(CC_SOURCES))
 OBJECTS         += $(patsubst %.S,$(BUILD_DIR)/%.o,$(AS_SOURCES))
 DEPENDS          = $(patsubst %.o,%.d,$(OBJECTS))
+PREPROCESSED     = $(patsubst %.o,%.i,$(OBJECTS))
 
 # Common build variables
 BUILD_DIR        = generated
