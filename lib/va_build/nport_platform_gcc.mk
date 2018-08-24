@@ -38,7 +38,7 @@ SIZE            = $(PREFIX)size
 AR              = $(PREFIX)ar
 
 # Rule to compile C sources to object files.
-$(BUILD_DIR)/%.o: $(WS)/%.c
+$(DEF_BUILD_DIR)/%.o: $(WS)/%.c
 	$(PRINT) " [CC]: $@"
 	$(VERBOSE)mkdir -p $(dir $@)
 	$(VERBOSE)$(CC) $(CC_FLAGS) \
@@ -49,7 +49,7 @@ $(BUILD_DIR)/%.o: $(WS)/%.c
         -c $<
 
 # Rule to compile C sources to preprocessed files.
-$(BUILD_DIR)/%.i: $(WS)/%.c
+$(DEF_BUILD_DIR)/%.i: $(WS)/%.c
 	$(PRINT) " [CC]: $@"
 	$(VERBOSE)mkdir -p $(dir $@)
 	$(VERBOSE)$(CC) $(CC_FLAGS) \
@@ -59,7 +59,7 @@ $(BUILD_DIR)/%.i: $(WS)/%.c
         -E $<
 
 # Rule to compile Assembly sources to preprocessed files.
-$(BUILD_DIR)/%.i: $(WS)/%.S
+$(DEF_BUILD_DIR)/%.i: $(WS)/%.S
 	$(PRINT) " [AS]: $@"
 	$(VERBOSE)mkdir -p $(dir $@)
 	$(VERBOSE)$(CC) $(CC_FLAGS) \
@@ -69,7 +69,7 @@ $(BUILD_DIR)/%.i: $(WS)/%.S
         -E $<
 
 # Rule to compile Assembly sources to object files.
-$(BUILD_DIR)/%.o: $(WS)/%.S
+$(DEF_BUILD_DIR)/%.o: $(WS)/%.S
 	$(PRINT) " [AS]: $@"
 	$(VERBOSE)mkdir -p $(dir $@)
 	$(VERBOSE)$(CC) $(CC_FLAGS) \

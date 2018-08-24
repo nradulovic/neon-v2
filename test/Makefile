@@ -1,4 +1,4 @@
-#
+
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published by the Free
@@ -74,7 +74,7 @@ all: $(PROJECT_FLASH) $(PROJECT_SIZE)
 clean: clean-flash clean-size
 
 distclean: 
-	$(VERBOSE)rm -rf $(BUILD_DIR)
+	$(VERBOSE)rm -rf $(DEF_BUILD_DIR)
 
 preprocess: $(PREPROCESSED)
 

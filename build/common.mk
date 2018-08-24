@@ -15,10 +15,6 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Include guard
-ifndef BUILD_COMMON_MK
-BUILD_COMMON_MK = 1
-
 # == Functions ==
 # Check that given variables are set and all have non-empty values,
 # die with an error otherwise.
@@ -55,21 +51,22 @@ DEF_DOX_BASE     = $(WS)/documentation/base_doxyfile
 DEF_DOXYFILE	 = $(DEF_DOX_O)/doxyfile
 
 # Builder helper variables
-OBJECTS          = $(patsubst %.c,$(BUILD_DIR)/%.o,$(CC_SOURCES))
-OBJECTS         += $(patsubst %.S,$(BUILD_DIR)/%.o,$(AS_SOURCES))
+OBJECTS          = $(patsubst %.c,$(DEF_BUILD_DIR)/%.o,$(CC_SOURCES))
+OBJECTS         += $(patsubst %.S,$(DEF_BUILD_DIR)/%.o,$(AS_SOURCES))
 DEPENDS          = $(patsubst %.o,%.d,$(OBJECTS))
 PREPROCESSED     = $(patsubst %.o,%.i,$(OBJECTS))
 
 # Common build variables
-BUILD_DIR        = generated
+DEF_BUILD_DIR   = generated
+DEF_PACK_DIR    = packed
 
 # Create possible targets
 PROJECT_NAME   ?= undefined
 PROJECT_CONFIG ?= lib/include/configs/default_config.h
-PROJECT_ELF     = $(BUILD_DIR)/$(PROJECT_NAME).elf
-PROJECT_LIB     = $(BUILD_DIR)/$(PROJECT_NAME).a
-PROJECT_FLASH   = $(BUILD_DIR)/$(PROJECT_NAME).hex
-PROJECT_SIZE    = $(BUILD_DIR)/$(PROJECT_NAME).siz
+PROJECT_ELF     = $(DEF_BUILD_DIR)/$(PROJECT_NAME).elf
+PROJECT_LIB     = $(DEF_BUILD_DIR)/$(PROJECT_NAME).a
+PROJECT_FLASH   = $(DEF_BUILD_DIR)/$(PROJECT_NAME).hex
+PROJECT_SIZE    = $(DEF_BUILD_DIR)/$(PROJECT_NAME).siz
 
 # Handle the verbosity argument
 # If the argument is not given assume that verbosity is off.
@@ -215,6 +212,7 @@ cc_include_paths:
 .PHONY: cc_sources
 cc_sources:
 	$(foreach i,$(CC_SOURCES),$(info $(WS)/$(i)))
+	$(foreach i,$(AS_SOURCES),$(info $(WS)/$(i)))
 
 .PHONY: cc_flags
 cc_flags:
@@ -223,4 +221,20 @@ cc_flags:
 .PHONY: cc_defines
 cc_defines:
 	$(foreach i,$(CC_DEFINES),$(info $(i)))
-endif
+
+.PHONY: package
+package: config
+	$(VERBOSE)for p in $(CC_INCLUDES); \
+    do \
+        dirs=$$(dirname $$(find $${p} -name *.h)); \
+        mkdir -pv $(DEF_PACK_DIR)/$${dirs}; \
+        cp -vr $(WS)/$${dirs} $(DEF_PACK_DIR)/$${p};\
+    done
+	$(VERBOSE)for file in $(CC_SOURCES); do \
+        mkdir -pv $$(dirname $(DEF_PACK_DIR)/$${file}); \
+        cp -v $(WS)/$${file} $(DEF_PACK_DIR)/$${file};\
+    done
+	$(VERBOSE)echo "Compiler flags  : " $(CC_FLAGS) > $(DEF_PACK_DIR)/settings.txt
+	$(VERBOSE)echo "Compiler defines: " $(CC_DEFINES) >> $(DEF_PACK_DIR)/settings.txt
+	$(VERBOSE)echo "Linker flags    : " $(LD_FLAGS) >> $(DEF_PACK_DIR)/settings.txt
+	

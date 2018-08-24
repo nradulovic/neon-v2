@@ -26,13 +26,13 @@ NCONFIG_GIT_VERSION := "$(shell git describe --abbrev=7 --always --dirty --tags 
 CC_INCLUDES += lib/include
 
 # Add generated folder include folder
-CC_INCLUDES += $(PROJECT_DIR)/$(BUILD_DIR)
+CC_INCLUDES += $(PROJECT_DIR)/$(DEF_BUILD_DIR)
 
 # Common defines for the library
 CC_DEFINES += NCONFIG_GIT_VERSION=\"$(NCONFIG_GIT_VERSION)\"
 
 # Library header configuration
-CC_CONFIG_FILE = $(BUILD_DIR)/neon_config.h
+CC_CONFIG_FILE = $(DEF_BUILD_DIR)/neon_config.h
 
 .PHONY: config
 config: $(CC_CONFIG_FILE)

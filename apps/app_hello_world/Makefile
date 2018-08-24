@@ -58,7 +58,7 @@ all: config $(PROJECT_FLASH) $(PROJECT_SIZE)
 clean: clean-size clean-flash config-clean
 
 distclean: 
-	$(VERBOSE)rm -rf $(BUILD_DIR)
+	$(VERBOSE)rm -rf $(DEF_BUILD_DIR)
 
 $(PROJECT_LIB): $(OBJECTS)
 
