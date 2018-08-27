@@ -82,7 +82,7 @@ $(DEF_BUILD_DIR)/%.o: $(WS)/%.S
 # Rule to link object files to library.
 %.a:
 	$(PRINT) " [AR]: $@"
-	$(VERBOSE)$(AR) rcs $@ \
+	$(VERBOSE)$(AR) rcs $(AR_FLAGS) $@ \
         $^ \
         $(AR_LIBS)
 

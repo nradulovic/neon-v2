@@ -32,7 +32,6 @@
 #ifndef NLIST_SLL_H_
 #define NLIST_SLL_H_
 
-#include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -192,16 +191,7 @@ struct nlist_sll * nlist_sll_next(const struct nlist_sll * node)
  *              A list node or sentinel.
  *  @return     Previous node.
  */
-NPLATFORM_INLINE
-struct nlist_sll * nlist_sll_prev(struct nlist_sll * const node)
-{
-    struct nlist_sll * tmp = node;
-
-    while (tmp->next != node) {
-        tmp = tmp->next;
-    }
-    return (tmp);
-}
+struct nlist_sll * nlist_sll_prev(struct nlist_sll * const node);
 
 /** @brief      Insert node (N) after current node (C).
  *  @param[in]  current

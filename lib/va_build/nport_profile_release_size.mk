@@ -19,3 +19,4 @@
 # Additional profile description
 BUILD_PROFILE_DESC = "No debug / optimizations for size"
 
+CC_DEFINES += NPROFILE_RELEASE_SIZE

@@ -16,15 +16,6 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Include guard
-ifndef LIB_BUILD_NLIST_MK
-LIB_BUILD_NLIST_MK=1
-
-# Dependencies
-include $(WS)/lib/build/nlib.mk
-include $(WS)/lib/build/nport.mk
-
-# Includes and sources
-CC_SOURCES += lib/source/nlist_sll.c
-
-endif
+CC_FLAGS += -flto
+AR_FLAGS += --plugin lto
+LD_FLAGS += -Wl,-flto
