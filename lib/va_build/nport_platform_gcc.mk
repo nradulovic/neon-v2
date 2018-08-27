@@ -16,9 +16,6 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Platform identification
-BUILD_PLATFORM = gcc
-
 # Platform description
 BUILD_PLATFORM_DESC = "GCC, the GNU Lesser Compiler Collection"
 
