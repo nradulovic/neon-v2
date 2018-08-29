@@ -75,6 +75,7 @@ void narch_cpu_stop(void);
 uint32_t narch_exp2(uint_fast8_t x);
 
 /** @brief      Calculate logarithm of base 2.
+ *  @example    log2(2) = 1, log2(10) = 4
  */
 uint_fast8_t narch_log2(uint32_t x);
 
