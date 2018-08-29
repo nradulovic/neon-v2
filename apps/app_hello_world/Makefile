@@ -25,12 +25,7 @@ PROJECT_DIR = apps/app_hello_world
 # Project name, this will be used as output binary file name.
 PROJECT_NAME := app_hello_world
 
-# Common build script, contains common build rules and variables.
-include $(WS)/build/common.mk
-
-# Include depenencies, nlib exports common library variables, nport is needed
-# to import additional build rules.
-include $(WS)/lib/build/nlib.mk
+# Include depenencies, nport is needed to import additional build rules.
 include $(WS)/lib/build/nport.mk
 
 # Project configuration header file.

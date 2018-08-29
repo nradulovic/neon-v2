@@ -23,12 +23,7 @@ PROJECT_DIR = test
 # Project name, this will be used as output binary file name.
 PROJECT_NAME := test
 
-# Common build script, contains common build rules and variables.
-include $(WS)/build/common.mk
-
-# Include depenencies, nlib exports common library variables, nport is needed
-# to import additional build rules.
-include $(WS)/lib/build/nlib.mk
+# Include depenencies, nport is needed to import additional build rules.
 include $(WS)/lib/build/nport.mk
 include $(WS)/lib/build/nlogger.mk
 include $(WS)/lib/build/ndebug.mk

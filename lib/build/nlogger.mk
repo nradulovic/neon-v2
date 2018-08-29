@@ -21,7 +21,7 @@ ifndef BUILD_NLOGGER_MK
 BUILD_NLOGGER_MK=1
 
 # Dependencies
-include $(WS)/lib/build/nlib.mk
+include $(WS)/lib/build/common.mk
 include $(WS)/lib/build/nport.mk
 
 CC_SOURCES += lib/va_source/nlogger_os_$(OS)_printers.c

@@ -21,8 +21,8 @@ ifndef LIB_BUILD_NDEBUG_MK
 LIB_BUILD_NDEBUG_MK=1
 
 # Dependencies
+include $(WS)/lib/build/common.mk
 include $(WS)/lib/build/nport.mk
 include $(WS)/lib/build/nlogger.mk
-include $(WS)/lib/build/nlib.mk
 
 endif

@@ -21,7 +21,7 @@ ifndef LIB_BUILD_NBITS_MK
 LIB_BUILD_NBITS_MK=1
 
 # Dependencies
-include $(WS)/lib/build/nlib.mk
+include $(WS)/lib/build/common.mk
 include $(WS)/lib/build/nport.mk
 
 endif

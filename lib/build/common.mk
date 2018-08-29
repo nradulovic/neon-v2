@@ -15,6 +15,9 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
+ifndef LIB_BUILD_COMMON_MK
+LIB_BUILD_COMMON_MK = 1
+
 # == Functions ==
 # Check that given variables are set and all have non-empty values,
 # die with an error otherwise.
@@ -93,6 +96,18 @@ clean:
 clean-objects: 
 	$(VERBOSE)rm -f $(OBJECTS) $(DEPENDS)
 
+.PHONY: config
+config: $(CC_CONFIG_FILE)
+
+.PHONY: config-clean
+config-clean:
+	$(VERBOSE)rm -f $(CC_CONFIG_FILE)
+	
+$(CC_CONFIG_FILE): $(WS)/$(PROJECT_CONFIG)
+	$(PRINT) Project configuration file "$(WS)/$(PROJECT_CONFIG)"
+	$(VERBOSE)mkdir -p $(dir $@)
+	$(VERBOSE)cp $(WS)/$(PROJECT_CONFIG) $@
+	
 .PHONY: documentation
 documentation: html pdf 
 
@@ -238,3 +253,23 @@ package: config
 	$(VERBOSE)echo "Compiler defines: " $(CC_DEFINES) >> $(DEF_PACK_DIR)/settings.txt
 	$(VERBOSE)echo "Linker flags    : " $(LD_FLAGS) >> $(DEF_PACK_DIR)/settings.txt
 	
+#
+# Common library defines/includes/sources
+#
+
+# Add common library defines
+NCONFIG_GIT_VERSION := "$(shell git describe --abbrev=7 --always --dirty --tags 2>/dev/null || echo unknown)"
+
+# Add common library include folder
+CC_INCLUDES += lib/include
+
+# Add generated folder include folder
+CC_INCLUDES += $(PROJECT_DIR)/$(DEF_BUILD_DIR)
+
+# Common defines for the library
+CC_DEFINES += NCONFIG_GIT_VERSION=\"$(NCONFIG_GIT_VERSION)\"
+
+# Library header configuration
+CC_CONFIG_FILE = $(DEF_BUILD_DIR)/neon_config.h
+
+endif

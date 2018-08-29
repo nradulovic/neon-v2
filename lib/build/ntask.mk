@@ -21,7 +21,7 @@ ifndef LIB_BUILD_NTASK_MK
 LIB_BUILD_NTASK_MK=1
 
 # Dependencies
-include $(WS)/lib/build/nlib.mk
+include $(WS)/lib/build/common.mk
 include $(WS)/lib/build/nport.mk
 include $(WS)/lib/build/nqueue.mk
 include $(WS)/lib/build/nlist.mk
