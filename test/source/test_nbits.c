@@ -24,8 +24,8 @@
 
 NTESTSUITE_TEST(test_none_array_size)
 {
-    const char small_array[1];
-    const char big_array[10];
+    char small_array[1];
+    char big_array[10];
 
     NTESTSUITE_EXPECT_UINT(1);
     NTESTSUITE_ACTUAL_UINT(NBITS_ARRAY_SIZE(small_array));
