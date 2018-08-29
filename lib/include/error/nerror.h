@@ -33,14 +33,6 @@
 #ifndef NEON_MODULE_ERROR_H_
 #define NEON_MODULE_ERROR_H_
 
-#include <stdint.h>
-#include <stddef.h>
-
-#include "port/nport_platform.h"
-#include "port/nport_arch.h"
-#include "logger/nlogger.h"
-#include "neon_config.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
