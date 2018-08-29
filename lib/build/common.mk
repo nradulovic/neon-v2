@@ -222,12 +222,21 @@ help:
 
 .PHONY: cc_include_paths
 cc_include_paths:
+ifdef NEON_ROOT
+	$(foreach i,$(CC_INCLUDES),$(info $(NEON_ROOT)/$(i)))
+else
 	$(foreach i,$(CC_INCLUDES),$(info $(WS)/$(i)))
+endif
 
 .PHONY: cc_sources
 cc_sources:
+ifdef NEON_ROOT
+	$(foreach i,$(CC_SOURCES),$(info $(NEON_ROOT)/$(i)))
+	$(foreach i,$(AS_SOURCES),$(info $(NEON_ROOT)/$(i)))
+else
 	$(foreach i,$(CC_SOURCES),$(info $(WS)/$(i)))
 	$(foreach i,$(AS_SOURCES),$(info $(WS)/$(i)))
+endif
 
 .PHONY: cc_flags
 cc_flags:
