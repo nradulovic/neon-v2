@@ -23,6 +23,8 @@
 extern "C" {
 #endif
 
+#define NCONFIG_ENABLE_LOGGER 0
+    
 #ifdef __cplusplus
 }
 #endif
