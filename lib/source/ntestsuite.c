@@ -18,14 +18,6 @@
 
 #include "testsuite/ntestsuite.h"
 
-enum np_testsuite_state
-{
-    NP_TESTSUITE_STATE_INIT,
-    NP_TESTSUITE_STATE_EXPECT,
-    NP_TESTSUITE_STATE_ACTUAL,
-    NP_TESTSUITE_STATE_EVALUATE,
-};
-
 struct np_testsuite_context
 {
     struct np_testsuite_fixture * fixture;
@@ -36,7 +28,6 @@ struct np_testsuite_context
         union np_testsuite_test_val expected;
         enum np_testsuite_type type;
     } test_case;
-    enum np_testsuite_state state;
     uint32_t total_tests;
     uint32_t total_failed_tests;
     uint32_t total_asserts;
@@ -68,16 +59,8 @@ void np_testsuite_print_overview(void)
 	}
 }
 
-bool np_testsuite_expect(union np_testsuite_test_val * value, enum np_testsuite_type type, uint32_t line)
+void np_testsuite_expect(union np_testsuite_test_val * value, enum np_testsuite_type type)
 {
-	if ((g_np_testsuite_context.state != NP_TESTSUITE_STATE_INIT) &&
-		(g_np_testsuite_context.state != NP_TESTSUITE_STATE_EVALUATE)) {
-        testsuite_test_failed(line);
-		nlogger_err("%s\n", "Didn't finish previous evaluation.");
-		g_np_testsuite_context.should_exit = true;
-		return true;
-	}
-	g_np_testsuite_context.state = NP_TESTSUITE_STATE_EXPECT;
 	g_np_testsuite_context.test_case.type = type;
 
 	switch (type) {
@@ -98,44 +81,11 @@ bool np_testsuite_expect(union np_testsuite_test_val * value, enum np_testsuite_
             g_np_testsuite_context.test_case.actual.ptr = NULL;
             break;
 	}
-	return false;
 }
 
-bool np_testsuite_actual(union np_testsuite_test_val * value, enum np_testsuite_type type, uint32_t line)
+void np_testsuite_actual(union np_testsuite_test_val * value)
 {
-    if (g_np_testsuite_context.state != NP_TESTSUITE_STATE_EXPECT) {
-        testsuite_test_failed(line);
-		nlogger_err("%s\n", "Didn't specified the expected value.");
-		g_np_testsuite_context.should_exit = true;
-		return true;
-    }
-
-    if (g_np_testsuite_context.test_case.type != type) {
-        const char * expected_type = "unknown";
-        switch (g_np_testsuite_context.test_case.type) {
-            case NP_TESTSUITE_TYPE_BOOL:
-                expected_type = "NP_TESTSUITE_TYPE_BOOL";
-                break;
-            case NP_TESTSUITE_TYPE_UINT:
-                expected_type = "NP_TESTSUITE_TYPE_UINT";
-                break;
-            case NP_TESTSUITE_TYPE_INT:
-                expected_type = "NP_TESTSUITE_TYPE_INT";
-                break;
-            case NP_TESTSUITE_TYPE_PTR:
-                expected_type = "NP_TESTSUITE_TYPE_PTR";
-                break;
-        }
-        testsuite_test_failed(line);
-		nlogger_err("MACRO TYPE MISMATCH!\n"
-            "  Expected type (%s)\n"
-            "  Actual   type (%s)\n", expected_type, type);
-		g_np_testsuite_context.should_exit = true;
-		return true;
-    }
-    g_np_testsuite_context.state = NP_TESTSUITE_STATE_ACTUAL;
-
-	switch (type) {
+	switch (g_np_testsuite_context.test_case.type) {
         case NP_TESTSUITE_TYPE_BOOL:
             g_np_testsuite_context.test_case.actual.b = value->b;
             break;
@@ -149,7 +99,6 @@ bool np_testsuite_actual(union np_testsuite_test_val * value, enum np_testsuite_
             g_np_testsuite_context.test_case.actual.ptr = value->ptr;
             break;
 	}
-    return false;
 }
 
 void np_testsuite_run(struct np_testsuite_fixture * fixture,
@@ -194,15 +143,6 @@ void np_testsuite_print_results(const struct np_testsuite_fixture * fixture)
 
 bool np_testsuite_evaluate(uint32_t line)
 {
-    if (g_np_testsuite_context.state != NP_TESTSUITE_STATE_ACTUAL) {
-        testsuite_test_failed(line);
-		nlogger_err("%s\n", "Didn't specified the actual value.");
-		g_np_testsuite_context.should_exit = true;
-		return true;
-    }
-    g_np_testsuite_context.state = NP_TESTSUITE_STATE_EVALUATE;
-    g_np_testsuite_context.total_asserts++;
-
     switch (g_np_testsuite_context.test_case.type) {
         case NP_TESTSUITE_TYPE_BOOL:
             if (g_np_testsuite_context.test_case.actual.b !=
