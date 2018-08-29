@@ -54,7 +54,18 @@ uint32_t narch_exp2(uint_fast8_t x)
 NPLATFORM_INLINE
 uint_fast8_t narch_log2(uint32_t x)
 {
-    return (31u - __builtin_clz(x));
+    static const uint_fast8_t log2_table[256] =
+    {
+#define LT(n) n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n
+        -1, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,
+        LT(4), LT(5), LT(5), LT(6), LT(6), LT(6), LT(6),
+        LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7)
+    };
+    if (x >= 256) {
+        return 0;
+    } else {
+        return log2_table[x];
+    };
 }
 
 /** @} */
