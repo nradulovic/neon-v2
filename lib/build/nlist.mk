@@ -26,5 +26,6 @@ include $(WS)/lib/build/nport.mk
 
 # Includes and sources
 CC_SOURCES += lib/source/nlist_sll.c
+CC_SOURCES += lib/source/nlist_dll.c
 
 endif

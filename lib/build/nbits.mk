@@ -24,4 +24,6 @@ LIB_BUILD_NBITS_MK=1
 include $(WS)/lib/build/common.mk
 include $(WS)/lib/build/nport.mk
 
+CC_SOURCES += lib/source/nbits.c
+
 endif

@@ -46,6 +46,18 @@ extern "C" {
  */
 
 NPLATFORM_INLINE
+void narch_set_bit(uint32_t * u32, uint_fast8_t bit)
+{
+    *u32 |= (uint32_t)1u << bit;
+}
+
+NPLATFORM_INLINE
+void narch_clear_bit(uint32_t * u32, uint_fast8_t bit)
+{
+    *u32 &= ~((uint32_t)1u << bit);
+}
+
+NPLATFORM_INLINE
 uint32_t narch_exp2(uint_fast8_t x)
 {
     return (0x1u << x);

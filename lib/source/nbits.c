@@ -16,30 +16,28 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdarg.h>
+#include "bits/nbits.h"
 
-#include "logger/nlogger_x.h"
-
-#define nlogger_va_vprintf vprintf
-
-struct nlogger_instance p_nlogger_global =
+uint32_t nbits_ftou32(float val)
 {
-    .level = NLOGGER_LEVEL_INFO
-};
+    union float_to_u32
+    {
+        float                       fvalue;
+        uint32_t                    ivalue;
+    }                           u;
+    u.fvalue = val;
 
-void p_nlogger_x_print(struct nlogger_instance * instance, 
-        uint8_t level, const char * msg, ...)
-{
-    if (instance->level >= level) {
-        va_list args;
-        va_start(args, msg);
-        nlogger_va_vprintf(msg, args);
-        va_end(args);
-    }
+    return (u.ivalue);
 }
 
-void p_nlogger_x_set_level(struct nlogger_instance * instance, uint8_t level)
+float nbits_u32tof(uint32_t val)
 {
-    instance->level = level;
+    union u32_to_float
+    {
+        uint32_t                    ivalue;
+        float                       fvalue;
+    }                           u;
+    u.ivalue = val;
+
+    return (u.fvalue);
 }

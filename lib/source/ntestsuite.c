@@ -28,9 +28,8 @@ struct np_testsuite_context
         union np_testsuite_test_val expected;
         enum np_testsuite_type type;
     } test_case;
-    uint32_t total_tests;
-    uint32_t total_failed_tests;
-    uint32_t total_asserts;
+    uint16_t total_tests;
+    uint16_t total_failed_tests;
     bool should_exit;
 };
 
@@ -38,6 +37,12 @@ static struct np_testsuite_context g_np_testsuite_context;
 
 static void testsuite_test_failed(uint32_t line)
 {
+    (void)line; /* Suppress compiler warning when nlogger is not enabled. */
+                /*
+                 * When nlogger is not enabled, all the arguments which are 
+                 * normally used by nlogger will not be used. This will make
+                 * the compiler complain about unused variables.
+                 */
     nlogger_err("Test FAILED at %s() in %s:%u\n", 
         g_np_testsuite_context.test->name, 
         g_np_testsuite_context.test->file, line);
@@ -49,56 +54,23 @@ void np_testsuite_print_overview(void)
 		nlogger_info("\n\n  Total tests  : %u\n  Total FAILED : %u\n"
 			"  Total asserts: %u\n",
 			g_np_testsuite_context.total_tests,
-			g_np_testsuite_context.total_failed_tests,
-			g_np_testsuite_context.total_asserts);
+			g_np_testsuite_context.total_failed_tests);
 	} else {
 		nlogger_info("\n\n  Total tests  : %u\n"
 			"  Total asserts: %u\n\n  OK\n",
-			g_np_testsuite_context.total_tests,
-			g_np_testsuite_context.total_asserts);
+			g_np_testsuite_context.total_tests);
 	}
 }
 
-void np_testsuite_expect(union np_testsuite_test_val * value, enum np_testsuite_type type)
+void np_testsuite_expect(union np_testsuite_test_val value, enum np_testsuite_type type)
 {
 	g_np_testsuite_context.test_case.type = type;
-
-	switch (type) {
-        case NP_TESTSUITE_TYPE_BOOL:
-            g_np_testsuite_context.test_case.expected.b = value->b;
-            g_np_testsuite_context.test_case.actual.b = !value->b;
-            break;
-        case NP_TESTSUITE_TYPE_UINT:
-            g_np_testsuite_context.test_case.expected.ui = value->ui;
-            g_np_testsuite_context.test_case.actual.ui = ~value->ui;
-            break;
-        case NP_TESTSUITE_TYPE_INT:
-            g_np_testsuite_context.test_case.expected.si = value->si;
-            g_np_testsuite_context.test_case.actual.si = ~value->si;
-            break;
-        case NP_TESTSUITE_TYPE_PTR:
-            g_np_testsuite_context.test_case.expected.ptr = value->ptr;
-            g_np_testsuite_context.test_case.actual.ptr = NULL;
-            break;
-	}
+    g_np_testsuite_context.test_case.expected = value;
 }
 
-void np_testsuite_actual(union np_testsuite_test_val * value)
+void np_testsuite_actual(union np_testsuite_test_val value)
 {
-	switch (g_np_testsuite_context.test_case.type) {
-        case NP_TESTSUITE_TYPE_BOOL:
-            g_np_testsuite_context.test_case.actual.b = value->b;
-            break;
-        case NP_TESTSUITE_TYPE_UINT:
-            g_np_testsuite_context.test_case.actual.ui = value->ui;
-            break;
-        case NP_TESTSUITE_TYPE_INT:
-            g_np_testsuite_context.test_case.actual.si = value->si;
-            break;
-        case NP_TESTSUITE_TYPE_PTR:
-            g_np_testsuite_context.test_case.actual.ptr = value->ptr;
-            break;
-	}
+    g_np_testsuite_context.test_case.actual = value;
 }
 
 void np_testsuite_run(struct np_testsuite_fixture * fixture,

@@ -83,7 +83,7 @@ extern const char * nplatform_build;
  */
 #ifndef NPLATFORM_CONTAINER_OF
 #define NPLATFORM_CONTAINER_OF(ptr, type, member)                      \
-    (type *)((char *)ptr - offsetof(type, member))
+    ((type *)((char *)ptr - offsetof(type, member)))
 #endif
 
 /**@brief       Provides function name for assert macros

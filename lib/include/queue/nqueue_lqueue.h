@@ -32,7 +32,6 @@
 #define NEON_QUEUE_LQUEUE_H_
 
 #include <stdint.h>
-#include <string.h>
 #include "port/nport_platform.h"
 #include "bits/nbits.h"
 

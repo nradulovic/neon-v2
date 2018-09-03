@@ -167,24 +167,14 @@ struct nlist_sll
               
  @endverbatim
  */
-NPLATFORM_INLINE
-struct nlist_sll * nlist_sll_init(struct nlist_sll * node)
-{
-    node->next = node;
-
-    return (node);
-}
+struct nlist_sll * nlist_sll_init(struct nlist_sll * node);
 
 /** @brief      Return the next node of @a node in linked list.
  *  @param[in]  node
  *              A list node or sentinel.
  *  @return     Next node.
  */
-NPLATFORM_INLINE
-struct nlist_sll * nlist_sll_next(const struct nlist_sll * node)
-{
-    return (node->next);
-}
+#define nlist_sll_next(a_node)   (a_node)->next
 
 /** @brief      Return previous node of @a node in linked list.
  *  @param[in]  node
@@ -217,14 +207,7 @@ struct nlist_sll * nlist_sll_prev(struct nlist_sll * const node);
         +-----+    +-----+    +-----+    +-----+
  @endverbatim
  */
-NPLATFORM_INLINE
-void nlist_sll_add_after(struct nlist_sll * current, struct nlist_sll * node)
-{
-    struct nlist_sll * prev = nlist_sll_prev(current);
-
-    node->next = prev->next;
-    prev->next = node;
-}
+void nlist_sll_add_after(struct nlist_sll * current, struct nlist_sll * node);
 
 /** @brief      Insert node (N) before current node (C).
  *  @param[in]  current
@@ -250,15 +233,8 @@ void nlist_sll_add_after(struct nlist_sll * current, struct nlist_sll * node)
         +-----+    +-----+    +-----+    +-----+
  @endverbatim
  */
-NPLATFORM_INLINE
 struct nlist_sll * nlist_sll_add_before(struct nlist_sll * current, 
-        struct nlist_sll * node)
-{
-    node->next = current->next;    
-    current->next = node;
-
-    return (node);
-}
+        struct nlist_sll * node);
 
 /** @brief      Remove a node (N)
  *  @param[in]  node
@@ -283,14 +259,32 @@ struct nlist_sll * nlist_sll_add_before(struct nlist_sll * current,
         +-----+    +-----+              +-----+
  @endverbatim
  */
-NPLATFORM_INLINE
-void nlist_sll_remove(struct nlist_sll * node)
-{
-    struct nlist_sll * prev = nlist_sll_prev(node);
+void nlist_sll_remove(struct nlist_sll * node);
 
-    prev->next = node->next;
-    node->next = node;
-}
+/** @brief      Remove a node (N)
+ *  @param[in]  node
+ *              A list node.
+ *
+ *  Before calling this function:
+ @verbatim
+        +-----+    +-----+    +-----+    +-----+
+        |     |--->|     |--->|     |--->|     |-->next
+        |  1  |    |  C  |    |  N  |    |  2  |
+        |     |    |     |    |     |    |     |
+        +-----+    +-----+    +-----+    +-----+
+ @endverbatim
+ *
+ *  After call to this function:
+ @verbatim
+                                                +-----------+
+        +-----+    +-----+    +-----+           |  +-----+  |
+        |     |--->|     |--->|     |-->next    +->|     |--+
+        |  1  |    |  C  |    |  2  |              |  N  |
+        |     |    |     |    |     |              |     |
+        +-----+    +-----+    +-----+              +-----+
+ @endverbatim
+ */
+void nlist_sll_remove_from(struct nlist_sll * current, struct nlist_sll * node);
 
 /** @brief      Check if a list @a node is empty or not.
  *  @param[in]  node
@@ -299,11 +293,7 @@ void nlist_sll_remove(struct nlist_sll * node)
  *  @retval     true - The list is empty.
  *  @retval     false - The list contains at least one node.
  */
-NPLATFORM_INLINE
-bool nlist_sll_is_empty(const struct nlist_sll * node)
-{
-    return (!!(node->next == node));
-}
+bool nlist_sll_is_empty(const struct nlist_sll * node);
 
 #ifdef __cplusplus
 }

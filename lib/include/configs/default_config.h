@@ -27,6 +27,18 @@ extern "C" {
 #define NCONFIG_ENABLE_LOGGER 0
 #endif
     
+#ifndef NCONFIG_ENABLE_DEBUG
+#define NCONFIG_ENABLE_DEBUG 0
+#endif
+    
+#ifndef NCONFIG_TASK_INSTANCES
+#define NCONFIG_TASK_INSTANCES 32
+#endif
+    
+#ifndef NCONFIG_TASK_PRIORITIES
+#define NCONFIG_TASK_PRIORITIES 32
+#endif
+    
 #ifdef __cplusplus
 }
 #endif

@@ -33,9 +33,7 @@
 #define NEON_BITS_BITARRAY_H_
 
 #include <stdint.h>
-#include "port/nport_platform.h"
 #include "port/nport_arch.h"
-#include "bits/nbits.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,55 +50,45 @@ struct nbitarray
 };
 
 /** @brief      Initialize the bitarray.
- *  @param      ba
- *              Pointer to bitarray structure.
+ *  @param      a_ba
+ *              Pointer to bitarray structure @ref nbitarray.
  *  @api
  */
-NPLATFORM_INLINE
-void nbitarray_init(struct nbitarray * ba)
-{
-    ba->bits = 0u;
-}
+#define nbitarray_init(a_ba)    (a_ba)->bits = 0u
 
 /** @brief      Set a bit.
- *  @param      bitarray
- *              Pointer to bitarray structure.
- *  @param      bit
+ *  @param      a_ba
+ *              Pointer to bitarray structure @ref nbitarray.
+ *  @param      a_bit
  *              Bit number in the bitarray. The bit value must be in range:
- *              0 - (@ref NBITARRAY_BITS - 1u).
+ *              0 - (@ref NBITARRAY_BITS - 1u). Type uint_fast8_t.
+ *  @note       Using a value bigger than @ref NBITARRAY_BITS - 1u for argument
+ *              a_bit will cause undefined behaviour.
  *  @api
  */
-NPLATFORM_INLINE
-void nbitarray_set(struct nbitarray * ba, uint_fast8_t bit)
-{
-    ba->bits |= 0x1u << bit;
-}
+#define nbitarray_set(a_ba, a_bit)                                          \
+    narch_set_bit(&(a_ba)->bits, (a_bit))
 
 /** @brief      Clear a bit.
- *  @param      bitarray
- *              Pointer to bitarray structure.
- *  @param      bit
+ *  @param      a_ba
+ *              Pointer to bitarray structure @ref nbitarray.
+ *  @param      a_bit
  *              Bit number in the bitarray. The bit value must be in range:
- *              0 - (@ref NBITARRAY_BITS - 1u).
+ *              0 - (@ref NBITARRAY_BITS - 1u). Type uint_fast8_t.
+ *  @note       Using a value bigger than @ref NBITARRAY_BITS - 1u for argument
+ *              a_bit will cause undefined behaviour.
  *  @api
  */
-NPLATFORM_INLINE
-void nbitarray_clear(struct nbitarray * ba, uint_fast8_t bit)
-{
-    ba->bits &= ~(0x1u << bit);
-}
+#define nbitarray_clear(a_ba, a_bit)                                        \
+    narch_clear_bit(&(a_ba)->bits, (a_bit))
 
 /** @brief      Get the position of Most Significat Bit Set.
- *  @param      ba
+ *  @param      a_ba
  *              Pointer to bitarray structure.
  *  @returns    The position of the MSB set bit: 0 - 255.
  *  @api
  */
-NPLATFORM_INLINE
-uint_fast8_t nbitarray_msbs(const struct nbitarray * ba)
-{
-    return (narch_log2(ba->bits));
-}
+#define nbitarray_msbs(a_ba)    narch_log2((a_ba)->bits)
 
 #ifdef __cplusplus
 }

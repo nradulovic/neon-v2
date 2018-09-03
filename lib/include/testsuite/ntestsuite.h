@@ -45,10 +45,6 @@
 extern "C" {
 #endif
 
-#if (NLOGGER_IS_ENABLED == 0)
-#error "Module nlogger must be enabled for ntestsuite."
-#endif
-
 #define NTESTSUITE_PRINT_RESULTS(a_fixture)                                 \
 	np_testsuite_print_results(&(a_fixture))
 
@@ -73,56 +69,56 @@ extern "C" {
     do {\
         union np_testsuite_test_val val; \
         val.ui = (a_number); \
-        np_testsuite_expect(&val, NP_TESTSUITE_TYPE_UINT); \
+        np_testsuite_expect(val, NP_TESTSUITE_TYPE_UINT); \
     } while (0)
 
 #define NTESTSUITE_EXPECT_INT(a_number)                                     \
     do {\
         union np_testsuite_test_val val; \
         val.si = (a_number); \
-	    np_testsuite_expect(&val, NP_TESTSUITE_TYPE_INT); \
+	    np_testsuite_expect(val, NP_TESTSUITE_TYPE_INT); \
     } while (0)
 
 #define NTESTSUITE_EXPECT_PTR(a_pointer)                                    \
     do {\
         union np_testsuite_test_val val; \
         val.ptr = (a_pointer); \
-        np_testsuite_expect(&val, NP_TESTSUITE_TYPE_PTR); \
+        np_testsuite_expect(val, NP_TESTSUITE_TYPE_PTR); \
     } while (0)
 
 #define NTESTSUITE_EXPECT_BOOL(a_bool)                                      \
     do {\
         union np_testsuite_test_val val; \
         val.b = (a_bool); \
-	    np_testsuite_expect(&val, NP_TESTSUITE_TYPE_BOOL); \
+	    np_testsuite_expect(val, NP_TESTSUITE_TYPE_BOOL); \
     } while (0)
     
 #define NTESTSUITE_ACTUAL_UINT(a_number)                                       \
     do {\
         union np_testsuite_test_val val; \
         val.ui = (a_number); \
-	    np_testsuite_actual(&val); \
+	    np_testsuite_actual(val); \
     } while (0)
 
 #define NTESTSUITE_ACTUAL_INT(a_number)                                        \
     do {\
         union np_testsuite_test_val val; \
         val.si = (a_number); \
-	    np_testsuite_actual(&val); \
+	    np_testsuite_actual(val); \
     } while (0)
                 
 #define NTESTSUITE_ACTUAL_PTR(a_pointer)                                        \
     do {\
         union np_testsuite_test_val val; \
         val.ptr = (a_pointer); \
-        np_testsuite_actual(&val); \
+        np_testsuite_actual(val); \
     } while (0)
 
 #define NTESTSUITE_ACTUAL_BOOL(a_bool)                                       \
     do {\
         union np_testsuite_test_val val; \
         val.b = (a_bool); \
-        np_testsuite_actual(&val); \
+        np_testsuite_actual(val); \
     } while (0)
 
 #define NTESTSUITE_EVALUATE()                                               \
@@ -143,8 +139,8 @@ struct np_testsuite_fixture
     const char * name;
     void (* setup)(void);
     void (* teardown)(void);
-    uint32_t total;
-    uint32_t failed;
+    uint8_t total;
+    uint8_t failed;
 };
 
 #define NTESTSUITE_TEST(test_name) \
@@ -180,8 +176,8 @@ void np_testsuite_print_results(const struct np_testsuite_fixture * fixture);
 
 void np_testsuite_run(struct np_testsuite_fixture * fixture,
 		const struct np_testsuite_test * test);
-void np_testsuite_expect(union np_testsuite_test_val * value, enum np_testsuite_type type);
-void np_testsuite_actual(union np_testsuite_test_val * value);
+void np_testsuite_expect(union np_testsuite_test_val value, enum np_testsuite_type type);
+void np_testsuite_actual(union np_testsuite_test_val value);
 
 bool np_testsuite_evaluate(uint32_t line);
 #ifdef __cplusplus

@@ -88,9 +88,10 @@ struct nfiber
  *  @{
  */
 
-#define NFIBER_TERMINATED                   0
-#define NFIBER_YIELDED                      1
-#define NFIBER_WAITING                      2
+#define NFIBER_UNINITIALIZED                0
+#define NFIBER_TERMINATED                   1
+#define NFIBER_YIELDED                      2
+#define NFIBER_WAITING                      3
 
 /** @} */
 /*---------------------------------------------------------------------------*/

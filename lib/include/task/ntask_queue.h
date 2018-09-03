@@ -42,55 +42,6 @@
 extern "C" {
 #endif
 
-struct ntask;
-
-typedef uint_fast8_t (task_fn)(struct ntask * task, void * arg);
-
-struct ntask
-{
-    struct nfiber fiber;
-    struct npqueue_node node;
-    task_fn * fn;
-    void * arg;
-    uint_fast8_t state;
-    struct ntask_tls
-    {
-        uint32_t error;
-    } tls;
-};
-
-extern struct ntask * ng_current_task;
-
-#define ng_current  ng_current_task
-
-#define NTASK_UNINITIALIZED         NFIBER_UNINITIALIZED
-#define NTASK_DORMANT               NFIBER_TERMINATED
-#define NTASK_READY                 NFIBER_YIELDED
-#define NTASK_BLOCKED               NFIBER_WAITING
-    
-#define NTASK(func_call)            NFIBER(func_call)
-
-#define NTASK_BEGIN(task)           NFIBER_BEGIN(&(task)->fiber)
-
-#define NTASK_END()                 NFIBER_END()
-
-#define ntask_yield()               nfiber_yield()
-
-void ntask_create(struct ntask ** task, task_fn * fn, void * arg, 
-        uint_fast8_t prio);
-
-void ntask_dispatch(struct ntask * task);
-
-#define ntask_state(a_task)  (a_task)->state
-
-#define ntask_priority(a_task)   npqueue_node_priority(&(a_task)->node)
-
-void ntask_ready(struct ntask * task);
-
-void ntask_block(void);
-
-#define nerror  ng_current->tls.error
-
 #ifdef __cplusplus
 }
 #endif

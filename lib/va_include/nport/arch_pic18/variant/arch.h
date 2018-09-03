@@ -17,58 +17,33 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Variant architecture for x86 header
+ *  @brief       Variant architecture for PIC18 header
  *
  *  @addtogroup  port
  *  @{
  */
-/** @defgroup    port_x86_variant_arch Variant architecture for x86
- *  @brief       Variant architecture for x86.
+/** @defgroup    port_pic18_variant_arch Variant architecture for PIC18
+ *  @brief       Variant architecture for PIC18.
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_X86_VARIANT_ARCH_H_
-#define NEON_X86_VARIANT_ARCH_H_
+#ifndef NEON_PIC18_VARIANT_ARCH_H_
+#define NEON_PIC18_VARIANT_ARCH_H_
 
 #include <stdint.h>
-#include "port/nport_platform.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/*---------------------------------------------------------------------------*/
-/** @defgroup   x86_variant_arch_cpu Architecture CPU (x86) operations
- *  @brief      Architecture CPU (x86) operations.
- *  @{
- */
+#define NARCH_ID "pic18"
+#define NARCH_DATA_WIDTH 8
+#define NARCH_PIC18 1
 
-NPLATFORM_INLINE
-uint32_t narch_exp2(uint_fast8_t x)
-{
-    return (0x1u << x);
-}
+typedef uint8_t narch_native;
 
-NPLATFORM_INLINE
-uint_fast8_t narch_log2(uint32_t x)
-{
-    static const uint_fast8_t log2_table[256] =
-    {
-#define LT(n) n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n
-        -1, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,
-        LT(4), LT(5), LT(5), LT(6), LT(6), LT(6), LT(6),
-        LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7)
-    };
-    if (x >= 256) {
-        return 0;
-    } else {
-        return log2_table[x];
-    };
-}
-
-/** @} */
 #ifdef __cplusplus
 }
 #endif
@@ -76,4 +51,4 @@ uint_fast8_t narch_log2(uint32_t x)
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_X86_VARIANT_ARCH_H_ */
+#endif /* NEON_PIC18_VARIANT_ARCH_H_ */

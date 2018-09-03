@@ -109,14 +109,14 @@ struct nlogger_instance
 {
     struct nlist_sll list;
     const char * name;
-    uint32_t level;
+    uint8_t level;
 };
 
 extern struct nlogger_instance p_nlogger_global;
 
 void p_nlogger_x_print(struct nlogger_instance * instance, 
-        uint32_t level, const char * msg, ...);
-void p_nlogger_x_set_level(struct nlogger_instance * instance, uint32_t level);
+        uint8_t level, const char * msg, ...);
+void p_nlogger_x_set_level(struct nlogger_instance * instance, uint8_t level);
 
 /** @} */
 #ifdef __cplusplus

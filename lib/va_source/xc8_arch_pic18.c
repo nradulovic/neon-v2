@@ -16,30 +16,25 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <stdarg.h>
+#include "port/nport_arch.h"
 
-#include "logger/nlogger_x.h"
-
-#define nlogger_va_vprintf vprintf
-
-struct nlogger_instance p_nlogger_global =
+uint32_t narch_exp2(uint_fast8_t x)
 {
-    .level = NLOGGER_LEVEL_INFO
-};
-
-void p_nlogger_x_print(struct nlogger_instance * instance, 
-        uint8_t level, const char * msg, ...)
-{
-    if (instance->level >= level) {
-        va_list args;
-        va_start(args, msg);
-        nlogger_va_vprintf(msg, args);
-        va_end(args);
-    }
+    return (0x1u << x);
 }
 
-void p_nlogger_x_set_level(struct nlogger_instance * instance, uint8_t level)
+uint_fast8_t narch_log2(uint32_t x)
 {
-    instance->level = level;
+    static const uint_fast8_t log2_table[256] =
+    {
+#define LT(n) n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n
+        0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,
+        LT(4), LT(5), LT(5), LT(6), LT(6), LT(6), LT(6),
+        LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7)
+    };
+    if (x >= 256) {
+        return 0;
+    } else {
+        return log2_table[x];
+    };
 }

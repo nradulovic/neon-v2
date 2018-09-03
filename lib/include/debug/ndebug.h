@@ -39,7 +39,12 @@
 #include "port/nport_platform.h"
 #include "port/nport_arch.h"
 #include "logger/nlogger.h"
+
+#if defined(NEON_APP_CONFIG)
 #include "neon_config.h"
+#else
+#include "configs/default_config.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {

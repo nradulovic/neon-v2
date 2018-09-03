@@ -32,6 +32,7 @@
 #ifndef NEON_MODULE_ARCH_H_
 #define NEON_MODULE_ARCH_H_
 
+#include <stdint.h>
 #include "variant/arch.h"
 
 #ifdef __cplusplus
@@ -49,12 +50,19 @@ extern "C" {
 
 /** @brief      Each port defines a macro named NARCH_xxx.
  *  
- *  For example, the ARM based architecures will define 'NARCH_ARM'. In 
+ *  For example, the ARM based architectures will define 'NARCH_ARM'. In 
  *  addition to this macro it will probably define macros like 'NARCH_ARM_V7M'
  *  which identifies a subset of architecture information.
  */
 #define NARCH_xxx
 
+/** @brief      Number of bits of the used architecture
+ *  @api
+ */
+#ifdef __DOXYGEN__
+#define NARCH_DATA_WIDTH              8
+#endif
+    
 /** @} */
 /*---------------------------------------------------------------------------*/
 /** @defgroup   arch_cpu Architecture CPU operations
@@ -69,6 +77,28 @@ extern "C" {
  *  a High Level OS is used, this function will terminate the current process.
  */
 void narch_cpu_stop(void);
+
+/** @brief      Set a bit in unsigned 32-bit integer variable
+ *  @param      u32
+ *              Pointer to unsigned 32-bit integer.
+ *  @param      bit
+ *              Argument specifying which bit to set.
+ *  @note       Do not use bit >= 32 since it will result in undefined
+ *              behaviour.
+ *  @api
+ */
+void narch_set_bit(uint32_t * u32, uint_fast8_t bit);
+
+/** @brief      Clear a bit in unsigned integer 32-bit variable
+ *  @param      u32
+ *              Pointer to unsigned 32-bit integer.
+ *  @param      bit
+ *              Argument specifying which bit to clear.
+ *  @note       Do not use bit >= 32 since it will result in undefined
+ *              behaviour.
+ *  @api
+ */
+void narch_clear_bit(uint32_t * u32, uint_fast8_t bit);
 
 /** @brief      Calculate exponent of 2.
  */

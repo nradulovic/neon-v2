@@ -231,31 +231,9 @@ extern "C" {
  *  @{
  */
 
-NPLATFORM_INLINE
-uint32_t nbits_ftou32(float val)
-{
-    union float_to_u32
-    {
-        float                       fvalue;
-        uint32_t                    ivalue;
-    }                           u;
-    u.fvalue = val;
+uint32_t nbits_ftou32(float val);
 
-    return (u.ivalue);
-}
-
-NPLATFORM_INLINE
-float nbits_u32tof(uint32_t val)
-{
-    union u32_to_float
-    {
-        uint32_t                    ivalue;
-        float                       fvalue;
-    }                           u;
-    u.ivalue = val;
-
-    return (u.fvalue);
-}
+float nbits_u32tof(uint32_t val);
 
 /** @} */
 #ifdef __cplusplus

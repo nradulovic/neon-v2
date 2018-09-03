@@ -170,36 +170,21 @@ struct nlist_dll
       +-----------+
  @endverbatim
  */
-NPLATFORM_INLINE
-struct nlist_dll * nlist_dll_init(struct nlist_dll * node)
-{
-    node->next = node;
-    node->prev = node;
-
-    return (node);
-}
+struct nlist_dll * nlist_dll_init(struct nlist_dll * node);
 
 /** @brief      Return the next node of @a node in linked list.
  *  @param[in]  node
  *              A list node or sentinel.
  *  @return     Next node.
  */
-NPLATFORM_INLINE
-struct nlist_dll * nlist_dll_next(const struct nlist_dll * node)
-{
-    return (node->next);
-}
+#define nlist_dll_next(a_node)  (a_node)->next
 
 /** @brief      Return previous node of @a node in linked list.
  *  @param[in]  node
  *              A list node or sentinel.
  *  @return     Previous node.
  */
-NPLATFORM_INLINE
-struct nlist_dll * nlist_dll_prev(const struct nlist_dll * node)
-{
-    return (node->prev);
-}
+#define nlist_dll_prev(a_node)   (a_node)->prev
 
 /** @brief      Insert node (N) before current node (C).
  *  @param[in]  current
@@ -225,17 +210,8 @@ struct nlist_dll * nlist_dll_prev(const struct nlist_dll * node)
         +-----+    +-----+    +-----+    +-----+
  @endverbatim
  */
-NPLATFORM_INLINE
 struct nlist_dll * nlist_dll_add_after(struct nlist_dll * current,
-        struct nlist_dll * node)
-{
-    node->next          = current;
-    node->prev          = current->prev;
-    current->prev->next = node;
-    current->prev       = node;
-
-    return (node);
-}
+        struct nlist_dll * node);
 
 /** @brief      Insert node (N) after current node (C).
  *  @param[in]  current
@@ -261,17 +237,8 @@ struct nlist_dll * nlist_dll_add_after(struct nlist_dll * current,
         +-----+    +-----+    +-----+    +-----+
  @endverbatim
  */
-NPLATFORM_INLINE
 struct nlist_dll * nlist_dll_add_before(struct nlist_dll * current,
-        struct nlist_dll * node)
-{
-    node->prev          = current;
-    node->next          = current->next;
-    current->next->prev = node;
-    current->next       = node;
-
-    return (node);
-}
+        struct nlist_dll * node);
 
 /** @brief      Remove a node (N)
  *  @param[in]  node
@@ -297,22 +264,7 @@ struct nlist_dll * nlist_dll_add_before(struct nlist_dll * current,
                                     ———
  @endverbatim
  */
-NPLATFORM_INLINE
-void nlist_dll_remove(struct nlist_dll * node)
-{
-    node->next->prev = node->prev;
-    node->prev->next = node->next;
-
-    /* NOTE:
-     * Next pointer must point to itself, since it may be checked by
-     * nlist_dll_is_empty() function.
-     */
-    node->next = node;
-    /* NOTE:
-     * During debugging it is easier to catch errors with NULL pointer.
-     */
-    node->prev = NULL;
-}
+void nlist_dll_remove(struct nlist_dll * node);
 
 /** @brief      Check if a list @a node is empty or not.
  *  @param[in]  node
@@ -321,11 +273,7 @@ void nlist_dll_remove(struct nlist_dll * node)
  *  @retval     true - The list is empty.
  *  @retval     false - The list contains at least one node.
  */
-NPLATFORM_INLINE
-bool nlist_dll_is_empty(const struct nlist_dll * node)
-{
-    return (!!(node->next == node));
-}
+bool nlist_dll_is_empty(const struct nlist_dll * node);
 
 /** @brief      Rotate list (S) to left
  *
@@ -355,15 +303,7 @@ bool nlist_dll_is_empty(const struct nlist_dll * node)
  *  }
  *  @endcode
  */
-NPLATFORM_INLINE
-void nlist_dll_rotate_left(struct nlist_dll * list)
-{
-    struct nlist_dll *             first;
-
-    first = list->next;
-    nlist_dll_remove(first);
-    nlist_dll_add_before(list, first);
-}
+void nlist_dll_rotate_left(struct nlist_dll * list);
 
 #ifdef __cplusplus
 }

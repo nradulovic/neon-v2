@@ -54,6 +54,8 @@ extern "C" {
 enum nerror
 {
     EOBJ_INVALID, /* Invalid object error */
+    EOBJ_INITIALIZED,
+    EARG_OUTOFRANGE, /* Argument is out of range */
 };
 
 /** @} */
