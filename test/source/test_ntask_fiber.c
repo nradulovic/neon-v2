@@ -24,7 +24,7 @@
 
 #include "test_ntask_fiber.h"
 
-static uint32_t g_output;
+static uint8_t g_output;
 static bool g_should_stop;
 
 static NFIBER(fiber_empty(struct nfiber *));

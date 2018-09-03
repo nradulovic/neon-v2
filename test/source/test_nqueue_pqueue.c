@@ -124,7 +124,7 @@ NTESTSUITE_TEST(test_single_first)
 NTESTSUITE_TEST(test_single_remove)
 {
     NTESTSUITE_EXPECT_BOOL(true);
-    npqueue_remove(npqueue_first(&g_queue));
+    npqueue_remove_first(&g_queue);
     NTESTSUITE_ACTUAL_BOOL(npqueue_is_empty(&g_queue));
     NTESTSUITE_EVALUATE();
 }
@@ -136,7 +136,7 @@ NTESTSUITE_TEST(test_single_insert)
     NTESTSUITE_EXPECT_BOOL(false);
     npqueue_node_init(&node, 1);
     npqueue_insert(&g_queue, &node);
-    npqueue_remove(npqueue_first(&g_queue));
+    npqueue_remove_first(&g_queue);
     NTESTSUITE_ACTUAL_BOOL(npqueue_is_empty(&g_queue));
     NTESTSUITE_EVALUATE();
 }
@@ -158,9 +158,9 @@ NTESTSUITE_TEST(test_multi_first)
 NTESTSUITE_TEST(test_multi_remove)
 {
     NTESTSUITE_EXPECT_BOOL(true);
-    npqueue_remove(npqueue_first(&g_queue));
-    npqueue_remove(npqueue_first(&g_queue));
-    npqueue_remove(npqueue_first(&g_queue));
+    npqueue_remove_first(&g_queue);
+    npqueue_remove_first(&g_queue);
+    npqueue_remove_first(&g_queue);
     NTESTSUITE_ACTUAL_BOOL(npqueue_is_empty(&g_queue));
     NTESTSUITE_EVALUATE();
 }
@@ -172,9 +172,9 @@ NTESTSUITE_TEST(test_multi_insert)
     NTESTSUITE_EXPECT_BOOL(false);
     npqueue_node_init(&node, 1);
     npqueue_insert(&g_queue, &node);
-    npqueue_remove(npqueue_first(&g_queue));
-    npqueue_remove(npqueue_first(&g_queue));
-    npqueue_remove(npqueue_first(&g_queue));
+    npqueue_remove_first(&g_queue);
+    npqueue_remove_first(&g_queue);
+    npqueue_remove_first(&g_queue);
     NTESTSUITE_ACTUAL_BOOL(npqueue_is_empty(&g_queue));
     NTESTSUITE_EVALUATE();
 }
@@ -204,7 +204,7 @@ NTESTSUITE_TEST(test_multi_sort_middle_duplicate)
     NTESTSUITE_EXPECT_PTR(&g_node2);
     npqueue_node_init(&node2_1, 2);
     npqueue_insert(&g_queue, &node2_1);
-    npqueue_remove(npqueue_first(&g_queue));
+    npqueue_remove_first(&g_queue);
     NTESTSUITE_ACTUAL_PTR(npqueue_first(&g_queue));
     NTESTSUITE_EVALUATE();
 }

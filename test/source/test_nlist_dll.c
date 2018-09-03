@@ -25,33 +25,17 @@
 struct node_list
 {
     struct nlist_dll list;
-    char letter;
 };
 
-static struct node_list g_node_a =
-{
-    .letter = 'a'
-};
+static struct node_list g_node_a;
 
-static struct node_list g_node_b =
-{
-    .letter = 'b'
-};
+static struct node_list g_node_b;
 
-static struct node_list g_node_c =
-{
-    .letter = 'c'
-};
+static struct node_list g_node_c;
 
-static struct node_list g_node_d =
-{
-    .letter = 'd'
-};
+static struct node_list g_node_d;
 
-static struct node_list g_node_0 =
-{
-    .letter = '0'
-};
+static struct node_list g_node_0;
 
 static struct nlist_dll g_sentinel;
 

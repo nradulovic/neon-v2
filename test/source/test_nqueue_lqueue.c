@@ -26,11 +26,11 @@
 
 #define QUEUE_SIZE 4
 
-static nlqueue(uint32_t, QUEUE_SIZE) g_test_queue;
+static nlqueue(uint8_t, QUEUE_SIZE) g_test_queue;
 
 NTESTSUITE_TEST(test_none_init)
 {
-    static nlqueue(uint32_t, 16) my_queue;
+    nlqueue(uint8_t, 16) my_queue = {0};
 
     /* NOTE:
      * Compile time test only. Ensure that the expected is equal to actual

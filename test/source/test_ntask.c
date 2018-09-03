@@ -20,10 +20,10 @@
 #include "task/ntask.h"
 #include "test_ntask.h"
 
-static struct ntask g_task_init;
-static struct ntask g_task_yield;
+static struct ntask * g_task_create;
+static struct ntask * g_task_yield;
 
-static NTASK(task_init_fn(struct ntask * task, void * arg))
+static NTASK(task_create_fn(struct ntask * task, void * arg))
 {
     (void)arg;
 
@@ -43,25 +43,25 @@ static NTASK(task_yield_fn(struct ntask * task, void * arg))
 NTESTSUITE_TEST(test_init)
 {
     NTESTSUITE_EXPECT_UINT(NTASK_DORMANT);
-    ntask_init(&g_task_init, task_init_fn, NULL, 0);
-    NTESTSUITE_ACTUAL_UINT(ntask_state(&g_task_init));
+    ntask_create(&g_task_create, task_create_fn, NULL, 0);
+    NTESTSUITE_ACTUAL_UINT(ntask_state(g_task_create));
     NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_priority)
 {
     NTESTSUITE_EXPECT_UINT(1);
-    ntask_init(&g_task_init, task_init_fn, NULL, 1);
-    NTESTSUITE_ACTUAL_UINT(ntask_priority(&g_task_init));
+    ntask_create(&g_task_create, task_create_fn, NULL, 1);
+    NTESTSUITE_ACTUAL_UINT(ntask_priority(g_task_create));
     NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_yield)
 {
     NTESTSUITE_EXPECT_UINT(NTASK_READY);
-    ntask_init(&g_task_yield, task_yield_fn, NULL, 0);
-    ntask_dispatch(&g_task_yield);
-    NTESTSUITE_ACTUAL_UINT(ntask_state(&g_task_yield));
+    ntask_create(&g_task_yield, task_yield_fn, NULL, 0);
+    ntask_dispatch(g_task_yield);
+    NTESTSUITE_ACTUAL_UINT(ntask_state(g_task_yield));
     NTESTSUITE_EVALUATE();
 }
 
