@@ -38,7 +38,7 @@
 #include "list/nlist_sll.h"
 
 #if defined(NEON_APP_CONFIG)
-#include "neon_config.h"
+#include "neon_app_config.h"
 #else
 #include "configs/default_config.h"
 #endif

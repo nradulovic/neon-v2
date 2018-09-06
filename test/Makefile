@@ -23,18 +23,19 @@ PROJECT_DIR = test
 # Project name, this will be used as output binary file name.
 PROJECT_NAME := test
 
+# Project configuration header file.
+PROJECT_CONFIG := test
+
 # Include depenencies, nport is needed to import additional build rules.
 include $(WS)/lib/build/nport.mk
 include $(WS)/lib/build/nlogger.mk
+include $(WS)/lib/build/nconfig.mk
 include $(WS)/lib/build/ndebug.mk
 include $(WS)/lib/build/nbits.mk
 include $(WS)/lib/build/ntestsuite.mk
 include $(WS)/lib/build/nqueue.mk
 include $(WS)/lib/build/nerror.mk
 include $(WS)/lib/build/ntask.mk
-
-# Project configuration header file.
-PROJECT_CONFIG := $(PROJECT_DIR)/include/neon_config.h
 
 # List additional C header include paths.
 CC_INCLUDES += $(PROJECT_DIR)/include
