@@ -40,6 +40,12 @@
 #include "port/nport_arch.h"
 #include "logger/nlogger.h"
 
+#if defined(NEON_APP_CONFIG)
+#include "neon_app_config.h"
+#else
+#include "configs/default_config.h"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -48,25 +54,25 @@ extern "C" {
 #define NTESTSUITE_STOP_ON_ERROR (NCONFIG_ENABLE_LOGGER == 0)
 #endif
 
+#if (!NTESTSUITE_STOP_ON_ERROR)
 #define NTESTSUITE_PRINT_RESULTS(a_fixture)                                 \
 	np_testsuite_print_results(&(a_fixture))
+#else
+#define NTESTSUITE_PRINT_RESULTS(a_fixture)
+#endif
+
+#if (!NTESTSUITE_STOP_ON_ERROR)
+#define NTESTSUITE_PRINT_OVERVIEW()                                         \
+	np_testsuite_print_overview()
+#else
+#define NTESTSUITE_PRINT_OVERVIEW()
+#endif
 
 #define NTESTSUITE_PRINT_HEADER()                                           \
     nlogger_info("Build info: %s - %s\n", NPLATFORM_DATE, NPLATFORM_TIME);  \
     nlogger_info("Port platform ID: %s\n", nplatform_id);                   \
     nlogger_info("Port platform build: %s\n", nplatform_build);
 
-#define NTESTSUITE_PRINT_OVERVIEW()                                         \
-	np_testsuite_print_overview()
-
-#define NTESTSUITE_FIXTURE(a_name, a_setup, a_teardown)                     \
-    struct np_testsuite_fixture a_name = {                                  \
-        .name = # a_name,                                                   \
-        .setup = a_setup,                                                   \
-        .teardown = a_teardown,                                             \
-        .total = 0u,                                                        \
-        .failed = 0u,                                                       \
-    }
 
 #define NTESTSUITE_EXPECT_UINT(a_number)                                    \
     do {\
@@ -124,15 +130,32 @@ extern "C" {
         np_testsuite_actual(val); \
     } while (0)
 
-#if (NTESTSUITE_STOP_ON_ERROR)
+#if (!NTESTSUITE_STOP_ON_ERROR)
+#define NTESTSUITE_FIXTURE(a_name, a_setup, a_teardown)                     \
+    struct np_testsuite_fixture a_name = {                                  \
+        .setup = a_setup,                                                   \
+        .teardown = a_teardown,                                             \
+        .name = # a_name,                                                   \
+        .total = 0u,                                                        \
+        .failed = 0u,                                                       \
+    }
+#else
+#define NTESTSUITE_FIXTURE(a_name, a_setup, a_teardown)                     \
+    struct np_testsuite_fixture a_name = {                                  \
+        .setup = a_setup,                                                   \
+        .teardown = a_teardown,                                             \
+    }
+#endif
+
+#if (!NTESTSUITE_STOP_ON_ERROR)
 #define NTESTSUITE_EVALUATE()                                               \
         if (np_testsuite_evaluate(NPLATFORM_LINE)) { \
-            narch_cpu_stop(); \
+            return; \
         }
 #else
 #define NTESTSUITE_EVALUATE()                                               \
         if (np_testsuite_evaluate(NPLATFORM_LINE)) { \
-            return; \
+            narch_cpu_stop(); \
         }
 #endif
 
@@ -146,13 +169,16 @@ enum np_testsuite_type
 
 struct np_testsuite_fixture
 {
-    const char * name;
     void (* setup)(void);
     void (* teardown)(void);
+#if (!NTESTSUITE_STOP_ON_ERROR)
+    const char * name;
     uint8_t total;
     uint8_t failed;
+#endif
 };
 
+#if (!NTESTSUITE_STOP_ON_ERROR)
 #define NTESTSUITE_TEST(test_name) \
 static void test_name(void); \
 static struct np_testsuite_test testsuite_ ## test_name = { \
@@ -161,12 +187,22 @@ static struct np_testsuite_test testsuite_ ## test_name = { \
 	.file = NPLATFORM_FILE, \
 };\
 static void test_name(void)
+#else
+#define NTESTSUITE_TEST(test_name) \
+static void test_name(void); \
+static struct np_testsuite_test testsuite_ ## test_name = { \
+	.test_fn = test_name, \
+};\
+static void test_name(void)
+#endif
 
 struct np_testsuite_test
 {
 	void (*test_fn)(void);
+#if (!NTESTSUITE_STOP_ON_ERROR)
 	const char * name;
 	const char * file;
+#endif
 };
 
 union np_testsuite_test_val
