@@ -34,15 +34,18 @@
 #define NEON_MODULE_TESTSUITE_H_
 
 #include <stdint.h>
-#include <stddef.h>
-#include <string.h>
 #include <stdbool.h>
 
 #include "port/nport_platform.h"
+#include "port/nport_arch.h"
 #include "logger/nlogger.h"
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+#ifndef NTESTSUITE_STOP_ON_ERROR
+#define NTESTSUITE_STOP_ON_ERROR (NCONFIG_ENABLE_LOGGER == 0)
 #endif
 
 #define NTESTSUITE_PRINT_RESULTS(a_fixture)                                 \
@@ -121,10 +124,17 @@ extern "C" {
         np_testsuite_actual(val); \
     } while (0)
 
+#if (NTESTSUITE_STOP_ON_ERROR)
+#define NTESTSUITE_EVALUATE()                                               \
+        if (np_testsuite_evaluate(NPLATFORM_LINE)) { \
+            narch_cpu_stop(); \
+        }
+#else
 #define NTESTSUITE_EVALUATE()                                               \
         if (np_testsuite_evaluate(NPLATFORM_LINE)) { \
             return; \
         }
+#endif
 
 enum np_testsuite_type
 {
