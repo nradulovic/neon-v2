@@ -18,9 +18,24 @@
 
 #include "port/nport_arch.h"
 
+void narch_cpu_stop(void)
+{
+    for (;;);
+}
+
+void narch_set_bit(uint32_t * u32, uint_fast8_t bit)
+{
+    *u32 |= (uint32_t)1u << bit;
+}
+
+void narch_clear_bit(uint32_t * u32, uint_fast8_t bit)
+{
+    *u32 &= ~((uint32_t)1u << bit);
+}
+
 uint32_t narch_exp2(uint_fast8_t x)
 {
-    return (0x1u << x);
+    return ((uint32_t)0x1u << x);
 }
 
 uint_fast8_t narch_log2(uint32_t x)
@@ -31,10 +46,27 @@ uint_fast8_t narch_log2(uint32_t x)
         0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,
         LT(4), LT(5), LT(5), LT(6), LT(6), LT(6), LT(6),
         LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7)
+#undef LT
     };
-    if (x >= 256) {
-        return 0;
-    } else {
-        return log2_table[x];
-    };
+    uint8_t tt;
+    
+    tt = x >> 24u;
+
+    if (tt) {
+        return 24u + log2_table[tt];
+    }
+    
+    tt = x >> 16u;
+
+    if (tt) {
+        return 16u + log2_table[tt];
+    }
+    
+    tt = x >> 8u;
+
+    if (tt) {
+        return 8u + log2_table[tt];
+    }
+    
+    return log2_table[x];
 }
