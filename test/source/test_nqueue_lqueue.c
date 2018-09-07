@@ -30,7 +30,7 @@ static nlqueue(uint8_t, QUEUE_SIZE) g_test_queue;
 
 NTESTSUITE_TEST(test_none_init)
 {
-    nlqueue(uint8_t, 16) my_queue = {0};
+    nlqueue(uint8_t, 16) my_queue;
 
     /* NOTE:
      * Compile time test only. Ensure that the expected is equal to actual
