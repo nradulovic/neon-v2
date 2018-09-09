@@ -33,7 +33,7 @@
 #define NEON_QUEUE_PQUEUE_H_
 
 #include <stdint.h>
-#include "list/nlist_sll.h"
+#include "list/nlist_dll.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,7 +50,7 @@ extern "C" {
  */
 struct npqueue
 {
-    struct nlist_sll sentinel;
+    struct nlist_dll sentinel;
 };
 
 /** @brief    	Priority sorted queue node structure.
@@ -63,7 +63,7 @@ struct npqueue
  */
 struct npqueue_node
 {
-    struct nlist_sll node;
+    struct nlist_dll node;
     uint_fast8_t priority;
 };
 
@@ -147,7 +147,7 @@ uint_fast8_t npqueue_node_mod_priority(struct npqueue_node * node,
  *              Pointer to queue structure.
  *  @api
  */
-void npqueue_init(struct npqueue * queue);
+#define npqueue_init(a_queue)   nlist_dll_init(&(a_queue)->sentinel)
 
 /** @brief      Insert a node into the queue.
  *  @param      queue
@@ -173,7 +173,7 @@ struct npqueue_node * npqueue_remove_first(struct npqueue * queue);
  *  @retval     - false - Queue @a queue is not empty.
  *  @api
  */
-#define npqueue_is_empty(a_queue)  nlist_sll_is_empty(&(a_queue)->sentinel)
+#define npqueue_is_empty(a_queue)  nlist_dll_is_empty(&(a_queue)->sentinel)
 
 /** @brief      Return a pointer to a node with highest priority node in queue.
  *  @param      queue
@@ -181,7 +181,7 @@ struct npqueue_node * npqueue_remove_first(struct npqueue * queue);
  *  @return     Return a pointer to a node with highest priority node in queue.
  *  @api
  */
-#define npqueue_first(a_queue) npqueue_from_list(nlist_sll_first(&(a_queue)->sentinel))
+#define npqueue_first(a_queue) npqueue_from_list(nlist_dll_first(&(a_queue)->sentinel))
 
 /** @} */
 #ifdef __cplusplus
