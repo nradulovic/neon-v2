@@ -45,14 +45,6 @@ extern "C" {
  *  @{
  */
 
-/** @brief    	Priority sorted queue structure.
- *  @api
- */
-struct npqueue
-{
-    struct nlist_dll sentinel;
-};
-
 /** @brief    	Priority sorted queue node structure.
  *
  *  Each node has a priority attribute. The attribute type is 8-bit unsigned
@@ -61,7 +53,7 @@ struct npqueue
  *
  *  @api
  */
-struct npqueue_node
+struct npqueue
 {
     struct nlist_dll node;
     uint_fast8_t priority;
@@ -80,7 +72,7 @@ struct npqueue_node
  *  @return    	Pointer to priority queue node structure.
  *  @api
  */
-#define npqueue_from_list(a_list) NLIST_ENTRY((a_list), struct npqueue_node, node)
+#define npqueue_from_list(a_list) NLIST_ENTRY((a_list), struct npqueue, node)
 
 /** @brief    	Initialize a node and define its priority.
  *
@@ -95,7 +87,7 @@ struct npqueue_node
  *      		the value is 0.
  *  @return    	The pointer @a node.
  */
-struct npqueue_node * npqueue_node_init(struct npqueue_node * node,
+struct npqueue * npqueue_init(struct npqueue * node,
         uint_fast8_t priority);
 
 /** @brief    	Terminate a node.
@@ -105,7 +97,7 @@ struct npqueue_node * npqueue_node_init(struct npqueue_node * node,
  *  @param     	node
  *      		Pointer to a node structure.
  */
-void npqueue_node_term(struct npqueue_node * node);
+void npqueue_term(struct npqueue * node);
 
 /** @brief      Get a node priority.
  *  @param      node
@@ -114,9 +106,14 @@ void npqueue_node_term(struct npqueue_node * node);
  *              priority.
  *  @api
  */
-#define npqueue_node_priority(a_node)  (a_node)->priority
+#define npqueue_priority(a_node)                                            \
+    (a_node)->priority
 
-#define npqueue_node_set_priority(a_node, a_priority) (a_node)->priority = (a_priority)
+#define npqueue_set_priority(a_node, a_priority)                            \
+    (a_node)->priority = (a_priority)
+
+#define npqueue_next(a_node)                                                \
+    npqueue_from_list(nlist_dll_next(&(a_node)->node))
 
 /** @brief      Modify a node priority.
  *  
@@ -132,8 +129,7 @@ void npqueue_node_term(struct npqueue_node * node);
  *  @return     Old node priority value.
  *  @api
  */
-uint_fast8_t npqueue_node_mod_priority(struct npqueue_node * node,
-    	uint_fast8_t priority);
+uint_fast8_t npqueue_mod_priority(struct npqueue * node, uint_fast8_t priority);
 
 /** @} */
 /*---------------------------------------------------------------------------*/
@@ -142,13 +138,6 @@ uint_fast8_t npqueue_node_mod_priority(struct npqueue_node * node,
  *  @{
  */
 
-/** @brief      Initialize a queue.
- *  @param      queue
- *              Pointer to queue structure.
- *  @api
- */
-#define npqueue_init(a_queue)   nlist_dll_init(&(a_queue)->sentinel)
-
 /** @brief      Insert a node into the queue using sorting method.
  *  @param      queue
  *              Pointer to queue structure.
@@ -156,23 +145,24 @@ uint_fast8_t npqueue_node_mod_priority(struct npqueue_node * node,
  *              Pointer to node structure.
  *  @api
  */
-void npqueue_insert_sorted(struct npqueue * queue, struct npqueue_node * node);
+void npqueue_insert_sorted(struct npqueue * head, struct npqueue * node);
 
-/** @brief      Insert a node into the queue using the fifo method.
+/** @brief      Insert a node into the queue using the FIFO method.
  *  @param      queue
  *              Pointer to queue structure.
  *  @param      node
  *              Pointer to node structure.
  *  @api
  */
-void npqueue_insert_fifo(struct npqueue * queue, struct npqueue_node * node);
+#define npqueue_insert_fifo(a_head, a_node)                                 \
+    nlist_dll_add_before(&(a_head)->node, &(a_node)->node)
 
 /** @brief      Remove the node from queue.
  *  @param      node
  *              Pointer to node structure.
  *  @api
  */
-struct npqueue_node * npqueue_remove_first(struct npqueue * queue);
+#define npqueue_remove(a_node)  nlist_dll_remove(&(a_node)->node)
 
 /** @brief      Test if queue is empty.
  *  @param      queue
@@ -182,15 +172,7 @@ struct npqueue_node * npqueue_remove_first(struct npqueue * queue);
  *  @retval     - false - Queue @a queue is not empty.
  *  @api
  */
-#define npqueue_is_empty(a_queue)  nlist_dll_is_empty(&(a_queue)->sentinel)
-
-/** @brief      Return a pointer to a node with highest priority node in queue.
- *  @param      queue
- *              Pointer to queue structure.
- *  @return     Return a pointer to a node with highest priority node in queue.
- *  @api
- */
-#define npqueue_first(a_queue) npqueue_from_list(nlist_dll_first(&(a_queue)->sentinel))
+#define npqueue_is_last(a_node) nlist_dll_is_empty(&(a_node)->node)
 
 /** @} */
 #ifdef __cplusplus

@@ -8,24 +8,25 @@
 #include "task/ntask_fiber.h"
 #include "task/ntask.h"
 
-struct task_ready_queue
+static struct task_ready_queue
 {
+    struct ntask * current;
     struct nbitarray group;
-    struct npqueue groups[NCONFIG_TASK_PRIORITIES];
-};
+    struct npqueue * groups[NCONFIG_TASK_PRIORITIES];
+} g_task_ready_queue;
 
-static struct task_ready_queue g_task_ready_queue;
+#if (NCONFIG_TASK_INSTANCES != 0)
 static struct ntask g_task_pool[NCONFIG_TASK_INSTANCES];
+#endif
 
-struct ntask * ng_current_task;
-
-static struct ntask * task_from_node(struct npqueue_node * node)
+static struct ntask * task_from_node(struct npqueue * node)
 {
     return NPLATFORM_CONTAINER_OF(node, struct ntask, node);
 }
 
 struct ntask * alloc_task(void)
 {
+#if (NCONFIG_TASK_INSTANCES != 0)
     struct ntask * task = &g_task_pool[0];
 
     for (uint8_t i = 0u; i < NBITS_ARRAY_SIZE(g_task_pool); i++) {
@@ -35,6 +36,9 @@ struct ntask * alloc_task(void)
         task++;
     }
     return NULL;
+#else
+    return malloc(sizeof(struct ntask));
+#endif
 }
 
 void ntask_create(
@@ -52,42 +56,63 @@ void ntask_create(
         return;
     }
     nfiber_init(&l_task->fiber);
-    npqueue_node_init(&l_task->node, prio);
+    npqueue_init(&l_task->node, prio);
     l_task->fn = fn;
     l_task->arg = arg;
-    l_task->state = NFIBER_TERMINATED;
+    l_task->state = NTASK_DORMANT;
     *task = l_task;
+}
+
+struct ntask * ntask_current(void)
+{
+    struct task_ready_queue * rq = &g_task_ready_queue;
+
+    return rq->current;
 }
 
 void ntask_schedule(void)
 {
-}
-
-void ntask_dispatch(struct ntask * task)
-{
-    task->state = nfiber_dispatch(task->fn(task, task->arg)); 
+    struct task_ready_queue * rq = &g_task_ready_queue;
+    
+                                    /* While there are ready tasks in system */
+    while (!nbitarray_is_empty(&rq->group)) {
+        uint_fast8_t prio;
+                                                    /* Get the highest level */
+        prio = nbitarray_msbs(&rq->group);
+                                                       /* Fetch the new task */
+        rq->current = task_from_node(rq->groups[prio]);
+                                              /* Round-robin for other tasks */
+        rq->groups[prio] = npqueue_next(&rq->current->node);
+                                                       /* Execute the thread */
+        rq->current->state = nfiber_dispatch(
+                rq->current->fn(rq->current, rq->current->arg)); 
+    }
 }
 
 void ntask_ready(struct ntask * task)
 {
-    uint_fast8_t prio = npqueue_node_priority(&task->node);
-    
-    nbitarray_set(&g_task_ready_queue.group, prio);
-#if (NCONFIG_TASK_PRIORITIES < 32)
-    npqueue_insert_sorted(&g_task_ready_queue.groups[prio], &task->node);
-#else
-    npqueue_insert_fifo(&g_task_ready_queue.groups[prio], &task->node);
-#endif
+    uint_fast8_t prio = npqueue_priority(&task->node);
+    struct task_ready_queue * rq = &g_task_ready_queue;
+
+    if (rq->groups[prio] == NULL) {
+        rq->groups[prio] = &task->node;
+        nbitarray_set(&rq->group, prio);
+    } else {
+        npqueue_insert_fifo(rq->groups[prio], &task->node);
+    }
     task->state = NTASK_READY;
 }
 
-void ntask_block(void)
+void ntask_block(struct ntask * task)
 {
-    uint_fast8_t prio = npqueue_node_priority(&ng_current_task->node);
-
-    task_from_node(npqueue_remove_first(&g_task_ready_queue.groups[prio]))->state = NTASK_BLOCKED;
-    
-    if (npqueue_is_empty(&g_task_ready_queue.groups[prio])) {
-        nbitarray_clear(&g_task_ready_queue.group, prio);
+    if (npqueue_is_last(&task->node)) {
+        uint_fast8_t prio = npqueue_priority(&task->node);
+        struct task_ready_queue * rq = &g_task_ready_queue;
+        
+        rq->groups[prio] = NULL;
+        nbitarray_clear(&rq->group, prio);
+    } else {
+        npqueue_remove(&task->node);
     }
+    task->state = NTASK_BLOCKED;
 }

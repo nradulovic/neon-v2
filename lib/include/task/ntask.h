@@ -49,7 +49,7 @@ typedef uint_fast8_t (task_fn)(struct ntask * task, void * arg);
 struct ntask
 {
     struct nfiber fiber;
-    struct npqueue_node node;
+    struct npqueue node;
     task_fn * fn;
     void * arg;
     uint_fast8_t state;
@@ -61,7 +61,7 @@ struct ntask
 
 extern struct ntask * ng_current_task;
 
-#define ng_current  ng_current_task
+#define ng_current  ntask_current()
 
 #define NTASK_UNINITIALIZED         NFIBER_UNINITIALIZED
 #define NTASK_DORMANT               NFIBER_TERMINATED
@@ -79,15 +79,15 @@ extern struct ntask * ng_current_task;
 void ntask_create(struct ntask ** task, task_fn * fn, void * arg, 
         uint_fast8_t prio);
 
-void ntask_dispatch(struct ntask * task);
-
 #define ntask_state(a_task)  (a_task)->state
 
-#define ntask_priority(a_task)   npqueue_node_priority(&(a_task)->node)
+#define ntask_priority(a_task)   npqueue_priority(&(a_task)->node)
 
 void ntask_ready(struct ntask * task);
 
-void ntask_block(void);
+void ntask_block(struct ntask * task);
+
+struct ntask * ntask_current(void);
 
 #define nerror  ng_current->tls.error
 

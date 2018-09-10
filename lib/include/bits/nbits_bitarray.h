@@ -90,6 +90,9 @@ struct nbitarray
  */
 #define nbitarray_msbs(a_ba)    narch_log2((a_ba)->bits)
 
+#define nbitarray_is_empty(a_ba)                                            \
+    ((a_ba)->bits == 0u)
+
 #ifdef __cplusplus
 }
 #endif
