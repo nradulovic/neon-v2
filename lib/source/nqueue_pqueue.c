@@ -43,7 +43,7 @@ uint_fast8_t npqueue_node_mod_priority(struct npqueue_node * node,
     return (retval);
 }
 
-void npqueue_insert(struct npqueue * queue, struct npqueue_node * node)
+void npqueue_insert_sorted(struct npqueue * queue, struct npqueue_node * node)
 {
     struct nlist_dll * current;
 
@@ -53,6 +53,11 @@ void npqueue_insert(struct npqueue * queue, struct npqueue_node * node)
         }
     }
     nlist_dll_add_after(current, &node->node);
+}
+
+void npqueue_insert_fifo(struct npqueue * queue, struct npqueue_node * node)
+{
+    nlist_dll_add_before(&queue->sentinel, &node->node);
 }
 
 struct npqueue_node * npqueue_remove_first(struct npqueue * queue)

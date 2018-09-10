@@ -103,7 +103,7 @@ NTESTSUITE_TEST(test_empty_insert)
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(true);
     npqueue_node_init(&node, 1);
-    npqueue_insert(&g_queue, &node);
+    npqueue_insert_sorted(&g_queue, &node);
     NTESTSUITE_EVALUATE();
 }
 
@@ -135,7 +135,7 @@ NTESTSUITE_TEST(test_single_insert)
 
     NTESTSUITE_EXPECT_BOOL(false);
     npqueue_node_init(&node, 1);
-    npqueue_insert(&g_queue, &node);
+    npqueue_insert_sorted(&g_queue, &node);
     npqueue_remove_first(&g_queue);
     NTESTSUITE_ACTUAL_BOOL(npqueue_is_empty(&g_queue));
     NTESTSUITE_EVALUATE();
@@ -171,7 +171,7 @@ NTESTSUITE_TEST(test_multi_insert)
 
     NTESTSUITE_EXPECT_BOOL(false);
     npqueue_node_init(&node, 1);
-    npqueue_insert(&g_queue, &node);
+    npqueue_insert_sorted(&g_queue, &node);
     npqueue_remove_first(&g_queue);
     npqueue_remove_first(&g_queue);
     npqueue_remove_first(&g_queue);
@@ -192,7 +192,7 @@ NTESTSUITE_TEST(test_multi_sort_duplicate)
 
     NTESTSUITE_EXPECT_PTR(&g_node3);
     npqueue_node_init(&node3_1, 3);
-    npqueue_insert(&g_queue, &node3_1);
+    npqueue_insert_sorted(&g_queue, &node3_1);
     NTESTSUITE_ACTUAL_PTR(npqueue_first(&g_queue));
     NTESTSUITE_EVALUATE();
 }
@@ -203,7 +203,7 @@ NTESTSUITE_TEST(test_multi_sort_middle_duplicate)
 
     NTESTSUITE_EXPECT_PTR(&g_node2);
     npqueue_node_init(&node2_1, 2);
-    npqueue_insert(&g_queue, &node2_1);
+    npqueue_insert_sorted(&g_queue, &node2_1);
     npqueue_remove_first(&g_queue);
     NTESTSUITE_ACTUAL_PTR(npqueue_first(&g_queue));
     NTESTSUITE_EVALUATE();
@@ -218,7 +218,7 @@ static void setup_single(void)
 {
     npqueue_init(&g_queue);
     npqueue_node_init(&g_node1, 1);
-    npqueue_insert(&g_queue, &g_node1);
+    npqueue_insert_sorted(&g_queue, &g_node1);
 }
 
 static void setup_multi(void)
@@ -227,9 +227,9 @@ static void setup_multi(void)
     npqueue_node_init(&g_node1, 1);
     npqueue_node_init(&g_node2, 2);
     npqueue_node_init(&g_node3, 3);
-    npqueue_insert(&g_queue, &g_node1);
-    npqueue_insert(&g_queue, &g_node2);
-    npqueue_insert(&g_queue, &g_node3);
+    npqueue_insert_sorted(&g_queue, &g_node1);
+    npqueue_insert_sorted(&g_queue, &g_node2);
+    npqueue_insert_sorted(&g_queue, &g_node3);
 }
 
 void test_nqueue_pqueue(void)

@@ -73,7 +73,11 @@ void ntask_ready(struct ntask * task)
     uint_fast8_t prio = npqueue_node_priority(&task->node);
     
     nbitarray_set(&g_task_ready_queue.group, prio);
-    npqueue_insert(&g_task_ready_queue.groups[prio], &task->node);
+#if (NCONFIG_TASK_PRIORITIES < 32)
+    npqueue_insert_sorted(&g_task_ready_queue.groups[prio], &task->node);
+#else
+    npqueue_insert_fifo(&g_task_ready_queue.groups[prio], &task->node);
+#endif
     task->state = NTASK_READY;
 }
 

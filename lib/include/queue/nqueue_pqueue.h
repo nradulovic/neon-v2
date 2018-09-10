@@ -149,14 +149,23 @@ uint_fast8_t npqueue_node_mod_priority(struct npqueue_node * node,
  */
 #define npqueue_init(a_queue)   nlist_dll_init(&(a_queue)->sentinel)
 
-/** @brief      Insert a node into the queue.
+/** @brief      Insert a node into the queue using sorting method.
  *  @param      queue
  *              Pointer to queue structure.
  *  @param      node
  *              Pointer to node structure.
  *  @api
  */
-void npqueue_insert(struct npqueue * queue, struct npqueue_node * node);
+void npqueue_insert_sorted(struct npqueue * queue, struct npqueue_node * node);
+
+/** @brief      Insert a node into the queue using the fifo method.
+ *  @param      queue
+ *              Pointer to queue structure.
+ *  @param      node
+ *              Pointer to node structure.
+ *  @api
+ */
+void npqueue_insert_fifo(struct npqueue * queue, struct npqueue_node * node);
 
 /** @brief      Remove the node from queue.
  *  @param      node
