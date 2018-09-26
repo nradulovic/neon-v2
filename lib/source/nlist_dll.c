@@ -64,16 +64,3 @@ void nlist_dll_remove(struct nlist_dll * node)
     node->prev = NULL;
 }
 
-bool nlist_dll_is_empty(const struct nlist_dll * node)
-{
-    return (!!(node->next == node));
-}
-
-void nlist_dll_rotate_left(struct nlist_dll * list)
-{
-    struct nlist_dll *             first;
-
-    first = list->next;
-    nlist_dll_remove(first);
-    nlist_dll_add_before(list, first);
-}

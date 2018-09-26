@@ -83,9 +83,11 @@ void ntask_create(struct ntask ** task, task_fn * fn, void * arg,
 
 #define ntask_priority(a_task)   npqueue_priority(&(a_task)->node)
 
+void ntask_schedule(void);
+
 void ntask_ready(struct ntask * task);
 
-void ntask_block(struct ntask * task);
+void ntask_block(void);
 
 struct ntask * ntask_current(void);
 

@@ -36,7 +36,7 @@ extern "C" {
 #endif
     
 #ifndef NCONFIG_TASK_PRIORITIES
-#define NCONFIG_TASK_PRIORITIES 32
+#define NCONFIG_TASK_PRIORITIES 8
 #endif
     
 #ifdef __cplusplus

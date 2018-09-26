@@ -172,6 +172,8 @@ struct nlist_dll
  */
 struct nlist_dll * nlist_dll_init(struct nlist_dll * node);
 
+#define nlist_dll_term(a_node)  do { (a_node)->next = NULL; } while (0)
+
 /** @brief      Return the next node of @a node in linked list.
  *  @param[in]  node
  *              A list node or sentinel.
@@ -273,37 +275,11 @@ void nlist_dll_remove(struct nlist_dll * node);
  *  @retval     true - The list is empty.
  *  @retval     false - The list contains at least one node.
  */
-bool nlist_dll_is_empty(const struct nlist_dll * node);
-
-/** @brief      Rotate list (S) to left
- *
- *  Before calling this function:
- @verbatim
-        +-----+    +-----+    +-----+    +-----+
-        |     |--->|     |--->|     |<---|     |-->next
-        |  1  |    |  S  |    |  2  |    |  3  |
- prev<--|     |<---|     |<---|     |--->|     |
-        +-----+    +-----+    +-----+    +-----+
- @endverbatim
- *
- *  After call to this function:
- @verbatim
-        +-----+    +-----+    +-----+    +-----+
-        |     |--->|     |--->|     |<---|     |-->next
-        |  1  |    |  2  |    |  S  |    |  3  |
- prev<--|     |<---|     |<---|     |--->|     |
-        +-----+    +-----+    +-----+    +-----+
- @endverbatim
- *  @note       This function will not work correctly on empty lists. Before
- *              calling this function first check the list with
- *              @ref nlist_dll_is_empty function.
- *  @code
- *  if (!nlist_dll_is_empty(&my_list) {
- *      nlist_dll_rotate_left(&my_list);
- *  }
- *  @endcode
- */
-void nlist_dll_rotate_left(struct nlist_dll * list);
+NPLATFORM_INLINE
+bool nlist_dll_is_empty(const struct nlist_dll * node)
+{
+    return !!(node->next == node);
+}
 
 #ifdef __cplusplus
 }

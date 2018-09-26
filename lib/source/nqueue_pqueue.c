@@ -18,40 +18,39 @@
 
 #include "queue/nqueue_pqueue.h"
 
-struct npqueue * npqueue_init(struct npqueue * node,
-        uint_fast8_t priority)
+void npqueue_sentinel_shift(struct npqueue_sentinel * sentinel)
 {
-    npqueue_from_list(nlist_dll_init(&node->node))->priority = priority;
+    struct npqueue * next = npqueue_next(sentinel);
+    
+    nlist_dll_remove(&sentinel->list);
+    nlist_dll_add_before(&next->list, &sentinel->list);
+}
 
+struct npqueue * npqueue_init(struct npqueue * node, uint_fast8_t priority)
+{
+    nlist_dll_init(&node->list);
+    npqueue_priority_set(node, priority);
+    
     return (node);
 }
 
 void npqueue_term(struct npqueue * node)
 {
-    nlist_dll_init(&node->node);
-    node->priority = 0u;
+    npqueue_priority_set(node, 0);
+    nlist_dll_init(&node->list);
 }
 
-uint_fast8_t npqueue_mod_priority(struct npqueue * node, uint_fast8_t priority)
+void npqueue_insert_sort(struct npqueue_sentinel * sentinel, 
+        struct npqueue * node)
 {
-    uint_fast8_t retval;
+    struct nlist_dll * current_list;
     
-    retval = npqueue_priority(node);
-    npqueue_set_priority(node, priority);
-
-    return (retval);
-}
-
-void npqueue_insert_sorted(struct npqueue * head, struct npqueue * node)
-{
-    struct nlist_dll * current;
-
-    for (NLIST_DLL_EACH(current, &head->node)) {
-        if (npqueue_from_list(current)->priority < node->priority) {
+    for (NLIST_DLL_EACH(current_list, &sentinel->list)) {
+        struct npqueue * current = npqueue_from_list(current_list);
+        
+        if (current->priority < node->priority) {
             break;
         }
     }
-    nlist_dll_add_after(current, &node->node);
+    nlist_dll_add_after(current_list, &node->list);
 }
-
-

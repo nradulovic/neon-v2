@@ -274,6 +274,9 @@ struct nfiber
 #define nfiber_yield()    	                                                \
         NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_YIELDED, 1000u)
 
+#define nfiber_block()                                                      \
+        NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_WAITING, 2000u)
+
 /** @} */
 
 #endif /* NEON_TASK_FIBER_H_ */
