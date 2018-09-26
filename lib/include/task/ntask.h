@@ -36,7 +36,7 @@
 
 #include "port/nport_platform.h"
 #include "queue/nqueue_pqueue.h"
-#include "task/ntask_fiber.h"
+#include "fiber/nfiber.h"
 
 #ifdef __cplusplus
 extern "C" {

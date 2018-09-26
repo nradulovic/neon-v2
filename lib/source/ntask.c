@@ -5,7 +5,7 @@
 #include "configs/default_config.h"
 #include "queue/nqueue_pqueue.h"
 #include "error/nerror.h"
-#include "task/ntask_fiber.h"
+#include "fiber/nfiber.h"
 #include "task/ntask.h"
 
 static struct task_ready_queue

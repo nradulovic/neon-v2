@@ -20,9 +20,7 @@
 #include <stdbool.h>
 
 #include "testsuite/ntestsuite.h"
-#include "task/ntask_fiber.h"
-
-#include "test_ntask_fiber.h"
+#include "fiber/nfiber.h"
 
 static uint8_t g_output;
 static bool g_should_stop;
