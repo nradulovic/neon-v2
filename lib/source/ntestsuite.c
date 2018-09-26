@@ -88,9 +88,9 @@ void np_testsuite_run(struct np_testsuite_fixture * fixture,
 	g_np_testsuite_context.test = test;
 #if (!NTESTSUITE_STOP_ON_ERROR)
 	g_np_testsuite_context.should_exit = false;
-	if (fixture->total == 0u) {
-		nlogger_info("Test %s:%s:%s\n", test->file, test->name, fixture->name);
-	}
+    if (fixture->total == 0u) {
+        nlogger_info("Test %s:%s\n", test->file, fixture->name);
+    }
 	g_np_testsuite_context.total_tests++;
 	fixture->total++;
 #endif
