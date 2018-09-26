@@ -30,6 +30,14 @@ extern "C" {
 #ifndef NCONFIG_ENABLE_DEBUG
 #define NCONFIG_ENABLE_DEBUG 0
 #endif
+
+#ifndef NCONFIG_FIBER_INSTANCES
+#define NCONFIG_FIBER_INSTANCES 32
+#endif
+
+#ifndef NCONFIG_EPA_INSTANCES
+#define NCONFIG_EPA_INSTANCES 32
+#endif
     
 #ifndef NCONFIG_TASK_INSTANCES
 #define NCONFIG_TASK_INSTANCES 32
@@ -38,7 +46,15 @@ extern "C" {
 #ifndef NCONFIG_TASK_PRIORITIES
 #define NCONFIG_TASK_PRIORITIES 8
 #endif
-    
+
+#ifndef NCONFIG_TASK_ROUND_ROBIN
+#define NCONFIG_TASK_ROUND_ROBIN 1
+#endif
+
+#ifndef NCONFIG_TASK_PERSISTENT
+#define NCONFIG_TASK_PERSISTENT 0
+#endif
+
 #ifdef __cplusplus
 }
 #endif

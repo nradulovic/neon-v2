@@ -13,7 +13,9 @@ static struct task_ready_queue
     struct ntask * current;
     bool should_shift;
     struct nbitarray group;
+#if (NCONFIG_TASK_ROUND_ROBIN == 1)
     struct npqueue_sentinel groups[NCONFIG_TASK_PRIORITIES];
+#endif
 } g_task_ready_queue;
 
 static struct ntask * task_from_node(struct npqueue * node)
@@ -39,12 +41,28 @@ static struct ntask * alloc_task(void)
 #endif
 }
 
+#if (NCONFIG_TASK_PERSISTENT == 0)
+static void free_task(struct ntask * task)
+{
+#if (NCONFIG_TASK_INSTANCES != 0)
+    task->state = NTASK_UNINITIALIZED;
+#else
+    free(task);
+#endif
+}
+#endif
+
 static void rq_init(struct task_ready_queue * rq)
 {
-    nbitarray_init(&rq->group);
+    static bool is_initialized = false;
 
-    for (uint32_t i = 0u; i < NCONFIG_TASK_PRIORITIES; i++) {
-        npqueue_sentinel_init(&rq->groups[i]);
+    if (!is_initialized) {
+        is_initialized = true;
+        nbitarray_init(&rq->group);
+
+        for (uint32_t i = 0u; i < NCONFIG_TASK_PRIORITIES; i++) {
+            npqueue_sentinel_init(&rq->groups[i]);
+        }
     }
 }
 
@@ -75,13 +93,9 @@ void ntask_create(
         void * arg, 
         uint_fast8_t prio)
 {
-    static bool is_initialized;
     struct ntask * l_task;
 
-    if (!is_initialized) {
-        is_initialized = true;
-        rq_init(&g_task_ready_queue);
-    }
+    rq_init(&g_task_ready_queue);
 
     l_task = alloc_task();
 
