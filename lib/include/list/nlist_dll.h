@@ -275,11 +275,8 @@ void nlist_dll_remove(struct nlist_dll * node);
  *  @retval     true - The list is empty.
  *  @retval     false - The list contains at least one node.
  */
-NPLATFORM_INLINE
-bool nlist_dll_is_empty(const struct nlist_dll * node)
-{
-    return !!(node->next == node);
-}
+#define NLIST_DLL_IS_EMPTY(a_node)                                          \
+    ((a_node)->next == (a_node))
 
 #ifdef __cplusplus
 }

@@ -106,28 +106,28 @@ extern "C" {
     do {\
         union np_testsuite_test_val val; \
         val.ui = (a_number); \
-	    np_testsuite_actual(val); \
+	    NP_TESTSUITE_EVALUATE(val); \
     } while (0)
 
 #define NTESTSUITE_ACTUAL_INT(a_number)                                        \
     do {\
         union np_testsuite_test_val val; \
         val.si = (a_number); \
-	    np_testsuite_actual(val); \
+	    NP_TESTSUITE_EVALUATE(val); \
     } while (0)
                 
 #define NTESTSUITE_ACTUAL_PTR(a_pointer)                                        \
     do {\
         union np_testsuite_test_val val; \
         val.ptr = (a_pointer); \
-        np_testsuite_actual(val); \
+        NP_TESTSUITE_EVALUATE(val); \
     } while (0)
 
 #define NTESTSUITE_ACTUAL_BOOL(a_bool)                                       \
     do {\
         union np_testsuite_test_val val; \
         val.b = (a_bool); \
-        np_testsuite_actual(val); \
+        NP_TESTSUITE_EVALUATE(val); \
     } while (0)
 
 #if (!NTESTSUITE_STOP_ON_ERROR)
@@ -147,14 +147,16 @@ extern "C" {
     }
 #endif
 
+#define NTESTSUITE_EVALUATE()
+    
 #if (!NTESTSUITE_STOP_ON_ERROR)
-#define NTESTSUITE_EVALUATE()                                               \
-        if (np_testsuite_evaluate(NPLATFORM_LINE)) { \
+#define NP_TESTSUITE_EVALUATE(val)                                               \
+        if (np_testsuite_actual(NPLATFORM_LINE, (val))) { \
             return; \
         }
 #else
-#define NTESTSUITE_EVALUATE()                                               \
-        if (np_testsuite_evaluate(NPLATFORM_LINE)) { \
+#define NP_TESTSUITE_EVALUATE(val)                                               \
+        if (np_testsuite_actual(NPLATFORM_LINE, (val))) { \
             narch_cpu_stop(); \
         }
 #endif
@@ -223,9 +225,9 @@ void np_testsuite_print_results(const struct np_testsuite_fixture * fixture);
 void np_testsuite_run(struct np_testsuite_fixture * fixture,
 		const struct np_testsuite_test * test);
 void np_testsuite_expect(union np_testsuite_test_val value, enum np_testsuite_type type);
-void np_testsuite_actual(union np_testsuite_test_val value);
 
-bool np_testsuite_evaluate(uint32_t line);
+bool np_testsuite_actual(uint32_t line, union np_testsuite_test_val value);
+
 #ifdef __cplusplus
 }
 #endif

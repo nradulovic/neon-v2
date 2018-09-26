@@ -20,11 +20,9 @@
 
 struct np_testsuite_context
 {
-    struct np_testsuite_fixture * fixture;
     const struct np_testsuite_test * test;
     struct np_testsuite_test_case
     {
-        union np_testsuite_test_val actual;
         union np_testsuite_test_val expected;
         enum np_testsuite_type type;
     } test_case;
@@ -84,23 +82,17 @@ void np_testsuite_expect(union np_testsuite_test_val value, enum np_testsuite_ty
     g_np_testsuite_context.test_case.expected = value;
 }
 
-void np_testsuite_actual(union np_testsuite_test_val value)
-{
-    g_np_testsuite_context.test_case.actual = value;
-}
-
 void np_testsuite_run(struct np_testsuite_fixture * fixture,
 		const struct np_testsuite_test * test)
 {
-	g_np_testsuite_context.fixture = fixture;
 	g_np_testsuite_context.test = test;
 #if (!NTESTSUITE_STOP_ON_ERROR)
 	g_np_testsuite_context.should_exit = false;
-	if (g_np_testsuite_context.fixture->total == 0u) {
+	if (fixture->total == 0u) {
 		nlogger_info("Test %s:%s:%s\n", test->file, test->name, fixture->name);
 	}
 	g_np_testsuite_context.total_tests++;
-	g_np_testsuite_context.fixture->total++;
+	fixture->total++;
 #endif
 
 	if (fixture->setup) {
@@ -112,7 +104,7 @@ void np_testsuite_run(struct np_testsuite_fixture * fixture,
 #if (!NTESTSUITE_STOP_ON_ERROR)
 	if (g_np_testsuite_context.should_exit == true) {
 		g_np_testsuite_context.total_failed_tests++;
-		g_np_testsuite_context.fixture->failed++;
+		fixture->failed++;
 	}
 #endif
 	if (fixture->teardown) {
@@ -123,13 +115,13 @@ void np_testsuite_run(struct np_testsuite_fixture * fixture,
 	}
 }
 
-bool np_testsuite_evaluate(uint32_t line)
+bool np_testsuite_actual(uint32_t line, union np_testsuite_test_val actual)
 {
 	bool retval = false;
 
     switch (g_np_testsuite_context.test_case.type) {
         case NP_TESTSUITE_TYPE_BOOL:
-            if (g_np_testsuite_context.test_case.actual.b !=
+            if (actual.b !=
                 g_np_testsuite_context.test_case.expected.b) {
 #if (!NTESTSUITE_STOP_ON_ERROR)
                 testsuite_test_failed(line);
@@ -138,13 +130,13 @@ bool np_testsuite_evaluate(uint32_t line)
                             "  Actual   : %s\n",
                             g_np_testsuite_context.test_case.expected.b ?
                                 "true" : "false",
-                            g_np_testsuite_context.test_case.actual.b ?
+                            actual.b ?
                                 "true" : "false");
 		        retval = true;
             }
             break;
         case NP_TESTSUITE_TYPE_UINT:
-            if (g_np_testsuite_context.test_case.actual.ui !=
+            if (actual.ui !=
                 g_np_testsuite_context.test_case.expected.ui) {
 #if (!NTESTSUITE_STOP_ON_ERROR)
                 testsuite_test_failed(line);
@@ -152,12 +144,12 @@ bool np_testsuite_evaluate(uint32_t line)
 		        nlogger_err("  Expected : %u\n"
                             "  Actual   : %u\n",
                             g_np_testsuite_context.test_case.expected.ui,
-                            g_np_testsuite_context.test_case.actual.ui);
+                            actual.ui);
 		        retval = true;
             }
             break;
         case NP_TESTSUITE_TYPE_INT:
-            if (g_np_testsuite_context.test_case.actual.si !=
+            if (actual.si !=
                 g_np_testsuite_context.test_case.expected.si) {
 #if (!NTESTSUITE_STOP_ON_ERROR)
                 testsuite_test_failed(line);
@@ -165,12 +157,12 @@ bool np_testsuite_evaluate(uint32_t line)
 		        nlogger_err("  Expected : %d\n"
                             "  Actual   : %d\n",
                             g_np_testsuite_context.test_case.expected.si,
-                            g_np_testsuite_context.test_case.actual.si);
+                            actual.si);
 		        retval = true;
             }
             break;
         case NP_TESTSUITE_TYPE_PTR:
-            if (g_np_testsuite_context.test_case.actual.ptr !=
+            if (actual.ptr !=
                 g_np_testsuite_context.test_case.expected.ptr) {
 #if (!NTESTSUITE_STOP_ON_ERROR)
                 testsuite_test_failed(line);
@@ -178,7 +170,7 @@ bool np_testsuite_evaluate(uint32_t line)
 		        nlogger_err("  Expected : %p\n"
                             "  Actual   : %p\n",
                             g_np_testsuite_context.test_case.expected.ptr,
-                            g_np_testsuite_context.test_case.actual.ptr);
+                            actual.ptr);
 		        retval = true;
             }
             break;
