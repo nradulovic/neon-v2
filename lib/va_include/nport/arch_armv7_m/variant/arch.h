@@ -46,25 +46,25 @@ extern "C" {
  */
 
 NPLATFORM_INLINE
-void narch_set_bit(uint32_t * u32, uint_fast8_t bit)
+void narch_set_bit(narch_uint * u32, uint_fast8_t bit)
 {
-    *u32 |= (uint32_t)1u << bit;
+    *u32 |= (narch_uint)1u << bit;
 }
 
 NPLATFORM_INLINE
-void narch_clear_bit(uint32_t * u32, uint_fast8_t bit)
+void narch_clear_bit(narch_uint * u32, uint_fast8_t bit)
 {
-    *u32 &= ~((uint32_t)1u << bit);
+    *u32 &= ~((narch_uint)1u << bit);
 }
 
 NPLATFORM_INLINE
-uint32_t narch_exp2(uint_fast8_t x)
+narch_uint narch_exp2(uint_fast8_t x)
 {
     return (0x1u << x);
 }
 
 NPLATFORM_INLINE
-uint_fast8_t narch_log2(uint32_t x)
+uint_fast8_t narch_log2(narch_uint x)
 {
     uint_fast8_t clz;
 

@@ -54,6 +54,7 @@ documentation/doxyfile_version
 apps/*
 !apps/app_hello_world
 !apps/app_template
+!apps/app_test_common
 !apps/README.md
 
 # Ignore extension related folders

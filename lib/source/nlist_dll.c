@@ -52,15 +52,5 @@ void nlist_dll_remove(struct nlist_dll * node)
 {
     node->next->prev = node->prev;
     node->prev->next = node->next;
-
-    /* NOTE:
-     * Next pointer must point to itself, since it may be checked by
-     * nlist_dll_is_empty() function.
-     */
-    node->next = node;
-    /* NOTE:
-     * During debugging it is easier to catch errors with NULL pointer.
-     */
-    node->prev = NULL;
 }
 

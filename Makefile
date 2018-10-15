@@ -19,22 +19,18 @@
 # Generic rules
 
 .PHONY: all
-all: apps tests
+all: apps 
  
 .PHONY: clean
-clean: apps-clean tests-clean
+clean: apps-clean 
 
 .PHONY: distclean
-distclean: apps-distclean tests-distclean
-
-.PHONY: test
-test: all
-	@./test/generated/test.elf
+distclean: apps-distclean 
 
 # Application handling
 
 .PHONY: apps
-apps:
+apps: apps-config
 	@for app in apps/app_*/; \
     do \
         if [ -d $${app} ]; then $(MAKE) -C $${app} all; fi; \
@@ -54,16 +50,19 @@ apps-distclean:
         if [ -d $${app} ]; then $(MAKE) -C $${app} distclean; fi; \
     done
 
+.PHONY: apps-config
+apps-config:
+	@for app in apps/app_*/; \
+    do \
+        if [ -d $${app} ]; then $(MAKE) -C $${app} config; fi; \
+    done
+
 # Tests handling
+.PHONY: test
+test: all
+	@for app in apps/app_test_*/; \
+    do \
+        if [ -d $${app} ]; then $(MAKE) -C $${app} test; fi; \
+    done
+	
 
-.PHONY: tests
-tests:
-	@$(MAKE) -C test all; done
-
-.PHONY: tests-clean
-tests-clean:
-	@$(MAKE) -C test clean; done
-
-.PHONY: tests-distclean
-tests-distclean:
-	@$(MAKE) -C test distclean; done

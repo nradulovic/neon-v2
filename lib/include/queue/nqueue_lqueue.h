@@ -39,25 +39,15 @@
 extern "C" {
 #endif
 
-/** @brief    	Base type.
- * 
- *  In case when we want speed, change the base type to some more optimal size.
- */
-#if defined(NPROFILE_SPEED)
-#define NP_LQUEUE_BASE_TYPE uint_fast8_t
-#else
-#define NP_LQUEUE_BASE_TYPE uint8_t
-#endif
-
 /** @brief    	Lightweight base structure.
  *  @notapi
  */
 struct np_lqueue_base
 {
-    NP_LQUEUE_BASE_TYPE head;
-    NP_LQUEUE_BASE_TYPE tail;
-    NP_LQUEUE_BASE_TYPE empty;
-    NP_LQUEUE_BASE_TYPE mask;
+	uint_fast8_t head;
+	uint_fast8_t tail;
+	uint_fast8_t empty;
+	uint_fast8_t mask;
 };
 
 /** @brief    	Lightweight queue custom structure.
@@ -76,8 +66,8 @@ struct np_lqueue_base
  *              greater than 2 and equal to a number which is power of 2.
  *  @api
  */
-#define nlqueue(T, elements)     											\
-    struct nlqueue_ ## T { 													\
+#define nlqueue(T, elements)     										    \
+    { 																		\
     	struct np_lqueue_base base; 										\
     	T np_qb_buffer[	((elements < 2) || !NBITS_IS_POWEROF2(elements)) ?  \
     		-1 : elements]; 												\
@@ -149,7 +139,7 @@ struct np_lqueue_base
     (NLQUEUE_EMPTY(Q) == NLQUEUE_SIZE(Q))
 
 NPLATFORM_INLINE
-void np_lqueue_base_init(struct np_lqueue_base * qb, uint32_t elements)
+void np_lqueue_base_init(struct np_lqueue_base * qb, uint8_t elements)
 {
     qb->head = 0u;
     qb->tail = 0u;

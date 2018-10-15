@@ -45,6 +45,11 @@ extern "C" {
  *  @{
  */
 
+#define NARCH_ID "x86"
+#define NARCH_DATA_WIDTH 32
+
+typedef uint32_t narch_uint;
+
 NPLATFORM_INLINE
 void narch_set_bit(uint32_t * u32, uint_fast8_t bit)
 {

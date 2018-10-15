@@ -29,10 +29,12 @@
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_TASK_FIBER_H_
-#define NEON_TASK_FIBER_H_
+#ifndef NEON_FIBER_H_
+#define NEON_FIBER_H_
 
 #include <stdint.h>
+
+#include "task/ntask.h"
 
 /*---------------------------------------------------------------------------*/
 /** @defgroup   fiber_ctx Fiber context macros
@@ -69,29 +71,30 @@
 
 /** @} */
 /*---------------------------------------------------------------------------*/
+/** @defgroup   fiber_state Fiber states
+ *  @brief      Fiber states.
+ *  @{
+ */
+#define NFIBER_DORMANT 0
+#define NFIBER_YIELDED 1
+#define NFIBER_BLOCKED 2
+#define NFIBER_TERMINATED 3
+
+/** @} */
+/*---------------------------------------------------------------------------*/
 /** @defgroup   fiber_decl Fiber declarations
  *  @brief      Fiber declarations.
  *  @{
  */
 
-/** @brief      Fiber control structure.
- */
+struct nfiber;
+
+typedef uint_fast8_t (nfiber_fn)(struct nfiber * fb, void * arg);
+
 struct nfiber
 {
     uint32_t ctx;
 };
-
-/** @} */
-/*---------------------------------------------------------------------------*/
-/** @defgroup   fiber_state Fiber states
- *  @brief      Fiber states.
- *  @{
- */
-
-#define NFIBER_UNINITIALIZED                0
-#define NFIBER_TERMINATED                   1
-#define NFIBER_YIELDED                      2
-#define NFIBER_WAITING                      3
 
 /** @} */
 /*---------------------------------------------------------------------------*/
@@ -100,16 +103,6 @@ struct nfiber
  *  @{
  */
 
-/** @brief      Initialize a fiber.
- *
- *  Initializes a fiber. Initialization must be done prior to starting to
- *  execute the fiber.
- *
- *  @param      fb
- *              A pointer to the fiber control structure.
- *
- *  @hideinitializer
- */
 #define nfiber_init(fb)                      NP_FIBER_CTX_INIT(&(fb)->ctx)
 
 /** @} */
@@ -129,7 +122,7 @@ struct nfiber
  *
  *  @hideinitializer
  */
-#define NFIBER(fiber_proto) uint_fast8_t fiber_proto
+#define NFIBER(fiber_proto)     uint_fast8_t fiber_proto
 
 /** @brief      Declare the start of a fiber inside the C function.
  *
@@ -187,7 +180,7 @@ struct nfiber
 /**
  * Schedule a fiber.
  *
- * This function shedules a fiber. The return value of the
+ * This function schedules a fiber. The return value of the
  * function is non-zero if the fiber is running or zero if the
  * fiber has exited.
  *
@@ -217,7 +210,7 @@ struct nfiber
  */
 #define nfiber_wait_until(condition)                                        \
     while (!(condition)) {    			                                    \
-        NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_WAITING, 0u);    		    \
+        NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_BLOCKED, 0u);    		    \
     }
 
 /**
@@ -275,9 +268,10 @@ struct nfiber
         NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_YIELDED, 1000u)
 
 #define nfiber_block()                                                      \
-        NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_WAITING, 2000u)
+        NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_BLOCKED, 2000u)
 
 /** @} */
-
-#endif /* NEON_TASK_FIBER_H_ */
+/** @} */
+/** @} */
+#endif /* NEON_FIBER_H_ */
 

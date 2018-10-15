@@ -33,65 +33,157 @@
 #define NEON_MODULE_TASK_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
-#include "port/nport_platform.h"
+#include "configs/default_config.h"
 #include "queue/nqueue_pqueue.h"
-#include "fiber/nfiber.h"
+#include "bits/nbits.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#define NTASK_QUEUE_SB 1
+#define NTASK_QUEUE_FB 2
+#define NTASK_QUEUE_DB 3
+#define NTASK_QUEUE_SQ 4
+#define NTASK_BITMAP_X 1
+#define NTASK_BITMAP_S 2
+
+#if ((NCONFIG_TASK_SCHED_RR == 1) && \
+     (NCONFIG_TASK_PRIO_GROUPS == NCONFIG_TASK_PRIO_LEVELS))
+#define NTASK_RDY_QUEUE_TYPE    NTASK_QUEUE_FB
+#elif ((NCONFIG_TASK_SCHED_RR == 1) && \
+       (NCONFIG_TASK_PRIO_GROUPS != NCONFIG_TASK_PRIO_LEVELS))
+#define NTASK_RDY_QUEUE_TYPE    NTASK_QUEUE_SB
+#elif ((NCONFIG_TASK_SCHED_PRIO == 1) && \
+       (NCONFIG_TASK_PRIO_GROUPS == NCONFIG_TASK_PRIO_LEVELS))
+#define NTASK_RDY_QUEUE_TYPE    NTASK_QUEUE_DB
+#else
+#error "Invalid configuration."
+#endif
+
+#if ((NCONFIG_TASK_SCHED_RR == 1) || (NCONFIG_TASK_PRIO_GROUPS > 32))
+#define NTASK_WAIT_QUEUE_TYPE   NTASK_QUEUE_SQ
+#elif (NCONFIG_TASK_SCHED_PRIO == 1)
+#define NTASK_WAIT_QUEUE_TYPE   NTASK_QUEUE_DB
+#else
+#error "Invalid configuration."
+#endif
+
+#if (NCONFIG_TASK_PRIO_GROUPS > NARCH_DATA_WIDTH)
+#define NTASK_BITMAP_TYPE       NTASK_BITMAP_X
+#else
+#define NTASK_BITMAP_TYPE       NTASK_BITMAP_S
+#endif
+
 struct ntask;
 
-typedef uint_fast8_t (task_fn)(struct ntask * task, void * arg);
+typedef void (task_fn)(struct ntask * task, void * arg);
+
+enum ntask_state
+{
+    NTASK_UNINITIALIZED         = 0,
+    NTASK_DORMANT               = 1,
+    NTASK_READY                 = 2,
+    NTASK_BLOCKED               = 3
+};
+
+/** @brief      Task ready queue
+ */
+struct ntask_rdy_queue
+{
+#if ((NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_SB) || \
+     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_FB))
+    struct npqueue_sentinel sentinel[NCONFIG_TASK_PRIO_GROUPS];
+#endif
+#if (NTASK_BITMAP_TYPE == NTASK_BITMAP_X)
+    nbitarray_x bitarray[NBITARRAY_DEF(NCONFIG_TASK_PRIO_GROUPS)];
+#else
+    nbitarray_s bitarray[1];
+#endif
+};
+
+/**
+ * @brief       Task priority queue
+ */
+struct ntask_wait_queue
+{
+#if (NTASK_WAIT_QUEUE_TYPE == NTASK_QUEUE_SQ)
+    struct npqueue_sentinel sentinel;
+#else
+#if (NTASK_BITMAP_TYPE == NTASK_BITMAP_X)
+    nbitarray_x bitarray[NBITARRAY_DEF(NCONFIG_TASK_PRIO_GROUPS)];
+#else
+    nbitarray_s bitarray[1];
+#endif
+#endif
+};
 
 struct ntask
 {
-    struct nfiber fiber;
+#if ((NTASK_WAIT_QUEUE_TYPE == NTASK_QUEUE_SQ) || \
+     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_SB) || \
+     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_FB))
     struct npqueue node;
+#else
+    uint_fast8_t prio;
+#endif
     task_fn * fn;
     void * arg;
-    uint_fast8_t state;
-    struct ntask_tls
+    enum ntask_state state;
+    struct ntask_local_storage
     {
         uint32_t error;
     } tls;
 };
 
-extern struct ntask * ng_current_task;
+struct ntask_schedule
+{
+    struct ntask * current;
+    struct ntask_rdy_queue queue;
+    struct ntask_wait_queue dormant;
+    bool switch_pending;
+#if (NCONFIG_TASK_SCHED_RR == 1)
+    bool should_shift;
+#endif
+};
 
-#define ng_current  ntask_current()
+extern struct ntask_schedule g_task_schedule;
 
-#define NTASK_UNINITIALIZED         NFIBER_UNINITIALIZED
-#define NTASK_DORMANT               NFIBER_TERMINATED
-#define NTASK_READY                 NFIBER_YIELDED
-#define NTASK_BLOCKED               NFIBER_WAITING
-    
-#define NTASK(func_call)            NFIBER(func_call)
-
-#define NTASK_BEGIN(task)           NFIBER_BEGIN(&(task)->fiber)
-
-#define NTASK_END()                 NFIBER_END()
-
-#define ntask_yield()               nfiber_yield()
-
-void ntask_create(struct ntask ** task, task_fn * fn, void * arg, 
+void ntask_init(struct ntask * task, task_fn * fn, void * arg, 
         uint_fast8_t prio);
+
+void ntask_term(struct ntask * task);
 
 #define ntask_state(a_task)  (a_task)->state
 
+#if ((NTASK_WAIT_QUEUE_TYPE == NTASK_QUEUE_SQ) || \
+     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_SB) || \
+     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_FB))
 #define ntask_priority(a_task)   npqueue_priority(&(a_task)->node)
+#else
+#define ntask_priority(a_task)  (a_task)->prio
+#endif
 
-void ntask_schedule(void);
+void ntask_looper(void);
 
-void ntask_ready(struct ntask * task);
+/** @brief      Do the scheduling and return if task switch is needed.
+ *  @return     Is task switching needed?
+ *  @retval     true - Task switching is needed.
+ *  @retval     false - Task switching is not needed.
+ */
+#define ntask_schedule()        g_task_schedule.switch_pending
 
-void ntask_block(void);
+void ntask_ready(struct ntask_wait_queue * queue, struct ntask * task);
 
-struct ntask * ntask_current(void);
+void ntask_block(struct ntask_wait_queue * queue, struct ntask * task);
 
-#define nerror  ng_current->tls.error
+#define ntask_terminate(a_task)    											\
+	ntask_block(&g_task_schedule.dormant, (a_task))
+
+#define ncurrent                g_task_schedule.current
+#define nerror                  ncurrent->tls.error
 
 #ifdef __cplusplus
 }

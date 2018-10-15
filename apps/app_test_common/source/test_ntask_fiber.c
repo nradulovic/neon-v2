@@ -157,7 +157,7 @@ NTESTSUITE_TEST(test_none_until)
 
     NTESTSUITE_EXPECT_UINT(3u);
     nfiber_init(&until);
-    while (nfiber_dispatch(fiber_until(&until)) != NFIBER_WAITING);
+    while (nfiber_dispatch(fiber_until(&until)) != NFIBER_BLOCKED);
     NTESTSUITE_ACTUAL_UINT(g_output);
     NTESTSUITE_EVALUATE();
 }
@@ -168,7 +168,7 @@ NTESTSUITE_TEST(test_none_while)
 
     NTESTSUITE_EXPECT_UINT(3u);
     nfiber_init(&while_ctx);
-    while (nfiber_dispatch(fiber_while(&while_ctx)) != NFIBER_WAITING);
+    while (nfiber_dispatch(fiber_while(&while_ctx)) != NFIBER_BLOCKED);
     NTESTSUITE_ACTUAL_UINT(g_output);
     NTESTSUITE_EVALUATE();
 }

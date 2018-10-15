@@ -25,11 +25,11 @@ PROJECT_DIR = apps/app_hello_world
 # Project name, this will be used as output binary file name.
 PROJECT_NAME := app_hello_world
 
-# Include depenencies, nport is needed to import additional build rules.
-include $(WS)/lib/build/nport.mk
-
 # Project configuration header file.
 PROJECT_CONFIG := $(PROJECT_DIR)/include/neon_config.h
+
+# Include depenencies, nport is needed to import additional build rules.
+include $(WS)/lib/build/nport.mk
 
 # List additional C header include paths.
 CC_INCLUDES += $(PROJECT_DIR)/include

@@ -37,6 +37,7 @@
 #include <stdint.h>
 
 #include "port/nport_platform.h"
+#include "port/nport_arch.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -234,6 +235,46 @@ extern "C" {
 uint32_t nbits_ftou32(float val);
 
 float nbits_u32tof(uint32_t val);
+
+/** @} */
+/*---------------------------------------------------------------------------*/
+/** @defgroup   bits_bitarray N-bit array functions
+ *  @brief      Functions for manipulating N-bit array.
+ *  @{
+ */
+ 
+typedef narch_uint nbitarray_s;
+
+#define nbitarray_s_set(a_array, a_bit)                                     \
+    narch_set_bit((a_array), (a_bit))
+    
+#define nbitarray_s_clear(a_array, a_bit)                                   \
+    narch_clear_bit((a_array), (a_bit))
+    
+#define nbitarray_s_msbs(a_array)                                           \
+    narch_log2(*(a_array))
+
+#define nbitarray_s_is_empty(a_array)                                       \
+    (*(a_array) == 0)
+
+/** @} */
+/*---------------------------------------------------------------------------*/
+/** @defgroup   bits_bitarray N-bit array functions
+ *  @brief      Functions for manipulating N-bit array.
+ *  @{
+ */
+    
+typedef narch_uint nbitarray_x;
+
+#define NBITARRAY_DEF(bits)													\
+	NBITS_DIVIDE_ROUNDUP((bits), NARCH_DATA_WIDTH) + 1
+
+void nbitarray_x_set(nbitarray_x * array, uint_fast8_t bit);
+void nbitarray_x_clear(nbitarray_x * array, uint_fast8_t bit);
+uint_fast8_t nbitarray_x_msbs(const nbitarray_x * array);
+
+#define nbitarray_x_is_empty(a_array)										\
+	((a_array)[0] == 0u)
 
 /** @} */
 #ifdef __cplusplus

@@ -158,8 +158,8 @@ void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
  *              Pointer to node structure.
  *  @api
  */
-#define npqueue_insert_fifo(a_sentinel, a_node)                             \
-    do { nlist_dll_add_after(&(a_sentinel)->list, &(a_node)->list); } while (0)
+#define npqueue_insert_fifo(a_queue, a_node)                               \
+        nlist_dll_add_after(&(a_queue)->list, &(a_node)->list)
 
 /** @brief      Remove the node from queue.
  *  @param      node

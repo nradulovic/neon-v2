@@ -17,15 +17,15 @@
 #
 
 # Include guard
-ifndef LIB_BUILD_NCONFIG_MK
-LIB_BUILD_NCONFIG_MK=1
+ifndef LIB_BUILD_NFIBER
+LIB_BUILD_NFIBER=1
 
 # Dependencies
 include $(WS)/lib/build/common.mk
 include $(WS)/lib/build/nport.mk
+include $(WS)/lib/build/nerror.mk
+include $(WS)/lib/build/ntask.mk
 
-ifneq ("$(PROJECT_CONFIG)","")
-CC_DEFINES += NCONFIG_PROJECT_CONFIG=\"$(PROJECT_CONFIG)\"
-endif
+CC_SOURCES += lib/source/nfiber_task.c
 
 endif

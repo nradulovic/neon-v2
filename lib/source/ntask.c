@@ -1,152 +1,165 @@
 
 #include "port/nport_arch.h"
+#include "port/nport_platform.h"
 #include "bits/nbits.h"
-#include "bits/nbits_bitarray.h"
-#include "configs/default_config.h"
-#include "queue/nqueue_pqueue.h"
 #include "error/nerror.h"
-#include "fiber/nfiber.h"
 #include "task/ntask.h"
 
-static struct task_ready_queue
-{
-    struct ntask * current;
-    bool should_shift;
-    struct nbitarray group;
-#if (NCONFIG_TASK_ROUND_ROBIN == 1)
-    struct npqueue_sentinel groups[NCONFIG_TASK_PRIORITIES];
-#endif
-} g_task_ready_queue;
+struct ntask_schedule g_task_schedule;
 
+#if ((NTASK_WAIT_QUEUE_TYPE == NTASK_QUEUE_SQ) || \
+     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_SB) || \
+     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_FB))
 static struct ntask * task_from_node(struct npqueue * node)
 {
     return NPLATFORM_CONTAINER_OF(node, struct ntask, node);
 }
-
-static struct ntask * alloc_task(void)
-{
-#if (NCONFIG_TASK_INSTANCES != 0)
-    static struct ntask task_pool[NCONFIG_TASK_INSTANCES];
-    struct ntask * task = &task_pool[0];
-
-    for (uint8_t i = 0u; i < NBITS_ARRAY_SIZE(task_pool); i++) {
-        if (task->state == NTASK_UNINITIALIZED) {
-            return task;
-        }
-        task++;
-    }
-    return NULL;
-#else
-    return malloc(sizeof(struct ntask));
-#endif
-}
-
-#if (NCONFIG_TASK_PERSISTENT == 0)
-static void free_task(struct ntask * task)
-{
-#if (NCONFIG_TASK_INSTANCES != 0)
-    task->state = NTASK_UNINITIALIZED;
-#else
-    free(task);
-#endif
-}
 #endif
 
-static void rq_init(struct task_ready_queue * rq)
+void ntask_init(struct ntask * task, task_fn * fn, void * arg, 
+        uint_fast8_t prio)
 {
+    struct ntask_schedule * ctx = &g_task_schedule;
     static bool is_initialized = false;
 
     if (!is_initialized) {
         is_initialized = true;
-        nbitarray_init(&rq->group);
 
-        for (uint32_t i = 0u; i < NCONFIG_TASK_PRIORITIES; i++) {
-            npqueue_sentinel_init(&rq->groups[i]);
+#if ((NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_SB) || \
+     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_FB))
+        for (uint32_t i = 0u; i < NBITS_ARRAY_SIZE(ctx->queue.sentinel); i++) {
+            npqueue_sentinel_init(&ctx->queue.sentinel[i]);
         }
+#else
+
+#endif
     }
+
+    /* Adjust priority now according to avaialable priority groups or levels.
+     */
+#if ((NTASK_WAIT_QUEUE_TYPE == NTASK_QUEUE_SQ) || \
+     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_SB) || \
+     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_FB))
+    npqueue_init(&task->node, prio);
+#else
+    task->prio = prio;
+#endif
+    task->fn = fn;
+    task->arg = arg;
+    task->state = NTASK_DORMANT;
 }
 
-static void rq_insert(struct ntask * task, struct task_ready_queue * rq)
+void ntask_term(struct ntask * task)
 {
-    uint_fast8_t prio = npqueue_priority(&task->node);
-
-    nbitarray_set(&rq->group, prio);
-    npqueue_insert_fifo(&rq->groups[prio], &task->node);
+    task->state = NTASK_UNINITIALIZED;
 }
 
-static void rq_remove(struct ntask * task, struct task_ready_queue * rq)
+void ntask_looper(void)
 {
-    uint_fast8_t prio;
-    
-    npqueue_remove(&task->node);
-    
-    prio = npqueue_priority(&task->node);
-    
-    if (npqueue_sentinel_is_empty(&rq->groups[prio])) {
-        nbitarray_clear(&rq->group, prio);
-    }
-}
-
-void ntask_create(
-        struct ntask ** task, 
-        task_fn * fn, 
-        void * arg, 
-        uint_fast8_t prio)
-{
-    struct ntask * l_task;
-
-    rq_init(&g_task_ready_queue);
-
-    l_task = alloc_task();
-
-    if (l_task == NULL) {
-        nerror = -EOBJ_INVALID;
-        return;
-    }
-    nfiber_init(&l_task->fiber);
-    npqueue_init(&l_task->node, prio);
-    l_task->fn = fn;
-    l_task->arg = arg;
-    l_task->state = NTASK_DORMANT;
-    *task = l_task;
-}
-
-struct ntask * ntask_current(void)
-{
-    struct task_ready_queue * rq = &g_task_ready_queue;
-
-    return rq->current;
-}
-
-void ntask_schedule(void)
-{
-    struct task_ready_queue * rq = &g_task_ready_queue;
+    struct ntask_schedule * ctx = &g_task_schedule;
                                     /* While there are ready tasks in system */
-    while (!nbitarray_is_empty(&rq->group)) {
+#if (NTASK_BITMAP_TYPE == NTASK_BITMAP_X)
+    while (!nbitarray_x_is_empty(&ctx->queue.bitarray[0])) {
+#else
+    while (!nbitarray_s_is_empty(&ctx->queue.bitarray[0])) {
+#endif
         uint_fast8_t prio;
                                                     /* Get the highest level */
-        prio = nbitarray_msbs(&rq->group);
+#if (NTASK_BITMAP_TYPE == NTASK_BITMAP_X)
+        prio = nbitarray_x_msbs(&ctx->queue.bitarray[0]);
+#else
+        prio = nbitarray_s_msbs(&ctx->queue.bitarray[0]);
+#endif
                                                        /* Fetch the new task */
-        rq->current = task_from_node(npqueue_sentinel_head(&rq->groups[prio]));
+#if ((NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_SB) || \
+     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_FB))
+        ctx->current = task_from_node(
+                npqueue_sentinel_head(&ctx->queue.sentinel[prio]));
+#else
+#endif
                                               /* Round-robin for other tasks */
-        if (rq->should_shift) {
-            rq->should_shift = false;
-            npqueue_sentinel_shift(&rq->groups[prio]);
+#if (NCONFIG_TASK_SCHED_RR == 1)
+        if (ctx->should_shift) {
+            ctx->should_shift = false;
+            npqueue_sentinel_shift(&ctx->queue.sentinel[prio]);
         }
+#endif
                                                        /* Execute the thread */
-        rq->current->state = nfiber_dispatch(
-                rq->current->fn(rq->current, rq->current->arg)); 
-
-        if (rq->current->state == NTASK_DORMANT || 
-            rq->current->state == NTASK_BLOCKED) {
-            rq_remove(rq->current, rq);
-        }
+        ctx->current->fn(ctx->current, ctx->current->arg);
     }
 }
 
-void ntask_ready(struct ntask * task)
+void ntask_ready(struct ntask_wait_queue * queue, struct ntask * task)
 {
-    rq_insert(task, &g_task_ready_queue);
+    struct ntask_schedule * ctx = &g_task_schedule;
+    uint_fast8_t prio = ntask_priority(task);
+
+    if (prio > ntask_priority(ctx->current)) {
+        ctx->switch_pending = true;
+    }
     task->state = NTASK_READY;
+
+    /* Remove task from wait queue */
+#if (NTASK_WAIT_QUEUE_TYPE == NTASK_QUEUE_SQ)
+    (void)queue;
+    npqueue_remove(&task->node);
+#else
+#if (NTASK_BITMAP_TYPE == NTASK_BITMAP_X)
+    nbitarray_x_clear(&queue->bitarray[0], prio);
+#else
+    nbitarray_s_clear(&queue->bitarray[0], prio);
+#endif
+#endif
+
+    /* Insert task to ready queue */
+#if (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_SB)
+    npqueue_insert_sort(&ctx->queue.sentinel[prio], &task->node);
+#elif (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_FB)
+    npqueue_insert_fifo(&ctx->queue.sentinel[prio], &task->node);
+#endif
+#if (NTASK_BITMAP_TYPE == NTASK_BITMAP_X)
+    nbitarray_x_set(&ctx->queue.bitarray[0], prio);
+#else
+    nbitarray_s_set(&ctx->queue.bitarray[0], prio);
+#endif
 }
 
+void ntask_block(struct ntask_wait_queue * queue, struct ntask * task)
+{
+    struct ntask_schedule * ctx = &g_task_schedule;
+    uint_fast8_t prio = ntask_priority(task);
+    
+    ctx->switch_pending = true;
+    task->state = NTASK_BLOCKED;
+
+    /* Remove task from ready queue */
+#if ((NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_SB) || \
+     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_FB)) 
+    npqueue_remove(&task->node);
+    
+    if (npqueue_sentinel_is_empty(&ctx->queue.sentinel[prio])) {
+#if (NTASK_BITMAP_TYPE == NTASK_BITMAP_X)
+        nbitarray_x_clear(&ctx->queue.bitarray[0], prio);
+#else
+        nbitarray_s_clear(&ctx->queue.bitarray[0], prio);
+#endif
+    }
+#else
+#if (NTASK_BITMAP_TYPE == NTASK_BITMAP_X)
+    nbitarray_x_clear(&ctx->queue.bitarray[0], prio);
+#else
+    nbitarray_s_clear(&ctx->queue.bitarray[0], prio);
+#endif
+#endif
+
+    /* Insert task to wait queue */
+#if (NTASK_WAIT_QUEUE_TYPE == NTASK_QUEUE_SQ)
+    npqueue_insert_sort(&queue->sentinel, &task->node);
+#else
+#if (NTASK_BITMAP_TYPE == NTASK_BITMAP_X)
+    nbitarray_x_set(&queue->bitarray[0], prio);
+#else
+    nbitarray_s_set(&queue->bitarray[0], prio);
+#endif
+#endif
+}

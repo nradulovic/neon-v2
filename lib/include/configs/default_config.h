@@ -23,6 +23,10 @@
 extern "C" {
 #endif
 
+#if defined(NCONFIG_PROJECT_CONFIG)
+#include "neon_config.h"
+#endif
+
 #ifndef NCONFIG_ENABLE_LOGGER
 #define NCONFIG_ENABLE_LOGGER 0
 #endif
@@ -43,16 +47,20 @@ extern "C" {
 #define NCONFIG_TASK_INSTANCES 32
 #endif
     
-#ifndef NCONFIG_TASK_PRIORITIES
-#define NCONFIG_TASK_PRIORITIES 8
+#ifndef NCONFIG_TASK_PRIO_GROUPS
+#define NCONFIG_TASK_PRIO_GROUPS 32
 #endif
 
-#ifndef NCONFIG_TASK_ROUND_ROBIN
-#define NCONFIG_TASK_ROUND_ROBIN 1
+#ifndef NCONFIG_TASK_PRIO_GROUPS
+#define NCONFIG_TASK_PRIO_GROUPS 32
 #endif
 
-#ifndef NCONFIG_TASK_PERSISTENT
-#define NCONFIG_TASK_PERSISTENT 0
+#ifndef NCONFIG_TASK_SCHED_RR
+#define NCONFIG_TASK_SCHED_RR 1
+#endif
+
+#ifndef NCONFIG_TASK_SCHED_PRIO
+#define NCONFIG_TASK_SCHED_PRIO 0
 #endif
 
 #ifdef __cplusplus

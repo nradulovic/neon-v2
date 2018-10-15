@@ -102,12 +102,12 @@ void narch_clear_bit(uint32_t * u32, uint_fast8_t bit);
 
 /** @brief      Calculate exponent of 2.
  */
-uint32_t narch_exp2(uint_fast8_t x);
+narch_uint narch_exp2(uint_fast8_t x);
 
 /** @brief      Calculate logarithm of base 2.
  *  @example    log2(2) = 1, log2(10) = 4
  */
-uint_fast8_t narch_log2(uint32_t x);
+uint_fast8_t narch_log2(narch_uint x);
 
 /** @} */
 #ifdef __cplusplus

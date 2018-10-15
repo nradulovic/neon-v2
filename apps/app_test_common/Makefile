@@ -1,6 +1,4 @@
-#
-# Neon
-# Copyright (C) 2018   REAL-TIME CONSULTING
+
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published by the Free
@@ -16,16 +14,23 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Include guard
-ifndef LIB_BUILD_NCONFIG_MK
-LIB_BUILD_NCONFIG_MK=1
+.PHONY: all
+all:
+	@$(MAKE) -C common all
 
-# Dependencies
-include $(WS)/lib/build/common.mk
-include $(WS)/lib/build/nport.mk
+.PHONY: clean
+clean:
+	@$(MAKE) -C common clean
 
-ifneq ("$(PROJECT_CONFIG)","")
-CC_DEFINES += NCONFIG_PROJECT_CONFIG=\"$(PROJECT_CONFIG)\"
-endif
+.PHONY: distclean
+distclean:
+	@$(MAKE) -C common distclean
 
-endif
+.PHONY: config
+config:
+	@$(MAKE) -C common config
+
+.PHONY: test
+test:
+	@$(MAKE) -C common test
+

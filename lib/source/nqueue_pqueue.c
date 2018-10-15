@@ -40,7 +40,7 @@ void npqueue_term(struct npqueue * node)
     nlist_dll_init(&node->list);
 }
 
-void npqueue_insert_sort(struct npqueue_sentinel * sentinel, 
+void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
         struct npqueue * node)
 {
     struct nlist_dll * current_list;

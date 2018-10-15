@@ -65,11 +65,14 @@ DEF_PACK_DIR    = packed
 
 # Create possible targets
 PROJECT_NAME   ?= undefined
-PROJECT_CONFIG ?= lib/include/configs/default_config.h
 PROJECT_ELF     = $(DEF_BUILD_DIR)/$(PROJECT_NAME).elf
 PROJECT_LIB     = $(DEF_BUILD_DIR)/$(PROJECT_NAME).a
 PROJECT_FLASH   = $(DEF_BUILD_DIR)/$(PROJECT_NAME).hex
 PROJECT_SIZE    = $(DEF_BUILD_DIR)/$(PROJECT_NAME).siz
+PROJECT_CONFIG ?= lib/include/configs/default_config.h
+
+# Library header configuration
+CC_CONFIG_FILE = $(DEF_BUILD_DIR)/neon_config.h
 
 # Handle the verbosity argument
 # If the argument is not given assume that verbosity is off.
@@ -99,14 +102,14 @@ clean-objects:
 .PHONY: config
 config: $(CC_CONFIG_FILE)
 
+$(CC_CONFIG_FILE): $(WS)/$(PROJECT_CONFIG)
+	$(PRINT) Using Application config: $(PROJECT_CONFIG)
+	$(VERBOSE)mkdir -p $(dir $@)
+	$(VERBOSE)cp $< $@
+
 .PHONY: config-clean
 config-clean:
 	$(VERBOSE)rm -f $(CC_CONFIG_FILE)
-	
-$(CC_CONFIG_FILE): $(WS)/$(PROJECT_CONFIG)
-	$(PRINT) Project configuration file "$(WS)/$(PROJECT_CONFIG)"
-	$(VERBOSE)mkdir -p $(dir $@)
-	$(VERBOSE)cp $(WS)/$(PROJECT_CONFIG) $@
 	
 .PHONY: documentation
 documentation: html pdf 
@@ -277,8 +280,5 @@ CC_INCLUDES += $(PROJECT_DIR)/$(DEF_BUILD_DIR)
 
 # Common defines for the library
 CC_DEFINES += NCONFIG_GIT_VERSION=\"$(NCONFIG_GIT_VERSION)\"
-
-# Library header configuration
-CC_CONFIG_FILE = $(DEF_BUILD_DIR)/neon_config.h
 
 endif
