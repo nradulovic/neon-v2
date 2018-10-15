@@ -144,7 +144,7 @@ void np_lqueue_base_init(struct np_lqueue_base * qb, uint8_t elements)
     qb->head = 0u;
     qb->tail = 0u;
     qb->empty = elements;
-    qb->mask = elements - 1u;
+    qb->mask = (uint_fast8_t)(elements - 1u);
 }
 
 NPLATFORM_INLINE

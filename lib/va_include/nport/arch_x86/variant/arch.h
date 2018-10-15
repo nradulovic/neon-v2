@@ -71,7 +71,7 @@ uint32_t narch_exp2(uint_fast8_t x)
 NPLATFORM_INLINE
 uint_fast8_t narch_log2(uint32_t x)
 {
-    return (31u - __builtin_clz(x));
+    return (uint_fast8_t)(31u - (uint_fast8_t)__builtin_clz(x));
 }
 
 /** @} */

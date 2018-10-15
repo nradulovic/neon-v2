@@ -119,6 +119,9 @@ bool np_testsuite_actual(uint32_t line, union np_testsuite_test_val actual)
 {
 	bool retval = false;
 
+#if (NTESTSUITE_STOP_ON_ERROR)
+    (void)line;
+#endif
     switch (g_np_testsuite_context.test_case.type) {
         case NP_TESTSUITE_TYPE_BOOL:
             if (actual.b !=
