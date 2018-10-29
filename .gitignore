@@ -32,6 +32,7 @@
 .settings/
 Debug/
 Release/
+tags
 
 *~
 .*~
