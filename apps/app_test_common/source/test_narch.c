@@ -20,7 +20,7 @@
 
 #include "testsuite/ntestsuite.h"
 #include "port/nport_arch.h"
-#include "test_narch.h"
+#include "main.h"
 
 NTESTSUITE_TEST(test_none_exp2_0)
 {
@@ -85,7 +85,7 @@ NTESTSUITE_TEST(test_none_log2_UINT32_MAX)
     NTESTSUITE_EVALUATE();
 }
 
-void test_narch(void)
+void test_exec(void)
 {
     NTESTSUITE_FIXTURE(none, NULL, NULL);
     NTESTSUITE_RUN(none, test_none_exp2_0);

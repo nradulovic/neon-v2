@@ -20,7 +20,7 @@
 
 #include "testsuite/ntestsuite.h"
 #include "bits/nbits.h"
-#include "test_nbits.h"
+#include "main.h"
 
 NTESTSUITE_TEST(test_none_array_size)
 {
@@ -223,7 +223,7 @@ NTESTSUITE_TEST(test_none_ftou32_u32tof)
     NTESTSUITE_EVALUATE();
 }
 
-void test_nbits(void)
+void test_exec(void)
 {
     NTESTSUITE_FIXTURE(none, NULL, NULL);
     NTESTSUITE_RUN(none, test_none_array_size);

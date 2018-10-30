@@ -20,4 +20,4 @@
 BUILD_ARCH_DESC = "x86 Architecture"
 
 CC_INCLUDES += lib/va_include/nport/arch_x86
-
+CC_SOURCES += lib/va_source/nport_arch_x86.c

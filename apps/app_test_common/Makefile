@@ -14,23 +14,25 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
+TARGETS := narch nbits
+
 .PHONY: all
 all:
-	@$(MAKE) -C common all
+	@for t in $(TARGETS); do $(MAKE) -C $$t all; done
 
 .PHONY: clean
 clean:
-	@$(MAKE) -C common clean
+	@for t in $(TARGETS); do $(MAKE) -C $$t clean; done
 
 .PHONY: distclean
 distclean:
-	@$(MAKE) -C common distclean
+	@for t in $(TARGETS); do $(MAKE) -C $$t distclean; done
 
 .PHONY: config
 config:
-	@$(MAKE) -C common config
+	@for t in $(TARGETS); do $(MAKE) -C $$t config; done
 
 .PHONY: test
 test:
-	@$(MAKE) -C common test
+	@for t in $(TARGETS); do $(MAKE) -C $$t test; done
 

@@ -74,6 +74,8 @@ uint_fast8_t narch_log2(uint32_t x)
     return (uint_fast8_t)(31u - (uint_fast8_t)__builtin_clz(x));
 }
 
+void narch_cpu_stop(void);
+
 /** @} */
 #ifdef __cplusplus
 }

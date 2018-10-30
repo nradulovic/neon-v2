@@ -15,33 +15,12 @@
  * You should have received a copy of the GNU Lesser General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-/** @file
- *  @author      Nenad Radulovic
- *  @brief       Tests for narch
- *
- *  @addtogroup  module
- *  @{
- */
-/** @defgroup    mod_test_narch Tests for narch
- *  @brief       Tests for narch.
- *  @{
- */
-/*---------------------------------------------------------------------------*/
 
-#ifndef TEST_NARCH_H_
-#define TEST_NARCH_H_
+#include <stdlib.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "port/nport_arch.h"
 
-void test_narch(void);
-
-#ifdef __cplusplus
+void narch_cpu_stop(void)
+{
+    exit(1);
 }
-#endif
-
-/** @} */
-/** @} */
-/*---------------------------------------------------------------------------*/
-#endif  /* TEST_NARCH_H_ */

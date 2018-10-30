@@ -17,31 +17,22 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Tests for nbits
- *
- *  @addtogroup  module
- *  @{
- */
-/** @defgroup    mod_test_bits Tests for nbits
- *  @brief       Tests for nbits.
- *  @{
+ *  @brief       Main header
  */
 /*---------------------------------------------------------------------------*/
 
-#ifndef TEST_NBITS_H_
-#define TEST_NBITS_H_
+#ifndef MAIN_H_
+#define MAIN_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void test_nbits(void);
+void test_exec(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-/** @} */
-/** @} */
 /*---------------------------------------------------------------------------*/
-#endif  /* TEST_NBITS_H_ */
+#endif /* MAIN_H_ */
