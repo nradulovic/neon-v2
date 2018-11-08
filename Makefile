@@ -59,8 +59,8 @@ apps-config:
 
 # Tests handling
 .PHONY: test
-test: all
-	@for app in apps/app_test_*/; \
+test:
+	@for app in apps/app_*/; \
     do \
         if [ -d $${app} ]; then $(MAKE) -C $${app} test; fi; \
     done

@@ -20,6 +20,7 @@
 
 #include "testsuite/ntestsuite.h"
 #include "bits/nbits.h"
+#include "main.h"
 
 static nbitarray_x g_instance[NBITARRAY_DEF(64)];
 
@@ -126,7 +127,7 @@ static void setup_empty(void)
     memset(&g_instance[0], 0, sizeof(g_instance));
 }
 
-void test_nbits_bitarray(void)
+void test_exec(void)
 {
     NTESTSUITE_FIXTURE(none, NULL, NULL);
     NTESTSUITE_FIXTURE(empty, setup_empty, NULL);

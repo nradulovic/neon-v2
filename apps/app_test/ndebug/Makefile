@@ -14,25 +14,25 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-TARGETS := narch nbits
+TARGETS := cfg_enabled cfg_disabled
 
 .PHONY: all
 all:
-	@for t in $(TARGETS); do $(MAKE) -C $$t all; done
+	@for t in $(TARGETS); do $(MAKE) -C . -f $$t.mk all; done
 
 .PHONY: clean
 clean:
-	@for t in $(TARGETS); do $(MAKE) -C $$t clean; done
+	@for t in $(TARGETS); do $(MAKE) -C . -f $$t.mk clean; done
 
 .PHONY: distclean
 distclean:
-	@for t in $(TARGETS); do $(MAKE) -C $$t distclean; done
+	@for t in $(TARGETS); do $(MAKE) -C . -f $$t.mk distclean; done
 
 .PHONY: config
 config:
-	@for t in $(TARGETS); do $(MAKE) -C $$t config; done
+	@for t in $(TARGETS); do $(MAKE) -C . -f $$t.mk config; done
 
 .PHONY: test
 test:
-	@for t in $(TARGETS); do $(MAKE) -C $$t test; done
+	@for t in $(TARGETS); do $(MAKE) -C . -f $$t.mk test; done
 

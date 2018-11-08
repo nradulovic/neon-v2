@@ -1,6 +1,4 @@
-#
-# Neon
-# Copyright (C) 2018   REAL-TIME CONSULTING
+
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published by the Free
@@ -16,15 +14,26 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Include guard
-ifndef LIB_BUILD_NQUEUE_MK
-LIB_BUILD_NQUEUE_MK=1
+TARGETS := narch nbits nbits_bitarray ndebug nlist_dll nlist_sll nqueue_lqueue
+TARGETS += nqueue_pqueue ntask ntask_fiber
 
-# Dependencies
-include $(WS)/lib/build/common.mk
-include $(WS)/lib/build/nport.mk
-include $(WS)/lib/build/nlist.mk
+.PHONY: all
+all: 
+	@for t in $(TARGETS); do $(MAKE) -C $$t all; done
 
-CC_SOURCES += lib/source/nqueue_pqueue.c
+.PHONY: clean
+clean:
+	@for t in $(TARGETS); do $(MAKE) -C $$t clean; done
 
-endif
+.PHONY: distclean
+distclean:
+	@for t in $(TARGETS); do $(MAKE) -C $$t distclean; done
+
+.PHONY: config
+config:
+	@for t in $(TARGETS); do $(MAKE) -C $$t config; done
+
+.PHONY: test
+test: 
+	@for t in $(TARGETS); do $(MAKE) -C $$t test; done
+

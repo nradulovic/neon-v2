@@ -32,7 +32,7 @@ NTESTSUITE_TEST(test_yield)
 {
 }
 
-void test_ntask(void)
+void test_exec(void)
 {
     NTESTSUITE_FIXTURE(none, NULL, NULL);
 

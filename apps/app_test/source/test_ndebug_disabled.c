@@ -16,10 +16,12 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stddef.h>
+#define TEST_DISABLE_DEBUG
+
+#include <string.h>
 #include "testsuite/ntestsuite.h"
 #include "debug/ndebug.h"
-#include "test_ndebug_enabled.h"
+#include "main.h"
 
 #define narch_cpu_stop()        g_cpu_state_output = false
 
@@ -27,9 +29,9 @@ static bool g_cpu_state_output;
 
 NTESTSUITE_TEST(test_empty_obligation)
 {
-    uint32_t n = 0;
+    uint32_t n = 5;
 
-    NTESTSUITE_EXPECT_UINT(1);
+    NTESTSUITE_EXPECT_UINT(5);
     NOBLIGATION(n = 1);
     NTESTSUITE_ACTUAL_UINT(n);
     NTESTSUITE_EVALUATE();
@@ -69,7 +71,7 @@ NTESTSUITE_TEST(test_empty_internal)
 
 NTESTSUITE_TEST(test_empty_f_assert)
 {
-    NTESTSUITE_EXPECT_BOOL(false);
+    NTESTSUITE_EXPECT_BOOL(true);
     NASSERT(false);
     NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
     NTESTSUITE_EVALUATE();
@@ -77,7 +79,7 @@ NTESTSUITE_TEST(test_empty_f_assert)
 
 NTESTSUITE_TEST(test_empty_f_require)
 {
-    NTESTSUITE_EXPECT_BOOL(false);
+    NTESTSUITE_EXPECT_BOOL(true);
     NREQUIRE(false);
     NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
     NTESTSUITE_EVALUATE();
@@ -85,7 +87,7 @@ NTESTSUITE_TEST(test_empty_f_require)
 
 NTESTSUITE_TEST(test_empty_f_ensure)
 {
-    NTESTSUITE_EXPECT_BOOL(false);
+    NTESTSUITE_EXPECT_BOOL(true);
     NENSURE(false);
     NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
     NTESTSUITE_EVALUATE();
@@ -93,7 +95,7 @@ NTESTSUITE_TEST(test_empty_f_ensure)
 
 NTESTSUITE_TEST(test_empty_f_internal)
 {
-    NTESTSUITE_EXPECT_BOOL(false);
+    NTESTSUITE_EXPECT_BOOL(true);
     NASSERT_INTERNAL(false);
     NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
     NTESTSUITE_EVALUATE();
@@ -104,7 +106,7 @@ static void setup_empty(void)
     g_cpu_state_output = true;
 }
 
-void test_ndebug_enabled(void)
+void test_exec(void)
 {
     NTESTSUITE_FIXTURE(empty, setup_empty, NULL);
     NTESTSUITE_RUN(empty, test_empty_obligation);

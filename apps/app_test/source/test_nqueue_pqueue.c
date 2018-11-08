@@ -18,10 +18,10 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <test_nqueue_pqueue.h>
 
 #include "testsuite/ntestsuite.h"
 #include "queue/nqueue_pqueue.h"
+#include "main.h"
 
 static struct npqueue_sentinel g_queue;
 static struct npqueue g_node1;
@@ -281,7 +281,7 @@ static void setup_multi(void)
     npqueue_insert_fifo(&g_queue, &g_node1);
 }
 
-void test_nqueue_pqueue(void)
+void test_exec(void)
 {
     NTESTSUITE_FIXTURE(none, NULL, NULL);
     NTESTSUITE_FIXTURE(empty, setup_empty, NULL);

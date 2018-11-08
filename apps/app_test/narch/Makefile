@@ -18,16 +18,16 @@
 WS = ../../..
 
 # Relative path to this project directory.
-PROJECT_DIR = apps/app_test_common/nbits
+PROJECT_DIR = apps/app_test/narch
 
 # Project name, this will be used as output binary file name.
-PROJECT_NAME := test_nbits
+PROJECT_NAME := test_narch
 
 # Project configuration header file.
-PROJECT_CONFIG := $(PROJECT_DIR)/../include/config_nbits.h
+PROJECT_CONFIG := $(PROJECT_DIR)/../include/config_narch.h
 
 # Include depenencies, nport is needed to import additional build rules.
-include $(WS)/lib/build/nbits.mk
+include $(WS)/lib/build/nport.mk
 include $(WS)/lib/build/ntestsuite.mk
 
 # List additional C header include paths.
@@ -36,7 +36,7 @@ CC_INCLUDES += $(PROJECT_DIR)/../include
 # List additional C source files. Files which are not listed here will not be
 # compiled.
 CC_SOURCES += $(PROJECT_DIR)/../source/main.c
-CC_SOURCES += $(PROJECT_DIR)/../source/test_nbits.c
+CC_SOURCES += $(PROJECT_DIR)/../source/test_narch.c
 
 # List additional archives. Use this when using an external static archive.
 AR_LIBS +=

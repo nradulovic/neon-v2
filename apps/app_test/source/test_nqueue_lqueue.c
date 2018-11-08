@@ -22,7 +22,7 @@
 
 #include "testsuite/ntestsuite.h"
 #include "queue/nqueue_lqueue.h"
-#include "test_nqueue_lqueue.h"
+#include "main.h"
 
 #define QUEUE_SIZE 4
 
@@ -211,7 +211,7 @@ static void setup_full(void)
     NLQUEUE_PUT_FIFO(&g_test_queue, 4);
 }
 
-void test_nqueue_lqueue(void)
+void test_exec(void)
 {
     NTESTSUITE_FIXTURE(none, NULL, NULL);
     NTESTSUITE_FIXTURE(empty, setup_empty, NULL);

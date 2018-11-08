@@ -21,6 +21,7 @@
 
 #include "testsuite/ntestsuite.h"
 #include "fiber/nfiber.h"
+#include "main.h"
 
 static uint8_t g_output;
 static bool g_should_stop;
@@ -210,7 +211,7 @@ static void setup_none(void)
     g_output = 0u;
 }
 
-void test_ntask_fiber(void)
+void test_exec(void)
 {
     NTESTSUITE_FIXTURE(none, setup_none, NULL);
     NTESTSUITE_RUN(none, test_none_empty);
