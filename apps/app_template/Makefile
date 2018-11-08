@@ -62,6 +62,8 @@ clean: clean-size clean-flash config-clean
 distclean: 
 	$(VERBOSE)rm -rf $(DEF_BUILD_DIR)
 
+test:
+
 $(PROJECT_LIB): $(OBJECTS)
 
 $(PROJECT_ELF): $(PROJECT_LIB)
