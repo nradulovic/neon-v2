@@ -39,35 +39,30 @@ NTESTSUITE_TEST(test_none_init)
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(true);
     NLQUEUE_INIT(&my_queue);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_empty)
 {
     NTESTSUITE_EXPECT_UINT(QUEUE_SIZE);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_EMPTY(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_size)
 {
     NTESTSUITE_EXPECT_UINT(QUEUE_SIZE);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_SIZE(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_is_full)
 {
     NTESTSUITE_EXPECT_BOOL(false);
     NTESTSUITE_ACTUAL_BOOL(NLQUEUE_IS_FULL(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_is_empty)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(NLQUEUE_IS_EMPTY(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_fifo_head)
@@ -75,7 +70,6 @@ NTESTSUITE_TEST(test_empty_fifo_head)
     NTESTSUITE_EXPECT_UINT(234);
     NLQUEUE_PUT_FIFO(&g_test_queue, 234);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_HEAD(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_fifo_tail)
@@ -83,7 +77,6 @@ NTESTSUITE_TEST(test_empty_fifo_tail)
     NTESTSUITE_EXPECT_UINT(234);
     NLQUEUE_PUT_FIFO(&g_test_queue, 234);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_TAIL(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_lifo_head)
@@ -91,7 +84,6 @@ NTESTSUITE_TEST(test_empty_lifo_head)
     NTESTSUITE_EXPECT_UINT(234);
     NLQUEUE_PUT_LIFO(&g_test_queue, 234);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_HEAD(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_lifo_tail)
@@ -99,35 +91,30 @@ NTESTSUITE_TEST(test_empty_lifo_tail)
     NTESTSUITE_EXPECT_UINT(234);
     NLQUEUE_PUT_LIFO(&g_test_queue, 234);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_TAIL(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_nonempty_empty)
 {
     NTESTSUITE_EXPECT_UINT(QUEUE_SIZE - 2u);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_EMPTY(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_nonempty_size)
 {
     NTESTSUITE_EXPECT_UINT(QUEUE_SIZE);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_SIZE(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_nonempty_is_full)
 {
     NTESTSUITE_EXPECT_BOOL(false);
     NTESTSUITE_ACTUAL_BOOL(NLQUEUE_IS_FULL(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_nonempty_is_empty)
 {
     NTESTSUITE_EXPECT_BOOL(false);
     NTESTSUITE_ACTUAL_BOOL(NLQUEUE_IS_EMPTY(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_nonempty_fifo_head)
@@ -135,7 +122,6 @@ NTESTSUITE_TEST(test_nonempty_fifo_head)
     NTESTSUITE_EXPECT_UINT(1);
     NLQUEUE_PUT_FIFO(&g_test_queue, 233);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_HEAD(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_nonempty_fifo_tail)
@@ -143,7 +129,6 @@ NTESTSUITE_TEST(test_nonempty_fifo_tail)
     NTESTSUITE_EXPECT_UINT(233);
     NLQUEUE_PUT_FIFO(&g_test_queue, 233);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_TAIL(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_nonempty_lifo_head)
@@ -151,7 +136,6 @@ NTESTSUITE_TEST(test_nonempty_lifo_head)
     NTESTSUITE_EXPECT_UINT(234);
     NLQUEUE_PUT_LIFO(&g_test_queue, 234);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_HEAD(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_nonempty_lifo_tail)
@@ -159,35 +143,30 @@ NTESTSUITE_TEST(test_nonempty_lifo_tail)
     NTESTSUITE_EXPECT_UINT(2);
     NLQUEUE_PUT_LIFO(&g_test_queue, 234);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_TAIL(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_full_empty)
 {
     NTESTSUITE_EXPECT_UINT(0);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_EMPTY(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_full_size)
 {
     NTESTSUITE_EXPECT_UINT(QUEUE_SIZE);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_SIZE(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_full_is_full)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(NLQUEUE_IS_FULL(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_full_is_empty)
 {
     NTESTSUITE_EXPECT_BOOL(false);
     NTESTSUITE_ACTUAL_BOOL(NLQUEUE_IS_EMPTY(&g_test_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 static void setup_empty(void)

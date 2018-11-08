@@ -35,7 +35,6 @@ NTESTSUITE_TEST(test_none_init)
     NTESTSUITE_EXPECT_BOOL(true);
     (void)a_instance;
     NTESTSUITE_ACTUAL_BOOL(true);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_0)
@@ -43,7 +42,6 @@ NTESTSUITE_TEST(test_empty_set_0)
     NTESTSUITE_EXPECT_UINT(0);
     nbitarray_x_set(&g_instance[0], 0u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_x_msbs(&g_instance[0]));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_get_1)
@@ -51,7 +49,6 @@ NTESTSUITE_TEST(test_empty_set_get_1)
     NTESTSUITE_EXPECT_UINT(1);
     nbitarray_x_set(&g_instance[0], 1u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_x_msbs(&g_instance[0]));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_get_31)
@@ -59,7 +56,6 @@ NTESTSUITE_TEST(test_empty_set_get_31)
     NTESTSUITE_EXPECT_UINT(31);
     nbitarray_x_set(&g_instance[0], 31u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_x_msbs(&g_instance[0]));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_m_0)
@@ -68,7 +64,6 @@ NTESTSUITE_TEST(test_empty_set_m_0)
     nbitarray_x_set(&g_instance[0], 0u);
     nbitarray_x_set(&g_instance[0], 0u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_x_msbs(&g_instance[0]));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_m_1)
@@ -77,7 +72,6 @@ NTESTSUITE_TEST(test_empty_set_m_1)
     nbitarray_x_set(&g_instance[0], 0u);
     nbitarray_x_set(&g_instance[0], 1u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_x_msbs(&g_instance[0]));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_m_31)
@@ -87,7 +81,6 @@ NTESTSUITE_TEST(test_empty_set_m_31)
     nbitarray_x_set(&g_instance[0], 1u);
     nbitarray_x_set(&g_instance[0], 31u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_x_msbs(&g_instance[0]));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_clr_get_1)
@@ -97,7 +90,6 @@ NTESTSUITE_TEST(test_empty_set_clr_get_1)
     nbitarray_x_set(&g_instance[0], 1u);
     nbitarray_x_clear(&g_instance[0], 1u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_x_msbs(&g_instance[0]));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_clr_get_31)
@@ -108,7 +100,6 @@ NTESTSUITE_TEST(test_empty_set_clr_get_31)
     nbitarray_x_set(&g_instance[0], 31u);
     nbitarray_x_clear(&g_instance[0], 31u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_x_msbs(&g_instance[0]));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_clr_get_31_m)
@@ -119,7 +110,6 @@ NTESTSUITE_TEST(test_empty_set_clr_get_31_m)
     nbitarray_x_set(&g_instance[0], 31u);
     nbitarray_x_clear(&g_instance[0], 1u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_x_msbs(&g_instance[0]));
-    NTESTSUITE_EVALUATE();
 }
 
 static void setup_empty(void)

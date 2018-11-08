@@ -63,6 +63,10 @@ extern "C" {
 #define NCONFIG_TASK_SCHED_PRIO 0
 #endif
 
+#ifndef NCONFIG_TESTSUITE_STOP_ON_ERROR
+#define NCONFIG_TESTSUITE_STOP_ON_ERROR 0
+#endif
+
 #ifdef __cplusplus
 }
 #endif

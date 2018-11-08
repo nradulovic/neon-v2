@@ -45,7 +45,6 @@ NTESTSUITE_TEST(test_none_init)
 
     NTESTSUITE_EXPECT_PTR(&list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_init(&list));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_none_init_is_null_true)
@@ -54,7 +53,6 @@ NTESTSUITE_TEST(test_none_init_is_null_true)
 
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_null(&list));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_none_init_is_null_false)
@@ -64,7 +62,6 @@ NTESTSUITE_TEST(test_none_init_is_null_false)
     NTESTSUITE_EXPECT_BOOL(false);
     nlist_sll_init(&list);
     NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_null(&list));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_none_is_null_false)
@@ -74,42 +71,36 @@ NTESTSUITE_TEST(test_none_is_null_false)
     NTESTSUITE_EXPECT_BOOL(false);
     nlist_sll_init(&list);
     NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_null(&list));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_is_empty)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_empty(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_next)
 {
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_prev)
 {
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_first)
 {
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_first(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_last)
 {
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_last(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_add_after)
@@ -118,19 +109,15 @@ NTESTSUITE_TEST(test_empty_add_after)
 
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_add_before)
@@ -139,19 +126,15 @@ NTESTSUITE_TEST(test_empty_add_before)
 
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_add_head)
@@ -160,19 +143,15 @@ NTESTSUITE_TEST(test_empty_add_head)
    
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_add_tail)
@@ -181,19 +160,15 @@ NTESTSUITE_TEST(test_empty_add_tail)
     
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_remove)
@@ -201,42 +176,36 @@ NTESTSUITE_TEST(test_empty_remove)
     NTESTSUITE_EXPECT_BOOL(true);
     nlist_sll_remove(&g_sentinel);
     NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_empty(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_single_is_empty)
 {
     NTESTSUITE_EXPECT_BOOL(false);
     NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_empty(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_single_next)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_single_prev)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_single_first)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_first(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_single_last)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_last(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_single_add_after)
@@ -245,27 +214,21 @@ NTESTSUITE_TEST(test_single_add_after)
     
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_b.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_b.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_b.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_b.list));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_single_add_before)
@@ -274,27 +237,21 @@ NTESTSUITE_TEST(test_single_add_before)
     
     NTESTSUITE_EXPECT_PTR(&g_node_b.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_b.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_b.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_b.list));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_single_add_head)
@@ -303,27 +260,21 @@ NTESTSUITE_TEST(test_single_add_head)
     
     NTESTSUITE_EXPECT_PTR(&g_node_b.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_b.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_b.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_b.list));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_single_add_tail)
@@ -332,27 +283,21 @@ NTESTSUITE_TEST(test_single_add_tail)
     
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_b.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_b.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_b.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_b.list));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_single_remove)
@@ -360,42 +305,36 @@ NTESTSUITE_TEST(test_single_remove)
     nlist_sll_remove(&g_node_a.list);
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_empty(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_abcd_is_empty)
 {
     NTESTSUITE_EXPECT_BOOL(false);
     NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_empty(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_abcd_next)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_abcd_prev)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_d.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_abcd_first)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_first(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_abcd_last)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_d.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_last(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_abcd_add_after)
@@ -404,27 +343,21 @@ NTESTSUITE_TEST(test_abcd_add_after)
     
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_0.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_0.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_d.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_c.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_d.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_0.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_d.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_0.list));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_abcd_add_before)
@@ -433,27 +366,21 @@ NTESTSUITE_TEST(test_abcd_add_before)
     
     NTESTSUITE_EXPECT_PTR(&g_node_0.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_d.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_b.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_0.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_0.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_0.list));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_abcd_add_head)
@@ -462,27 +389,21 @@ NTESTSUITE_TEST(test_abcd_add_head)
     
     NTESTSUITE_EXPECT_PTR(&g_node_0.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_d.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_b.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_0.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_a.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_0.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_0.list));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_abcd_add_tail)
@@ -491,27 +412,21 @@ NTESTSUITE_TEST(test_abcd_add_tail)
     
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_0.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_sentinel));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_0.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_d.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_c.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_d.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_next(&g_node_0.list));
-    NTESTSUITE_EVALUATE();
     
     NTESTSUITE_EXPECT_PTR(&g_node_d.list);
     NTESTSUITE_ACTUAL_PTR(nlist_sll_prev(&g_node_0.list));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_abcd_remove)
@@ -522,7 +437,6 @@ NTESTSUITE_TEST(test_abcd_remove)
     nlist_sll_remove(&g_node_c.list);
     nlist_sll_remove(&g_node_d.list);
     NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_empty(&g_sentinel));
-    NTESTSUITE_EVALUATE();
 }
 
 static void setup_empty(void)

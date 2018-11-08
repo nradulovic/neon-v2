@@ -32,7 +32,6 @@ NTESTSUITE_TEST(test_empty_obligation)
     NTESTSUITE_EXPECT_UINT(1);
     NOBLIGATION(n = 1);
     NTESTSUITE_ACTUAL_UINT(n);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_assert)
@@ -40,7 +39,6 @@ NTESTSUITE_TEST(test_empty_assert)
     NTESTSUITE_EXPECT_BOOL(true);
     NASSERT(true);
     NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_require)
@@ -48,7 +46,6 @@ NTESTSUITE_TEST(test_empty_require)
     NTESTSUITE_EXPECT_BOOL(true);
     NREQUIRE(true);
     NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_ensure)
@@ -56,7 +53,6 @@ NTESTSUITE_TEST(test_empty_ensure)
     NTESTSUITE_EXPECT_BOOL(true);
     NENSURE(true);
     NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_internal)
@@ -64,7 +60,6 @@ NTESTSUITE_TEST(test_empty_internal)
     NTESTSUITE_EXPECT_BOOL(true);
     NASSERT_INTERNAL(true);
     NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_f_assert)
@@ -72,7 +67,6 @@ NTESTSUITE_TEST(test_empty_f_assert)
     NTESTSUITE_EXPECT_BOOL(false);
     NASSERT(false);
     NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_f_require)
@@ -80,7 +74,6 @@ NTESTSUITE_TEST(test_empty_f_require)
     NTESTSUITE_EXPECT_BOOL(false);
     NREQUIRE(false);
     NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_f_ensure)
@@ -88,7 +81,6 @@ NTESTSUITE_TEST(test_empty_f_ensure)
     NTESTSUITE_EXPECT_BOOL(false);
     NENSURE(false);
     NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_f_internal)
@@ -96,7 +88,6 @@ NTESTSUITE_TEST(test_empty_f_internal)
     NTESTSUITE_EXPECT_BOOL(false);
     NASSERT_INTERNAL(false);
     NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
-    NTESTSUITE_EVALUATE();
 }
 
 static void setup_empty(void)

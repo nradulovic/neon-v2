@@ -45,87 +45,73 @@
 extern "C" {
 #endif
 
-#ifndef NTESTSUITE_STOP_ON_ERROR
-#define NTESTSUITE_STOP_ON_ERROR (NCONFIG_ENABLE_LOGGER == 0)
-#endif
-
-#if (!NTESTSUITE_STOP_ON_ERROR)
 #define NTESTSUITE_PRINT_RESULTS(a_fixture)                                 \
 	np_testsuite_print_results(&(a_fixture))
-#else
-#define NTESTSUITE_PRINT_RESULTS(a_fixture)
-#endif
 
-#if (!NTESTSUITE_STOP_ON_ERROR)
 #define NTESTSUITE_PRINT_OVERVIEW()                                         \
 	np_testsuite_print_overview()
-#else
-#define NTESTSUITE_PRINT_OVERVIEW()
-#endif
 
 #define NTESTSUITE_PRINT_HEADER()                                           \
     nlogger_info("Build info: %s - %s\n", NPLATFORM_DATE, NPLATFORM_TIME);  \
     nlogger_info("Port platform ID: %s\n", nplatform_id);                   \
     nlogger_info("Port platform build: %s\n", nplatform_build);
 
-
 #define NTESTSUITE_EXPECT_UINT(a_number)                                    \
-    do {\
-        union np_testsuite_test_val val; \
-        val.ui = (a_number); \
-        np_testsuite_expect(val, NP_TESTSUITE_TYPE_UINT); \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.ui = (a_number);                                                \
+        np_testsuite_expect(val, NP_TESTSUITE_TYPE_UINT);                   \
     } while (0)
 
 #define NTESTSUITE_EXPECT_INT(a_number)                                     \
-    do {\
-        union np_testsuite_test_val val; \
-        val.si = (a_number); \
-	    np_testsuite_expect(val, NP_TESTSUITE_TYPE_INT); \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.si = (a_number);                                                \
+	    np_testsuite_expect(val, NP_TESTSUITE_TYPE_INT);                    \
     } while (0)
 
 #define NTESTSUITE_EXPECT_PTR(a_pointer)                                    \
-    do {\
-        union np_testsuite_test_val val; \
-        val.ptr = (a_pointer); \
-        np_testsuite_expect(val, NP_TESTSUITE_TYPE_PTR); \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.ptr = (a_pointer);                                              \
+        np_testsuite_expect(val, NP_TESTSUITE_TYPE_PTR);                    \
     } while (0)
 
 #define NTESTSUITE_EXPECT_BOOL(a_bool)                                      \
-    do {\
-        union np_testsuite_test_val val; \
-        val.b = (a_bool); \
-	    np_testsuite_expect(val, NP_TESTSUITE_TYPE_BOOL); \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.b = (a_bool);                                                   \
+	    np_testsuite_expect(val, NP_TESTSUITE_TYPE_BOOL);                   \
     } while (0)
     
-#define NTESTSUITE_ACTUAL_UINT(a_number)                                       \
-    do {\
-        union np_testsuite_test_val val; \
-        val.ui = (a_number); \
-	    NP_TESTSUITE_EVALUATE(val); \
+#define NTESTSUITE_ACTUAL_UINT(a_number)                                    \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.ui = (a_number);                                                \
+	    NP_TESTSUITE_EVALUATE(val);                                         \
     } while (0)
 
-#define NTESTSUITE_ACTUAL_INT(a_number)                                        \
-    do {\
-        union np_testsuite_test_val val; \
-        val.si = (a_number); \
-	    NP_TESTSUITE_EVALUATE(val); \
+#define NTESTSUITE_ACTUAL_INT(a_number)                                     \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.si = (a_number);                                                \
+	    NP_TESTSUITE_EVALUATE(val);                                         \
     } while (0)
                 
-#define NTESTSUITE_ACTUAL_PTR(a_pointer)                                        \
-    do {\
-        union np_testsuite_test_val val; \
-        val.ptr = (a_pointer); \
-        NP_TESTSUITE_EVALUATE(val); \
+#define NTESTSUITE_ACTUAL_PTR(a_pointer)                                    \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.ptr = (a_pointer);                                              \
+        NP_TESTSUITE_EVALUATE(val);                                         \
     } while (0)
 
-#define NTESTSUITE_ACTUAL_BOOL(a_bool)                                       \
-    do {\
-        union np_testsuite_test_val val; \
-        val.b = (a_bool); \
-        NP_TESTSUITE_EVALUATE(val); \
+#define NTESTSUITE_ACTUAL_BOOL(a_bool)                                      \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.b = (a_bool);                                                   \
+        NP_TESTSUITE_EVALUATE(val);                                         \
     } while (0)
 
-#if (!NTESTSUITE_STOP_ON_ERROR)
 #define NTESTSUITE_FIXTURE(a_name, a_setup, a_teardown)                     \
     struct np_testsuite_fixture a_name = {                                  \
         .setup = a_setup,                                                   \
@@ -134,25 +120,16 @@ extern "C" {
         .total = 0u,                                                        \
         .failed = 0u,                                                       \
     }
-#else
-#define NTESTSUITE_FIXTURE(a_name, a_setup, a_teardown)                     \
-    struct np_testsuite_fixture a_name = {                                  \
-        .setup = a_setup,                                                   \
-        .teardown = a_teardown,                                             \
-    }
-#endif
 
-#define NTESTSUITE_EVALUATE()
-    
-#if (!NTESTSUITE_STOP_ON_ERROR)
-#define NP_TESTSUITE_EVALUATE(val)                                               \
-        if (np_testsuite_actual(NPLATFORM_LINE, (val))) { \
-            return; \
+#if (!NCONFIG_TESTSUITE_STOP_ON_ERROR)
+#define NP_TESTSUITE_EVALUATE(val)                                          \
+        if (np_testsuite_actual(NPLATFORM_LINE, (val))) {                   \
+            return;                                                         \
         }
 #else
-#define NP_TESTSUITE_EVALUATE(val)                                               \
-        if (np_testsuite_actual(NPLATFORM_LINE, (val))) { \
-            narch_cpu_stop(); \
+#define NP_TESTSUITE_EVALUATE(val)                                          \
+        if (np_testsuite_actual(NPLATFORM_LINE, (val))) {                   \
+            narch_cpu_stop();                                               \
         }
 #endif
 
@@ -168,38 +145,25 @@ struct np_testsuite_fixture
 {
     void (* setup)(void);
     void (* teardown)(void);
-#if (!NTESTSUITE_STOP_ON_ERROR)
     const char * name;
     uint8_t total;
     uint8_t failed;
-#endif
 };
 
-#if (!NTESTSUITE_STOP_ON_ERROR)
 #define NTESTSUITE_TEST(test_name) \
-static void test_name(void); \
-static struct np_testsuite_test testsuite_ ## test_name = { \
-	.test_fn = test_name, \
-	.name = # test_name, \
-	.file = NPLATFORM_FILE, \
-};\
-static void test_name(void)
-#else
-#define NTESTSUITE_TEST(test_name) \
-static void test_name(void); \
-static struct np_testsuite_test testsuite_ ## test_name = { \
-	.test_fn = test_name, \
-};\
-static void test_name(void)
-#endif
+    static void test_name(void); \
+    static struct np_testsuite_test testsuite_ ## test_name = { \
+    	.test_fn = test_name, \
+    	.name = # test_name, \
+    	.file = NPLATFORM_FILE, \
+    };\
+    static void test_name(void)
 
 struct np_testsuite_test
 {
 	void (*test_fn)(void);
-#if (!NTESTSUITE_STOP_ON_ERROR)
 	const char * name;
 	const char * file;
-#endif
 };
 
 union np_testsuite_test_val

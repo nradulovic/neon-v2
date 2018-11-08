@@ -9,7 +9,6 @@
 extern "C" {
 #endif
 
-#define NTESTSUITE_STOP_ON_ERROR 0
 #define NCONFIG_ENABLE_LOGGER 1
 
 #ifdef __cplusplus

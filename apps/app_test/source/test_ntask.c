@@ -18,7 +18,7 @@
 
 #include "testsuite/ntestsuite.h"
 #include "task/ntask.h"
-#include "test_ntask.h"
+#include "main.h"
 
 NTESTSUITE_TEST(test_init_state)
 {

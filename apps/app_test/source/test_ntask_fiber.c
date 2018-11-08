@@ -138,7 +138,6 @@ NTESTSUITE_TEST(test_none_empty)
     NTESTSUITE_EXPECT_UINT(NFIBER_TERMINATED);
     nfiber_init(&empty);
     NTESTSUITE_ACTUAL_UINT(nfiber_dispatch(fiber_empty(&empty)));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_none_exit)
@@ -149,7 +148,6 @@ NTESTSUITE_TEST(test_none_exit)
     nfiber_init(&exit);
     nfiber_dispatch(fiber_exit(&exit));
     NTESTSUITE_ACTUAL_UINT(g_output);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_none_until)
@@ -160,7 +158,6 @@ NTESTSUITE_TEST(test_none_until)
     nfiber_init(&until);
     while (nfiber_dispatch(fiber_until(&until)) != NFIBER_BLOCKED);
     NTESTSUITE_ACTUAL_UINT(g_output);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_none_while)
@@ -171,7 +168,6 @@ NTESTSUITE_TEST(test_none_while)
     nfiber_init(&while_ctx);
     while (nfiber_dispatch(fiber_while(&while_ctx)) != NFIBER_BLOCKED);
     NTESTSUITE_ACTUAL_UINT(g_output);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_none_wait)
@@ -182,7 +178,6 @@ NTESTSUITE_TEST(test_none_wait)
     nfiber_init(&wait);
     while (nfiber_dispatch(fiber_wait_0(&wait)) != NFIBER_TERMINATED);
     NTESTSUITE_ACTUAL_UINT(g_output);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_none_yield)
@@ -203,7 +198,6 @@ NTESTSUITE_TEST(test_none_yield)
         nfiber_dispatch(fiber_yielded_2(&yielded_2));
     }
     NTESTSUITE_ACTUAL_UINT(g_output);
-    NTESTSUITE_EVALUATE();
 }
 
 static void setup_none(void)
