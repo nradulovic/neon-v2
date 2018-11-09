@@ -19,27 +19,32 @@ Neon is a real-time kernel for deply embedded microcontrollers. For
 details about Neon design refer to [documentation/neon_design.md]. It
 enforces a specific coding scheme and programming paradigm.
 
-The documentation is currently minimal so refer to `template` folder for
-examples.
+The documentation is currently minimal so refer to `app_template` application
+folder for examples how to use system. For additional examples about particular
+feature please refer to `templates` folder.
 
 Neon software provides:
  - multithreaded like execution using cooperative scheduling. The mechanics to
    provide the concurent execution is heavilly inspired by Adam Dunkels 
    protothreads.
  - dynamic memory allocation. It tries not to replace the standard C library
-   malloc, but adds other ways of managing RAM memory.
+   malloc, but adds more algorithms of managing RAM memory which are embedded
+   friendly.
  - Hardware Abstraction Layer
  - Virtual Timers
 
 ---
 ## 2. License
 The software is distributed under open source GNU LESSER GENERAL PUBLIC
-LICENSE Version 3. A copy of license file is found in [lgpl-3.0.md].
+LICENSE Version 3. A copy of license file is found in [LGPL-3.0.md].
 
 ---
 ## 3. Platforms supported
 Several platforms are supported. In order to manage different
-configurations, a few flags are available:
+configurations, a few build flags are available:
+ - `OS` - defines which OS is being used in the target
+ - `PROFILE` - defines the optimization profile which is being used during
+   compilation.
  - `PLATFORM` - describes the development platfrom being used. For example,
    GCC or ARM CC compiler.
  - `ARCH` - describes the target MCU CPU core architecture, like x86 or 
@@ -60,7 +65,8 @@ Neon source consist of a ``.c`` files located in `lib/source` and
 `lib/va_source`. The header ``.h`` files are located in `lib/include` and
 `lib/va_include` directories. The include paths are managed by build system
 according to arguments given for selected platform. Please see 
-[documentation/build.md] for instructions how to run Neon on various devices.
+[documentation/build.md] for instructions how to build Neon for various 
+targets.
 
 ---
 ## 5. Coding standard
