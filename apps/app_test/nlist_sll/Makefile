@@ -24,7 +24,7 @@ PROJECT_DIR = apps/app_test/nlist_sll
 PROJECT_NAME := test_nlist_sll
 
 # Project configuration header file.
-PROJECT_CONFIG := $(PROJECT_DIR)/../include/config_nlist.h
+PROJECT_CONFIG := $(PROJECT_DIR)/../include/config_generic.h
 
 # Include depenencies, nport is needed to import additional build rules.
 include $(WS)/lib/build/nlist.mk

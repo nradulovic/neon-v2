@@ -24,7 +24,7 @@ PROJECT_DIR = apps/app_test/narch
 PROJECT_NAME := test_narch
 
 # Project configuration header file.
-PROJECT_CONFIG := $(PROJECT_DIR)/../include/config_narch.h
+PROJECT_CONFIG := $(PROJECT_DIR)/../include/config_generic.h
 
 # Include depenencies, nport is needed to import additional build rules.
 include $(WS)/lib/build/nport.mk
