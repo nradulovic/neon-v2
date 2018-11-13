@@ -16,30 +16,26 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+
 #include "bits/nbits.h"
 
 uint32_t nbits_ftou32(float val)
 {
-    union float_to_u32
-    {
-        float                       fvalue;
-        uint32_t                    ivalue;
-    }                           u;
-    u.fvalue = val;
+    uint32_t retval;
 
-    return (u.ivalue);
+    memcpy(&retval, &val, sizeof(retval));
+
+    return retval;
 }
 
 float nbits_u32tof(uint32_t val)
 {
-    union u32_to_float
-    {
-        uint32_t                    ivalue;
-        float                       fvalue;
-    }                           u;
-    u.ivalue = val;
+    float retval;
 
-    return (u.fvalue);
+    memcpy(&retval, &val, sizeof(retval));
+
+    return retval;
 }
 
 void nbitarray_x_set(nbitarray_x * array, uint_fast8_t bit)
