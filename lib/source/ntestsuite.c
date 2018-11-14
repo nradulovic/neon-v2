@@ -46,15 +46,17 @@ static void testsuite_test_failed(uint32_t line)
         g_np_testsuite_context.test->file, line);
 }
 
-void np_testsuite_print_overview(void)
+int np_testsuite_print_overview(void)
 {
 	if (g_np_testsuite_context.total_failed_tests != 0u) {
 		nlogger_info("\n\n  Total tests  : %u\n  Total FAILED : %u\n",
 			g_np_testsuite_context.total_tests,
 			g_np_testsuite_context.total_failed_tests);
+        return 1;
 	} else {
 		nlogger_info("\n\n  Total tests  : %u\n",
 			g_np_testsuite_context.total_tests);
+        return 0;
 	}
 }
 

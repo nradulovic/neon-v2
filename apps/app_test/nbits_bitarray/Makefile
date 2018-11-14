@@ -24,7 +24,7 @@ PROJECT_DIR = apps/app_test/nbits_bitarray
 PROJECT_NAME := test_nbits_bitarray
 
 # Project configuration header file.
-PROJECT_CONFIG := $(PROJECT_DIR)/../include/config_nbits.h
+PROJECT_CONFIG := $(PROJECT_DIR)/../include/config_generic.h
 
 # Include depenencies, nport is needed to import additional build rules.
 include $(WS)/lib/build/nbits.mk

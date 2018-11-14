@@ -14,26 +14,26 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-TARGETS := narch nbits nbits_bitarray ndebug nlist_dll nlist_sll nqueue_lqueue
-TARGETS += nqueue_pqueue ntask ntask_fiber
+TARGETS := narch nbits nbits_bitarray nlist_dll nlist_sll nqueue_lqueue
+TARGETS += nqueue_pqueue ntask ntask_fiber ndebug_enabled ndebug_disabled
 
 .PHONY: all
 all: 
-	@for t in $(TARGETS); do $(MAKE) -C $$t all; done
+	@for t in $(TARGETS); do $(MAKE) -C $$t all || exit; done
 
 .PHONY: clean
 clean:
-	@for t in $(TARGETS); do $(MAKE) -C $$t clean; done
+	@for t in $(TARGETS); do $(MAKE) -C $$t clean || exit; done
 
 .PHONY: distclean
 distclean:
-	@for t in $(TARGETS); do $(MAKE) -C $$t distclean; done
+	@for t in $(TARGETS); do $(MAKE) -C $$t distclean || exit; done
 
 .PHONY: config
 config:
-	@for t in $(TARGETS); do $(MAKE) -C $$t config; done
+	@for t in $(TARGETS); do $(MAKE) -C $$t config || exit; done
 
 .PHONY: test
 test: 
-	@for t in $(TARGETS); do $(MAKE) -C $$t test; done
+	@for t in $(TARGETS); do $(MAKE) -C $$t test || exit; done
 

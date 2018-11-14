@@ -177,7 +177,7 @@ union np_testsuite_test_val
 #define NTESTSUITE_RUN(fixture, test) \
 		np_testsuite_run(&(fixture), &(testsuite_ ## test))
 
-void np_testsuite_print_overview(void);
+int np_testsuite_print_overview(void);
 
 void np_testsuite_print_results(const struct np_testsuite_fixture * fixture);
 

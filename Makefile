@@ -30,31 +30,31 @@ distclean: apps-distclean
 # Application handling
 
 .PHONY: apps
-apps: apps-config
+apps: 
 	@for app in apps/app_*/; \
     do \
-        if [ -d $${app} ]; then $(MAKE) -C $${app} all; fi; \
+        if [ -d $${app} ]; then $(MAKE) -C $${app} all || exit; fi; \
     done
 
 .PHONY: apps-clean
 apps-clean:
 	@for app in apps/app_*/; \
     do \
-        if [ -d $${app} ]; then $(MAKE) -C $${app} clean; fi; \
+        if [ -d $${app} ]; then $(MAKE) -C $${app} clean || exit; fi; \
     done
 
 .PHONY: apps-distclean
 apps-distclean:
 	@for app in apps/app_*/; \
     do \
-        if [ -d $${app} ]; then $(MAKE) -C $${app} distclean; fi; \
+        if [ -d $${app} ]; then $(MAKE) -C $${app} distclean || exit; fi; \
     done
 
 .PHONY: apps-config
 apps-config:
 	@for app in apps/app_*/; \
     do \
-        if [ -d $${app} ]; then $(MAKE) -C $${app} config; fi; \
+        if [ -d $${app} ]; then $(MAKE) -C $${app} config || exit; fi; \
     done
 
 # Tests handling
@@ -62,7 +62,7 @@ apps-config:
 test:
 	@for app in apps/app_*/; \
     do \
-        if [ -d $${app} ]; then $(MAKE) -C $${app} test; fi; \
+        if [ -d $${app} ]; then $(MAKE) -C $${app} test || exit; fi; \
     done
 	
 

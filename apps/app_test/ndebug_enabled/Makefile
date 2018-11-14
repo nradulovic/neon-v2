@@ -18,13 +18,13 @@
 WS = ../../..
 
 # Relative path to this project directory.
-PROJECT_DIR = apps/app_test/ndebug
+PROJECT_DIR = apps/app_test/ndebug_enabled
 
 # Project name, this will be used as output binary file name.
-PROJECT_NAME := test_ndebug_disabled
+PROJECT_NAME := test_ndebug_enabled
 
 # Project configuration header file.
-PROJECT_CONFIG := $(PROJECT_DIR)/../include/config_ndebug_disable.h
+PROJECT_CONFIG := $(PROJECT_DIR)/../include/config_ndebug_enable.h
 
 # Include depenencies, nport is needed to import additional build rules.
 include $(WS)/lib/build/nbits.mk
@@ -36,7 +36,7 @@ CC_INCLUDES += $(PROJECT_DIR)/../include
 # List additional C source files. Files which are not listed here will not be
 # compiled.
 CC_SOURCES += $(PROJECT_DIR)/../source/main.c
-CC_SOURCES += $(PROJECT_DIR)/../source/test_ndebug_disabled.c
+CC_SOURCES += $(PROJECT_DIR)/../source/test_ndebug_enabled.c
 
 # List additional archives. Use this when using an external static archive.
 AR_LIBS +=

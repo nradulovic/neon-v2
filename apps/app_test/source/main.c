@@ -23,7 +23,5 @@ int main(void)
 {
     NTESTSUITE_PRINT_HEADER();
     test_exec();
-    NTESTSUITE_PRINT_OVERVIEW();
-    
-    return 0;
+    return NTESTSUITE_PRINT_OVERVIEW();
 }
