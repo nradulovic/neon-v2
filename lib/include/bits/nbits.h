@@ -50,14 +50,28 @@ extern "C" {
  */
 
 /** @brief      Determines the first dimension of an array.
+ *
+ *  The size of the array is calculated by the compiler at compile time.
+ * 
  *  @param      array
  *              An array : type unspecified
  *  @mseffect
  */
 #define NBITS_ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
 
+/** @brief      Determine the size (in bytes) of specified @r field in 
+ *              structure of type @r type.
+ *
+ *  The size of the field is calculated by the compiler at compile time.
+ * 
+ *  @param      type
+ *              Type of the structure which contains the field : structure type
+ *  @param      field
+ *              Name of the field.
+ */
+#define NBITS_FIELD_SIZE(type, field) (sizeof(((type *)0)->field))
+
 /** @brief      Returns the sizeof @c type in bits.
- *  @mseffect
  */
 #define NBITS_BIT_SIZE(type)    (sizeof(type) * 8u)    
 
