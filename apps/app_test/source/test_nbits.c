@@ -111,11 +111,11 @@ NTESTSUITE_TEST(test_none_log2_x)
     NTESTSUITE_EXPECT_UINT(6);
     NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(64));
 
-//    NTESTSUITE_EXPECT_UINT(7);
-//    NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(128));
-//
-//    NTESTSUITE_EXPECT_UINT(7);
-//    NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(255));
+    NTESTSUITE_EXPECT_UINT(7);
+    NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(128));
+
+    NTESTSUITE_EXPECT_UINT(7);
+    NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(255));
 }
 
 NTESTSUITE_TEST(test_none_log2_UINT32_MAX)
@@ -140,6 +140,24 @@ NTESTSUITE_TEST(test_none_is_powerof2_4)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(nbits_is_powerof2(4));
+}
+
+NTESTSUITE_TEST(test_none_to_mask_0)
+{
+    NTESTSUITE_EXPECT_UINT(0);
+    NTESTSUITE_ACTUAL_UINT(nbits_to_mask(0));
+}
+
+NTESTSUITE_TEST(test_none_to_mask_8)
+{
+    NTESTSUITE_EXPECT_UINT(0xffu);
+    NTESTSUITE_ACTUAL_UINT(nbits_to_mask(8));
+}
+
+NTESTSUITE_TEST(test_none_to_mask_32)
+{
+    NTESTSUITE_EXPECT_UINT(0xffffffffu);
+    NTESTSUITE_ACTUAL_UINT(nbits_to_mask(32));
 }
 
 NTESTSUITE_TEST(test_none_xbn)
@@ -205,6 +223,9 @@ void test_exec(void)
     NTESTSUITE_RUN(none, test_none_is_powerof2_0);
     NTESTSUITE_RUN(none, test_none_is_powerof2_1);
     NTESTSUITE_RUN(none, test_none_is_powerof2_4);
+    NTESTSUITE_RUN(none, test_none_to_mask_0);
+    NTESTSUITE_RUN(none, test_none_to_mask_8);
+    NTESTSUITE_RUN(none, test_none_to_mask_32);
     NTESTSUITE_RUN(none, test_none_xbn);
     NTESTSUITE_RUN(none, test_none_msb);
     NTESTSUITE_RUN(none, test_none_lsb);
