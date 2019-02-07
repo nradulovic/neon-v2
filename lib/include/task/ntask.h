@@ -43,43 +43,13 @@
 extern "C" {
 #endif
 
-#define NTASK_QUEUE_SB 1
-#define NTASK_QUEUE_FB 2
-#define NTASK_QUEUE_DB 3
-#define NTASK_QUEUE_SQ 4
-#define NTASK_BITMAP_X 1
-#define NTASK_BITMAP_S 2
+#define ncurrent                g_task_schedule.current
 
-#if ((NCONFIG_TASK_SCHED_RR == 1) && \
-     (NCONFIG_TASK_PRIO_GROUPS == NCONFIG_TASK_PRIO_LEVELS))
-#define NTASK_RDY_QUEUE_TYPE    NTASK_QUEUE_FB
-#elif ((NCONFIG_TASK_SCHED_RR == 1) && \
-       (NCONFIG_TASK_PRIO_GROUPS != NCONFIG_TASK_PRIO_LEVELS))
-#define NTASK_RDY_QUEUE_TYPE    NTASK_QUEUE_SB
-#elif ((NCONFIG_TASK_SCHED_PRIO == 1) && \
-       (NCONFIG_TASK_PRIO_GROUPS == NCONFIG_TASK_PRIO_LEVELS))
-#define NTASK_RDY_QUEUE_TYPE    NTASK_QUEUE_DB
-#else
-#error "Invalid configuration."
-#endif
-
-#if ((NCONFIG_TASK_SCHED_RR == 1) || (NCONFIG_TASK_PRIO_GROUPS > 32))
-#define NTASK_WAIT_QUEUE_TYPE   NTASK_QUEUE_SQ
-#elif (NCONFIG_TASK_SCHED_PRIO == 1)
-#define NTASK_WAIT_QUEUE_TYPE   NTASK_QUEUE_DB
-#else
-#error "Invalid configuration."
-#endif
-
-#if (NCONFIG_TASK_PRIO_GROUPS > NARCH_DATA_WIDTH)
-#define NTASK_BITMAP_TYPE       NTASK_BITMAP_X
-#else
-#define NTASK_BITMAP_TYPE       NTASK_BITMAP_S
-#endif
+#define nerror                  ncurrent->tls.error
 
 struct ntask;
 
-typedef void (task_fn)(struct ntask * task, void * arg);
+typedef void (task_fn)(void * arg);
 
 enum ntask_state
 {
@@ -93,15 +63,7 @@ enum ntask_state
  */
 struct ntask_rdy_queue
 {
-#if ((NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_SB) || \
-     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_FB))
-    struct npqueue_sentinel sentinel[NCONFIG_TASK_PRIO_GROUPS];
-#endif
-#if (NTASK_BITMAP_TYPE == NTASK_BITMAP_X)
-    nbitarray_x bitarray[NBITARRAY_DEF(NCONFIG_TASK_PRIO_GROUPS)];
-#else
-    nbitarray_s bitarray[1];
-#endif
+    nbitarray_x bitarray[NBITARRAY_DEF(NCONFIG_TASK_INSTANCES)];
 };
 
 /**
@@ -109,81 +71,28 @@ struct ntask_rdy_queue
  */
 struct ntask_wait_queue
 {
-#if (NTASK_WAIT_QUEUE_TYPE == NTASK_QUEUE_SQ)
-    struct npqueue_sentinel sentinel;
-#else
-#if (NTASK_BITMAP_TYPE == NTASK_BITMAP_X)
-    nbitarray_x bitarray[NBITARRAY_DEF(NCONFIG_TASK_PRIO_GROUPS)];
-#else
-    nbitarray_s bitarray[1];
-#endif
-#endif
-};
-
-struct ntask
-{
-#if ((NTASK_WAIT_QUEUE_TYPE == NTASK_QUEUE_SQ) || \
-     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_SB) || \
-     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_FB))
-    struct npqueue node;
-#else
-    uint_fast8_t prio;
-#endif
-    task_fn * fn;
-    void * arg;
-    enum ntask_state state;
-    struct ntask_local_storage
-    {
-        uint32_t error;
-    } tls;
+    nbitarray_x bitarray[NBITARRAY_DEF(NCONFIG_TASK_INSTANCES)];
 };
 
 struct ntask_schedule
 {
-    struct ntask * current;
     struct ntask_rdy_queue queue;
     struct ntask_wait_queue dormant;
-    bool switch_pending;
-#if (NCONFIG_TASK_SCHED_RR == 1)
-    bool should_shift;
-#endif
+    struct ntask * current;
+    struct ntask * sentinel[NCONFIG_TASK_INSTANCES];
 };
 
 extern struct ntask_schedule g_task_schedule;
 
-void ntask_init(struct ntask * task, task_fn * fn, void * arg, 
-        uint_fast8_t prio);
+struct ntask * ntask_create(task_fn * fn, void * arg, uint_fast8_t prio);
 
-void ntask_term(struct ntask * task);
+void ntask_delete(struct ntask * task);
 
-#define ntask_state(a_task)  (a_task)->state
+void ntask_schedule(void);
 
-#if ((NTASK_WAIT_QUEUE_TYPE == NTASK_QUEUE_SQ) || \
-     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_SB) || \
-     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_FB))
-#define ntask_priority(a_task)   npqueue_priority(&(a_task)->node)
-#else
-#define ntask_priority(a_task)  (a_task)->prio
-#endif
+bool ntask_ready(struct ntask_wait_queue * queue, struct ntask * task);
 
-void ntask_looper(void);
-
-/** @brief      Do the scheduling and return if task switch is needed.
- *  @return     Is task switching needed?
- *  @retval     true - Task switching is needed.
- *  @retval     false - Task switching is not needed.
- */
-#define ntask_schedule()        g_task_schedule.switch_pending
-
-void ntask_ready(struct ntask_wait_queue * queue, struct ntask * task);
-
-void ntask_block(struct ntask_wait_queue * queue, struct ntask * task);
-
-#define ntask_terminate(a_task)    											\
-	ntask_block(&g_task_schedule.dormant, (a_task))
-
-#define ncurrent                g_task_schedule.current
-#define nerror                  ncurrent->tls.error
+bool ntask_block(struct ntask_wait_queue * queue, struct ntask * task);
 
 #ifdef __cplusplus
 }

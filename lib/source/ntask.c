@@ -4,49 +4,48 @@
 #include "bits/nbits.h"
 #include "error/nerror.h"
 #include "task/ntask.h"
+#include "mem/nmem_pool.h"
+
+struct ntask
+{
+	uint_fast8_t prio;
+    task_fn * fn;
+    void * arg;
+    enum ntask_state state;
+    struct ntask_local_storage
+    {
+        uint32_t error;
+    } tls;
+};
+
 
 struct ntask_schedule g_task_schedule;
 
-#if ((NTASK_WAIT_QUEUE_TYPE == NTASK_QUEUE_SQ) || \
-     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_SB) || \
-     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_FB))
-static struct ntask * task_from_node(struct npqueue * node)
+#define NMEM_DEFINE(array) \
+	.free = (struct nlist_sll *)array,
+
+static struct ntask task_mempool_storage[NCONFIG_TASK_INSTANCES];
+static struct nmem_pool task_mempool;
+
+struct ntask * ntask_create(task_fn * fn, void * arg, uint_fast8_t prio)
 {
-    return NPLATFORM_CONTAINER_OF(node, struct ntask, node);
-}
-#endif
+	struct ntask_schedule * ctx = &g_task_schedule;
+    struct ntask * task;
 
-void ntask_init(struct ntask * task, task_fn * fn, void * arg, 
-        uint_fast8_t prio)
-{
-    struct ntask_schedule * ctx = &g_task_schedule;
-    static bool is_initialized = false;
-
-    if (!is_initialized) {
-        is_initialized = true;
-
-#if ((NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_SB) || \
-     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_FB))
-        for (uint32_t i = 0u; i < NBITS_ARRAY_SIZE(ctx->queue.sentinel); i++) {
-            npqueue_sentinel_init(&ctx->queue.sentinel[i]);
-        }
-#else
-
-#endif
+    if (nmem_pool_is_initialized(&task_mempool) == false) {
+    	nmem_pool_init(&task_mempool,
+    			task_mempool_storage,
+    			sizeof(task_mempool_storage),
+				sizeof(task_mempool_storage[0]));
     }
+    task = nmem_pool_alloc(&task_mempool);
 
-    /* Adjust priority now according to avaialable priority groups or levels.
-     */
-#if ((NTASK_WAIT_QUEUE_TYPE == NTASK_QUEUE_SQ) || \
-     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_SB) || \
-     (NTASK_RDY_QUEUE_TYPE == NTASK_QUEUE_FB))
-    npqueue_init(&task->node, prio);
-#else
     task->prio = prio;
-#endif
     task->fn = fn;
     task->arg = arg;
     task->state = NTASK_DORMANT;
+
+    return task;
 }
 
 void ntask_term(struct ntask * task)

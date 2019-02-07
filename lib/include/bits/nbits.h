@@ -334,7 +334,7 @@ typedef narch_uint nbitarray_s;
  *              NARCH_DATA_WIDTH bits.
  *  @{
  */
-    
+
 typedef narch_uint nbitarray_x;
 
 #define NBITARRAY_DEF(bits)													\

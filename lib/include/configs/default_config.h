@@ -39,6 +39,10 @@ extern "C" {
 #define NCONFIG_FIBER_INSTANCES 32
 #endif
 
+#ifndef NCONFIG_TASK_INSTANCES
+#define NCONFIG_TASK_INSTANCES 8
+#endif
+
 #ifndef NCONFIG_EPA_INSTANCES
 #define NCONFIG_EPA_INSTANCES 32
 #endif

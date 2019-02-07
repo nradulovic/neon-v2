@@ -15,31 +15,39 @@
  * You should have received a copy of the GNU Lesser General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+/** @file
+ *  @author      Nenad Radulovic
+ *  @brief       Memory pools header
+ *
+ *  @addtogroup  mem
+ *  @{
+ */
+/** @defgroup    mem_pool Memory pool
+ *  @brief       Memory pool management
+ *  @{
+ */
+/*---------------------------------------------------------------------------*/
 
-#include "testsuite/ntestsuite.h"
-#include "task/ntask.h"
-#include "main.h"
 
-NTESTSUITE_TEST(test_init_state)
+#ifndef NMEM_POOL_H_
+#define NMEM_POOL_H_
+
+#include "list/nlist_sll.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+struct nmem_pool
 {
+	struct nlist_sll * free;
+};
+
+#ifdef __cplusplus
 }
+#endif
 
-NTESTSUITE_TEST(test_init_priority)
-{
-}
-
-NTESTSUITE_TEST(test_yield)
-{
-}
-
-void test_exec(void)
-{
-    NTESTSUITE_FIXTURE(none, NULL, NULL);
-
-    NTESTSUITE_RUN(none, test_init_state);
-    NTESTSUITE_RUN(none, test_init_priority);
-    NTESTSUITE_RUN(none, test_yield);
-    NTESTSUITE_PRINT_RESULTS(none);
-}
-
-
+/** @} */
+/** @} */
+/*---------------------------------------------------------------------------*/
+#endif /* NMEM_POOL_H_ */
