@@ -312,6 +312,8 @@ float nbits_u32tof(uint32_t val);
  *  @brief      Functions for manipulating NARCH_DATA_WIDTH-bit array.
  *  @{
  */
+
+#define NBITARRAY_S_MAX_SIZE        NARCH_DATA_WIDTH
  
 typedef narch_uint nbitarray_s;
 
@@ -337,8 +339,13 @@ typedef narch_uint nbitarray_s;
 
 typedef narch_uint nbitarray_x;
 
-#define NBITARRAY_DEF(bits)													\
+#define NBITARRAY_X_DEF(bits)												\
 	NBITS_DIVIDE_ROUNDUP((bits), NARCH_DATA_WIDTH) + 1
+
+/** @brief      Specifies the maximum number of bits in @a nbitarray_x array.
+ */
+#define NBITARRAY_X_MAX_SIZE                                                \
+    (NARCH_DATA_WIDTH * NARCH_DATA_WIDTH)
 
 void nbitarray_x_set(nbitarray_x * array, uint_fast8_t bit);
 void nbitarray_x_clear(nbitarray_x * array, uint_fast8_t bit);

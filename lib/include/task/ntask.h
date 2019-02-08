@@ -43,6 +43,9 @@
 extern "C" {
 #endif
 
+#define NTASK_PRIO_MAX          255
+#define NTASK_PRIO_MIN          0
+
 #define ncurrent                g_task_schedule.current
 
 #define nerror                  ncurrent->tls.error
@@ -56,29 +59,26 @@ enum ntask_state
     NTASK_UNINITIALIZED         = 0,
     NTASK_DORMANT               = 1,
     NTASK_READY                 = 2,
-    NTASK_BLOCKED               = 3
+    NTASK_CANCELLED             = 3,
+    NTASK_BLOCKED               = 4
 };
 
 /** @brief      Task ready queue
  */
-struct ntask_rdy_queue
+struct ntask_queue
 {
+#if (NCONFIG_TASK_INSTANCES <= NBITARRAY_S_MAX_SIZE)
+    nbitarray_s bitarray;
+#else
     nbitarray_x bitarray[NBITARRAY_DEF(NCONFIG_TASK_INSTANCES)];
-};
-
-/**
- * @brief       Task priority queue
- */
-struct ntask_wait_queue
-{
-    nbitarray_x bitarray[NBITARRAY_DEF(NCONFIG_TASK_INSTANCES)];
+#endif
 };
 
 struct ntask_schedule
 {
-    struct ntask_rdy_queue queue;
-    struct ntask_wait_queue dormant;
-    struct ntask * current;
+    struct ntask_queue ready;
+    struct ntask * current; /* Speed optimization, a pointer pointing to msbs
+                               of the ready queue. */
     struct ntask * sentinel[NCONFIG_TASK_INSTANCES];
 };
 
@@ -88,11 +88,15 @@ struct ntask * ntask_create(task_fn * fn, void * arg, uint_fast8_t prio);
 
 void ntask_delete(struct ntask * task);
 
+void ntask_start(struct ntask * task);
+
+void ntask_stop(struct ntask * task);
+
 void ntask_schedule(void);
 
-bool ntask_ready(struct ntask_wait_queue * queue, struct ntask * task);
+void ntask_ready(struct ntask_queue * queue);
 
-bool ntask_block(struct ntask_wait_queue * queue, struct ntask * task);
+void ntask_block(struct ntask_queue * queue);
 
 #ifdef __cplusplus
 }
