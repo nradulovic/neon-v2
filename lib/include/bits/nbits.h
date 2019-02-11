@@ -314,15 +314,15 @@ float nbits_u32tof(uint32_t val);
  */
 
 #define NBITARRAY_S_MAX_SIZE        NARCH_DATA_WIDTH
- 
+
 typedef narch_uint nbitarray_s;
 
 #define nbitarray_s_set(a_array, a_bit)                                     \
     narch_set_bit((a_array), (a_bit))
-    
+
 #define nbitarray_s_clear(a_array, a_bit)                                   \
     narch_clear_bit((a_array), (a_bit))
-    
+
 #define nbitarray_s_msbs(a_array)                                           \
     narch_log2(*(a_array))
 

@@ -20,12 +20,31 @@
 #include "task/ntask.h"
 #include "main.h"
 
-NTESTSUITE_TEST(test_init_state)
+static void task_fn(void * arg);
+
+static void task_fn(void * arg)
 {
+	(void)arg;
 }
 
-NTESTSUITE_TEST(test_init_priority)
+NTESTSUITE_TEST(test_init_state)
 {
+	struct ntask * task;
+
+	task = ntask_create(task_fn, NULL, 1);
+
+	NTESTSUITE_EXPECT_UINT(NTASK_DORMANT);
+	NTESTSUITE_ACTUAL_UINT(ntask_state(task));
+}
+
+NTESTSUITE_TEST(test_start_state)
+{
+	struct ntask * task;
+
+	task = ntask_create(task_fn, NULL, 1);
+
+	NTESTSUITE_EXPECT_UINT(NTASK_DORMANT);
+	NTESTSUITE_ACTUAL_UINT(ntask_state(task));
 }
 
 NTESTSUITE_TEST(test_yield)
@@ -37,7 +56,7 @@ void test_exec(void)
     NTESTSUITE_FIXTURE(none, NULL, NULL);
 
     NTESTSUITE_RUN(none, test_init_state);
-    NTESTSUITE_RUN(none, test_init_priority);
+    NTESTSUITE_RUN(none, test_start_state);
     NTESTSUITE_RUN(none, test_yield);
     NTESTSUITE_PRINT_RESULTS(none);
 }

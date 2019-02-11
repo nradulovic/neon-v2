@@ -46,11 +46,11 @@ extern "C" {
 #ifndef NCONFIG_EPA_INSTANCES
 #define NCONFIG_EPA_INSTANCES 32
 #endif
-    
+
 #ifndef NCONFIG_TASK_INSTANCES
 #define NCONFIG_TASK_INSTANCES 32
 #endif
-    
+
 #ifndef NCONFIG_TASK_PRIO_GROUPS
 #define NCONFIG_TASK_PRIO_GROUPS 32
 #endif
