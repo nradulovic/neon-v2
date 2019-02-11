@@ -22,11 +22,11 @@
 #include "bits/nbits.h"
 #include "main.h"
 
-static nbitarray_x g_instance[NBITARRAY_DEF(64)];
+static nbitarray_x g_instance[NBITARRAY_X_DEF(64)];
 
 NTESTSUITE_TEST(test_none_init)
 {
-    nbitarray_x a_instance[NBITARRAY_DEF(32)];
+    nbitarray_x a_instance[NBITARRAY_X_DEF(32)];
 
     /* NOTE:
      * Compile time test only. Ensure that the expected is equal to actual

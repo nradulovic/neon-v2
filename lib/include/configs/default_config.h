@@ -32,7 +32,7 @@ extern "C" {
 #endif
     
 #ifndef NCONFIG_ENABLE_DEBUG
-#define NCONFIG_ENABLE_DEBUG 0
+#define NCONFIG_ENABLE_DEBUG 1
 #endif
 
 #ifndef NCONFIG_FIBER_INSTANCES

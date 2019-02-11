@@ -32,11 +32,7 @@
 #ifndef NEON_MODULE_TASK_H_
 #define NEON_MODULE_TASK_H_
 
-#include <stdint.h>
-#include <stdbool.h>
-
 #include "configs/default_config.h"
-#include "queue/nqueue_pqueue.h"
 #include "bits/nbits.h"
 
 #ifdef __cplusplus
@@ -57,13 +53,13 @@ typedef void (task_fn)(void * arg);
 enum ntask_state
 {
     NTASK_UNINITIALIZED         = 0,
-    NTASK_DORMANT               = 1,
-    NTASK_READY                 = 2,
-    NTASK_CANCELLED             = 3,
-    NTASK_BLOCKED               = 4
+    NTASK_DORMANT               = 251,
+    NTASK_READY                 = 252,
+    NTASK_CANCELLED             = 253,
+    NTASK_BLOCKED               = 254
 };
 
-/** @brief      Task ready queue
+/** @brief      Task ready/wait queue
  */
 struct ntask_queue
 {

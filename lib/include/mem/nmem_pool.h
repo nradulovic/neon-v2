@@ -32,15 +32,25 @@
 #ifndef NMEM_POOL_H_
 #define NMEM_POOL_H_
 
+#include "bits/nbits.h"
 #include "list/nlist_sll.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-struct nmem_pool
+#define NMEM_STATIC_POOL_INITIALIZE(array) 									\
+	{ 																		\
+		.n_of_allocated = 0u,												\
+		.size = sizeof(array[0]),											\
+		.storage = &array[0],												\
+	}
+
+struct nmem_static_pool
 {
-	struct nlist_sll * free;
+	size_t n_of_allocated;
+	size_t size;
+	void * storage;
 };
 
 #ifdef __cplusplus

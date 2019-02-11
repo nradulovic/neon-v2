@@ -68,12 +68,50 @@ extern "C" {
  *  @api
  */
 #if (NDEBUG_IS_ENABLED == 1)
-#define NASSERT(expr)                                                         \
+#define NASSERT(expr)                                                        \
     if (!(expr)) {                                                           \
-    	NASSERT_ALWAYS(# expr);												\
+    	NASSERT_ALWAYS(# expr);												 \
     }
 #else
 #define NASSERT(expr)                   (void)0
+#endif
+
+/** @brief      Generic assert macro with action.
+ *  @param      msg
+ *              Message : a standard error message, see
+ *              @ref standard_error_messages.
+ *  @param      expr
+ *              Expression : C expression : condition which must be 'true'.
+ *  @param		action
+ *  			Expression : C expression : expression which will be executed
+ *  			when asser fails.
+ *  @api
+ */
+#define NASSERT_ACTION(expr, action)                                        \
+    if (!(expr)) {                                                          \
+    	NASSERT_ALWAYS_ACTION(# expr, action);								\
+    }
+
+/** @brief      Assert macro that will always execute (no conditional) with
+ *              action.
+ *  @param      msg
+ *              Message : a standard error message, see
+ *              @ref Standard error messages.
+ *  @param      text
+ *              Text : string : a text which will be printed when this assert
+ *              macro is executed.
+ *  @api
+ */
+#if (NDEBUG_IS_ENABLED == 1)
+#define NASSERT_ALWAYS_ACTION(text, action)                                 \
+    do {																	\
+    	nlogger_err("Failed assert %s at %s:%u in %s\n", text, 				\
+    		NPLATFORM_FUNC, NPLATFORM_LINE, NPLATFORM_FILE);				\
+    	action;																\
+    } while (0)
+#else
+#define NASSERT_ALWAYS_ACTION(text, action)    								\
+	action
 #endif
 
 /** @brief      Assert macro that will always execute (no conditional).
@@ -119,7 +157,14 @@ extern "C" {
  *              Expression : C expression : condition which must be 'true'.
  *  @api
  */
-#define NREQUIRE(expr)                   NASSERT(expr)
+#define NREQUIRE(expr)                  NASSERT(expr)
+
+/** @brief      Make sure the caller has fulfilled all contract preconditions
+ *  @param      expr
+ *              Expression : C expression : condition which must be 'true'.
+ *  @api
+ */
+#define NREQUIRE_ACTION(expr, action)   NASSERT_ACTION(expr, action)
 
 /** @brief      Make sure the callee has fulfilled all contract postconditions
  *  @param      expr
@@ -127,6 +172,13 @@ extern "C" {
  *  @api
  */
 #define NENSURE(expr)                   NASSERT(expr)
+
+/** @brief      Make sure the callee has fulfilled all contract postconditions
+ *  @param      expr
+ *              Expression : C expression : condition which must be 'true'.
+ *  @api
+ */
+#define NENSURE_ACTION(expr, action)    NASSERT_ACTION(expr, action)
 
 /**@} */
 /*---------------------------------------------------------------------------*/
@@ -162,7 +214,7 @@ extern "C" {
 #define NSIGNATURE_DEFER                    ((unsigned int)0xdeadfeefu)
 
 #if (NDEBUG_IS_ENABLED == 1)
-#define NSIGNATURE_DECLARE                     int _signature;
+#define NSIGNATURE_DECLARE                     unsigned int _signature;
 #define NSIGNATURE_INITIALIZER(signature)   ._signature = signature,
 #else
 #define NSIGNATURE_DECLARE
