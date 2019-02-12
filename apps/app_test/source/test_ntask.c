@@ -41,7 +41,7 @@ NTESTSUITE_TEST(test_start_state)
 {
 	struct ntask * task;
 
-	task = ntask_create(task_fn, NULL, 1);
+	task = ntask_create(task_fn, NULL, 2);
 
 	NTESTSUITE_EXPECT_UINT(NTASK_DORMANT);
 	NTESTSUITE_ACTUAL_UINT(ntask_state(task));
