@@ -180,6 +180,14 @@ void ntask_start(struct ntask * task)
     task->state = NTASK_READY;
 }
 
+/*
+ * 1. If a task is in ready queue then just remove it from the queue.
+ * 2. If a task is blocked (waiting on something) it will be invoked with
+ *    current state set to NTASK_CANCELED so blocking code can distinguish this
+ *    use case and unblock the task in order to terminate itself.
+ * 3. If a task is already canceled then just do nothing.
+ * 4. The task state is updated to NTASK_DORMANT.
+ */
 void ntask_stop(struct ntask * task)
 {
 	NREQUIRE(NSIGNATURE_OF(task) == NSIGNATURE_THREAD);
@@ -187,37 +195,29 @@ void ntask_stop(struct ntask * task)
 	NREQUIRE(task->state != NTASK_DORMANT);
 
     switch (task->state) {
-        case NTASK_UNINITIALIZED:
-        case NTASK_DORMANT: {
-            /* error */
-            return;
-        }
         case NTASK_READY: {
             struct ntask_schedule * ctx = &g_task_schedule;
                   /* Remove from ready queue only if scheduler has been already
                    * started.
                    */
-            if (ctx->current) {
-                                             /* Remove task from ready queue */
+            if (ctx->current) {                                         /* 1 */
             	queue_remove(&ctx->ready, task->prio);
             }
             break;
         }
-        case NTASK_CANCELLED: {
-                                      /* It can happen, no error, just exit. */
-            return;
-        }
         case NTASK_BLOCKED: {
-            task->state = NTASK_CANCELLED;
-                                 /* Give the task a chance to cancel itself. */
+            task->state = NTASK_CANCELLED;                              /* 2 */
             dispatch(task);
             break;
         }
+        default:
+            return;                                                     /* 3 */
     }
-                                                        /* Update task state */
-    task->state = NTASK_DORMANT;
+    task->state = NTASK_DORMANT;                                        /* 4 */
 }
 
+/*
+ */
 void ntask_schedule(void)
 {
     struct ntask_schedule * ctx = &g_task_schedule;
