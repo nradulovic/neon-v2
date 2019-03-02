@@ -21,7 +21,7 @@
 # it just creates dummy BSP implementation to satisfy linking.
 
 # Additional MCU description
-BUILD_MCU_DESC := "PIC18F45K22 MCU"
+BUILD_MCU_DESC := PIC18F45K22
 
 # Includes and sources
 CC_SOURCES += lib/va_source/nport_mcu_generic.c

@@ -53,12 +53,6 @@ DEF_DOX_PROJECT  = documentation/$(MOD_NAME)_doxyfile
 DEF_DOX_BASE     = $(WS)/documentation/base_doxyfile
 DEF_DOXYFILE	 = $(DEF_DOX_O)/doxyfile
 
-# Builder helper variables
-OBJECTS          = $(patsubst %.c,$(DEF_BUILD_DIR)/%.o,$(CC_SOURCES))
-OBJECTS         += $(patsubst %.S,$(DEF_BUILD_DIR)/%.o,$(AS_SOURCES))
-DEPENDS          = $(patsubst %.o,%.d,$(OBJECTS))
-PREPROCESSED     = $(patsubst %.o,%.i,$(OBJECTS))
-
 # Common build variables
 DEF_BUILD_DIR   = generated
 DEF_PACK_DIR    = packed
@@ -79,10 +73,10 @@ CC_CONFIG_FILE = $(DEF_BUILD_DIR)/neon_config.h
 V ?= 0
 ifeq ("$(V)","1")
 VERBOSE         := # Empty space
-PRINT           := @true # Empty space
+print           := # Empty space
 else ifeq ("$(V)","0")
 VERBOSE         := @ # Empty space
-PRINT           := @echo # Empty space
+print		 = $(call echo,$(1))
 MAKEFLAGS       += -s
 else
 $(error Specify either `V=0` or `V=1`)
@@ -91,92 +85,93 @@ endif
 # This is the default target
 .PHONY: all
 all:
+	
+.PHONY: build
+build:
 
 .PHONY: clean
 clean:
 
 .PHONY: clean-objects
-clean-objects: 
-	$(VERBOSE)rm -f $(OBJECTS) $(DEPENDS)
+clean-objects:
+	$(VERBOSE)$(call rm, $(OBJECTS) $(DEPENDS))
+	$(call print,Deleted $(PROJECT_NAME) objects and depends)
 
 .PHONY: config
 config: $(CC_CONFIG_FILE)
 
 $(CC_CONFIG_FILE): $(WS)/$(PROJECT_CONFIG)
-	$(PRINT) Using Application config: $(PROJECT_CONFIG)
-	$(VERBOSE)mkdir -p $(dir $@)
-	$(VERBOSE)cp $< $@
+	$(VERBOSE)$(call mkdir, $(dir $@))
+	$(VERBOSE)$(call cp, $< $@)
+	$(call print,Generated $(PROJECT_NAME) project configuration from $(PROJECT_CONFIG))
 
 .PHONY: config-clean
 config-clean:
-	$(VERBOSE)rm -f $(CC_CONFIG_FILE)
+	$(VERBOSE)$(call rm, $(CC_CONFIG_FILE))
+	$(call print,Deleted $(PROJECT_NAME) configuration file)
 	
 .PHONY: documentation
 documentation: html pdf 
 
 .PHONY: documentation-clean
 documentation-clean: html-clean pdf-clean
-	$(VERBOSE)rm -rf $(DEF_DOX_O)
-	$(PRINT) "Documentation cleaned up"
-
-.PHONY: html
-html: $(DEF_DOXYFILE)
-	@echo "GENERATE_HTML = YES" >> $(DEF_DOXYFILE)
-	$(PRINT) "Generating HTML documentation..."
-	$(VERBOSE)doxygen $< >/dev/null
-	@echo
-	$(PRINT) "HTML generated in $(DEF_DOX_O)/$(DEF_DOX_HTML_O)"
-
-.PHONY: clean-lib
-clean-lib: clean-objects
-	$(PRINT) "Cleaning library..."
-	$(VERBOSE)rm -rf $(PROJECT_LIB)
-
-.PHONY: clean-elf
-clean-elf: clean-lib
-	$(PRINT) "Cleaning executable..."
-	$(VERBOSE)rm -rf $(PROJECT_ELF)
-
-.PHONY: clean-size
-clean-size: clean-elf
-	$(PRINT) "Cleaning size report..."
-	$(VERBOSE)rm -rf $(PROJECT_SIZE)
-
-.PHONY: clean-flash
-clean-flash: clean-elf
-	$(PRINT) "Cleaning flash binary file..."
-	$(VERBOSE)rm -rf $(PROJECT_FLASH)
-
-.PHONY: html-clean
-html-clean:
-	$(PRINT) "Cleaning HTML documentation..."
-	$(VERBOSE)rm -rf $(DEF_DOX_O)/$(DEF_DOX_HTML_O)
+	$(VERBOSE)$(call rmdir, $(DEF_DOX_O))
+	$(call print,Deleted all documentation in $(PROJECT_NAME):$(DEF_DOX_O))
 
 .PHONY: pdf
 pdf: $(DEF_DOXYFILE)
-	@echo "GENERATE_LATEX = YES" >> $(DEF_DOXYFILE)	
-	$(PRINT) "Generating PDF documentation..."
-	$(VERBOSE)doxygen $< >/dev/null
+	$(VERBOSE)$(call echo,GENERATE_LATEX = YES) >> $(DEF_DOXYFILE)	
+	$(VERBOSE)$(call doxygen $<)
 	$(VERBOSE)$(MAKE) -C $(DEF_DOX_O)/$(DEF_DOX_LATEX_O)
-	@echo
-	$(PRINT) "PDF generated in $(DEF_DOX_O)/$(DEF_DOX_LATEX_O)"
+	$(call print,Generated $(PROJECT_NAME) PDF documentation in $(DEF_DOX_O)/$(DEF_DOX_LATEX_O))
+
+.PHONY: html
+html: $(DEF_DOXYFILE)
+	$(VERBOSE)$(call echo, GENERATE_HTML = YES) >> $(DEF_DOXYFILE)
+	$(VERBOSE)$(call doxygen $<)
+	$(call print,Generated $(PROJECT_NAME) HTML documentation in $(DEF_DOX_O)/$(DEF_DOX_HTML_O))
+
+.PHONY: clean-lib
+clean-lib: clean-objects
+	$(VERBOSE)$(call rm, $(PROJECT_LIB))
+	$(call print,Deleted $(PROJECT_NAME) library)
+
+.PHONY: clean-elf
+clean-elf: clean-lib
+	$(VERBOSE)$(call rm, $(PROJECT_ELF))
+	$(call print,Deleted $(PROJECT_NAME) executable)
+
+.PHONY: clean-size
+clean-size: clean-elf
+	$(VERBOSE)$(call rm, $(PROJECT_SIZE))
+	$(call print,Deleted $(PROJECT_NAME) executable size report)
+
+.PHONY: clean-flash
+clean-flash: clean-elf
+	$(VERBOSE)$(call rm, $(PROJECT_FLASH))
+	$(call print,Deleted $(PROJECT_NAME) flash binary)
 
 .PHONY: pdf-clean
 pdf-clean:
-	$(PRINT) "Cleaning PDF documentation..."
-	$(VERBOSE)rm -rf $(DEF_DOX_O)/$(DEF_DOX_LATEX_O)
+	$(VERBOSE)$(call rmdir, $(DEF_DOX_O)/$(DEF_DOX_LATEX_O))
+	$(call print,Deleted $(PROJECT_NAME) PDF documentation)
+
+.PHONY: html-clean
+html-clean:
+	$(VERBOSE)$(call rmdir, $(DEF_DOX_O)/$(DEF_DOX_HTML_O))
+	$(call print,Deleted $(PROJECT_NAME) HTML documentation)
 
 .PHONY: $(DEF_DOXYFILE)
 $(DEF_DOXYFILE): $(DEF_DOX_PROJECT) $(DEF_DOX_BASE)
-	$(PRINT) "Generating Doxyfile..."
-	@mkdir -p $(dir $@)
-	@cat $(DEF_DOX_BASE) > $@
-	@cat $(DEF_DOX_PROJECT) >> $@
-	@echo "PROJECT_NUMBER = '$(GIT_VERSION)'" >> $@
-	@echo "OUTPUT_DIRECTORY = $(DEF_DOX_O)" >> $@
-	@echo "HTML_OUTPUT = $(DEF_DOX_HTML_O)" >> $@
-	@echo "LATEX_OUTPUT = $(DEF_DOX_LATEX_O)" >> $@
-
+	$(VERBOSE)$(call mkdir, $(dir $@))
+	$(VERBOSE)cat $(DEF_DOX_BASE) > $@
+	$(VERBOSE)cat $(DEF_DOX_PROJECT) >> $@
+	$(VERBOSE)$(call echo,PROJECT_NUMBER = '$(GIT_VERSION)') >> $@
+	$(VERBOSE)$(call echo,OUTPUT_DIRECTORY = $(DEF_DOX_O)) >> $@
+	$(VERBOSE)$(call echo,HTML_OUTPUT = $(DEF_DOX_HTML_O)) >> $@
+	$(VERBOSE)$(call echo,LATEX_OUTPUT = $(DEF_DOX_LATEX_O)) >> $@
+	$(call print,Generated $(PROJECT_NAME) doxyfile)
+	
 .PHONY: help
 help:
 	@echo "Neon Makefile help for module '$(MOD_NAME)'"
@@ -251,16 +246,17 @@ cc_defines:
 
 .PHONY: package
 package: config
-	$(VERBOSE)for p in $(CC_INCLUDES); \
-    do \
+	$(VERBOSE)for p in $(CC_INCLUDES);\
+	do \
         dirs=$$(dirname $$(find $${p} -name *.h)); \
-        mkdir -pv $(DEF_PACK_DIR)/$${dirs}; \
-        cp -vr $(WS)/$${dirs} $(DEF_PACK_DIR)/$${p};\
-    done
-	$(VERBOSE)for file in $(CC_SOURCES); do \
-        mkdir -pv $$(dirname $(DEF_PACK_DIR)/$${file}); \
-        cp -v $(WS)/$${file} $(DEF_PACK_DIR)/$${file};\
-    done
+        $(NPORT_HOST_OS_MKDIR) $(DEF_PACK_DIR)/$${dirs}; \
+        $(NPORT_HOST_OS_CP) $(WS)/$${dirs} $(DEF_PACK_DIR)/$${p};\
+	done
+	$(VERBOSE)for file in $(CC_SOURCES);\
+	do \
+        $(NPORT_HOST_OS_MKDIR) $$(dirname $(DEF_PACK_DIR)/$${file}); \
+        $(NPORT_HOST_OS_CP) $(WS)/$${file} $(DEF_PACK_DIR)/$${file};\
+	done
 	$(VERBOSE)echo "Compiler flags  : " $(CC_FLAGS) > $(DEF_PACK_DIR)/settings.txt
 	$(VERBOSE)echo "Compiler defines: " $(CC_DEFINES) >> $(DEF_PACK_DIR)/settings.txt
 	$(VERBOSE)echo "Linker flags    : " $(LD_FLAGS) >> $(DEF_PACK_DIR)/settings.txt
@@ -269,16 +265,10 @@ package: config
 # Common library defines/includes/sources
 #
 
-# Add common library defines
-NCONFIG_GIT_VERSION := "$(shell git describe --abbrev=7 --always --dirty --tags 2>/dev/null || echo unknown)"
-
 # Add common library include folder
 CC_INCLUDES += lib/include
 
-# Add generated folder include folder
+# Add generated folder to include paths
 CC_INCLUDES += $(PROJECT_DIR)/$(DEF_BUILD_DIR)
-
-# Common defines for the library
-CC_DEFINES += NCONFIG_GIT_VERSION=\"$(NCONFIG_GIT_VERSION)\"
 
 endif

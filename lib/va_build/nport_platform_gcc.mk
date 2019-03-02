@@ -19,6 +19,12 @@
 # Platform description
 BUILD_PLATFORM_DESC = "GCC, the GNU Lesser Compiler Collection"
 
+# Builder helper variables
+OBJECTS          = $(patsubst %.c,$(DEF_BUILD_DIR)/%.o,$(CC_SOURCES))
+OBJECTS         += $(patsubst %.S,$(DEF_BUILD_DIR)/%.o,$(AS_SOURCES))
+DEPENDS          = $(patsubst %.o,%.d,$(OBJECTS))
+PREPROCESSED     = $(patsubst %.o,%.i,$(OBJECTS))
+
 CC_INCLUDES += lib/va_include/nport/platform_gcc
 CC_SOURCES += lib/va_source/nport_platform_gcc.c
 CC_FLAGS += -std=c99 -fmessage-length=0
@@ -36,39 +42,39 @@ AR              = $(PREFIX)ar
 
 # Rule to compile C sources to object files.
 $(DEF_BUILD_DIR)/%.o: $(WS)/%.c
-	$(PRINT) " [CC]: $@"
-	$(VERBOSE)mkdir -p $(dir $@)
+	$(call print, [CC]: $@)
+	$(VERBOSE)$(call mkdir, $(dir $@))
 	$(VERBOSE)$(CC) $(CC_FLAGS) \
-        $(addprefix -D, $(CC_DEFINES)) \
-        $(addprefix -I$(WS)/, $(CC_INCLUDES)) \
-        -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" \
-        -o $@ \
-        -c $<
+	    $(addprefix -D, $(CC_DEFINES)) \
+	    $(addprefix -I$(WS)/, $(CC_INCLUDES)) \
+	    -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" \
+	    -o $@ \
+	    -c $<
 
 # Rule to compile C sources to preprocessed files.
 $(DEF_BUILD_DIR)/%.i: $(WS)/%.c
-	$(PRINT) " [CC]: $@"
-	$(VERBOSE)mkdir -p $(dir $@)
+	$(call print, [CP]: $@)
+	$(VERBOSE)$(call mkdir, $(dir $@))
 	$(VERBOSE)$(CC) $(CC_FLAGS) \
-        $(addprefix -D, $(CC_DEFINES)) \
-        $(addprefix -I$(WS)/, $(CC_INCLUDES)) \
-        -o $@ \
-        -E $<
+	    $(addprefix -D, $(CC_DEFINES)) \
+	    $(addprefix -I$(WS)/, $(CC_INCLUDES)) \
+	    -o $@ \
+	    -E $<
 
 # Rule to compile Assembly sources to preprocessed files.
 $(DEF_BUILD_DIR)/%.i: $(WS)/%.S
-	$(PRINT) " [AS]: $@"
-	$(VERBOSE)mkdir -p $(dir $@)
+	$(call print, [AP]: $@)
+	$(VERBOSE)$(call mkdir, $(dir $@))
 	$(VERBOSE)$(CC) $(CC_FLAGS) \
-        $(addprefix -D, $(CC_DEFINES)) \
-        $(addprefix -I$(WS)/, $(CC_INCLUDES)) \
-        -o $@ \
-        -E $<
+	    $(addprefix -D, $(CC_DEFINES)) \
+	    $(addprefix -I$(WS)/, $(CC_INCLUDES)) \
+	    -o $@ \
+	    -E $<
 
 # Rule to compile Assembly sources to object files.
 $(DEF_BUILD_DIR)/%.o: $(WS)/%.S
-	$(PRINT) " [AS]: $@"
-	$(VERBOSE)mkdir -p $(dir $@)
+	$(call print, [AS]: $@)
+	$(VERBOSE)$(call mkdir, $(dir $@))
 	$(VERBOSE)$(CC) $(CC_FLAGS) \
         $(addprefix -D, $(CC_DEFINES)) \
         $(addprefix -I$(WS)/, $(CC_INCLUDES)) \
@@ -78,24 +84,24 @@ $(DEF_BUILD_DIR)/%.o: $(WS)/%.S
 
 # Rule to link object files to library.
 %.a:
-	$(PRINT) " [AR]: $@"
+	$(call print, [AR]: $@)
 	$(VERBOSE)$(AR) rcs $(AR_FLAGS) $@ \
-        $^ \
-        $(AR_LIBS)
+	    $^ \
+	    $(AR_LIBS)
 
 # Rule to link object files to ELF executable.
 %.elf: $(LD_LIBS) $(AR_LIBS)
-	$(PRINT) " [LD]: $@"
+	$(call print, [LD]: $@)
 	$(VERBOSE)$(LD) $(LD_FLAGS) -o $@ -Xlinker $^ $(LD_LIBS) $(AR_LIBS)
 
 # Rule to generate HEX file from ELF executable.
 %.hex:
-	$(PRINT) " [OBJCOPY]: $@"
+	$(call print, [OBJCOPY]: $@)
 	$(VERBOSE)$(OBJCOPY) -O $(FLASH_FORMAT) $< $@
 
 # Rule to generate size report from ELF executable.
 %.siz:
-	$(PRINT) " [SIZE]: $@"
+	$(call print, [SIZE]: $@)
 	$(VERBOSE)$(SIZE) --format=$(SIZ_FORMAT) $< > $@
 	$(VERBOSE)cat $@
 

@@ -16,8 +16,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NEON_DEFAULT_CONFIG_H_
-#define NEON_DEFAULT_CONFIG_H_
+#ifndef NEON_CONFIG_DEFAULT_H_
+#define NEON_CONFIG_DEFAULT_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -78,4 +78,4 @@ extern "C" {
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_DEFAULT_CONFIG_H_ */
+#endif /* NEON_CONFIG_DEFAULT_H_ */

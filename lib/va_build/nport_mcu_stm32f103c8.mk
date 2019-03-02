@@ -29,7 +29,7 @@
 #
 
 # Additional MCU description
-BUILD_MCU_DESC := "STM32F103C8"
+BUILD_MCU_DESC := STM32F103C8
 
 # Includes and sources
 CC_SOURCES += lib/va_source/nport_mcu_generic.c

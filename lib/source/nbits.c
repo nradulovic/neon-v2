@@ -46,8 +46,8 @@ void nbitarray_x_set(nbitarray_x * array, uint_fast8_t bit)
 
 	group = (uint_fast8_t)((bit / 32) + 1u);
 	pos = bit % NARCH_DATA_WIDTH;
-	narch_set_bit(&array[group], pos);
-	narch_set_bit(&array[0], (uint_fast8_t)(group - 1u));
+	array[group] |= 0x1u << pos;
+	array[0] |= 0x1u << (group - 1u);
 }
 
 void nbitarray_x_clear(nbitarray_x * array, uint_fast8_t bit)
@@ -58,10 +58,10 @@ void nbitarray_x_clear(nbitarray_x * array, uint_fast8_t bit)
 	group = bit / NARCH_DATA_WIDTH;
 	pos = bit % NARCH_DATA_WIDTH;
 
-	narch_clear_bit(&array[group + 1u], pos);
+	array[group + 1u] &= ~(0x1u << pos);
 
 	if (array[group + 1u] == 0u) {
-		narch_clear_bit(&array[0], group);
+        array[0] &= ~(0x1u << group);
 	}
 }
 

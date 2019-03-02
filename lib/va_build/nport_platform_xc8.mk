@@ -22,43 +22,59 @@ BUILD_PLATFORM_DESC = "Microchip XC8"
 CC_INCLUDES += lib/va_include/nport/platform_xc8
 # CC_SOURCES += lib/va_source/nport_platform_xc8.c
 
-# Rule to compile C sources to object files.
-$(DEF_BUILD_DIR)/%.o: $(WS)/%.c
-	$(PRINT) " [CC]: $@"
-	$(VERBOSE)echo "Building with Microchip XC8 is not supported."
+# Builder helper variables
+OBJECTS          = $(patsubst %.c,$(DEF_BUILD_DIR)/%.o,$(CC_SOURCES))
+OBJECTS         += $(patsubst %.S,$(DEF_BUILD_DIR)/%.o,$(AS_SOURCES))
+DEPENDS          = $(patsubst %.o,%.d,$(OBJECTS))
+PREPROCESSED     = $(patsubst %.o,%.i,$(OBJECTS))
+
+# Convert compiler agnostic MCU layer information about used MCU to XC8 
+# tool-chain MCU naming scheme. Compiler XC8 tool-chain expects the same string
+# but with PIC part stripped.
+CC_FLAGS += -mcpu=$(BUILD_MCU_DESC:PIC%=%) 
 
 # Rule to compile C sources to preprocessed files.
 $(DEF_BUILD_DIR)/%.i: $(WS)/%.c
-	$(PRINT) " [CC]: $@"
-	$(VERBOSE)echo "Building with Microchip XC8 is not supported."
+	$(call print, [CP]: $@)
+	$(VERBOSE)echo xc8-cc -mcpu
+
+# Rule to compile C sources to object files.
+$(DEF_BUILD_DIR)/%.o: $(WS)/%.c
+	$(call print, [CC]: $@)
+	$(VERBOSE)$(call mkdir, $(dir $@))
+	$(VERBOSE)xc8-cc $(CC_FLAGS) \
+	$(addprefix -D, $(CC_DEFINES)) \
+        $(addprefix -I$(WS)/, $(CC_INCLUDES)) \
+	-o $@ \
+        -c $<
 
 # Rule to compile Assembly sources to preprocessed files.
 $(DEF_BUILD_DIR)/%.i: $(WS)/%.S
-	$(PRINT) " [AS]: $@"
-	$(VERBOSE)echo "Building with Microchip XC8 is not supported."
+	$(call print, [AP]: $@)
+	$(VERBOSE)$(call echo, Building with Microchip XC8 is not supported)
 
 # Rule to compile Assembly sources to object files.
 $(DEF_BUILD_DIR)/%.o: $(WS)/%.S
-	$(PRINT) " [AS]: $@"
-	$(VERBOSE)echo "Building with Microchip XC8 is not supported."
+	$(call print, [AS]: $@)
+	$(VERBOSE)$(call echo, Building with Microchip XC8 is not supported)
 
 # Rule to link object files to library.
 %.a:
-	$(PRINT) " [AR]: $@"
-	$(VERBOSE)echo "Building with Microchip XC8 is not supported."
+	$(call print, [AR]: $@)
+	$(VERBOSE)$(call echo, Building with Microchip XC8 is not supported)
 
 # Rule to link object files to ELF executable.
 %.elf: $(LD_LIBS) $(AR_LIBS)
-	$(PRINT) " [LD]: $@"
-	$(VERBOSE)echo "Building with Microchip XC8 is not supported."
+	$(call print, [LD]: $@)
+	$(VERBOSE)$(call echo, Building with Microchip XC8 is not supported)
 
 # Rule to generate HEX file from ELF executable.
 %.hex:
-	$(PRINT) " [OBJCOPY]: $@"
-	$(VERBOSE)echo "Building with Microchip XC8 is not supported."
+	$(call print, [OBJCOPY]: $@)
+	$(VERBOSE)$(call echo, Building with Microchip XC8 is not supported)
 
 # Rule to generate size report from ELF executable.
 %.siz:
-	$(PRINT) " [SIZE]: $@"
-	$(VERBOSE)echo "Building with Microchip XC8 is not supported."
+	$(call print, [SIZE]: $@)
+	$(VERBOSE)$(call echo, Building with Microchip XC8 is not supported)
 
