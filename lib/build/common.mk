@@ -84,7 +84,7 @@ endif
 
 # This is the default target
 .PHONY: all
-all:
+all: build
 	
 .PHONY: build
 build:
@@ -218,49 +218,17 @@ help:
 	@echo "  make PLATFORM=$(PLATFORM) ARCH=$(ARCH) CC_FLAGS='-pedantic' V=1"
 	@echo
 
-.PHONY: cc_include_paths
-cc_include_paths:
-ifdef NEON_ROOT
-	$(foreach i,$(CC_INCLUDES),$(info $(NEON_ROOT)/$(i)))
-else
-	$(foreach i,$(CC_INCLUDES),$(info $(WS)/$(i)))
-endif
+.PHONY: recipe
+recipe: config
+	$(VERBOSE)echo "PREFIX: " $(PREFIX)
+	$(VERBOSE)echo "PROJECT_CONFIG: " $(WS)/$(PROJECT_CONFIG)
+	$(VERBOSE)echo "CC_INCLUDES: " $(addprefix $(WS)/, $(CC_INCLUDES))
+	$(VERBOSE)echo "CC_FLAGS: " $(CC_FLAGS)
+	$(VERBOSE)echo "CC_DEFINES: " $(CC_DEFINES)
+	$(VERBOSE)echo "CC_SOURCES: " $(CC_SOURCES)
+	$(VERBOSE)echo "LD_FLAGS: " $(LD_FLAGS)
+	$(VERBOSE)echo "LD_LIBS: " $(LD_LIBS)
 
-.PHONY: cc_sources
-cc_sources:
-ifdef NEON_ROOT
-	$(foreach i,$(CC_SOURCES),$(info $(NEON_ROOT)/$(i)))
-	$(foreach i,$(AS_SOURCES),$(info $(NEON_ROOT)/$(i)))
-else
-	$(foreach i,$(CC_SOURCES),$(info $(WS)/$(i)))
-	$(foreach i,$(AS_SOURCES),$(info $(WS)/$(i)))
-endif
-
-.PHONY: cc_flags
-cc_flags:
-	$(foreach i,$(CC_FLAGS),$(info $(i)))
-
-.PHONY: cc_defines
-cc_defines:
-	$(foreach i,$(CC_DEFINES),$(info $(i)))
-
-.PHONY: package
-package: config
-	$(VERBOSE)for p in $(CC_INCLUDES);\
-	do \
-        dirs=$$(dirname $$(find $${p} -name *.h)); \
-        $(NPORT_HOST_OS_MKDIR) $(DEF_PACK_DIR)/$${dirs}; \
-        $(NPORT_HOST_OS_CP) $(WS)/$${dirs} $(DEF_PACK_DIR)/$${p};\
-	done
-	$(VERBOSE)for file in $(CC_SOURCES);\
-	do \
-        $(NPORT_HOST_OS_MKDIR) $$(dirname $(DEF_PACK_DIR)/$${file}); \
-        $(NPORT_HOST_OS_CP) $(WS)/$${file} $(DEF_PACK_DIR)/$${file};\
-	done
-	$(VERBOSE)echo "Compiler flags  : " $(CC_FLAGS) > $(DEF_PACK_DIR)/settings.txt
-	$(VERBOSE)echo "Compiler defines: " $(CC_DEFINES) >> $(DEF_PACK_DIR)/settings.txt
-	$(VERBOSE)echo "Linker flags    : " $(LD_FLAGS) >> $(DEF_PACK_DIR)/settings.txt
-	
 #
 # Common library defines/includes/sources
 #

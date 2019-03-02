@@ -17,8 +17,8 @@
 # Include configurable nport feature makefiles
 include $(NPORT_FEATURES)
 
-# Define ALL rule.
-all: config $(PROJECT_FLASH) $(PROJECT_SIZE)
+# Define build rule.
+build: config $(PROJECT_FLASH) $(PROJECT_SIZE)
 
 clean: clean-flash clean-size config-clean
 

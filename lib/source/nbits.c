@@ -19,6 +19,7 @@
 #include <string.h>
 #include <limits.h>
 
+/* @package */
 #include "bits/nbits.h"
 
 uint32_t nbits_ftou32(float val)

@@ -45,20 +45,20 @@ test: $(TEST_TARGETS)
 
 .PHONY: $(BUILD_TARGETS)
 $(BUILD_TARGETS):
-	$(MAKE) -C $(@:%-build=%) build
+	@$(MAKE) -C $(@:%-build=%) build
 
 .PHONY: $(CLEAN_TARGETS)
 $(CLEAN_TARGETS):
-	$(MAKE) -C $(@:%-clean=%) clean
+	@$(MAKE) -C $(@:%-clean=%) clean
 	
 .PHONY: $(DISTCLEAN_TARGETS)
 $(DISTCLEAN_TARGETS):
-	$(MAKE) -C $(@:%-distclean=%) distclean
+	@$(MAKE) -C $(@:%-distclean=%) distclean
 
 .PHONY: $(CONFIG_TARGETS)
 $(CONFIG_TARGETS):
-	$(MAKE) -C $(@:%-config=%) config
+	@$(MAKE) -C $(@:%-config=%) config
 	
 .PHONY: $(TEST_TARGETS)
 $(TEST_TARGETS):
-	$(MAKE) -C $(@:%-test=%) test
+	@$(MAKE) -C $(@:%-test=%) test

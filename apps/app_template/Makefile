@@ -39,11 +39,11 @@ include $(WS)/lib/build/nerror.mk
 include $(WS)/lib/build/ntask.mk
 
 # List additional C header include paths.
-# CC_INCLUDES += $(PROJECT_DIR)/include
+CC_INCLUDES += $(PROJECT_DIR)/include
 
 # List application C source files. Files which are not listed here will not be
 # compiled.
-# CC_SOURCES += $(PROJECT_DIR)/source/main.c
+CC_SOURCES += $(PROJECT_DIR)/source/main.c
 
 # List additional archives. Use this when using an external static archive.
 AR_LIBS +=
@@ -55,7 +55,7 @@ LD_LIBS +=
 include $(NPORT_FEATURES)
 
 # Define build rule.
-build: config $(PROJECT_LIB)
+build: config $(PROJECT_ELF)
 
 clean: clean-size clean-flash config-clean
 
