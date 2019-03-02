@@ -35,7 +35,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "configs/default_config.h"
+#include "configs/nconfig_default.h"
 #include "queue/nqueue_pqueue.h"
 #include "bits/nbits.h"
 

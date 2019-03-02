@@ -36,7 +36,7 @@
 
 #include "logger/nlogger.h"
 #include "list/nlist_sll.h"
-#include "configs/default_config.h"
+#include "configs/nconfig_default.h"
 
 #ifdef __cplusplus
 extern "C" {

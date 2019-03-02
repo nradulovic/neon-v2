@@ -14,26 +14,51 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-TARGETS := narch nbits nbits_bitarray nlist_dll nlist_sll nqueue_lqueue
-TARGETS += nqueue_pqueue ntask ntask_fiber ndebug_enabled ndebug_disabled
+SUBDIRS := narch nbits nbits_bitarray nlist_dll nlist_sll nqueue_lqueue
+SUBDIRS += nqueue_pqueue ntask ntask_fiber ndebug_enabled ndebug_disabled
+
+BUILD_TARGETS     := $(addsuffix -build,     $(SUBDIRS))
+CLEAN_TARGETS     := $(addsuffix -clean,     $(SUBDIRS))
+DISTCLEAN_TARGETS := $(addsuffix -distclean, $(SUBDIRS))
+CONFIG_TARGETS    := $(addsuffix -config,    $(SUBDIRS))
+TEST_TARGETS      := $(addsuffix -test,      $(SUBDIRS))
+	
+# Generic rules
 
 .PHONY: all
-all: 
-	@for t in $(TARGETS); do $(MAKE) -C $$t all || exit; done
-
+all: build
+	
+.PHONY: build
+build: $(BUILD_TARGETS)
+ 
 .PHONY: clean
-clean:
-	@for t in $(TARGETS); do $(MAKE) -C $$t clean || exit; done
+clean: $(CLEAN_TARGETS)
 
 .PHONY: distclean
-distclean:
-	@for t in $(TARGETS); do $(MAKE) -C $$t distclean || exit; done
-
+distclean: $(DISTCLEAN_TARGETS)
+	
 .PHONY: config
-config:
-	@for t in $(TARGETS); do $(MAKE) -C $$t config || exit; done
+config: $(CONFIG_TARGETS)
 
 .PHONY: test
-test: 
-	@for t in $(TARGETS); do $(MAKE) -C $$t test || exit; done
+test: $(TEST_TARGETS)
 
+.PHONY: $(BUILD_TARGETS)
+$(BUILD_TARGETS):
+	$(MAKE) -C $(@:%-build=%) build
+
+.PHONY: $(CLEAN_TARGETS)
+$(CLEAN_TARGETS):
+	$(MAKE) -C $(@:%-clean=%) clean
+	
+.PHONY: $(DISTCLEAN_TARGETS)
+$(DISTCLEAN_TARGETS):
+	$(MAKE) -C $(@:%-distclean=%) distclean
+
+.PHONY: $(CONFIG_TARGETS)
+$(CONFIG_TARGETS):
+	$(MAKE) -C $(@:%-config=%) config
+	
+.PHONY: $(TEST_TARGETS)
+$(TEST_TARGETS):
+	$(MAKE) -C $(@:%-test=%) test

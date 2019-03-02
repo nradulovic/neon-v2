@@ -16,53 +16,50 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
+SUBDIRS := apps/app_test apps/app_template apps/app_hello_world
+
+BUILD_TARGETS     := $(addsuffix -build,     $(SUBDIRS))
+CLEAN_TARGETS     := $(addsuffix -clean,     $(SUBDIRS))
+DISTCLEAN_TARGETS := $(addsuffix -distclean, $(SUBDIRS))
+CONFIG_TARGETS    := $(addsuffix -config,    $(SUBDIRS))
+TEST_TARGETS      := $(addsuffix -test,      $(SUBDIRS))
+	
 # Generic rules
 
 .PHONY: all
-all: apps 
+all: build
+	
+.PHONY: build
+build: $(BUILD_TARGETS)
  
 .PHONY: clean
-clean: apps-clean 
+clean: $(CLEAN_TARGETS)
 
 .PHONY: distclean
-distclean: apps-distclean 
-
-# Application handling
-
-.PHONY: apps
-apps: 
-	@for app in apps/app_*/; \
-    do \
-        if [ -d $${app} ]; then $(MAKE) -C $${app} all || exit; fi; \
-    done
-
-.PHONY: apps-clean
-apps-clean:
-	@for app in apps/app_*/; \
-    do \
-        if [ -d $${app} ]; then $(MAKE) -C $${app} clean || exit; fi; \
-    done
-
-.PHONY: apps-distclean
-apps-distclean:
-	@for app in apps/app_*/; \
-    do \
-        if [ -d $${app} ]; then $(MAKE) -C $${app} distclean || exit; fi; \
-    done
-
-.PHONY: apps-config
-apps-config:
-	@for app in apps/app_*/; \
-    do \
-        if [ -d $${app} ]; then $(MAKE) -C $${app} config || exit; fi; \
-    done
-
-# Tests handling
-.PHONY: test
-test:
-	@for app in apps/app_*/; \
-    do \
-        if [ -d $${app} ]; then $(MAKE) -C $${app} test || exit; fi; \
-    done
+distclean: $(DISTCLEAN_TARGETS)
 	
+.PHONY: config
+config: $(CONFIG_TARGETS)
 
+.PHONY: test
+test: $(TEST_TARGETS)
+
+.PHONY: $(BUILD_TARGETS)
+$(BUILD_TARGETS):
+	$(MAKE) -C $(@:%-build=%) build
+
+.PHONY: $(CLEAN_TARGETS)
+$(CLEAN_TARGETS):
+	$(MAKE) -C $(@:%-clean=%) clean
+	
+.PHONY: $(DISTCLEAN_TARGETS)
+$(DISTCLEAN_TARGETS):
+	$(MAKE) -C $(@:%-distclean=%) distclean
+
+.PHONY: $(CONFIG_TARGETS)
+$(CONFIG_TARGETS):
+	$(MAKE) -C $(@:%-config=%) config
+	
+.PHONY: $(TEST_TARGETS)
+$(TEST_TARGETS):
+	$(MAKE) -C $(@:%-test=%) test

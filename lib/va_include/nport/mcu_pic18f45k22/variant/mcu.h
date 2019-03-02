@@ -16,21 +16,21 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /** @file
- *  @author      Nenad Radulovic
- *  @brief       Variant architecture for PIC18 header
+ *  @author      Developer name
+ *  @brief       Template description header
  *
- *  @addtogroup  port
+ *  @addtogroup  module
  *  @{
  */
-/** @defgroup    port_pic18_variant_arch Variant architecture for PIC18
- *  @brief       Variant architecture for PIC18.
+/** @defgroup    mod_template Template
+ *  @brief       Template.
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_PIC18_VARIANT_ARCH_H_
-#define NEON_PIC18_VARIANT_ARCH_H_
+#ifndef VA_INCLUDE_NPORT_VARIANT_MCU_H_
+#define VA_INCLUDE_NPORT_VARIANT_MCU_H_
 
 #include <stdint.h>
 
@@ -38,14 +38,25 @@
 extern "C" {
 #endif
 
-#define NARCH_ID "pic18"
-#define NARCH_DATA_WIDTH 8 /* sizeof(narch_uint) * 8 */
-#define NARCH_PIC18 1
+/*---------------------------------------------------------------------------*/
+/** @defgroup   templateid Template identification information
+ *  @brief      Template identification information.
+ *  @{
+ */
 
-typedef uint8_t narch_uint;
+/** @brief      Some brief description.
+ * 
+ *  More details about the function.
+ *
+ *  @param      param1
+ *              Some information about param1.
+ *  @returns    Returns a status information.
+ *  @retval     - ERANGE - Something has happened.
+ *  @api
+ */
+void some_function(uint32_t param1);
 
-/* TODO: Use static assert to compare NARCH_DATA_WIDTH and sizeof(narch_uint) */
-
+/** @} */
 #ifdef __cplusplus
 }
 #endif
@@ -53,4 +64,4 @@ typedef uint8_t narch_uint;
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_PIC18_VARIANT_ARCH_H_ */
+#endif /* VA_INCLUDE_NPORT_VARIANT_MCU_H_ */

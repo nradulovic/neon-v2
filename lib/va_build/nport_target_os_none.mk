@@ -16,15 +16,5 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Include guard
-ifndef BUILD_NLOGGER_MK
-BUILD_NLOGGER_MK=1
-
-# Dependencies
-include $(WS)/lib/build/common.mk
-include $(WS)/lib/build/nport.mk
-include $(WS)/lib/build/nconfig.mk
-
-CC_SOURCES += lib/va_source/nlogger_os_$(TARGET_OS)_printers.c
-
-endif
+# Additional OS description
+BUILD_TARGET_OS_DESC = "none"

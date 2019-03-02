@@ -16,15 +16,13 @@
 # this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-# Include guard
-ifndef BUILD_NLOGGER_MK
-BUILD_NLOGGER_MK=1
+# Additional OS description
+BUILD_HOST_OS_DESC = "Windows"
 
-# Dependencies
-include $(WS)/lib/build/common.mk
-include $(WS)/lib/build/nport.mk
-include $(WS)/lib/build/nconfig.mk
-
-CC_SOURCES += lib/va_source/nlogger_os_$(TARGET_OS)_printers.c
-
-endif
+git_version = $(shell git describe --abbrev=7 --always --dirty --tags 2> nul || echo unknown)
+mkdir = mkdir $(subst /,\,$(1)) > nul 2>&1 || (exit 0)
+rm = $(wordlist 2,65535,$(foreach FILE,$(subst /,\,$(1)),& del $(FILE) > nul 2>&1)) || (exit 0)
+rmdir = rmdir $(subst /,\,$(1)) > nul 2>&1 || (exit 0)
+cp = copy $(subst /,\,$(1)) $(subst /,\,$(2)) > nul 2>&1 || (exit 0)
+echo = echo $(1)
+doxygen = doxygen $(subst /,\,$(1))

@@ -39,7 +39,7 @@
 #include "port/nport_platform.h"
 #include "port/nport_arch.h"
 #include "logger/nlogger.h"
-#include "configs/default_config.h"
+#include "configs/nconfig_default.h"
 
 #ifdef __cplusplus
 extern "C" {

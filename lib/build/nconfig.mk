@@ -24,8 +24,16 @@ LIB_BUILD_NCONFIG_MK=1
 include $(WS)/lib/build/common.mk
 include $(WS)/lib/build/nport.mk
 
-ifneq ("$(PROJECT_CONFIG)","")
-CC_DEFINES += NCONFIG_PROJECT_CONFIG=\"$(PROJECT_CONFIG)\"
+# Generate version information
+CC_DEFINES += NCONFIG_GIT_VERSION=\"$(call git_version)\"
+
+# Generate custom configuration
+#
+# If a custom (project) configuration has been configured then a special macro
+# will be defined so the configuration file can be included by generic
+# configuration header. See nconfig_default.h file for more information.
+ifneq ($(PROJECT_CONFIG),)
+CC_DEFINES += NCONFIG_PROJECT_CONFIG=1
 endif
 
 endif
