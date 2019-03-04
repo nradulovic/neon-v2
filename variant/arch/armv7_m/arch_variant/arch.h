@@ -49,6 +49,12 @@ extern "C" {
  *  @{
  */
 
+#define NARCH_ID "armv7_m"
+#define NARCH_DATA_WIDTH 32 /* sizeof(narch_uint) * 8 */
+#define NARCH_ARMV7_M 1
+
+typedef uint32_t narch_uint;
+
 NPLATFORM_INLINE
 void narch_set_bit(narch_uint * u32, uint_fast8_t bit)
 {
