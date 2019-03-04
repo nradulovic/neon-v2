@@ -33,7 +33,8 @@
 #define NEON_MODULE_ARCH_H_
 
 #include <stdint.h>
-#include "variant/arch.h"
+
+#include "arch_variant/arch.h"
 
 #ifdef __cplusplus
 extern "C" {
