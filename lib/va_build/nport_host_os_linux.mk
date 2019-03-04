@@ -17,4 +17,10 @@
 #
 
 # Additional OS description
-BUILD_TARGET_OS_DESC = "none"
+BUILD_HOST_OS_DESC = "Linux"
+
+git_version = git describe --abbrev=7 --always --dirty --tags 2>/dev/null || echo unknown
+mkdir = mkdir -p $(1)
+rm = rm $(1) > /dev/null 2>&1 || true
+rmdir = rmdir $(1) > /dev/null 2>&1 || true
+echo = echo "$(1)"
