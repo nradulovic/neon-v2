@@ -29,8 +29,8 @@
  */
 /*---------------------------------------------------------------------------*/
 
-#ifndef NEON_GCC_VARIANT_GCC_COMMON_H_
-#define NEON_GCC_VARIANT_GCC_COMMON_H_
+#ifndef NEON_GCC_PLATFORM_VARIANT_PLATFORM_H_
+#define NEON_GCC_PLATFORM_VARIANT_PLATFORM_H_
 
 #define GCC_VERSION                                                         \
     (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
@@ -43,7 +43,7 @@
 #if (__STDC_VERSION__ >= 201112L)
 #include "variant/gcc_c11.h"
 #elif (__STDC_VERSION__ >= 199901L)
-#include "variant/gcc_c99.h"
+#include "../platform_variant/gcc_c99.h"
 #elif (__STDC_VERSION__ >= 199409L)
 #include "variant/gcc_c89.h"
 #else
@@ -57,6 +57,8 @@
 extern "C" {
 #endif
 /*---------------------------------------------------------------------------*/
+
+#define NPLATFORM_GCC					1
 
 #define NPLATFORM_FILE                  __FILE__
 
@@ -79,4 +81,4 @@ extern "C" {
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_GCC_VARIANT_GCC_COMMON_H_ */
+#endif /* NEON_GCC_PLATFORM_VARIANT_PLATFORM_H_ */

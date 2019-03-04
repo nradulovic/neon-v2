@@ -32,7 +32,7 @@
 #ifndef NEON_MODULE_BOARD_H_
 #define NEON_MODULE_BOARD_H_
 
-#include "variant/board.h"
+#include "board_variant/board.h"
 
 /** @} */
 /** @} */

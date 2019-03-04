@@ -18,10 +18,5 @@
 
 #include "port/nport_platform.h"
 
-#ifndef NCONFIG_GIT_VERSION
-#define NCONFIG_GIT_VERSION "undefined"
-#endif
-
 const char * nplatform_id = "gcc";
-const char * nplatform_build = NCONFIG_GIT_VERSION;
 

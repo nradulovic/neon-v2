@@ -29,70 +29,16 @@
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_ARMV7_M_VARIANT_ARCH_H_
-#define NEON_ARMV7_M_VARIANT_ARCH_H_
+#ifndef NEON_ARMV7_M_ARCH_VARIANT_ARCH_H_
+#define NEON_ARMV7_M_ARCH_VARIANT_ARCH_H_
 
-#include <stdint.h>
 #include "port/nport_platform.h"
 
 #if defined(NPLATFORM_GCC)
-#include "gcc_arch_variant.h"
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/*---------------------------------------------------------------------------*/
-/** @defgroup   ARMv7-M_variant_arch_cpu Architecture CPU (ARMv7-M) operations
- *  @brief      Architecture CPU (ARMv7-M) operations.
- *  @{
- */
-
-#define NARCH_ID "armv7_m"
-#define NARCH_DATA_WIDTH 32 /* sizeof(narch_uint) * 8 */
-#define NARCH_ARMV7_M 1
-
-typedef uint32_t narch_uint;
-
-NPLATFORM_INLINE
-void narch_set_bit(narch_uint * u32, uint_fast8_t bit)
-{
-    *u32 |= (narch_uint)1u << bit;
-}
-
-NPLATFORM_INLINE
-void narch_clear_bit(narch_uint * u32, uint_fast8_t bit)
-{
-    *u32 &= ~((narch_uint)1u << bit);
-}
-
-NPLATFORM_INLINE
-narch_uint narch_exp2(uint_fast8_t x)
-{
-    return (0x1u << x);
-}
-
-NPLATFORM_INLINE
-uint_fast8_t narch_log2(narch_uint x)
-{
-    uint_fast8_t clz;
-
-    __asm__ __volatile__ (
-        "@  ncore_log2                                      \n"
-        "   clz    %0, %1                                   \n"
-        : "=r"(clz)
-        : "r"(x));
-
-    return (31u - clz);
-}
-
-/** @} */
-#ifdef __cplusplus
-}
+#include "gcc_plat_arch.h"
 #endif
 
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_ARMV7_M_VARIANT_ARCH_H_ */
+#endif /* NEON_ARMV7_M_ARCH_VARIANT_ARCH_H_ */

@@ -17,31 +17,23 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Platform header for GCC C99 standard
+ *  @brief       Platform header for GCC C11 standard
  *
  *  @addtogroup  mod_platform
  *  @{
  */
-/** @defgroup    platform_gcc_c99 GCC Platform for C99 standard
- *  @brief       GCC Platform for C99 standard
+/** @defgroup    platform_gcc_c11 GCC Platform for C11 standard
+ *  @brief       GCC Platform for C11 standard
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
-#ifndef NEON_GCC_VARIANT_GCC_C99_H_
-#define NEON_GCC_VARIANT_GCC_C99_H_
+#ifndef NEON_GCC_PLATFORM_VARIANT_GCC_C11_H_
+#define NEON_GCC_PLATFORM_VARIANT_GCC_C11_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-/*---------------------------------------------------------------------------*/
+#include "../platform_variant/gcc_c99.h"
 
-#define NPLATFORM_FUNC          __func__
-
-#ifdef __cplusplus
-}
-#endif
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_GCC_VARIANT_GCC_C99_H_ */
+#endif /* NEON_GCC_PLATFORM_VARIANT_GCC_C11_H_ */

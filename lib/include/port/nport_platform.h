@@ -32,7 +32,7 @@
 #ifndef NEON_MODULE_PLATFORM_H_
 #define NEON_MODULE_PLATFORM_H_
 
-#include "variant/platform.h"
+#include "platform_variant/platform.h"
 
 #ifdef __cplusplus
 extern "C" {

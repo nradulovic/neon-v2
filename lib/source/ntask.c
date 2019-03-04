@@ -20,7 +20,18 @@ struct ntask
 };
 
 
-struct ntask_schedule g_task_schedule;
+/** @brief		Scheduler context
+ */
+struct ntask_schedule
+{
+	struct ntask * current;         /**< Speed optimization, current thread. */
+    struct ntask * sentinel[NCONFIG_TASK_INSTANCES]; /**< Sentinels to threads. */
+    struct ntask_queue ready;		/**< Ready queue */
+};
+
+/** @brief		Scheduler context
+ */
+static struct ntask_schedule g_task_schedule;
 
 #if (NCONFIG_TASK_INSTANCES > NBITARRAY_X_MAX_SIZE)
 # error "The limit of maximum task instances has been exceeded!"
@@ -135,11 +146,10 @@ static void dispatch(struct ntask * task)
 
 struct ntask * ntask_create(ntask_fn * fn, void * arg, uint_fast8_t prio)
 {
-    struct ntask_schedule * ctx = &g_task_schedule;
     struct ntask * task;
 
     NREQUIRE(fn != NULL);
-    NREQUIRE(ctx->current == NULL);
+    NREQUIRE(g_task_schedule.current == NULL);
     NREQUIRE(find_task_with_prio(&g_task_mempool[0], prio) == NULL);
 
     task = alloc_task(&g_task_mempool[0]);

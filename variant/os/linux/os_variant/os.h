@@ -1,6 +1,6 @@
 /*
  * Neon
- * Copyright (C) 2018   REAL-TIME CONSULTING
+ * Copyright (C)  2018  REAL-TIME CONSULTING
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the Free
@@ -17,31 +17,33 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Platform header for GCC C89 standard
+ *  @brief       Variant architecture for x86 header
  *
- *  @addtogroup  mod_platform
+ *  @addtogroup  port
  *  @{
  */
-/** @defgroup    platform_gcc_c89 GCC Platform for C89 standard
- *  @brief       GCC Platform for C89 standard
+/** @defgroup    port_x86_variant_arch Variant architecture for x86
+ *  @brief       Variant architecture for x86.
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
-#ifndef NEON_GCC_VARIANT_GCC_C89_H_
-#define NEON_GCC_VARIANT_GCC_C89_H_
+
+#ifndef NEON_LINUX_OS_VARIANT_OS_H_
+#define NEON_LINUX_OS_VARIANT_OS_H_
+
+#include <stdint.h>
+#include "port/nport_platform.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-/*---------------------------------------------------------------------------*/
-
-#define PORT_C_FUNC             __FUNCTION__
 
 #ifdef __cplusplus
 }
 #endif
+
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_GCC_VARIANT_GCC_C89_H_ */
+#endif /* NEON_LINUX_OS_VARIANT_OS_H_ */

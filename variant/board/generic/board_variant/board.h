@@ -29,8 +29,8 @@
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef VA_INCLUDE_NPORT_VARIANT_BOARD_H_
-#define VA_INCLUDE_NPORT_VARIANT_BOARD_H_
+#ifndef NEON_GENERIC_BOARD_VARIANT_BOARD_H_
+#define NEON_GENERIC_BOARD_VARIANT_BOARD_H_
 
 #include <stdint.h>
 
@@ -64,4 +64,4 @@ void some_function(uint32_t param1);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* VA_INCLUDE_NPORT_VARIANT_BOARD_H_ */
+#endif /* NEON_GENERIC_BOARD_VARIANT_BOARD_H_ */

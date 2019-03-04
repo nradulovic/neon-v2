@@ -16,65 +16,45 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /** @file
- *  @author      Nenad Radulovic
- *  @brief       Variant architecture for x86 header
+ *  @author      Developer name
+ *  @brief       Template description header
  *
- *  @addtogroup  port
+ *  @addtogroup  module
  *  @{
  */
-/** @defgroup    port_x86_variant_arch Variant architecture for x86
- *  @brief       Variant architecture for x86.
+/** @defgroup    mod_template Template
+ *  @brief       Template.
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_X86_VARIANT_ARCH_H_
-#define NEON_X86_VARIANT_ARCH_H_
+#ifndef NEON_GENERIC_MCU_VARIANT_MCU_H_
+#define NEON_GENERIC_MCU_VARIANT_MCU_H_
 
 #include <stdint.h>
-#include "port/nport_platform.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /*---------------------------------------------------------------------------*/
-/** @defgroup   x86_variant_arch_cpu Architecture CPU (x86) operations
- *  @brief      Architecture CPU (x86) operations.
+/** @defgroup   templateid Template identification information
+ *  @brief      Template identification information.
  *  @{
  */
 
-#define NARCH_ID "x86"
-#define NARCH_DATA_WIDTH 32
-
-typedef uint32_t narch_uint;
-
-NPLATFORM_INLINE
-void narch_set_bit(uint32_t * u32, uint_fast8_t bit)
-{
-    *u32 |= (uint32_t)1u << bit;
-}
-
-NPLATFORM_INLINE
-void narch_clear_bit(uint32_t * u32, uint_fast8_t bit)
-{
-    *u32 &= ~((uint32_t)1u << bit);
-}
-
-NPLATFORM_INLINE
-uint32_t narch_exp2(uint_fast8_t x)
-{
-    return (0x1u << x);
-}
-
-NPLATFORM_INLINE
-uint_fast8_t narch_log2(uint32_t x)
-{
-    return (uint_fast8_t)(31u - (uint_fast8_t)__builtin_clz(x));
-}
-
-void narch_cpu_stop(void);
+/** @brief      Some brief description.
+ * 
+ *  More details about the function.
+ *
+ *  @param      param1
+ *              Some information about param1.
+ *  @returns    Returns a status information.
+ *  @retval     - ERANGE - Something has happened.
+ *  @api
+ */
+void some_function(uint32_t param1);
 
 /** @} */
 #ifdef __cplusplus
@@ -84,4 +64,4 @@ void narch_cpu_stop(void);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_X86_VARIANT_ARCH_H_ */
+#endif /* NEON_GENERIC_MCU_VARIANT_MCU_H_ */

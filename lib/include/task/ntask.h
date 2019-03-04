@@ -32,7 +32,7 @@
 #ifndef NEON_MODULE_TASK_H_
 #define NEON_MODULE_TASK_H_
 
-#include "configs/default_config.h"
+#include "configs/nconfig_default.h"
 #include "bits/nbits.h"
 
 #ifdef __cplusplus
@@ -52,7 +52,7 @@ extern "C" {
 
 /** @brief		The current thread.
  */
-#define ncurrent                g_task_schedule.current
+#define ncurrent                ntask_current()
 
 /** @brief		The current thread error.
  */
@@ -84,18 +84,7 @@ struct ntask_queue
 #endif
 };
 
-/** @brief		Scheduler context
- */
-struct ntask_schedule
-{
-	struct ntask * current;         /**< Speed optimization, current thread. */
-    struct ntask * sentinel[NCONFIG_TASK_INSTANCES]; /**< Sentinels to threads. */
-    struct ntask_queue ready;		/**< Ready queue */
-};
-
-/** @brief		Scheduler context
- */
-extern struct ntask_schedule g_task_schedule;
+struct ntask * ntask_current(void);
 
 /** @brief		Create a task instance
  *  @param      fn

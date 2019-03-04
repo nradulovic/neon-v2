@@ -1,6 +1,6 @@
 /*
  * Neon
- * Copyright (C)  2018  REAL-TIME CONSULTING
+ * Copyright (C) 2018   REAL-TIME CONSULTING
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the Free
@@ -16,52 +16,32 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /** @file
- *  @author      Developer name
- *  @brief       Template description header
+ *  @author      Nenad Radulovic
+ *  @brief       Platform header for GCC C99 standard
  *
- *  @addtogroup  module
+ *  @addtogroup  mod_platform
  *  @{
  */
-/** @defgroup    mod_template Template
- *  @brief       Template.
+/** @defgroup    platform_gcc_c99 GCC Platform for C99 standard
+ *  @brief       GCC Platform for C99 standard
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
-
-#ifndef VA_INCLUDE_NPORT_VARIANT_MCU_H_
-#define VA_INCLUDE_NPORT_VARIANT_MCU_H_
-
-#include <stdint.h>
+#ifndef NEON_GCC_PLATFORM_VARIANT_GCC_C99_H_
+#define NEON_GCC_PLATFORM_VARIANT_GCC_C99_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 /*---------------------------------------------------------------------------*/
-/** @defgroup   templateid Template identification information
- *  @brief      Template identification information.
- *  @{
- */
 
-/** @brief      Some brief description.
- * 
- *  More details about the function.
- *
- *  @param      param1
- *              Some information about param1.
- *  @returns    Returns a status information.
- *  @retval     - ERANGE - Something has happened.
- *  @api
- */
-void some_function(uint32_t param1);
+#define NPLATFORM_FUNC          __func__
 
-/** @} */
 #ifdef __cplusplus
 }
 #endif
-
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* VA_INCLUDE_NPORT_VARIANT_MCU_H_ */
+#endif /* NEON_GCC_PLATFORM_VARIANT_GCC_C99_H_ */

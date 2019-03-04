@@ -36,7 +36,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "../port/nport_platform.h"
+#include "port/nport_platform.h"
 #include "port/nport_arch.h"
 
 #ifdef __cplusplus

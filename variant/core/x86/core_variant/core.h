@@ -1,6 +1,6 @@
 /*
  * Neon
- * Copyright (C) 2018   REAL-TIME CONSULTING
+ * Copyright (C)  2018  REAL-TIME CONSULTING
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the Free
@@ -17,23 +17,31 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Platform header for GCC C11 standard
+ *  @brief       Variant core for x86 header
  *
- *  @addtogroup  mod_platform
+ *  @addtogroup  port
  *  @{
  */
-/** @defgroup    platform_gcc_c11 GCC Platform for C11 standard
- *  @brief       GCC Platform for C11 standard
- *  @{
- */
+/** @defgroup    port_x86_variant_core Variant core for x86
+ *  @brief       Variant core for x86 */
 /*---------------------------------------------------------------------------*/
 
-#ifndef NEON_GCC_VARIANT_GCC_C11_H_
-#define NEON_GCC_VARIANT_GCC_C11_H_
 
-#include "variant/gcc_c99.h"
+#ifndef NEON_X86_CORE_VARIANT_CORE_H_
+#define NEON_X86_CORE_VARIANT_CORE_H_
+
+#include <stdint.h>
+#include "port/nport_platform.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef __cplusplus
+}
+#endif
 
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_GCC_VARIANT_GCC_C11_H_ */
+#endif /* NEON_X86_CORE_VARIANT_CORE_H_ */

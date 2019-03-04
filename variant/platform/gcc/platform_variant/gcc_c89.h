@@ -17,58 +17,31 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Task Fiber header
+ *  @brief       Platform header for GCC C89 standard
  *
- *  @addtogroup  lib
+ *  @addtogroup  mod_platform
  *  @{
  */
-/** @defgroup    lib_fiber Task Fiber
- *  @brief       Task Fiber
+/** @defgroup    platform_gcc_c89 GCC Platform for C89 standard
+ *  @brief       GCC Platform for C89 standard
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
+#ifndef NEON_GCC_PLATFORM_VARIANT_GCC_C89_H_
+#define NEON_GCC_PLATFORM_VARIANT_GCC_C89_H_
 
-#ifndef NEON_FIBER_TASK_H_
-#define NEON_FIBER_TASK_H_
-
-#include <stdint.h>
-#include "task/ntask.h"
-#include "fiber/nfiber.h"
-
+#ifdef __cplusplus
+extern "C" {
+#endif
 /*---------------------------------------------------------------------------*/
-/** @defgroup   fiber_decl Fiber declarations
- *  @brief      Fiber declarations.
- *  @{
- */
 
-struct nfiber_task
-{
-    struct nfiber fiber;
-    nfiber_fn * fiber_fn;
-    struct ntask * task;
-};
+#define PORT_C_FUNC             __FUNCTION__
 
-/** @brief      Initialize a fiber.
- *
- *  Initializes a fiber. Initialization must be done prior to starting to
- *  execute the fiber.
- *
- *  @param      fiber
- *              A pointer to the fiber control structure.
- *
- *  @hideinitializer
- */
-void nfiber_task_create(struct nfiber_task ** fiber, nfiber_fn * fn, void * arg,
-    uint_fast8_t prio);
-
-void nfiber_task_delete(struct nfiber_task * fiber);
-
-void np_fiber_task_dispatch(struct ntask * fiber_task, void * arg);
-
+#ifdef __cplusplus
+}
+#endif
 /** @} */
 /** @} */
-/** @} */
-
-#endif /* NEON_FIBER_TASK_H_ */
-
+/*---------------------------------------------------------------------------*/
+#endif /* NEON_GCC_PLATFORM_VARIANT_GCC_C89_H_ */

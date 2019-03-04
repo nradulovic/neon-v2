@@ -17,27 +17,23 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Variant architecture for ARMv7-M header
+ *  @brief       Common part of all platforms supported by architecture header
  *
  *  @addtogroup  port
  *  @{
  */
-/** @defgroup    port_armv7_m_variant_arch Variant architecture for ARMv7-M
- *  @brief       Variant architecture for ARMv7-M.
+/** @defgroup    port_armv7_m_variant_arch_common Common part of all platforms supported by architecture
+ *  @brief       Common part of all platforms supported by architecture
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_ARMV7_M_VARIANT_ARCH_H_
-#define NEON_ARMV7_M_VARIANT_ARCH_H_
+#ifndef NEON_ARMV7_M_ARCH_VARIANT_COMMON_PLAT_ARCH_H_
+#define NEON_ARMV7_M_ARCH_VARIANT_COMMON_PLAT_ARCH_H_
 
 #include <stdint.h>
 #include "port/nport_platform.h"
-
-#if defined(NPLATFORM_GCC)
-#include "gcc_arch_variant.h"
-#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,6 +44,12 @@ extern "C" {
  *  @brief      Architecture CPU (ARMv7-M) operations.
  *  @{
  */
+
+#define NARCH_ID "armv7_m"
+#define NARCH_DATA_WIDTH 32 /* sizeof(narch_uint) * 8 */
+#define NARCH_ARMV7_M 1
+
+typedef uint32_t narch_uint;
 
 NPLATFORM_INLINE
 void narch_set_bit(narch_uint * u32, uint_fast8_t bit)
@@ -67,20 +69,6 @@ narch_uint narch_exp2(uint_fast8_t x)
     return (0x1u << x);
 }
 
-NPLATFORM_INLINE
-uint_fast8_t narch_log2(narch_uint x)
-{
-    uint_fast8_t clz;
-
-    __asm__ __volatile__ (
-        "@  ncore_log2                                      \n"
-        "   clz    %0, %1                                   \n"
-        : "=r"(clz)
-        : "r"(x));
-
-    return (31u - clz);
-}
-
 /** @} */
 #ifdef __cplusplus
 }
@@ -89,4 +77,4 @@ uint_fast8_t narch_log2(narch_uint x)
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_ARMV7_M_VARIANT_ARCH_H_ */
+#endif /* NEON_ARMV7_M_ARCH_VARIANT_COMMON_PLAT_ARCH_H_ */
