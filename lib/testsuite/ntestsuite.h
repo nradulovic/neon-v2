@@ -36,10 +36,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "port/nport_platform.h"
-#include "port/nport_arch.h"
-#include "logger/nlogger.h"
-#include "configs/nconfig_default.h"
+#include "neon.h"
 
 #ifdef __cplusplus
 extern "C" {

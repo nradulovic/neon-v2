@@ -16,7 +16,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "port/nport_platform.h"
+#include "platform_variant/platform.h"
 
 const char * nplatform_id = "gcc";
 

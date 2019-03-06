@@ -16,4 +16,4 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "port/nport_mcu.h"
+#include "mcu_variant/mcu.h"

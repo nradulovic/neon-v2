@@ -32,6 +32,8 @@
 #ifndef NEON_GCC_PLATFORM_VARIANT_PLATFORM_H_
 #define NEON_GCC_PLATFORM_VARIANT_PLATFORM_H_
 
+#include <stddef.h>
+
 #define GCC_VERSION                                                         \
     (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
 
@@ -73,6 +75,13 @@ extern "C" {
 #define NPLATFORM_PACKED(x)             __attribute__((packed)) x
 
 #define NPLATFORM_ALIGN(align, x)       __attribute__((aligned (align))) x
+
+#define NPLATFORM_INLINE        		static inline
+
+#define NPLATFORM_INLINE_ALWAYS 		NPLATFORM_INLINE
+
+#define NPLATFORM_CONTAINER_OF(ptr, type, member)                      \
+    ((type *)((char *)ptr - offsetof(type, member)))
 
 #ifdef __cplusplus
 }

@@ -33,7 +33,7 @@
 #define NEON_LINUX_OS_VARIANT_OS_H_
 
 #include <stdint.h>
-#include "port/nport_platform.h"
+#include "platform_variant/platform.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -16,4 +16,4 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "port/nport_board.h"
+#include "board_variant/board.h"

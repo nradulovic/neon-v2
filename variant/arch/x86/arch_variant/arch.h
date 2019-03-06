@@ -33,7 +33,7 @@
 #define NEON_X86_ARCH_VARIANT_ARCH_H_
 
 #include <stdint.h>
-#include "port/nport_platform.h"
+#include "platform_variant/platform.h"
 
 #ifdef __cplusplus
 extern "C" {

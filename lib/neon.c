@@ -1,10 +1,27 @@
+/*
+ * Neon
+ * Copyright (C) 2018   REAL-TIME CONSULTING
+ *
+ * This program is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License along
+ * with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
 
-#include "port/nport_arch.h"
-#include "port/nport_platform.h"
-#include "bits/nbits.h"
-#include "error/nerror.h"
-#include "task/ntask.h"
-#include "debug/ndebug.h"
+#include <string.h>
+#include <limits.h>
+#include <stdio.h>
+#include <stdarg.h>
+
+#include "neon.h"
 
 struct ntask
 {
@@ -20,7 +37,7 @@ struct ntask
 };
 
 
-/** @brief		Scheduler context
+/** @brief		Scheduler context structure
  */
 struct ntask_schedule
 {
@@ -46,6 +63,229 @@ static struct ntask g_task_mempool[NCONFIG_TASK_INSTANCES];
 #if (NCONFIG_EXITABLE_SCHEDULER == 1)
 static bool should_exit = false;
 #endif
+
+struct nlogger_instance p_nlogger_global =
+{
+    .level = NLOGGER_LEVEL_INFO
+};
+
+const uint32_t nconfig_compiled_id = NCONFIG_ID;
+
+uint32_t nbits_ftou32(float val)
+{
+    uint32_t retval;
+
+    memcpy(&retval, &val, sizeof(retval));
+
+    return retval;
+}
+
+float nbits_u32tof(uint32_t val)
+{
+    float retval;
+
+    memcpy(&retval, &val, sizeof(retval));
+
+    return retval;
+}
+
+void nbitarray_x_set(nbitarray_x * array, uint_fast8_t bit)
+{
+	uint_fast8_t group;
+	uint_fast8_t pos;
+
+	group = (uint_fast8_t)((bit / 32) + 1u);
+	pos = bit % NARCH_DATA_WIDTH;
+	array[group] |= 0x1u << pos;
+	array[0] |= 0x1u << (group - 1u);
+}
+
+void nbitarray_x_clear(nbitarray_x * array, uint_fast8_t bit)
+{
+	uint_fast8_t group;
+	uint_fast8_t pos;
+
+	group = bit / NARCH_DATA_WIDTH;
+	pos = bit % NARCH_DATA_WIDTH;
+
+	array[group + 1u] &= ~(0x1u << pos);
+
+	if (array[group + 1u] == 0u) {
+        array[0] &= ~(0x1u << group);
+	}
+}
+
+uint_fast8_t nbitarray_x_msbs(const nbitarray_x * array)
+{
+	uint_fast8_t group;
+	uint_fast8_t pos;
+
+	group = narch_log2(array[0]);
+	pos = narch_log2(array[group + 1u]);
+
+	return (uint_fast8_t)(group * (uint_fast8_t)NARCH_DATA_WIDTH + pos);
+}
+
+struct nlist_dll * nlist_dll_init(struct nlist_dll * node)
+{
+    node->next = node;
+    node->prev = node;
+
+    return (node);
+}
+
+struct nlist_dll * nlist_dll_add_after(struct nlist_dll * current,
+        struct nlist_dll * node)
+{
+    node->next          = current;
+    node->prev          = current->prev;
+    current->prev->next = node;
+    current->prev       = node;
+
+    return (node);
+}
+
+struct nlist_dll * nlist_dll_add_before(struct nlist_dll * current,
+        struct nlist_dll * node)
+{
+    node->prev          = current;
+    node->next          = current->next;
+    current->next->prev = node;
+    current->next       = node;
+
+    return (node);
+}
+
+void nlist_dll_remove(struct nlist_dll * node)
+{
+    node->next->prev = node->prev;
+    node->prev->next = node->next;
+}
+
+struct nlist_sll * nlist_sll_init(struct nlist_sll * node)
+{
+    node->next = node;
+
+    return (node);
+}
+
+/*
+ * NOTE:
+ * This function is not inlined since doing so would generate bigger executable
+ * by around 200bytes (gcc-arm-none-eabi, 4.9.3, all optimizations) per each
+ * library user.
+ */
+struct nlist_sll * nlist_sll_prev(struct nlist_sll * const node)
+{
+    struct nlist_sll * tmp = node;
+
+    while (tmp->next != node) {
+        tmp = tmp->next;
+    }
+    return (tmp);
+}
+
+void nlist_sll_add_after(struct nlist_sll * current, struct nlist_sll * node)
+{
+    struct nlist_sll * prev = nlist_sll_prev(current);
+
+    node->next = prev->next;
+    prev->next = node;
+}
+
+struct nlist_sll * nlist_sll_add_before(struct nlist_sll * current,
+        struct nlist_sll * node)
+{
+    node->next = current->next;
+    current->next = node;
+
+    return (node);
+}
+
+void nlist_sll_remove(struct nlist_sll * node)
+{
+    struct nlist_sll * prev = nlist_sll_prev(node);
+
+    nlist_sll_remove_from(prev, node);
+}
+
+void nlist_sll_remove_from(struct nlist_sll * prev, struct nlist_sll * node)
+{
+    prev->next = node->next;
+    node->next = node;
+}
+
+bool nlist_sll_is_empty(const struct nlist_sll * node)
+{
+    return (!!(node->next == node));
+}
+
+void npqueue_sentinel_shift(struct npqueue_sentinel * sentinel)
+{
+    struct npqueue * next = npqueue_next(sentinel);
+
+    nlist_dll_remove(&sentinel->list);
+    nlist_dll_add_before(&next->list, &sentinel->list);
+}
+
+struct npqueue * npqueue_init(struct npqueue * node, uint_fast8_t priority)
+{
+    nlist_dll_init(&node->list);
+    npqueue_priority_set(node, priority);
+
+    return (node);
+}
+
+void npqueue_term(struct npqueue * node)
+{
+    npqueue_priority_set(node, 0);
+    nlist_dll_init(&node->list);
+}
+
+void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
+        struct npqueue * node)
+{
+    struct nlist_dll * current_list;
+
+    for (NLIST_DLL_EACH(current_list, &sentinel->list)) {
+        struct npqueue * current = npqueue_from_list(current_list);
+
+        if (current->priority < node->priority) {
+            break;
+        }
+    }
+    nlist_dll_add_after(current_list, &node->list);
+}
+
+
+void p_nlogger_x_print(struct nlogger_instance * instance, uint8_t level,
+    const char * msg, ...)
+{
+    if (instance->level >= level) {
+        va_list args;
+        va_start(args, msg);
+        vprintf(msg, args);
+        va_end(args);
+    }
+}
+
+void p_nlogger_x_set_level(struct nlogger_instance * instance, uint8_t level)
+{
+    instance->level = level;
+}
+
+void nfiber_task_create(struct nfiber_task ** fiber, nfiber_fn * fn, void * arg,
+    uint_fast8_t prio)
+{
+}
+
+void nfiber_task_delete(struct nfiber_task * fiber)
+{
+}
+
+static void np_fiber_task_dispatch(struct ntask * task, void * arg)
+{
+}
 
 static struct ntask * alloc_task(struct ntask * mempool)
 {
@@ -286,4 +526,3 @@ void ntask_queue_block(struct ntask_queue * queue)
                                                         /* Update task state */
     ctx->current->state = NTASK_BLOCKED;
 }
-
