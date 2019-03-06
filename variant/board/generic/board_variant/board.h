@@ -16,47 +16,26 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /** @file
- *  @author      Developer name
- *  @brief       Template description header
+ *  @author      Nenad Radulovic
+ *  @brief       Generic board
  *
- *  @addtogroup  module
+ *  @addtogroup  board
  *  @{
  */
-/** @defgroup    mod_template Template
- *  @brief       Template.
+/** @defgroup    board_generic Generic board
+ *  @brief       Generic board
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_GENERIC_BOARD_VARIANT_BOARD_H_
-#define NEON_GENERIC_BOARD_VARIANT_BOARD_H_
-
-#include <stdint.h>
+#ifndef NEON_BOARD_VARIANT_GENERIC_H_
+#define NEON_BOARD_VARIANT_GENERIC_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/*---------------------------------------------------------------------------*/
-/** @defgroup   templateid Template identification information
- *  @brief      Template identification information.
- *  @{
- */
-
-/** @brief      Some brief description.
- * 
- *  More details about the function.
- *
- *  @param      param1
- *              Some information about param1.
- *  @returns    Returns a status information.
- *  @retval     - ERANGE - Something has happened.
- *  @api
- */
-void some_function(uint32_t param1);
-
-/** @} */
 #ifdef __cplusplus
 }
 #endif
@@ -64,4 +43,4 @@ void some_function(uint32_t param1);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_GENERIC_BOARD_VARIANT_BOARD_H_ */
+#endif /* NEON_BOARD_VARIANT_GENERIC_H_ */

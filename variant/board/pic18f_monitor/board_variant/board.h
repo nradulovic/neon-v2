@@ -1,6 +1,6 @@
 /*
  * Neon
- * Copyright (C) 2018   REAL-TIME CONSULTING
+ * Copyright (C)  2018  REAL-TIME CONSULTING
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the Free
@@ -17,23 +17,34 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Platform header for GCC C11 standard
+ *  @brief       PIC18F Monitor board
  *
- *  @addtogroup  mod_platform
+ *  @addtogroup  board
  *  @{
  */
-/** @defgroup    platform_gcc_c11 GCC Platform for C11 standard
- *  @brief       GCC Platform for C11 standard
+/** @defgroup    board_pic18f_monitor PIC18F Monitor board
+ *  @brief       PIC18F Monitor board
  *  @{
  */
-/*---------------------------------------------------------------------------*/
 
-#ifndef NEON_GCC_VARIANT_GCC_C11_H_
-#define NEON_GCC_VARIANT_GCC_C11_H_
+#ifndef NEON_BOARD_VARIANT_PIC18F_MONITOR_H_
+#define NEON_BOARD_VARIANT_PIC18F_MONITOR_H_
 
-#include "variant/gcc_c99.h"
+#include "mcu_variant/mcu.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifndef NMCU_PIC18F46K40
+#error "PIC18F Monitor board uses PIC18F46K40"
+#endif
+
+#ifdef __cplusplus
+}
+#endif
 
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_GCC_VARIANT_GCC_C11_H_ */
+#endif /* NEON_BOARD_VARIANT_PIC18F_MONITOR_H_ */

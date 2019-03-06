@@ -16,29 +16,19 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "port/nport_arch.h"
+#include "arch_variant/arch.h"
 
 void narch_cpu_stop(void)
 {
     for (;;);
 }
 
-void narch_set_bit(uint32_t * u32, uint_fast8_t bit)
+narch_uint narch_exp2(uint_fast8_t x)
 {
-    *u32 |= (uint32_t)1u << bit;
+    return ((narch_uint)0x1u << x);
 }
 
-void narch_clear_bit(uint32_t * u32, uint_fast8_t bit)
-{
-    *u32 &= ~((uint32_t)1u << bit);
-}
-
-uint32_t narch_exp2(uint_fast8_t x)
-{
-    return ((uint32_t)0x1u << x);
-}
-
-uint_fast8_t narch_log2(uint32_t x)
+uint_fast8_t narch_log2(narch_uint x)
 {
     static const uint_fast8_t log2_table[256] =
     {
@@ -48,25 +38,6 @@ uint_fast8_t narch_log2(uint32_t x)
         LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7)
 #undef LT
     };
-    uint8_t tt;
-    
-    tt = x >> 24u;
-
-    if (tt) {
-        return 24u + log2_table[tt];
-    }
-    
-    tt = x >> 16u;
-
-    if (tt) {
-        return 16u + log2_table[tt];
-    }
-    
-    tt = x >> 8u;
-
-    if (tt) {
-        return 8u + log2_table[tt];
-    }
     
     return log2_table[x];
 }

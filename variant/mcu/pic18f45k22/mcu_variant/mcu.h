@@ -1,6 +1,6 @@
 /*
  * Neon
- * Copyright (C) 2018   REAL-TIME CONSULTING
+ * Copyright (C)  2018  REAL-TIME CONSULTING
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the Free
@@ -15,5 +15,24 @@
  * You should have received a copy of the GNU Lesser General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+/** @file
+ *  @author      Nenad Radulovic
+ *  @brief       PIC18F45K22 MCU
+ *
+ *  @addtogroup  mcu
+ *  @{
+ */
+/** @defgroup    mcu_pic18f45k22 PIC18F45K22 MCU
+ *  @brief       PIC18F45K22 MCU
+ *  @{
+ */
 
-#include "board_variant/board.h"
+#ifndef NEON_MCU_VARIANT_PIC18F45K22_H_
+#define NEON_MCU_VARIANT_PIC18F45K22_H_
+
+#define NMCU_PIC18F45K22
+
+/** @} */
+/** @} */
+/*---------------------------------------------------------------------------*/
+#endif /* NEON_MCU_VARIANT_PIC18F45K22_H_ */

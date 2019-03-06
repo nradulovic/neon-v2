@@ -18,7 +18,7 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Platform header for common GCC definitions.
+ *  @brief       Platform header for common XC8 definitions.
  *
  *  @addtogroup  mod_platform
  *  @{
@@ -27,38 +27,15 @@
  *  @brief       Common GCC Platform definitions
  *  @{
  */
-/*---------------------------------------------------------------------------*/
 
 #ifndef LIB_VA_INCLUDE_NPORT_PLATFORM_XC8_VARIANT_PLATFORM
 #define LIB_VA_INCLUDE_NPORT_PLATFORM_XC8_VARIANT_PLATFORM
 
-#if 0
-#define GCC_VERSION                                                         \
-    (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
-
-#if GCC_VERSION < 40900
-#error "GCC_VARIANT: Your compiler is too old - please upgrade it."
-#endif
-
-#if (defined(__STDC_VERSION__))
-#if (__STDC_VERSION__ >= 201112L)
-#include "variant/gcc_c11.h"
-#elif (__STDC_VERSION__ >= 199901L)
-#include "variant/gcc_c99.h"
-#elif (__STDC_VERSION__ >= 199409L)
-#include "variant/gcc_c89.h"
-#else
-#error "GCC VARIANT: Define either C89, C99, or C11 C standard."
-#endif
-#else
-#error "GCC_VARIANT: Unsupported compiler mode."
-#endif
-#endif
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-/*---------------------------------------------------------------------------*/
 
 #define NPLATFORM_FILE                  __FILE__
 
@@ -74,11 +51,17 @@ extern "C" {
 
 #define NPLATFORM_ALIGN(align, x)       __attribute__((aligned (align))) x
 
+#define NPLATFORM_INLINE        		static inline
+
+#define NPLATFORM_INLINE_ALWAYS 		NPLATFORM_INLINE
+
+#define NPLATFORM_CONTAINER_OF(ptr, type, member)                      \
+    ((type *)((char *)ptr - offsetof(type, member)))
+    
 #ifdef __cplusplus
 }
 #endif
 
 /** @} */
 /** @} */
-/*---------------------------------------------------------------------------*/
 #endif /* LIB_VA_INCLUDE_NPORT_PLATFORM_XC8_VARIANT_PLATFORM */

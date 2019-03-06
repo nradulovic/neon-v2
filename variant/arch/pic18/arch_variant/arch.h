@@ -20,17 +20,14 @@
  *  @brief       Variant architecture for PIC18 header
  *
  *  @addtogroup  port
- *  @{
- */
+ *  @{ */
+
 /** @defgroup    port_pic18_variant_arch Variant architecture for PIC18
  *  @brief       Variant architecture for PIC18.
- *  @{
- */
-/*---------------------------------------------------------------------------*/
+ *  @{ */
 
-
-#ifndef NEON_PIC18_VARIANT_ARCH_H_
-#define NEON_PIC18_VARIANT_ARCH_H_
+#ifndef NEON_ARCH_VARIANT_PIC18_H_
+#define NEON_ARCH_VARIANT_PIC18_H_
 
 #include <stdint.h>
 
@@ -52,5 +49,4 @@ typedef uint8_t narch_uint;
 
 /** @} */
 /** @} */
-/*---------------------------------------------------------------------------*/
-#endif /* NEON_PIC18_VARIANT_ARCH_H_ */
+#endif /* NEON_ARCH_VARIANT_PIC18_H_ */

@@ -657,64 +657,23 @@ uint_fast8_t narch_log2(narch_uint x);
  *  @brief      Power of 2 macros.
  *  @{ */
 
-#define NBITS_IS_POWEROF2(num)    										    \
-    (((num) != 0u) && (((num) & ((num) - 1)) == 0u))
+/** @brief      Right mask lookup table
+ */
+extern const uint32_t nbits_right_mask[33];
+
 
 /** @brief      Determining if an integer is a power of 2
  *  @note       For more details please refer to the following URL:
  *              https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
  */
-NPLATFORM_INLINE
-uint32_t nbits_is_powerof2(uint32_t v)
-{
-    return v && !(v & (v - 1));
-}
+#define NBITS_IS_POWEROF2(num)    										    \
+    (((num) != 0u) && (((num) & ((num) - 1)) == 0u))
 
 /** @brief      Create a bit mask of width @a v bits.
  *  @note       If the value of argument @a v is greater than 32 then the
  *              behaviour undefined.
  */
-NPLATFORM_INLINE
-uint32_t nbits_to_mask(uint32_t v)
-{
-    static const uint32_t mask[33] =
-    {
-        [ 0] = 0x00000000u,
-        [ 1] = 0x00000001u,
-        [ 2] = 0x00000003u,
-        [ 3] = 0x00000007u,
-        [ 4] = 0x0000000fu,
-        [ 5] = 0x0000001fu,
-        [ 6] = 0x0000003fu,
-        [ 7] = 0x0000007fu,
-        [ 8] = 0x000000ffu,
-        [ 9] = 0x000001ffu,
-        [10] = 0x000003ffu,
-        [11] = 0x000007ffu,
-        [12] = 0x00000fffu,
-        [13] = 0x00001fffu,
-        [14] = 0x00003fffu,
-        [15] = 0x00007fffu,
-        [16] = 0x0000ffffu,
-        [17] = 0x0001ffffu,
-        [18] = 0x0003ffffu,
-        [19] = 0x0007ffffu,
-        [20] = 0x000fffffu,
-        [21] = 0x001fffffu,
-        [22] = 0x003fffffu,
-        [23] = 0x007fffffu,
-        [24] = 0x00ffffffu,
-        [25] = 0x01ffffffu,
-        [26] = 0x03ffffffu,
-        [27] = 0x07ffffffu,
-        [28] = 0x0fffffffu,
-        [29] = 0x1fffffffu,
-        [30] = 0x3fffffffu,
-        [31] = 0x7fffffffu,
-        [32] = 0xffffffffu
-    };
-    return mask[v];
-}
+#define nbits_to_mask(v)        nbits_right_mask[v]
 
 /** @} */
 /** @defgroup   bits_byteextract Byte extract
@@ -762,10 +721,10 @@ float nbits_u32tof(uint32_t val);
 typedef narch_uint nbitarray_s;
 
 #define nbitarray_s_set(a_array, a_bit)                                     \
-    narch_set_bit((a_array), (a_bit))
+    *(a_array) |= (0x1u << (a_bit))
 
 #define nbitarray_s_clear(a_array, a_bit)                                   \
-    narch_clear_bit((a_array), (a_bit))
+    *(a_array) &= ~(0x1u << (a_bit))
 
 #define nbitarray_s_msbs(a_array)                                           \
     narch_log2(*(a_array))

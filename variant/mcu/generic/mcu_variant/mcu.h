@@ -26,37 +26,16 @@
  *  @brief       Template.
  *  @{
  */
-/*---------------------------------------------------------------------------*/
 
-
-#ifndef NEON_GENERIC_MCU_VARIANT_MCU_H_
-#define NEON_GENERIC_MCU_VARIANT_MCU_H_
-
-#include <stdint.h>
+#ifndef NEON_MCU_VARIANT_GENERIC_H_
+#define NEON_MCU_VARIANT_GENERIC_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+ 
+#define NMCU_GENERIC
 
-/*---------------------------------------------------------------------------*/
-/** @defgroup   templateid Template identification information
- *  @brief      Template identification information.
- *  @{
- */
-
-/** @brief      Some brief description.
- * 
- *  More details about the function.
- *
- *  @param      param1
- *              Some information about param1.
- *  @returns    Returns a status information.
- *  @retval     - ERANGE - Something has happened.
- *  @api
- */
-void some_function(uint32_t param1);
-
-/** @} */
 #ifdef __cplusplus
 }
 #endif
@@ -64,4 +43,4 @@ void some_function(uint32_t param1);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_GENERIC_MCU_VARIANT_MCU_H_ */
+#endif /* NEON_MCU_VARIANT_GENERIC_H_ */

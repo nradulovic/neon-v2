@@ -1,6 +1,6 @@
 /*
  * Neon
- * Copyright (C) 2018   REAL-TIME CONSULTING
+ * Copyright (C)  2018  REAL-TIME CONSULTING
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the Free
@@ -15,5 +15,24 @@
  * You should have received a copy of the GNU Lesser General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+/** @file
+ *  @author      Nenad Radulovic
+ *  @brief       PIC18F46K40 MCU
+ *
+ *  @addtogroup  mcu
+ *  @{
+ */
+/** @defgroup    mcu_pic18f46k40 PIC18F46K40 MCU
+ *  @brief       PIC18F46K40 MCU
+ *  @{
+ */
 
-#include "mcu_variant/mcu.h"
+#ifndef NEON_MCU_VARIANT_PIC18F46K40_H_
+#define NEON_MCU_VARIANT_PIC18F46K40_H_
+
+#define NMCU_PIC18F46K40
+
+/** @} */
+/** @} */
+/*---------------------------------------------------------------------------*/
+#endif /* NEON_MCU_VARIANT_PIC18F46K40_H_ */

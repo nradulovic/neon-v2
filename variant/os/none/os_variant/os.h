@@ -17,20 +17,18 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Variant architecture for x86 header
+ *  @brief       OS support
  *
- *  @addtogroup  port
+ *  @addtogroup  os
  *  @{
  */
-/** @defgroup    port_x86_variant_arch Variant architecture for x86
- *  @brief       Variant architecture for x86.
+/** @defgroup    os_none Barebone support (no OS)
+ *  @brief       Barebone support (no OS)
  *  @{
  */
-/*---------------------------------------------------------------------------*/
 
-
-#ifndef NEON_NONE_OS_VARIANT_OS_H_
-#define NEON_NONE_OS_VARIANT_OS_H_
+#ifndef NEON_OS_VARIANT_NONE_H_
+#define NEON_OS_VARIANT_NONE_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,4 +41,4 @@ extern "C" {
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_NONE_OS_VARIANT_OS_H_ */
+#endif /* NEON_OS_VARIANT_NONE_H_ */
