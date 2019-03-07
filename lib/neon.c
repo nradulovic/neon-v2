@@ -25,14 +25,15 @@
 
 struct ntask
 {
-	uint_fast8_t prio;
-    ntask_fn * fn;
-    void * arg;
-    enum ntask_state state;
+    ntask_fn *                  fn;             /**< Task function */
+    void *                      arg;            /**< Task arguments */
+    enum ntask_state            state;          /**< Task state */
     struct ntask_local_storage
     {
-        uint32_t error;
-    } tls;
+        enum nerror_id              error;      /**< Error indicator from last 
+                                                 *   function call */
+    }                           tls;            /**< Task Local Storage or 
+                                                 *   TLS */
     NSIGNATURE_DECLARE
 };
 
@@ -41,9 +42,29 @@ struct ntask
  */
 struct ntask_schedule
 {
-	struct ntask * current;         /**< Speed optimization, current thread. */
-    struct ntask * sentinel[NCONFIG_TASK_INSTANCES]; /**< Sentinels to threads. */
-    struct ntask_queue ready;		/**< Ready queue */
+	ntask_id                    current;        /**< Speed optimization, 
+                                                 *   current thread. */
+   
+    /** @brief      Task ready/wait queue
+     */
+    struct ntask_queue
+    {
+#if (NCONFIG_TASK_INSTANCES <= NBITARRAY_S_MAX_SIZE)
+        nbitarray_s bitarray;
+#else
+        nbitarray_x bitarray[NBITARRAY_DEF(NCONFIG_TASK_INSTANCES)];
+#endif
+    }          ready;                           /**< Ready queue */
+    struct ntask mempool[NCONFIG_TASK_INSTANCES];
+};
+
+struct nepa_schedule
+{
+    struct nepa
+    {
+        struct ntask task;
+        struct np_lqueue_base * base;
+    }                           mempool[NCONFIG_TASK_INSTANCES];
 };
 
 const uint32_t nbits_right_mask[33] =
@@ -94,8 +115,6 @@ static struct ntask_schedule g_task_schedule;
 #if (NCONFIG_TASK_INSTANCES > NTASK_PRIO_MAX)
 # error "The limit of maximum task priorities has been exceeded!"
 #endif
-
-static struct ntask g_task_mempool[NCONFIG_TASK_INSTANCES];
 
 #if (NCONFIG_EXITABLE_SCHEDULER == 1)
 static bool should_exit = false;
@@ -163,138 +182,6 @@ uint_fast8_t nbitarray_x_msbs(const nbitarray_x * array)
 	return (uint_fast8_t)(group * (uint_fast8_t)NARCH_DATA_WIDTH + pos);
 }
 
-struct nlist_dll * nlist_dll_init(struct nlist_dll * node)
-{
-    node->next = node;
-    node->prev = node;
-
-    return (node);
-}
-
-struct nlist_dll * nlist_dll_add_after(struct nlist_dll * current,
-        struct nlist_dll * node)
-{
-    node->next          = current;
-    node->prev          = current->prev;
-    current->prev->next = node;
-    current->prev       = node;
-
-    return (node);
-}
-
-struct nlist_dll * nlist_dll_add_before(struct nlist_dll * current,
-        struct nlist_dll * node)
-{
-    node->prev          = current;
-    node->next          = current->next;
-    current->next->prev = node;
-    current->next       = node;
-
-    return (node);
-}
-
-void nlist_dll_remove(struct nlist_dll * node)
-{
-    node->next->prev = node->prev;
-    node->prev->next = node->next;
-}
-
-struct nlist_sll * nlist_sll_init(struct nlist_sll * node)
-{
-    node->next = node;
-
-    return (node);
-}
-
-/*
- * NOTE:
- * This function is not inlined since doing so would generate bigger executable
- * by around 200bytes (gcc-arm-none-eabi, 4.9.3, all optimizations) per each
- * library user.
- */
-struct nlist_sll * nlist_sll_prev(struct nlist_sll * const node)
-{
-    struct nlist_sll * tmp = node;
-
-    while (tmp->next != node) {
-        tmp = tmp->next;
-    }
-    return (tmp);
-}
-
-void nlist_sll_add_after(struct nlist_sll * current, struct nlist_sll * node)
-{
-    struct nlist_sll * prev = nlist_sll_prev(current);
-
-    node->next = prev->next;
-    prev->next = node;
-}
-
-struct nlist_sll * nlist_sll_add_before(struct nlist_sll * current,
-        struct nlist_sll * node)
-{
-    node->next = current->next;
-    current->next = node;
-
-    return (node);
-}
-
-void nlist_sll_remove(struct nlist_sll * node)
-{
-    struct nlist_sll * prev = nlist_sll_prev(node);
-
-    nlist_sll_remove_from(prev, node);
-}
-
-void nlist_sll_remove_from(struct nlist_sll * prev, struct nlist_sll * node)
-{
-    prev->next = node->next;
-    node->next = node;
-}
-
-bool nlist_sll_is_empty(const struct nlist_sll * node)
-{
-    return (!!(node->next == node));
-}
-
-void npqueue_sentinel_shift(struct npqueue_sentinel * sentinel)
-{
-    struct npqueue * next = npqueue_next(sentinel);
-
-    nlist_dll_remove(&sentinel->list);
-    nlist_dll_add_before(&next->list, &sentinel->list);
-}
-
-struct npqueue * npqueue_init(struct npqueue * node, uint_fast8_t priority)
-{
-    nlist_dll_init(&node->list);
-    npqueue_priority_set(node, priority);
-
-    return (node);
-}
-
-void npqueue_term(struct npqueue * node)
-{
-    npqueue_priority_set(node, 0);
-    nlist_dll_init(&node->list);
-}
-
-void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
-        struct npqueue * node)
-{
-    struct nlist_dll * current_list;
-
-    for (NLIST_DLL_EACH(current_list, &sentinel->list)) {
-        struct npqueue * current = npqueue_from_list(current_list);
-
-        if (current->priority < node->priority) {
-            break;
-        }
-    }
-    nlist_dll_add_after(current_list, &node->list);
-}
-
-
 void p_nlogger_x_print(struct nlogger_instance * instance, uint8_t level,
     const char * msg, ...)
 {
@@ -309,19 +196,6 @@ void p_nlogger_x_print(struct nlogger_instance * instance, uint8_t level,
 void p_nlogger_x_set_level(struct nlogger_instance * instance, uint8_t level)
 {
     instance->level = level;
-}
-
-void nfiber_task_create(struct nfiber_task ** fiber, nfiber_fn * fn, void * arg,
-    uint_fast8_t prio)
-{
-}
-
-void nfiber_task_delete(struct nfiber_task * fiber)
-{
-}
-
-static void np_fiber_task_dispatch(struct ntask * task, void * arg)
-{
 }
 
 void np_lqueue_base_init(struct np_lqueue_base * qb, uint8_t elements)
@@ -379,79 +253,10 @@ uint32_t np_lqueue_base_tail(const struct np_lqueue_base * qb)
     return (qb->tail);
 }
 
-
-static struct ntask * alloc_task(struct ntask * mempool)
-{
-	struct ntask * task;
-
-	task = NULL;
-
-	for (uint16_t i = 0u; i < NCONFIG_TASK_INSTANCES; i++) {
-		task = &mempool[i];
-
-		if (task->state == NTASK_UNINITIALIZED) {
-			break;
-		}
-	}
-
-	return task;
-}
-
-static struct ntask * find_task_with_prio(struct ntask * mempool,
-		uint_fast8_t prio)
-{
-    for (uint16_t i = 0u; i < NCONFIG_TASK_INSTANCES; i++) {
-    	struct ntask * task;
-
-        task = &mempool[i];
-
-        if (task->state == NTASK_UNINITIALIZED) {
-        	break;
-        }
-        if (task->prio == prio) {
-            return task;
-        }
-    }
-    return NULL;
-}
-
-static void register_tasks(struct ntask_schedule * ctx, struct ntask * mempool)
-{
-    uint_fast8_t abs_prio;
-
-    abs_prio = 0u;
-
-    for (uint16_t prio = NTASK_PRIO_MIN; prio <= NTASK_PRIO_MAX; prio++) {
-        struct ntask * task;
-
-        task = find_task_with_prio(mempool, (uint_fast8_t)prio);
-
-        if (task) {
-            ctx->sentinel[abs_prio++] = task;
-        }
-    }
-}
-
-static void prioritize_tasks(struct ntask_schedule * ctx)
-{
-    for (uint16_t i = 0u; i < NCONFIG_TASK_INSTANCES; i++) {
-    	struct ntask * task;
-
-    	task = ctx->sentinel[i];
-
-    	if (task == NULL) {
-			break;
-		}
-        task->prio = (uint_fast8_t)i;
-    }
-}
-
 static void dispatch(struct ntask * task)
 {
     task->fn(task->arg);
 }
-
-#define task_from_prio(ctx, prio)		(ctx)->sentinel[prio]
 
 #if (NCONFIG_TASK_INSTANCES <= NBITARRAY_S_MAX_SIZE)
 
@@ -477,50 +282,48 @@ static void dispatch(struct ntask * task)
 
 #endif
 
-struct ntask * ntask_create(ntask_fn * fn, void * arg, uint_fast8_t prio)
+void ntask_init(ntask_fn * fn, void * arg, uint_fast8_t prio)
 {
     struct ntask * task;
 
     NREQUIRE(fn != NULL);
-    NREQUIRE(g_task_schedule.current == NULL);
-    NREQUIRE(find_task_with_prio(&g_task_mempool[0], prio) == NULL);
+    NREQUIRE(prio < NCONFIG_TASK_INSTANCES);
 
-    task = alloc_task(&g_task_mempool[0]);
+    task = &g_task_schedule.mempool[prio];
 
-	NENSURE(task != NULL);
-    NOBLIGATION(NSIGNATURE_IS(task, NSIGNATURE_THREAD));
+    NREQUIRE(NSIGNATURE_OF(task) != NSIGNATURE_THREAD);
 
-    task->prio = prio;
     task->fn = fn;
     task->arg = arg;
     task->state = NTASK_DORMANT;
-
-    return task;
+    memset(&task->tls, 0, sizeof(task->tls));
+    
+    NOBLIGATION(NSIGNATURE_IS(task, NSIGNATURE_THREAD));
 }
 
-void ntask_delete(struct ntask * task)
+void ntask_terminate(ntask_id task_id)
 {
-	NREQUIRE(NSIGNATURE_OF(task) == NSIGNATURE_THREAD);
-	NREQUIRE(task->state == NTASK_DORMANT);
-    task->state = NTASK_UNINITIALIZED;
-    NOBLIGATION(NSIGNATURE_IS(task, ~NSIGNATURE_THREAD));
+    NREQUIRE(task_id < NCONFIG_TASK_INSTANCES);
+	NREQUIRE(NSIGNATURE_OF(&g_task_schedule.mempool[task_id]) == NSIGNATURE_THREAD);
+	NREQUIRE(g_task_schedule.mempool[task_id].state == NTASK_DORMANT);
+    
+    g_task_schedule.mempool[task_id].state = NTASK_UNINITIALIZED;
+    
+    NOBLIGATION(NSIGNATURE_IS(&g_task_schedule.mempool[task_id], ~NSIGNATURE_THREAD));
 }
 
-
-void ntask_start(struct ntask * task)
+/*
+ * 1. Insert the task to ready queue.
+ * 2. Update the task state to NTASK_READY.
+ */
+void ntask_start(ntask_id task_id)
 {
-    struct ntask_schedule * ctx = &g_task_schedule;
+    NREQUIRE(task_id < NCONFIG_TASK_INSTANCES);
+    NREQUIRE(NSIGNATURE_OF(&g_task_schedule.mempool[task_id]) == NSIGNATURE_THREAD);
+    NREQUIRE(g_task_schedule.mempool[task_id].state == NTASK_DORMANT);
 
-    NREQUIRE(NSIGNATURE_OF(task) == NSIGNATURE_THREAD);
-    NREQUIRE(task->state == NTASK_DORMANT);
-
-        /* Insert to ready queue only if scheduler has been already started. */
-    if (ctx->current) {
-                                               /* Insert task to ready queue */
-    	queue_insert(&ctx->ready, task->prio);
-    }
-                                                        /* Update task state */
-    task->state = NTASK_READY;
+    queue_insert(&g_task_schedule.ready, task_id);                      /* 1 */
+    g_task_schedule.mempool[task_id].state = NTASK_READY;                        /* 2 */
 }
 
 /*
@@ -528,24 +331,24 @@ void ntask_start(struct ntask * task)
  * 2. If a task is blocked (waiting on something) it will be invoked with
  *    current state set to NTASK_CANCELED so blocking code can distinguish this
  *    use case and unblock the task in order to terminate itself.
- * 3. If a task is already canceled then just do nothing.
+ * 3. If a task is already cancelled then just do nothing.
  * 4. The task state is updated to NTASK_DORMANT.
  */
-void ntask_stop(struct ntask * task)
+void ntask_stop(ntask_id task_id)
 {
+    struct ntask * task;
+    
+    NREQUIRE(task_id < NCONFIG_TASK_INSTANCES);
+    
+    task = &g_task_schedule.mempool[task_id];
+    
 	NREQUIRE(NSIGNATURE_OF(task) == NSIGNATURE_THREAD);
 	NREQUIRE(task->state != NTASK_UNINITIALIZED);
 	NREQUIRE(task->state != NTASK_DORMANT);
 
     switch (task->state) {
         case NTASK_READY: {
-            struct ntask_schedule * ctx = &g_task_schedule;
-                  /* Remove from ready queue only if scheduler has been already
-                   * started.
-                   */
-            if (ctx->current) {                                         /* 1 */
-            	queue_remove(&ctx->ready, task->prio);
-            }
+            queue_remove(&g_task_schedule.ready, task_id);              /* 1 */
             break;
         }
         case NTASK_BLOCKED: {
@@ -560,62 +363,57 @@ void ntask_stop(struct ntask * task)
 }
 
 /*
+ * 1. Loop while the exit flag is not set (in case exitable scheduler is used)
+ *    or loop forever.
+ * 2. Get the highest priority level.
+ * 3. Fetch the new task and make it as current.
+ * 4. Execute the task function.
  */
 void ntask_schedule(void)
 {
-    struct ntask_schedule * ctx = &g_task_schedule;
-
-                           /* Calculate relative priority and sort the tasks */
-    register_tasks(ctx, &g_task_mempool[0]);
-    prioritize_tasks(ctx);
-
 #if (NCONFIG_EXITABLE_SCHEDULER == 1)
-                                    /* While there are ready tasks in system */
-    while (!should_exit) {
+    while (!should_exit) {                                              /* 1 */
 #else
-    while (true) {
+    while (true) {                                                      /* 1 */
 #endif
-        uint_fast8_t prio;
-                                                    /* Get the highest level */
-        prio = queue_get_highest(&ctx->ready);
-                                                       /* Fetch the new task */
-        ctx->current = task_from_prio(ctx, prio);
-                                                       /* Execute the thread */
-        dispatch(ctx->current);
+        struct ntask_schedule * ctx = &g_task_schedule;
+        ntask_id task_id;
+
+        task_id = queue_get_highest(&ctx->ready);                       /* 2 */
+        ctx->current = task_id;                                         /* 3 */
+        dispatch(&ctx->mempool[task_id]);                               /* 4 */
     }
 }
-
-enum ntask_state ntask_state(const struct ntask * task)
+    
+enum nerror_id ntask_current(void)
 {
-	NREQUIRE(NSIGNATURE_OF(task) == NSIGNATURE_THREAD);
-
-	return task->state;
+    return g_task_schedule.mempool[g_task_schedule.current].tls.error;
 }
 
-void ntask_queue_ready(struct ntask_queue * queue)
+enum ntask_state ntask_state(ntask_id task_id)
 {
-    struct ntask_schedule * ctx = &g_task_schedule;
-    uint_fast8_t prio;
+    NREQUIRE(task_id < NCONFIG_TASK_INSTANCES);
+	NREQUIRE(NSIGNATURE_OF(&g_task_schedule.mempool[task_id]) == NSIGNATURE_THREAD);
 
-    				   /* Find the most high priority task in the wait queue */
-    prio = queue_get_highest(queue);
-    										  /* Remove task from wait queue */
-    queue_remove(queue, prio);
+	return g_task_schedule.mempool[task_id].state;
+}
+
+void ntask_ready(ntask_id task_id)
+{
                                                /* Insert task to ready queue */
-    queue_insert(&ctx->ready, prio);
+    queue_insert(&g_task_schedule.ready, task_id);
                                                         /* Update task state */
-    task_from_prio(ctx, prio)->state = NTASK_READY;
+    g_task_schedule.mempool[task_id].state = NTASK_READY;
 }
 
-void ntask_queue_block(struct ntask_queue * queue)
+void ntask_block(ntask_id task_id)
 {
-    struct ntask_schedule * ctx = &g_task_schedule;
-    uint_fast8_t prio = ctx->current->prio;
+    queue_remove(&g_task_schedule.ready, task_id);
+    
+    g_task_schedule.mempool[task_id].state = NTASK_BLOCKED;
+}
 
-                                             /* Remove task from ready queue */
-    queue_remove(&ctx->ready, prio);
-                                                /* Insert task to wait queue */
-    queue_insert(queue, prio);
-                                                        /* Update task state */
-    ctx->current->state = NTASK_BLOCKED;
+void np_epa_init(void * ws, nepa_state * init_state, uint_fast8_t prio)
+{
+    
 }
