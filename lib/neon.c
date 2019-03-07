@@ -131,7 +131,7 @@ void nbitarray_x_set(nbitarray_x * array, uint_fast8_t bit)
 	uint_fast8_t group;
 	uint_fast8_t pos;
 
-	group = (uint_fast8_t)((bit / 32) + 1u);
+	group = (uint_fast8_t)((bit / NARCH_DATA_WIDTH) + 1u);
 	pos = bit % NARCH_DATA_WIDTH;
 	array[group] |= 0x1u << pos;
 	array[0] |= 0x1u << (group - 1u);
