@@ -1440,66 +1440,17 @@ struct np_lqueue_base
 #define NLQUEUE_IS_EMPTY(Q)    												\
     (NLQUEUE_EMPTY(Q) == NLQUEUE_SIZE(Q))
 
-NPLATFORM_INLINE
-void np_lqueue_base_init(struct np_lqueue_base * qb, uint8_t elements)
-{
-    qb->head = 0u;
-    qb->tail = 0u;
-    qb->empty = elements;
-    qb->mask = (uint_fast8_t)(elements - 1u);
-}
+void np_lqueue_base_init(struct np_lqueue_base * qb, uint8_t elements);
 
-NPLATFORM_INLINE
-uint32_t np_lqueue_base_put_fifo(struct np_lqueue_base * qb)
-{
-    qb->tail--;
-    qb->tail &= qb->mask;
-    qb->empty--;
+uint32_t np_lqueue_base_put_fifo(struct np_lqueue_base * qb);
 
-    return (qb->tail);
-}
+uint32_t np_lqueue_base_put_lifo(struct np_lqueue_base * qb);
 
-NPLATFORM_INLINE
-uint32_t np_lqueue_base_put_lifo(struct np_lqueue_base * qb)
-{
-    uint32_t retval;
+uint32_t np_lqueue_base_get(struct np_lqueue_base * qb);
 
-    retval = qb->head++;
-    qb->head &= qb->mask;
-    qb->empty--;
+uint32_t np_lqueue_base_head(const struct np_lqueue_base * qb);
 
-    return (retval);
-}
-
-NPLATFORM_INLINE
-uint32_t np_lqueue_base_get(struct np_lqueue_base * qb)
-{
-    uint32_t retval;
-
-    retval = qb->tail++;
-    qb->tail &= qb->mask;
-    qb->empty++;
-
-    return (retval);
-}
-
-NPLATFORM_INLINE
-uint32_t np_lqueue_base_head(const struct np_lqueue_base * qb)
-{
-    uint32_t real_head;
-
-    real_head = qb->head;
-    real_head--;
-    real_head &= qb->mask;
-
-    return (real_head);
-}
-
-NPLATFORM_INLINE
-uint32_t np_lqueue_base_tail(const struct np_lqueue_base * qb)
-{
-    return (qb->tail);
-}
+uint32_t np_lqueue_base_tail(const struct np_lqueue_base * qb);
 
 /** @} *//*==================================================================*/
 /** @defgroup   nqueue_pqueue Priority sorted queue module
