@@ -486,12 +486,19 @@ void ntask_stop(struct ntask * task)
     task->state = NTASK_DORMANT;                                        /* 4 */
 }
 
+static void idle_task(void * arg)
+{
+    /* */
+}
+
 /*
  */
 void ntask_schedule(void)
 {
     struct ntask_schedule * ctx = &g_task_schedule;
 
+    ntask_start(ntask_create(idle_task, NULL, 0));
+    
 #if (NCONFIG_EXITABLE_SCHEDULER == 1)
                                     /* While there are ready tasks in system */
     while (!should_exit) {
