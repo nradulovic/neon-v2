@@ -1131,12 +1131,14 @@ typedef uint_fast16_t nevent_id;
  *  @brief      Event module
  *  @{ *//*==================================================================*/
 
+typedef uint_fast8_t nepa_id;
+
 enum nepa_activity
 {
     NEPA_HANDLED
 };
 
-typedef enum nepa_activity (nepa_state)(void * ws, nevent_id event_id);
+typedef enum neap_activity (nepa_state)(void * ws, nevent_id event_id);
 
 #define nepa_workspace(q_size) \
     { \

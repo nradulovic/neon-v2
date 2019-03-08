@@ -40,7 +40,7 @@ struct ntask
 
 /** @brief		Scheduler context structure
  */
-struct schedule
+struct ntask_schedule
 {
 	ntask_id                    current;        /**< Speed optimization, 
                                                  *   current thread. */
@@ -54,13 +54,16 @@ struct schedule
 #else
         nbitarray_x bitarray[NBITARRAY_DEF(NCONFIG_TASK_INSTANCES)];
 #endif
-    }                           ready;          /**< Ready queue */
+    }          ready;                           /**< Ready queue */
+    struct ntask mempool[NCONFIG_TASK_INSTANCES];
+};
+
+struct nepa_schedule
+{
     struct nepa
     {
-        struct ntask                task;
-        struct np_lqueue_base *     evt_q;
-        nepa_state *                state;
-        void *                      ws;
+        struct ntask task;
+        struct np_lqueue_base * base;
     }                           mempool[NCONFIG_TASK_INSTANCES];
 };
 
@@ -103,7 +106,7 @@ const uint32_t nbits_right_mask[33] =
 
 /** @brief		Scheduler context
  */
-static struct schedule g_task_schedule;
+static struct ntask_schedule g_task_schedule;
 
 #if (NCONFIG_TASK_INSTANCES > NBITARRAY_X_MAX_SIZE)
 # error "The limit of maximum task instances has been exceeded!"
@@ -279,32 +282,48 @@ static void dispatch(struct ntask * task)
 
 #endif
 
-#define task_from_epa_id(epa_id) \
-    (&g_task_schedule.mempool[epa_id].task)
-
-static void task_init(ntask_fn * fn, void * arg, uint_fast8_t prio)
+void ntask_init(ntask_fn * fn, void * arg, uint_fast8_t prio)
 {
-    struct ntask * task = task_from_epa_id(prio);
-    
+    struct ntask * task;
+
+    NREQUIRE(fn != NULL);
+    NREQUIRE(prio < NCONFIG_TASK_INSTANCES);
+
+    task = &g_task_schedule.mempool[prio];
+
+    NREQUIRE(NSIGNATURE_OF(task) != NSIGNATURE_THREAD);
+
     task->fn = fn;
     task->arg = arg;
     task->state = NTASK_DORMANT;
     memset(&task->tls, 0, sizeof(task->tls));
+    
+    NOBLIGATION(NSIGNATURE_IS(task, NSIGNATURE_THREAD));
 }
 
-static void task_terminate(ntask_id task_id)
+void ntask_terminate(ntask_id task_id)
 {
-    task_from_epa_id(task_id)->task.state = NTASK_UNINITIALIZED;
+    NREQUIRE(task_id < NCONFIG_TASK_INSTANCES);
+	NREQUIRE(NSIGNATURE_OF(&g_task_schedule.mempool[task_id]) == NSIGNATURE_THREAD);
+	NREQUIRE(g_task_schedule.mempool[task_id].state == NTASK_DORMANT);
+    
+    g_task_schedule.mempool[task_id].state = NTASK_UNINITIALIZED;
+    
+    NOBLIGATION(NSIGNATURE_IS(&g_task_schedule.mempool[task_id], ~NSIGNATURE_THREAD));
 }
 
 /*
  * 1. Insert the task to ready queue.
  * 2. Update the task state to NTASK_READY.
  */
-static void task_start(ntask_id task_id)
+void ntask_start(ntask_id task_id)
 {
+    NREQUIRE(task_id < NCONFIG_TASK_INSTANCES);
+    NREQUIRE(NSIGNATURE_OF(&g_task_schedule.mempool[task_id]) == NSIGNATURE_THREAD);
+    NREQUIRE(g_task_schedule.mempool[task_id].state == NTASK_DORMANT);
+
     queue_insert(&g_task_schedule.ready, task_id);                      /* 1 */
-    task_from_epa_id(task_id)->state = NTASK_READY;                     /* 2 */
+    g_task_schedule.mempool[task_id].state = NTASK_READY;                        /* 2 */
 }
 
 /*
@@ -315,13 +334,13 @@ static void task_start(ntask_id task_id)
  * 3. If a task is already cancelled then just do nothing.
  * 4. The task state is updated to NTASK_DORMANT.
  */
-static void task_stop(ntask_id task_id)
+void ntask_stop(ntask_id task_id)
 {
     struct ntask * task;
     
     NREQUIRE(task_id < NCONFIG_TASK_INSTANCES);
     
-    task = task_from_epa_id(task_id);
+    task = &g_task_schedule.mempool[task_id];
     
 	NREQUIRE(NSIGNATURE_OF(task) == NSIGNATURE_THREAD);
 	NREQUIRE(task->state != NTASK_UNINITIALIZED);
@@ -357,7 +376,7 @@ void ntask_schedule(void)
 #else
     while (true) {                                                      /* 1 */
 #endif
-        struct schedule * ctx = &g_task_schedule;
+        struct ntask_schedule * ctx = &g_task_schedule;
         ntask_id task_id;
 
         task_id = queue_get_highest(&ctx->ready);                       /* 2 */
