@@ -773,7 +773,7 @@ uint_fast8_t nbitarray_x_msbs(const nbitarray_x * array);
  *  @param      expr
  *              Expression : C expression : condition which must be 'true'.
  */
-enum nerror
+enum nerror_id
 {
     EOBJ_INVALID, /**< Invalid object error */
     EOBJ_INITIALIZED,
