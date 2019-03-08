@@ -513,6 +513,24 @@ void ntask_schedule(void)
                                                        /* Execute the thread */
         dispatch(task_from_prio(ctx, prio));
     }
+    
+#if (NCONFIG_EXITABLE_SCHEDULER == 1)
+    for (uint_fast8_t prio = 0u; prio < NCONFIG_TASK_INSTANCES; prio) {
+        struct ntask * task;
+        
+        task = task_from_prio(ctx, prio);
+        
+        ntask_stop(task);
+    }
+    
+    for (uint_fast8_t prio = 0u; prio < NCONFIG_TASK_INSTANCES; prio) {
+        struct ntask * task;
+        
+        task = task_from_prio(ctx, prio);
+        
+        ntask_delete(task);
+    }
+#endif
 }
 
 enum ntask_state ntask_state(const struct ntask * task)
