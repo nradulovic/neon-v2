@@ -57,10 +57,6 @@
 #define NCONFIG_TASK_INSTANCES 8
 #endif
 
-#ifndef NCONFIG_EXITABLE_SCHEDULER
-#define NCONFIG_EXITABLE_SCHEDULER 0
-#endif
-
 #ifndef NCONFIG_TESTSUITE_STOP_ON_ERROR
 #define NCONFIG_TESTSUITE_STOP_ON_ERROR 1
 #endif
@@ -777,7 +773,7 @@ uint_fast8_t nbitarray_x_msbs(const nbitarray_x * array);
  *  @param      expr
  *              Expression : C expression : condition which must be 'true'.
  */
-enum nerror_id
+enum nerror
 {
     EOBJ_INVALID, /**< Invalid object error */
     EOBJ_INITIALIZED,
@@ -785,6 +781,561 @@ enum nerror_id
 };
 
 /** @} */
+/** @} *//*==================================================================*/
+/** @defgroup   nlist_sll Singly linked list module
+ *  @brief      Singly linked list module
+ *  @{ *//*==================================================================*/
+
+/** @brief      Macro to get the pointer to structure which contains any struct
+ *              of a list.
+ *  @param[in]  ptr
+ *              Pointer to structure/data that is containing a list structure.
+ *  @param[in]  type
+ *              Type of variable which contains a list structure.
+ *  @param[in]  member
+ *              Name of member in variable structure.
+ *  @return     Pointer to container structure.
+ *
+ *  @code
+ *  struct my_struct
+ *  {
+ *      char my_name[8];
+ *      struct nlist_sll some_list;
+ *      int some_stuff;
+ *  };
+ *
+ *  struct nlist_sll * current_element;
+ *  struct my_struct * current;
+ *
+ *  current = NLIST_SLL_ENTRY(current_element, struct my_struct, some_list);
+ *  @endcode
+ *  @mseffect
+ */
+#define NLIST_SLL_ENTRY(ptr, type, member)                                	\
+    NPLATFORM_CONTAINER_OF(ptr, type, member)
+
+#define nlist_sll_is_null(list)                                             \
+    ((list)->next == NULL)
+
+/** @brief      Macro to get the first element in list pointed by @a sentinel.
+ *  @param[in]  sentinel
+ *              Pointer to sentinel of a list.
+ *  @note       This macro is exception to macro naming rule since it is does
+ *              not have side effects.
+ */
+#define nlist_sll_first(sentinel)       nlist_sll_next(sentinel)
+
+/** @brief      Helper macro, get the last element in list pointed by
+ *              @a sentinel.
+ *  @param[in]  sentinel
+ *              Pointer to sentinel of a list.
+ *  @note       This macro is exception to macro naming rule since it is does
+ *              not have side effects.
+ */
+#define nlist_sll_last(sentinel)        nlist_sll_prev(sentinel)
+
+/** @brief      Helper macro, add a node @a node at list head pointed by
+ *              @a sentinel.
+ *  @param[in]  sentinel
+ *              Pointer to sentinel of a list.
+ *  @param[in]  node
+ *              Pointer to a node to be added to list.
+ *  @note       This macro is exception to macro naming rule since it is does
+ *              not have side effects.
+ */
+#define nlist_sll_add_head(sentinel, node)                                  \
+        nlist_sll_add_before(sentinel, node)
+
+/** @brief      Helper macro, add a node @a node at list tail pointed by
+ *              @a sentinel.
+ *  @param[in]  sentinel
+ *              Pointer to sentinel of a list.
+ *  @param[in]  node
+ *              Pointer to a node to be added to list.
+ *  @note       This macro is exception to macro naming rule since it is does
+ *              not have side effects.
+ */
+#define nlist_sll_add_tail(sentinel, node)                                  \
+        nlist_sll_add_after(sentinel, node)
+
+/** @brief      Construct for @a FOR loop to iterate over each element in a
+ *              list.
+ *
+ *  @code
+ *  struct nlist_sll * current;
+ *  struct nlist_sll * sentinel = &g_list_sentinel.list;
+ *
+ *  for (NLIST_SLL_EACH(current, sentinel)) {
+ *      ... do something with @a current (excluding remove)
+ *  }
+ *  @endcode
+ */
+#define NLIST_SLL_EACH(current, sentinel)                                   \
+    current = nlist_sll_first(sentinel); current != (sentinel);             \
+    current = nlist_sll_next(current)
+
+/** @brief      Construct for @a FOR loop to iterate over each element in list
+ *              backwards.
+ *
+ *  @code
+ *  struct nlist_sll * current;
+ *  struct nlist_sll * sentinel = &g_list_sentinel.list;
+ *
+ *  for (NLIST_SLL_EACH_BACKWARDS(current, sentinel)) {
+ *      ... do something with current (excluding remove)
+ *  }
+ *  @endcode
+ */
+#define NLIST_SLL_EACH_BACKWARDS(current, sentinel)                         \
+    current = nlist_sll_last(sentinel); current != (sentinel);              \
+    current = nlist_sll_prev(current)
+
+/** @brief      Construct for FOR loop to iterate over each element in list
+ *              which is safe against element removal.
+ *
+ *  @code
+ *  struct nlist_sll * current;
+ *  struct nlist_sll * iterator;
+ *  struct nlist_sll * sentinel = &g_list_sentinel.list;
+ *
+ *  for (NLIST_SLL_EACH_SAFE(current, iterator, sentinel)) {
+ *      ... do something with current (including remove)
+ *  }
+ *  @endcode
+ */
+#define NLIST_SLL_EACH_SAFE(current, iterator, sentinel)                    \
+    current = nlist_sll_first(sentinel), iterator = nlist_sll_next(current);\
+    current != (sentinel);                                                  \
+    current = iterator, iterator = nlist_sll_next(iterator)
+
+/** @brief      Singly Linked List (SLL) structure.
+ */
+struct nlist_sll
+{
+    struct nlist_sll *          next;             /**< Next node in the list.*/
+};
+
+/** @brief      Initialize a list sentinel or node.
+ *  @param[in]  node
+ *              A list sentinel or node.
+ *
+ *  Before calling this function:
+ @verbatim
+    +-----+
+    |     |--> next
+    |  N  |
+    |     |
+    +-----+
+ @endverbatim
+ *
+ *  After call to this function:
+ @verbatim
+ +-----------+
+ |  +-----+  |
+ +->|     |--+
+    |  N  |
+    |     |
+    +-----+
+
+ @endverbatim
+ */
+struct nlist_sll * nlist_sll_init(struct nlist_sll * node);
+
+/** @brief      Return the next node of @a node in linked list.
+ *  @param[in]  node
+ *              A list node or sentinel.
+ *  @return     Next node.
+ */
+#define nlist_sll_next(a_node)   (a_node)->next
+
+/** @brief      Return previous node of @a node in linked list.
+ *  @param[in]  node
+ *              A list node or sentinel.
+ *  @return     Previous node.
+ */
+struct nlist_sll * nlist_sll_prev(struct nlist_sll * const node);
+
+/** @brief      Insert node (N) after current node (C).
+ *  @param[in]  current
+ *              A list node or sentinel.
+ *  @param[in]  node
+ *              A list node.
+ *
+ *  Before calling this function:
+ @verbatim
+        +-----+    +-----+    +-----+             +-----+
+        |     |--->|     |--->|     |-->next      |     |
+        |  1  |    |  C  |    |  2  |             |  N  |
+        |     |    |     |    |     |             |     |
+        +-----+    +-----+    +-----+             +-----+
+ @endverbatim
+ *
+ *  After call to this function:
+ @verbatim
+        +-----+    +-----+    +-----+    +-----+
+        |     |--->|     |--->|     |--->|     |-->next
+        |  1  |    |  N  |    |  C  |    |  2  |
+        |     |    |     |    |     |    |     |
+        +-----+    +-----+    +-----+    +-----+
+ @endverbatim
+ */
+void nlist_sll_add_after(struct nlist_sll * current, struct nlist_sll * node);
+
+/** @brief      Insert node (N) before current node (C).
+ *  @param[in]  current
+ *              A list node or sentinel.
+ *  @param[in]  node
+ *              A list node.
+ *
+ *  Before calling this function:
+ @verbatim
+        +-----+    +-----+    +-----+             +-----+
+        |     |--->|     |--->|     |-->next      |     |
+        |  1  |    |  C  |    |  2  |             |  N  |
+        |     |    |     |    |     |             |     |
+        +-----+    +-----+    +-----+             +-----+
+ @endverbatim
+ *
+ *  After call to this function:
+ @verbatim
+        +-----+    +-----+    +-----+    +-----+
+        |     |--->|     |--->|     |--->|     |-->next
+        |  1  |    |  C  |    |  N  |    |  2  |
+        |     |    |     |    |     |    |     |
+        +-----+    +-----+    +-----+    +-----+
+ @endverbatim
+ */
+struct nlist_sll * nlist_sll_add_before(struct nlist_sll * current,
+        struct nlist_sll * node);
+
+/** @brief      Remove a node (N)
+ *  @param[in]  node
+ *              A list node.
+ *
+ *  Before calling this function:
+ @verbatim
+        +-----+    +-----+    +-----+
+        |     |--->|     |--->|     |-->next
+        |  1  |    |  N  |    |  2  |
+        |     |    |     |    |     |
+        +-----+    +-----+    +-----+
+ @endverbatim
+ *
+ *  After call to this function:
+ @verbatim
+                                     +-----------+
+        +-----+    +-----+           |  +-----+  |
+        |     |--->|     |-->next    +->|     |--+
+        |  1  |    |  2  |              |  N  |
+        |     |    |     |              |     |
+        +-----+    +-----+              +-----+
+ @endverbatim
+ */
+void nlist_sll_remove(struct nlist_sll * node);
+
+/** @brief      Remove a node (N)
+ *  @param[in]  node
+ *              A list node.
+ *
+ *  Before calling this function:
+ @verbatim
+        +-----+    +-----+    +-----+    +-----+
+        |     |--->|     |--->|     |--->|     |-->next
+        |  1  |    |  C  |    |  N  |    |  2  |
+        |     |    |     |    |     |    |     |
+        +-----+    +-----+    +-----+    +-----+
+ @endverbatim
+ *
+ *  After call to this function:
+ @verbatim
+                                                +-----------+
+        +-----+    +-----+    +-----+           |  +-----+  |
+        |     |--->|     |--->|     |-->next    +->|     |--+
+        |  1  |    |  C  |    |  2  |              |  N  |
+        |     |    |     |    |     |              |     |
+        +-----+    +-----+    +-----+              +-----+
+ @endverbatim
+ */
+void nlist_sll_remove_from(struct nlist_sll * current, struct nlist_sll * node);
+
+/** @brief      Check if a list @a node is empty or not.
+ *  @param[in]  node
+ *              A list sentinel.
+ *  @return     List state:
+ *  @retval     true - The list is empty.
+ *  @retval     false - The list contains at least one node.
+ */
+bool nlist_sll_is_empty(const struct nlist_sll * node);
+
+/** @} *//*==================================================================*/
+/** @defgroup   nlist_sll Doubly linked list module
+ *  @brief      Doubly linked list module
+ *  @{ *//*==================================================================*/
+
+/** @brief      Macro to get the pointer to structure which contains any struct
+ *              of a list.
+ *  @param[in]  ptr
+ *              Pointer to structure/data that is containing a list structure.
+ *  @param[in]  type
+ *              Type of variable which contains a list structure.
+ *  @param[in]  member
+ *              Name of member in variable structure.
+ *  @return     Pointer to container structure.
+ *
+ *  @code
+ *  struct my_struct
+ *  {
+ *      char my_name[8];
+ *      struct nlist_dll some_list;
+ *      int some_stuff;
+ *  };
+ *
+ *  struct nlist_dll * current_element;
+ *  struct my_struct * current;
+ *
+ *  current = NLIST_DLL_ENTRY(current_element, struct my_struct, some_list);
+ *  @endcode
+ *  @mseffect
+ */
+#define NLIST_DLL_ENTRY(ptr, type, member)                                	\
+    NLIST_SLL_ENTRY(ptr, type, member)
+
+#define nlist_dll_is_null(list)                                             \
+    ((list)->next == NULL)
+
+/** @brief      Macro to get the first element in list pointed by @a sentinel.
+ *  @param[in]  sentinel
+ *              Pointer to sentinel of a list.
+ *  @note       This macro is exception to macro naming rule since it is does
+ *              not have side effects.
+ */
+#define nlist_dll_first(sentinel)       nlist_dll_next(sentinel)
+
+/** @brief      Helper macro, get the last element in list pointed by
+ *              @a sentinel.
+ *  @param[in]  sentinel
+ *              Pointer to sentinel of a list.
+ *  @note       This macro is exception to macro naming rule since it is does
+ *              not have side effects.
+ */
+#define nlist_dll_last(sentinel)        nlist_dll_prev(sentinel)
+
+/** @brief      Helper macro, add a node @a node at list head pointed by
+ *              @a sentinel.
+ *  @param[in]  sentinel
+ *              Pointer to sentinel of a list.
+ *  @param[in]  node
+ *              Pointer to a node to be added to list.
+ *  @note       This macro is exception to macro naming rule since it is does
+ *              not have side effects.
+ */
+#define nlist_dll_add_head(sentinel, node)                                  \
+        nlist_dll_add_before(sentinel, node)
+
+/** @brief      Helper macro, add a node @a node at list tail pointed by
+ *              @a sentinel.
+ *  @param[in]  sentinel
+ *              Pointer to sentinel of a list.
+ *  @param[in]  node
+ *              Pointer to a node to be added to list.
+ *  @note       This macro is exception to macro naming rule since it is does
+ *              not have side effects.
+ */
+#define nlist_dll_add_tail(sentinel, node)                                  \
+        nlist_dll_add_after(sentinel, node)
+
+/** @brief      Construct for @a FOR loop to iterate over each element in a
+ *              list.
+ *
+ *  @code
+ *  struct nlist_dll * current;
+ *  struct nlist_dll * sentinel = &g_list_sentinel.list;
+ *
+ *  for (nlist_dll_EACH(current, sentinel)) {
+ *      ... do something with @a current (excluding remove)
+ *  }
+ *  @endcode
+ */
+#define NLIST_DLL_EACH(current, sentinel)                                      \
+    current = nlist_dll_first(sentinel); current != (sentinel);                \
+    current = nlist_dll_next(current)
+
+/** @brief      Construct for FOR loop to iterate over each element in list
+ *              backwards.
+ *
+ *  @code
+ *  struct nlist_dll * current;
+ *  struct nlist_dll * sentinel = &g_list_sentinel.list;
+ *
+ *  for (nlist_dll_EACH_BACKWARDS(current, sentinel)) {
+ *      ... do something with current (excluding remove)
+ *  }
+ *  @endcode
+ */
+#define NLIST_DLL_EACH_BACKWARDS(current, sentinel)                            \
+    current = nlist_dll_last(sentinel); current != (sentinel);                 \
+    current = nlist_dll_prev(current)
+
+/** @brief      Construct for FOR loop to iterate over each element in list
+ *              which is safe against element removal.
+ *
+ *  @code
+ *  struct nlist_dll * current;
+ *  struct nlist_dll * iterator;
+ *  struct nlist_dll * sentinel = &g_list_sentinel.list;
+ *
+ *  for (nlist_dll_EACH_SAFE(current, iterator, sentinel)) {
+ *      ... do something with current (including remove)
+ *  }
+ *  @endcode
+ */
+#define NLIST_DLL_EACH_SAFE(current, iterator, sentinel)                    \
+    current = nlist_dll_first(sentinel), iterator = nlist_dll_next(current);\
+    current != (sentinel);                                                  \
+    current = iterator, iterator = nlist_dll_next(iterator)
+
+/** @brief      Doubly-linked list structure
+ */
+struct nlist_dll
+{
+    struct nlist_dll *          next;       /**< Next node in the list.*/
+    struct nlist_dll *          prev;       /**< Previous node in the list.*/
+};
+
+/** @brief      Initialize a list sentinel or node.
+ *  @param[in]  node
+ *              A list sentinel or node.
+ *
+ *  Before calling this function:
+ @verbatim
+         +-----+
+         |     |--> next
+         |  N  |
+ prev <--|     |
+         +-----+
+ @endverbatim
+ *
+ *  After call to this function:
+ @verbatim
+      +-----------+
+      |  +-----+  |
+      +->|     |--+
+         |  N  |
+      +--|     |<-+
+      |  +-----+  |
+      +-----------+
+ @endverbatim
+ */
+struct nlist_dll * nlist_dll_init(struct nlist_dll * node);
+
+#define nlist_dll_term(a_node)  do { (a_node)->next = NULL; } while (0)
+
+/** @brief      Return the next node of @a node in linked list.
+ *  @param[in]  node
+ *              A list node or sentinel.
+ *  @return     Next node.
+ */
+#define nlist_dll_next(a_node)  (a_node)->next
+
+/** @brief      Return previous node of @a node in linked list.
+ *  @param[in]  node
+ *              A list node or sentinel.
+ *  @return     Previous node.
+ */
+#define nlist_dll_prev(a_node)   (a_node)->prev
+
+/** @brief      Insert node (N) before current node (C).
+ *  @param[in]  current
+ *              A list node or sentinel.
+ *  @param[in]  node
+ *              A list node.
+ *
+ *  Before calling this function:
+ @verbatim
+        +-----+    +-----+    +-----+             +-----+
+        |     |--->|     |--->|     |-->next      |     |
+        |  1  |    |  C  |    |  2  |             |  N  |
+ prev<--|     |<---|     |<---|     |             |     |
+        +-----+    +-----+    +-----+             +-----+
+ @endverbatim
+ *
+ *  After call to this function:
+ @verbatim
+        +-----+    +-----+    +-----+    +-----+
+        |     |--->|     |--->|     |--->|     |-->next
+        |  1  |    |  N  |    |  C  |    |  2  |
+ prev<--|     |<---|     |<---|     |<---|     |
+        +-----+    +-----+    +-----+    +-----+
+ @endverbatim
+ */
+struct nlist_dll * nlist_dll_add_after(
+		struct nlist_dll * current,
+        struct nlist_dll * node);
+
+/** @brief      Insert node (N) after current node (C).
+ *  @param[in]  current
+ *              A list node or sentinel.
+ *  @param[in]  node
+ *              A list node.
+ *
+ *  Before calling this function:
+ @verbatim
+        +-----+    +-----+    +-----+             +-----+
+        |     |--->|     |--->|     |-->next      |     |
+        |  1  |    |  C  |    |  2  |             |  N  |
+ prev<--|     |<---|     |<---|     |             |     |
+        +-----+    +-----+    +-----+             +-----+
+ @endverbatim
+ *
+ *  After call to this function:
+ @verbatim
+        +-----+    +-----+    +-----+    +-----+
+        |     |--->|     |--->|     |--->|     |-->next
+        |  1  |    |  C  |    |  N  |    |  2  |
+ prev<--|     |<---|     |<---|     |<---|     |
+        +-----+    +-----+    +-----+    +-----+
+ @endverbatim
+ */
+struct nlist_dll * nlist_dll_add_before(
+		struct nlist_dll * current,
+        struct nlist_dll * node);
+
+/** @brief      Remove a node (N)
+ *  @param[in]  node
+ *              A list node.
+ *
+ *  Before calling this function:
+ @verbatim
+        +-----+    +-----+    +-----+
+        |     |--->|     |--->|     |-->next
+        |  1  |    |  N  |    |  2  |
+ prev<--|     |<---|     |<---|     |
+        +-----+    +-----+    +-----+
+ @endverbatim
+ *
+ *  After call to this function:
+ @verbatim
+                                     +-----------+
+        +-----+    +-----+           |  +-----+  |
+        |     |--->|     |-->next    +->|     |--+
+        |  1  |    |  2  |              |  N  |
+ prev<--|     |<---|     |           +--|     |
+        +-----+    +-----+           |  +-----+
+                                    ———
+ @endverbatim
+ */
+void nlist_dll_remove(struct nlist_dll * node);
+
+/** @brief      Check if a list @a node is empty or not.
+ *  @param[in]  node
+ *              A list sentinel.
+ *  @return     List state:
+ *  @retval     true - The list is empty.
+ *  @retval     false - The list contains at least one node.
+ */
+#define NLIST_DLL_IS_EMPTY(a_node)                                          \
+    ((a_node)->next == (a_node))
+
 /** @} *//*==================================================================*/
 /** @defgroup   nqueue_lqueue Lightweight queue module
  *  @brief      Lightweight queue module
@@ -834,6 +1385,7 @@ struct np_lqueue_base
 /** @brief      Put an item to queue in FIFO mode.
  *  @note       Before calling this function ensure that queue is not full, see
  *     			@ref nqueue_is_full.
+ *  @api
  */
 #define NLQUEUE_PUT_FIFO(Q, item)     										\
     (Q)->np_qb_buffer[np_lqueue_base_put_fifo(&(Q)->base)] = (item)
@@ -841,6 +1393,7 @@ struct np_lqueue_base
 /** @brief      Put an item to queue in LIFO mode.
  *  @note       Before calling this function ensure that queue is not full, see
  *     			@ref nqueue_is_full.
+ *  @api
  */
 #define NLQUEUE_PUT_LIFO(Q, item)     										\
     (Q)->np_qb_buffer[np_lqueue_base_put_lifo(&(Q)->base)] = (item)
@@ -848,6 +1401,7 @@ struct np_lqueue_base
 /** @brief      Get an item from the queue buffer.
  *  @note       Before calling this function ensure that queue has an item. See
  *              @ref nqueue_is_empty.
+ *  @api
  */
 #define NLQUEUE_GET(Q)    													\
     (Q)->np_qb_buffer[np_lqueue_base_get(&(Q)->base)]
@@ -856,6 +1410,8 @@ struct np_lqueue_base
  *
  *  Get the pointer to head item in the queue. The item is not removed from
  *  queue buffer.
+ *
+ *  @api
  */
 #define NLQUEUE_HEAD(Q)    													\
     (Q)->np_qb_buffer[np_lqueue_base_head(&(Q)->base)]
@@ -863,26 +1419,26 @@ struct np_lqueue_base
 #define NLQUEUE_TAIL(Q)    													\
     (Q)->np_qb_buffer[np_lqueue_base_tail(&(Q)->base)]
 
-/** @brief      Returns the buffer size in number of elements.
+/** @brief         Returns the buffer size in number of elements.
+ *  @api
  */
 #define NLQUEUE_SIZE(Q)    				(Q)->base.mask + 1u
 
 /** @brief      Returns the current number of free elements in queue buffer.
+ *  @api
  */
 #define NLQUEUE_EMPTY(Q)    			(Q)->base.empty
 
 /** @brief      Return true if queue is full else false.
+ *  @api
  */
 #define NLQUEUE_IS_FULL(Q)    			(!NLQUEUE_EMPTY(Q))
 
-/** @brief      Return true if queue is empty else false.
+/** @brief       Return true if queue is empty else false.
+ *     @api
  */
 #define NLQUEUE_IS_EMPTY(Q)    												\
     (NLQUEUE_EMPTY(Q) == NLQUEUE_SIZE(Q))
-
-/** @brief      Return the pointer to queue base structure
- */
-#define NLQUEUE_BASE(Q)                 &(Q)->base
 
 void np_lqueue_base_init(struct np_lqueue_base * qb, uint8_t elements);
 
@@ -896,6 +1452,137 @@ uint32_t np_lqueue_base_head(const struct np_lqueue_base * qb);
 
 uint32_t np_lqueue_base_tail(const struct np_lqueue_base * qb);
 
+/** @} *//*==================================================================*/
+/** @defgroup   nqueue_pqueue Priority sorted queue module
+ *  @brief      Priority sorted queue module
+ *  @{ *//*==================================================================*/
+
+/** @defgroup   npqueue_structs Data structures
+ *  @brief      Data structures for queue and node objects.
+ *  @{ */
+
+struct npqueue_sentinel
+{
+    struct nlist_dll list;
+};
+
+#define npqueue_sentinel_init(a_sentinel)                                   \
+    nlist_dll_init(&(a_sentinel)->list)
+
+#define npqueue_sentinel_term(a_sentinel)                                   \
+    npqueue_sentinel_init(a_sentinel)
+
+/** @brief      Test if queue is empty.
+ *  @param      queue
+ *              Pointer to queue structure.
+ *  @return     Boolean type
+ *  @retval     - true - Queue @a queue is empty.
+ *  @retval     - false - Queue @a queue is not empty.
+ *  @api
+ */
+#define npqueue_sentinel_is_empty(a_sentinel)                              \
+    NLIST_DLL_IS_EMPTY(&(a_sentinel)->list)
+
+#define npqueue_sentinel_head(a_sentinel)                                  \
+    npqueue_next(a_sentinel)
+
+void npqueue_sentinel_shift(struct npqueue_sentinel * sentinel);
+
+/** @brief    	Priority sorted queue node structure.
+ *
+ *  Each node has a priority attribute. The attribute type is 8-bit unsigned
+ *  integer. The highest priority has the value 255. The lowest priority has
+ *  the value is 0.
+ *
+ *  @api
+ */
+struct npqueue
+{
+    struct nlist_dll list;
+    uint_fast8_t priority;
+};
+
+/** @} */
+/** @defgroup   npqueue_node Priority sorted queue node
+ *  @brief      Functions for manipulating the queue nodes.
+ *  @{ */
+
+/** @brief    	Convert a list entry to node entry.
+ *  @param     	a_node
+ *      		Pointer to node member of priority sorted queue node structure.
+ *  @return    	Pointer to priority queue node structure.
+ *  @api
+ */
+#define npqueue_from_list(a_node) NLIST_DLL_ENTRY((a_node), struct npqueue, list)
+
+/** @brief    	Initialize a node and define its priority.
+ *
+ *  A node structure needs to be initialized before it can be used within a
+ *  queue.
+ *
+ *  @param     	node
+ *      		Pointer to a node structure.
+ *  @param      priority
+ *      		An 8-bit unsigned integer number specifying this node priority.
+ *      		The highest priority has the value 255. The lowest priority has
+ *      		the value is 0.
+ *  @return    	The pointer @a node.
+ */
+struct npqueue * npqueue_init(struct npqueue * node, uint_fast8_t priority);
+
+/** @brief    	Terminate a node.
+ *
+ *  The function will re-initialize the node and set the priority to zero.
+ *
+ *  @param     	node
+ *      		Pointer to a node structure.
+ */
+void npqueue_term(struct npqueue * node);
+
+/** @brief      Get a node priority.
+ *  @param      node
+ *              Pointer to a node structure.
+ *  @return     An 8-bit unsigned integer number representing this node
+ *              priority.
+ *  @api
+ */
+#define npqueue_priority(a_node)                                            \
+    (a_node)->priority
+
+#define npqueue_priority_set(a_node, a_priority)                            \
+    do { (a_node)->priority = (a_priority); } while (0)
+
+#define npqueue_next(a_node)                                                \
+    npqueue_from_list(nlist_dll_next(&(a_node)->list))
+
+/** @brief      Insert a node into the queue using sorting method.
+ *  @param      queue
+ *              Pointer to queue structure.
+ *  @param      node
+ *              Pointer to node structure.
+ *  @api
+ */
+void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
+        struct npqueue * node);
+
+/** @brief      Insert a node into the queue using the FIFO method.
+ *  @param      queue
+ *              Pointer to queue structure.
+ *  @param      node
+ *              Pointer to node structure.
+ *  @api
+ */
+#define npqueue_insert_fifo(a_queue, a_node)                               \
+        nlist_dll_add_after(&(a_queue)->list, &(a_node)->list)
+
+/** @brief      Remove the node from queue.
+ *  @param      node
+ *              Pointer to node structure.
+ *  @api
+ */
+#define npqueue_remove(a_node)  nlist_dll_remove(&(a_node)->list)
+
+/** @} */
 /** @} *//*==================================================================*/
 /** @defgroup   nlogger Extended logger module
  *  @brief      Extended logger module
@@ -960,6 +1647,7 @@ uint32_t np_lqueue_base_tail(const struct np_lqueue_base * qb);
 
 struct nlogger_instance
 {
+    struct nlist_sll list;
     const char * name;
     uint8_t level;
 };
@@ -1041,6 +1729,8 @@ enum nlogger_levels
  */
 #define nerror                  ncurrent->tls.error
 
+struct ntask;
+
 /** @brief		Task function pointer
  */
 typedef void (ntask_fn)(void * arg);
@@ -1054,10 +1744,20 @@ enum ntask_state
     NTASK_BLOCKED               = 254
 };
 
+/** @brief      Task ready/wait queue
+ */
+struct ntask_queue
+{
+#if (NCONFIG_TASK_INSTANCES <= NBITARRAY_S_MAX_SIZE)
+    nbitarray_s bitarray;
+#else
+    nbitarray_x bitarray[NBITARRAY_DEF(NCONFIG_TASK_INSTANCES)];
+#endif
+};
 
-typedef uint_fast8_t ntask_id;
+struct ntask * ntask_current(void);
 
-/** @brief		Initialise a task instance
+/** @brief		Create a task instance
  *  @param      fn
  *  			Pointer to task function. See @ref ntask_fn.
  *  @param		arg
@@ -1067,29 +1767,20 @@ typedef uint_fast8_t ntask_id;
  *  			and maximum priority @ref NTASK_PRIO_MAX.
  *
  *  @pre		Pointer @a fn != NULL.
- *  @pre		Priority @a prio range ``(NTASK_PRIO_MIN, NCONFIG_TASK_INSTANCES]``
+ *  @pre		Priority @a prio range ``(NTASK_PRIO_MIN, NTASK_PRIO_MAX]``
  *
- *  Initialise the task with given attributes. 
- * 
- *  Before executing a task it needs to be initialised. The task structure is 
- *  allocated from internal task pool which size is defined by
- *  @ref NCONFIG_TASK_INSTANCES configuration macro. When a task is initialised 
- *  it is transitioned to state @ref NTASK_DORMANT. After initialisation the
- *  task can be started by @ref ntask_start function. 
- * 
- *  @note       This function can be called only during initialisation phase,
- *              before scheduler 
- *              Once a task is initialised it can't be de-initialised, it can
- *              be put only in dormant state by using @ref ntask_terminate
- *              function.
+ *  Create and initialize the task with given attributes. The task is allocated
+ *  from internal task pool which size is defined with
+ *  @ref NCONFIG_TASK_INSTANCES. When a task is created it is transitioned in
+ *  to state @ref NTASK_DORMANT.
  */
-void ntask_init(ntask_fn * fn, void * arg, uint_fast8_t prio);
+struct ntask * ntask_create(ntask_fn * fn, void * arg, uint_fast8_t prio);
 
-/** @brief		Terminate the task instance.
+/** @brief		Delete the task instance.
  *  @param		task
  *  			Task structure.
  */
-void ntask_terminate(ntask_id task);
+void ntask_delete(struct ntask * task);
 
 /** @brief 		Start a task
  *  @param		task
@@ -1097,59 +1788,282 @@ void ntask_terminate(ntask_id task);
  *
  *  When a task is started its state is changed to @ref NTASK_READY.
  */
-void ntask_start(ntask_id task);
+void ntask_start(struct ntask * task);
 
-void ntask_stop(ntask_id task);
+void ntask_stop(struct ntask * task);
 
 void ntask_schedule(void);
 
-enum nerror_id ntask_current_error(void);
+enum ntask_state ntask_state(const struct ntask * task);
 
-enum ntask_state ntask_state(ntask_id task);
+void ntask_queue_ready(struct ntask_queue * queue);
 
-void ntask_ready(ntask_id task_id);
-
-void ntask_block(ntask_id task_id);
+void ntask_queue_block(struct ntask_queue * queue);
 
 /** @} *//*==================================================================*/
-/** @defgroup   nevent Event module
- *  @brief      Event module
+/** @defgroup   nfiber Fiber module
+ *  @brief      Fiber module
  *  @{ *//*==================================================================*/
 
-enum nevent_sys_id
+/** @defgroup   fiber_state Fiber states
+ *  @brief      Fiber states.
+ *  @{
+ */
+#define NFIBER_DORMANT 0
+#define NFIBER_YIELDED 1
+#define NFIBER_BLOCKED 2
+#define NFIBER_TERMINATED 3
+
+/** @} */
+/*---------------------------------------------------------------------------*/
+/** @defgroup   fiber_decl Fiber declarations
+ *  @brief      Fiber declarations.
+ *  @{
+ */
+
+struct nfiber;
+
+typedef uint_fast8_t (nfiber_fn)(struct nfiber * fb, void * arg);
+
+struct nfiber
 {
-    NEVENT_SUPER = 0u,
-    NEVENT_ENTRY = 1u,
-    NEVENT_EXIT = 2u,
-    NEVENT_RESERVED_MAX = 15u
+    uint32_t ctx;
 };
 
-typedef uint_fast16_t nevent_id;
+/** @} */
+/*---------------------------------------------------------------------------*/
+/** @defgroup   fiber_init Fiber initialization
+ *  @brief      Fiber initialization.
+ *  @{
+ */
 
-/** @} *//*==================================================================*/
-/** @defgroup   nevent Event module
- *  @brief      Event module
- *  @{ *//*==================================================================*/
+#define nfiber_init(fb)                      NP_FIBER_CTX_INIT(&(fb)->ctx)
 
-typedef uint_fast8_t nepa_id;
+/** @} */
+/*---------------------------------------------------------------------------*/
+/** @name       Declaration and definition
+ *  @{
+ */
 
-enum nepa_activity
-{
-    NEPA_HANDLED
-};
+/** @brief      Declaration of a fiber.
+ *
+ *  This macro is used to declare a fiber. All fibers must be declared with
+ *  this macro.
+ *
+ *  @param      fiber_proto
+ *              The name and arguments of the C function implementing the
+ *              fiber.
+ *
+ *  @hideinitializer
+ */
+#define NFIBER(fiber_proto)     uint_fast8_t fiber_proto
 
-typedef enum neap_activity (nepa_state)(void * ws, nevent_id event_id);
+/** @brief      Declare the start of a fiber inside the C function.
+ *
+ *  This macro is used to declare the starting point of a fiber. It should be
+ *  placed at the start of the function in which the fiber runs. All C
+ *  statements above the NFIBER_BEGIN() invokation will be executed each time
+ *  the fiber is scheduled.
+ *
+ *  @param      fb
+ *              A pointer to the fiber control structure.
+ *
+ *  @hideinitializer
+ */
+#define NFIBER_BEGIN(fb)                                                    \
+    do {                                                                    \
+        struct nfiber * np_lfb = (fb);                                      \
+        NP_FIBER_CTX_BEGIN(&np_lfb->ctx)
 
-#define nepa_workspace(q_size) \
-    { \
-        struct evt_q nlqueue(nevent_id, (q_size)) evt_q; \
+/** @brief      Declare the end of a fiber.
+ *
+ *  This macro is used for declaring that a fiber ends. It must always be used
+ *  together with a matching NFIBER_BEGIN() macro.
+ *
+ *  @hideinitializer
+ */
+#define NFIBER_END()                                                        \
+        NP_FIBER_CTX_END(&np_lfb->ctx, NFIBER_TERMINATED);                  \
+    } while (0)
+
+/** @} */
+/*---------------------------------------------------------------------------*/
+/** @name Exiting and restarting
+ *  @{
+ */
+
+/**
+ * Exit the fiber.
+ *
+ * This macro causes the fiber to exit. If the fiber was
+ * spawned by another fiber, the parent fiber will become
+ * unblocked and can continue to run.
+ *
+ * \hideinitializer
+ */
+#define nfiber_exit()    			                                        \
+    NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_TERMINATED, 2000u);
+
+/** @} */
+
+/**
+ * \name Calling a fiber
+ * @{
+ */
+
+/**
+ * Schedule a fiber.
+ *
+ * This function schedules a fiber. The return value of the
+ * function is non-zero if the fiber is running or zero if the
+ * fiber has exited.
+ *
+ * \param fiber_fn The call to the C function implementing the fiber to
+ * be scheduled
+ *
+ * \hideinitializer
+ */
+#define nfiber_dispatch(fiber_fn)    fiber_fn
+
+/** @} */
+
+/**
+ * \name Blocked wait
+ * @{
+ */
+
+/**
+ * Block and wait until condition is true.
+ *
+ * This macro blocks the fiber until the specified condition is
+ * true.
+ *
+ * \param condition The condition.
+ *
+ * \hideinitializer
+ */
+#define nfiber_wait_until(condition)                                        \
+    while (!(condition)) {    			                                    \
+        NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_BLOCKED, 0u);    		    \
     }
 
-#define NEPA_INIT(epa, init_state, prio) \
-    NLQUEUE_INIT(&(epa)->evt_q); \
-    np_epa_init(NLQUEUE_BASE(&(epa)->evt_q), (prio))
+/**
+ * Block and wait while condition is true.
+ *
+ * This function blocks and waits while condition is true. See
+ * PT_WAIT_UNTIL().
+ *
+ * \param cond The condition.
+ *
+ * \hideinitializer
+ */
+#define nfiber_wait_while(cond)         nfiber_wait_until(!(cond))
 
-void np_epa_init(void * ws, nepa_state * init_state, uint_fast8_t prio);
+/** @} */
 
+
+/**
+ * \name Hierarchical fibers
+ * @{
+ */
+
+/**
+ * Block and wait until a child fiber completes.
+ *
+ * This macro schedules a child fiber. The current fiber
+ * will block until the child fiber completes.
+ *
+ * \note The child fiber must be manually initialized with the
+ * PT_INIT() function before this function is used.
+ *
+ * \param fiber_fn The child fiber with arguments
+ *
+ * \hideinitializer
+ */
+#define nfiber_call(fiber_fn)                                               \
+    nfiber_wait_until(nfiber_dispatch(fiber_fn) == NFIBER_TERMINATED)
+
+/** @} */
+
+/**
+ * \name Yielding from a fiber
+ * @{
+ */
+
+/**
+ * Yield from the current fiber.
+ *
+ * This function will yield the fiber, thereby allowing other
+ * processing to take place in the system.
+ *
+ * \hideinitializer
+ */
+#define nfiber_yield()    	                                                \
+        NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_YIELDED, 1000u)
+
+#define nfiber_block()                                                      \
+        NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_BLOCKED, 2000u)
+
+/** @} */
+/** @defgroup   fiber_decl Fiber declarations
+ *  @brief      Fiber declarations.
+ *  @{ */
+
+struct nfiber_task
+{
+    struct nfiber fiber;
+    nfiber_fn * fiber_fn;
+    struct ntask * task;
+};
+
+/** @brief      Initialize a fiber.
+ *
+ *  Initializes a fiber. Initialization must be done prior to starting to
+ *  execute the fiber.
+ *
+ *  @param      fiber
+ *              A pointer to the fiber control structure.
+ *
+ *  @hideinitializer
+ */
+void nfiber_task_create(struct nfiber_task ** fiber, nfiber_fn * fn, void * arg,
+    uint_fast8_t prio);
+
+void nfiber_task_delete(struct nfiber_task * fiber);
+
+/** @} */
+/** @defgroup   fiber_ctx Fiber context macros
+ *  @brief      Fiber context macros.
+ *  @note       These macros are not part of the public API.
+ *  @{
+ */
+
+/** @brief      Initialize the fiber context.
+ *  @hideinitializer
+ *  @notapi
+ */
+#define NP_FIBER_CTX_INIT(ctx)              *(ctx) = 0;
+
+/** @brief      Retrieve previously saved context.
+ *  @hideinitializer
+ *  @notapi
+ */
+#define NP_FIBER_CTX_BEGIN(ctx)             switch(*(ctx)) { case 0:
+
+/** @brief      Save the context.
+ *  @hideinitializer
+ *  @notapi
+ */
+#define NP_FIBER_CTX_SAVE(ctx, r, offset)                                   \
+    *(ctx) = __LINE__ + offset; return (r); case __LINE__ + offset:
+
+/** @brief      End the current execution context.
+ *  @hideinitializer
+ *  @notapi
+ */
+#define NP_FIBER_CTX_END(ctx, r)                                            \
+    *(ctx) = __LINE__; case __LINE__: ;} return (r)
+
+/** @} */
 /** @} */
 #endif /* NEON_H_ */
