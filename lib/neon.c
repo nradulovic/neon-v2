@@ -416,7 +416,7 @@ struct ntask * ntask_create(ntask_fn * fn, void * arg, uint_fast8_t prio)
     struct ntask * task;
 
     NREQUIRE(fn != NULL);
-    NREQUIRE(prio < NBITS_ARRAY_SIZE(ctx->mempool));
+    NREQUIRE(prio < NCONFIG_TASK_INSTANCES);
 
     task = task_from_prio(ctx, prio);
 

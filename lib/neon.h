@@ -1764,15 +1764,27 @@ struct ntask * ntask_current(void);
  *  			Task function argument.
  *  @param		prio
  *  			Priority of the task. Minimum priority is @ref NTASK_PRIO_MIN
- *  			and maximum priority @ref NTASK_PRIO_MAX.
+ *  			and maximum priority @ref NCONFIG_TASK_INSTANCES.
  *
- *  @pre		Pointer @a fn != NULL.
- *  @pre		Priority @a prio range ``(NTASK_PRIO_MIN, NTASK_PRIO_MAX]``
+ *  @pre		Pointer @a fn != ``NULL``.
+ *  @pre		Priority @a prio < ``NCONFIG_TASK_INSTANCES``.
+ *  @pre        The used priority @a prio is unique, used only by single task
+ *              instance.
  *
- *  Create and initialize the task with given attributes. The task is allocated
- *  from internal task pool which size is defined with
- *  @ref NCONFIG_TASK_INSTANCES. When a task is created it is transitioned in
- *  to state @ref NTASK_DORMANT.
+ *  Create and initialise the task with given attributes. 
+ * 
+ *  Each task has a function and associated arguments. The priority of each task
+ *  must be unique. No multiple tasks of same priority are allowed.
+ * 
+ *  The task control structure is allocated from internal task pool which size 
+ *  is defined with @ref NCONFIG_TASK_INSTANCES macro. All tasks at the 
+ *  beggining of firmware execution are in @reg NTASK_UNINITIALIZED state. When
+ *  a task is created it is transitioned in to @ref NTASK_DORMANT state. In 
+ *  order to start the task execution the function @ref ntask_start needs to be
+ *  called.
+ *  
+ *  @note       The function can be called before and after the scheduler has
+ *              been started.
  */
 struct ntask * ntask_create(ntask_fn * fn, void * arg, uint_fast8_t prio);
 
