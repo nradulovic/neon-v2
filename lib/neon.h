@@ -45,19 +45,23 @@
 #include "neon_config.h"
 #endif
 
-#ifndef NCONFIG_ENABLE_LOGGER
+#if !defined(NCONFIG_ENABLE_LOGGER) || defined(__DOXYGEN__)
 #define NCONFIG_ENABLE_LOGGER 0
 #endif
 
-#ifndef NCONFIG_ENABLE_DEBUG
+#if !defined(NCONFIG_ENABLE_DEBUG) || defined(__DOXYGEN__)
 #define NCONFIG_ENABLE_DEBUG 0
 #endif
 
-#ifndef NCONFIG_TASK_INSTANCES
+#if !defined(NCONFIG_TASK_INSTANCES) || defined(__DOXYGEN__)
 #define NCONFIG_TASK_INSTANCES 8
 #endif
 
-#ifndef NCONFIG_TESTSUITE_STOP_ON_ERROR
+#if !defined(NCONFIG_EXITABLE_SCHEDULER) || defined(__DOXYGEN__)
+#define NCONFIG_EXITABLE_SCHEDULER 0
+#endif
+
+#if !defined(NCONFIG_TESTSUITE_STOP_ON_ERROR) || defined(__DOXYGEN__)
 #define NCONFIG_TESTSUITE_STOP_ON_ERROR 1
 #endif
 
@@ -78,12 +82,10 @@
  *  @brief      Port platform module
  *  @{ *//*==================================================================*/
 
-/** @} */
 /** @defgroup   platformid Platform identification information
  *  @brief      Port compiler identification macros.
- *  @{
- */
-#ifdef __DOXYGEN__
+ *  @{ */
+#if defined(__DOXYGEN__)
 #define NPLATFORM_ID            "unknown"
 #endif
 
@@ -92,12 +94,9 @@
  *  For example, the GCC based compilers will define 'NPLATFORM_GCC'. ARM
  *  based compilers will define NPLATFORM_ARM.
  */
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NPLATFORM_xxx
 #endif
-
-extern const char * nplatform_id;
-extern const char * nplatform_build;
 
 /** @defgroup   platform_compiler Platform compiler macros
  *  @brief      Port compiler helper macros.
@@ -106,15 +105,15 @@ extern const char * nplatform_build;
 /** @brief      Compiler directive to inline a function.
  *  @note       This macro is usually defined in port.
  */
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NPLATFORM_INLINE        static inline
 #endif
 
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NPLATFORM_INLINE_ALWAYS NPLATFORM_INLINE
 #endif
 
-/**@brief       Cast a member of a structure out to the containing structure
+/** @brief      Cast a member of a structure out to the containing structure
  * @param       ptr
  *              the pointer to the member.
  * @param       type
@@ -122,78 +121,79 @@ extern const char * nplatform_build;
  * @param       member
  *              the name of the member within the struct.
  */
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NPLATFORM_CONTAINER_OF(ptr, type, member)                      \
     ((type *)((char *)ptr - offsetof(type, member)))
 #endif
 
-/**@brief       Provides function name for assert macros
+/** @brief      Provides function name for assert macros
  */
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NPLATFORM_FUNC             "unknown"
 #endif
 
-/**@brief       Provides the free file's name which is being compiled
+/** @brief      Provides the free file's name which is being compiled
  */
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NPLATFORM_FILE             "unknown"
 #endif
 
-/**@brief       Provides the free source line
+/** @brief      Provides the free source line
  */
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NPLATFORM_LINE             0
 #endif
 
-/**@brief       Omit function prologue/epilogue sequences
- * @note        Using this macro when the compiler feature is not supported
+/** @brief      Omit function prologue/epilogue sequences
+ *  @note       Using this macro when the compiler feature is not supported
  *              will generate compilation error.
  */
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NPLATFORM_NAKED(x)              __provoke_error__ x
 #endif
 
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NPLATFORM_UNUSED(y)             __provoke_error__ y
 #endif
 
-/**@brief       Declare a function that will never return
+/** @brief      Declare a function that will never return
  */
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NPLATFORM_NORETURN(x)           x
 #endif
 
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NPLATFORM_PACKED(x)             __provoke_error__ x
 #endif
 
-/**@brief       This attribute specifies a minimum alignment (in bytes) for
+/** @brief      This attribute specifies a minimum alignment (in bytes) for
  *              variables of the specified type.
  */
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NPLATFORM_ALIGN(align, x)       __provoke_error__ x
 #endif
 
-/**@brief       Prevent the compiler from merging or refetching accesses.
- * @details     The compiler is also forbidden from reordering successive
- *              instances of NPLATFORM_ACCESS_ONCE(), but only when the
- *              compiler is aware of some particular ordering.  One way to make
- *              the compiler aware of ordering is to put the two invocations of
- *              NPLATFORM_ACCESS_ONCE() in different C statements.
+/** @brief      Prevent the compiler from merging or refetching accesses.
+ * 
+ *  The compiler is also forbidden from reordering successive instances of 
+ *  NPLATFORM_ACCESS_ONCE(), but only when the compiler is aware of some 
+ *  particular ordering.  One way to make the compiler aware of ordering is to
+ *  put the two invocations of NPLATFORM_ACCESS_ONCE() in different C 
+ *  statements.
  */
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NPLATFORM_ACCESS_ONCE(x)        (*(volatile typeof(x) *)&(x))
 #endif
 
 /** @brief      Returns current date.
  */
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NPLATFORM_DATE                  __DATE__
 #endif
 
 /** @brief      Returns current time.
  */
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NPLATFORM_TIME                  __TIME__
 #endif
 
@@ -209,7 +209,7 @@ extern const char * nplatform_build;
 
 /** @brief		Name of the architecture (as string)
  */
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NARCH_ID                "unknown"
 #endif
 
@@ -219,14 +219,14 @@ extern const char * nplatform_build;
  *  addition to this macro it will probably define macros like 'NARCH_ARM_V7M'
  *  which identifies a subset of architecture information.
  */
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NARCH_xxx
 #endif
 
 /** @brief      Number of bits of the used architecture
  *  @api
  */
-#ifdef __DOXYGEN__
+#if defined(__DOXYGEN__)
 #define NARCH_DATA_WIDTH              8
 #endif
 
@@ -250,7 +250,6 @@ void narch_cpu_stop(void);
  *              Argument specifying which bit to set.
  *  @note       Do not use bit >= 32 since it will result in undefined
  *              behaviour.
- *  @api
  */
 void narch_set_bit(uint32_t * u32, uint_fast8_t bit);
 
@@ -261,7 +260,6 @@ void narch_set_bit(uint32_t * u32, uint_fast8_t bit);
  *              Argument specifying which bit to clear.
  *  @note       Do not use bit >= 32 since it will result in undefined
  *              behaviour.
- *  @api
  */
 void narch_clear_bit(uint32_t * u32, uint_fast8_t bit);
 
@@ -288,7 +286,7 @@ uint_fast8_t narch_log2(narch_uint x);
 
 /** @} *//*==================================================================*/
 /** @defgroup   nport_os Port OS module
- *  @brief      Port OSmodule
+ *  @brief      Port OS module
  *  @{ *//*==================================================================*/
 
 /** @} *//*==================================================================*/
@@ -301,7 +299,7 @@ uint_fast8_t narch_log2(narch_uint x);
  *              @ref NCONFIG_ENABLE_NDEBUG.
  *  @{
  */
-#if defined(NCONFIG_ENABLE_DEBUG) && (NCONFIG_ENABLE_DEBUG == 1)
+#if (NCONFIG_ENABLE_DEBUG == 1)
 #define NDEBUG_IS_ENABLED 1
 #else
 /** @brief      Macro that returns current ndebug configuration
@@ -320,7 +318,6 @@ uint_fast8_t narch_log2(narch_uint x);
  *              @ref standard_error_messages.
  *  @param      expr
  *              Expression : C expression : condition which must be 'true'.
- *  @api
  */
 #if (NDEBUG_IS_ENABLED == 1)
 #define NASSERT(expr)                                                        \
@@ -340,7 +337,6 @@ uint_fast8_t narch_log2(narch_uint x);
  *  @param		action
  *  			Expression : C expression : expression which will be executed
  *  			when asser fails.
- *  @api
  */
 #define NASSERT_ACTION(expr, action)                                        \
     if (!(expr)) {                                                          \
@@ -355,7 +351,6 @@ uint_fast8_t narch_log2(narch_uint x);
  *  @param      text
  *              Text : string : a text which will be printed when this assert
  *              macro is executed.
- *  @api
  */
 #if (NDEBUG_IS_ENABLED == 1)
 #define NASSERT_ALWAYS_ACTION(text, action)                                 \
@@ -376,7 +371,6 @@ uint_fast8_t narch_log2(narch_uint x);
  *  @param      text
  *              Text : string : a text which will be printed when this assert
  *              macro is executed.
- *  @api
  */
 #if (NDEBUG_IS_ENABLED == 1)
 #define NASSERT_ALWAYS(text)                                                 \
@@ -398,7 +392,6 @@ uint_fast8_t narch_log2(narch_uint x);
 /** @brief      Execute code to fulfill the contract
  *  @param      expr
  *              Expression : C expression : condition which must be 'true'.
- *  @api
  */
 #if (NDEBUG_IS_ENABLED == 1)
 #define NOBLIGATION(expr)               expr
@@ -409,28 +402,24 @@ uint_fast8_t narch_log2(narch_uint x);
 /** @brief      Make sure the caller has fulfilled all contract preconditions
  *  @param      expr
  *              Expression : C expression : condition which must be 'true'.
- *  @api
  */
 #define NREQUIRE(expr)                  NASSERT(expr)
 
 /** @brief      Make sure the caller has fulfilled all contract preconditions
  *  @param      expr
  *              Expression : C expression : condition which must be 'true'.
- *  @api
  */
 #define NREQUIRE_ACTION(expr, action)   NASSERT_ACTION(expr, action)
 
 /** @brief      Make sure the callee has fulfilled all contract postconditions
  *  @param      expr
  *              Expression : C expression : condition which must be 'true'.
- *  @api
  */
 #define NENSURE(expr)                   NASSERT(expr)
 
 /** @brief      Make sure the callee has fulfilled all contract postconditions
  *  @param      expr
  *              Expression : C expression : condition which must be 'true'.
- *  @api
  */
 #define NENSURE_ACTION(expr, action)    NASSERT_ACTION(expr, action)
 
@@ -443,7 +432,6 @@ uint_fast8_t narch_log2(narch_uint x);
 /** @brief      Assert macro used for internal execution checking
  *  @param      expr
  *              Expression : C expression : condition which must be 'true'.
- *  @api
  */
 #define NASSERT_INTERNAL(expr)            NASSERT(expr)
 
@@ -696,7 +684,7 @@ extern const uint32_t nbits_right_mask[33];
 
 #define nbits_xb1(value)                ((uint32_t)(value) & 0xffu)
 
-/**@brief       Sign extend signed 24 bit integer to signed 32 bits integer
+/** @brief      Sign extend signed 24 bit integer to signed 32 bits integer
  * @param       val - signed 24 bit integer
  * @return
  */
@@ -2028,18 +2016,18 @@ struct nfiber_task
     struct ntask * task;
 };
 
-/** @brief      Initialize a fiber.
+/** @brief      Initialise a Fiber task.
  *
- *  Initializes a fiber. Initialization must be done prior to starting to
+ *  Initialises a fiber task. Initialisation must be done prior to starting to
  *  execute the fiber.
  *
  *  @param      fiber
  *              A pointer to the fiber control structure.
- *
- *  @hideinitializer
  */
-void nfiber_task_create(struct nfiber_task ** fiber, nfiber_fn * fn, void * arg,
-    uint_fast8_t prio);
+struct nfiber_task * nfiber_task_create(struct nfiber_task * fiber, 
+        nfiber_fn * fn, 
+        void * arg,
+        uint_fast8_t prio);
 
 void nfiber_task_delete(struct nfiber_task * fiber);
 

@@ -308,8 +308,16 @@ void p_nlogger_x_set_level(struct nlogger_instance * instance, uint8_t level)
     instance->level = level;
 }
 
-void nfiber_task_create(struct nfiber_task ** fiber, nfiber_fn * fn, void * arg,
-    uint_fast8_t prio)
+/*===========================================================================*/
+/*
+ * Fiber task implementation
+ */
+/*===========================================================================*/
+
+struct nfiber_task * nfiber_task_create(struct nfiber_task * fiber, 
+        nfiber_fn * fn, 
+        void * arg,
+        uint_fast8_t prio)
 {
 }
 
