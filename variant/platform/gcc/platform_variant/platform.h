@@ -80,7 +80,7 @@ extern "C" {
 
 #define NPLATFORM_INLINE_ALWAYS 		NPLATFORM_INLINE
 
-#define NPLATFORM_CONTAINER_OF(ptr, type, member)                      \
+#define NPLATFORM_CONTAINER_OF(ptr, type, member)                           \
     ((type *)((char *)ptr - offsetof(type, member)))
 
 #ifdef __cplusplus

@@ -16,6 +16,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+
 #include "ntestsuite.h"
 
 struct np_testsuite_context
@@ -148,6 +150,17 @@ bool np_testsuite_actual(uint32_t line, union np_testsuite_test_val actual)
         case NP_TESTSUITE_TYPE_PTR:
             if (actual.ptr !=
                 g_np_testsuite_context.test_case.expected.ptr) {
+                testsuite_test_failed(line);
+		        nlogger_err("  Expected : %p\n"
+                            "  Actual   : %p\n",
+                            g_np_testsuite_context.test_case.expected.ptr,
+                            actual.ptr);
+		        retval = true;
+            }
+            break;
+        case NP_TESTSUITE_TYPE_STR:
+            if (strcmp(actual.str,
+                g_np_testsuite_context.test_case.expected.str) != 0) {
                 testsuite_test_failed(line);
 		        nlogger_err("  Expected : %p\n"
                             "  Actual   : %p\n",

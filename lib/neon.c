@@ -98,7 +98,7 @@ static struct ntask_schedule g_task_schedule;
 static bool should_exit = false;
 #endif
 
-struct nlogger_instance p_nlogger_global =
+struct nlogger_instance np_logger_global =
 {
     .level = NLOGGER_LEVEL_INFO
 };
@@ -292,7 +292,7 @@ void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
 }
 
 
-void p_nlogger_x_print(struct nlogger_instance * instance, uint8_t level,
+void np_logger_x_print(struct nlogger_instance * instance, uint8_t level,
     const char * msg, ...)
 {
     if (instance->level >= level) {
@@ -303,26 +303,9 @@ void p_nlogger_x_print(struct nlogger_instance * instance, uint8_t level,
     }
 }
 
-void p_nlogger_x_set_level(struct nlogger_instance * instance, uint8_t level)
+void np_logger_x_set_level(struct nlogger_instance * instance, uint8_t level)
 {
     instance->level = level;
-}
-
-/*===========================================================================*/
-/*
- * Fiber task implementation
- */
-/*===========================================================================*/
-
-struct nfiber_task * nfiber_task_create(struct nfiber_task * fiber, 
-        nfiber_fn * fn, 
-        void * arg,
-        uint_fast8_t prio)
-{
-}
-
-void nfiber_task_delete(struct nfiber_task * fiber)
-{
 }
 
 static void np_fiber_task_dispatch(struct ntask * task, void * arg)
@@ -396,24 +379,24 @@ void dispatch(struct ntask * task)
 
 #if (NCONFIG_TASK_INSTANCES <= NBITARRAY_S_MAX_SIZE)
 
-#define queue_insert(queue, prio) \
+#define queue_insert(queue, prio)                                           \
     nbitarray_s_set(&(queue)->bitarray, (prio))
 
-#define queue_remove(queue, prio) \
+#define queue_remove(queue, prio)                                           \
     nbitarray_s_clear(&(queue)->bitarray, (prio))
 
-#define queue_get_highest(queue) \
+#define queue_get_highest(queue)                                            \
 	nbitarray_s_msbs(&(queue)->bitarray)
 
 #else
 
-#define queue_insert(queue, prio) \
+#define queue_insert(queue, prio)                                           \
     nbitarray_x_set(&(queue)->bitarray[0], (prio))
 
-#define queue_remove(queue, prio) \
+#define queue_remove(queue, prio)                                           \
     nbitarray_x_clear(&(queue)->bitarray[0], (prio));
 
-#define queue_get_highest(queue) \
+#define queue_get_highest(queue)                                            \
 	nbitarray_x_msbs(&(queue)->bitarray[0])
 
 #endif
@@ -445,7 +428,6 @@ void ntask_delete(struct ntask * task)
     task->state = NTASK_UNINITIALIZED;
     NOBLIGATION(NSIGNATURE_IS(task, ~NSIGNATURE_THREAD));
 }
-
 
 void ntask_start(struct ntask * task)
 {
@@ -574,4 +556,42 @@ void ntask_queue_block(struct ntask_queue * queue)
     queue_insert(queue, prio);
                                                         /* Update task state */
     task_from_prio(ctx, prio)->state = NTASK_BLOCKED;
+}
+
+/*===========================================================================*/
+/*
+ * Fiber task implementation
+ */
+/*===========================================================================*/
+
+struct nfiber_task * nfiber_task_create( 
+        nfiber_fn * fn, 
+        void * arg,
+        uint_fast8_t prio)
+{
+}
+
+void nfiber_task_delete(struct nfiber_task * fiber)
+{
+}
+
+void nfiber_task_start(struct nfiber_task * fiber)
+{
+    
+}
+
+void nfiber_task_stop(struct nfiber_task * fiber)
+{
+    
+}
+
+
+void nfiber_sem_init(struct nfiber_sem * sem)
+{
+    
+}
+
+void nfiber_sem_term(struct nfiber_sem * sem)
+{
+    
 }

@@ -73,6 +73,13 @@ extern "C" {
         val.ptr = (a_pointer);                                              \
         np_testsuite_expect(val, NP_TESTSUITE_TYPE_PTR);                    \
     } while (0)
+    
+#define NTESTSUITE_EXPECT_STR(a_string)                                     \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.str = (a_string);                                               \
+        np_testsuite_expect(val, NP_TESTSUITE_TYPE_STR);                    \
+    } while (0)
 
 #define NTESTSUITE_EXPECT_BOOL(a_bool)                                      \
     do {                                                                    \
@@ -101,7 +108,14 @@ extern "C" {
         val.ptr = (a_pointer);                                              \
         NP_TESTSUITE_EVALUATE(val);                                         \
     } while (0)
-
+    
+#define NTESTSUITE_ACTUAL_STR(a_string)                                     \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.str = (a_string);                                               \
+        NP_TESTSUITE_EVALUATE(val);                                         \
+    } while (0)
+    
 #define NTESTSUITE_ACTUAL_BOOL(a_bool)                                      \
     do {                                                                    \
         union np_testsuite_test_val val;                                    \
@@ -135,7 +149,8 @@ enum np_testsuite_type
     NP_TESTSUITE_TYPE_UINT,
     NP_TESTSUITE_TYPE_INT,
     NP_TESTSUITE_TYPE_PTR,
-    NP_TESTSUITE_TYPE_BOOL
+    NP_TESTSUITE_TYPE_BOOL,
+    NP_TESTSUITE_TYPE_STR,
 };
 
 struct np_testsuite_fixture
@@ -168,6 +183,7 @@ union np_testsuite_test_val
 	uint32_t ui;
 	int32_t si;
 	void * ptr;
+    char * str;
 	bool b;
 };
 
