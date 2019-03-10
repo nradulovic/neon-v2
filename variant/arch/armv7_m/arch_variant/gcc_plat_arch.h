@@ -34,7 +34,7 @@
 
 #include <stdint.h>
 
-#include "port/nport_platform.h"
+#include "platform_variant/platform.h"
 #include "common_plat_arch.h"
 
 #ifdef __cplusplus
