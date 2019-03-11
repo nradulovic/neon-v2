@@ -33,7 +33,7 @@
 #define NEON_ARMV7_M_ARCH_VARIANT_COMMON_PLAT_ARCH_H_
 
 #include <stdint.h>
-#include "port/nport_platform.h"
+#include "platform_variant/platform.h"
 
 #ifdef __cplusplus
 extern "C" {

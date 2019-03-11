@@ -32,7 +32,7 @@
 #ifndef NEON_ARMV7_M_ARCH_VARIANT_ARCH_H_
 #define NEON_ARMV7_M_ARCH_VARIANT_ARCH_H_
 
-#include "port/nport_platform.h"
+#include "platform_variant/platform.h"
 
 #if defined(NPLATFORM_GCC)
 #include "gcc_plat_arch.h"

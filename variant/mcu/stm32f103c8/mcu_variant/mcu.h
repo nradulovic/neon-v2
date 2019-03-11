@@ -38,25 +38,6 @@
 extern "C" {
 #endif
 
-/*---------------------------------------------------------------------------*/
-/** @defgroup   templateid Template identification information
- *  @brief      Template identification information.
- *  @{
- */
-
-/** @brief      Some brief description.
- * 
- *  More details about the function.
- *
- *  @param      param1
- *              Some information about param1.
- *  @returns    Returns a status information.
- *  @retval     - ERANGE - Something has happened.
- *  @api
- */
-void some_function(uint32_t param1);
-
-/** @} */
 #ifdef __cplusplus
 }
 #endif
