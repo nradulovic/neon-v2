@@ -36,6 +36,10 @@
 #include "board_variant/board.h"
 #include "os_variant/os.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*===========================================================================*/
 /** @defgroup   nconfig Configuration module
  *  @brief      Configuration module
@@ -2200,4 +2204,9 @@ void nfiber_sem_term(struct nfiber_sem * sem);
 #define NFIBER_SEM_SIGNAL(sem)
 
 /** @} */
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* NEON_H_ */
