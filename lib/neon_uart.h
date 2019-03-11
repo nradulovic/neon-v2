@@ -123,7 +123,7 @@ extern "C" {
  */
 #define NUART_EVENT_RX_PARITY_ERROR     ((uint32_t)0x1ul << 9)
     
-typedef void (*nuart_callback)(struct nuart * uart, uint32_t events);
+typedef void (nuart_callback)(struct nuart * uart, uint32_t events);
 
 /** @} *//*==================================================================*/
 /** @defgroup   nuart_control UART control codes
@@ -146,22 +146,52 @@ typedef void (*nuart_callback)(struct nuart * uart, uint32_t events);
  */
 #define NUART_DATA_BITS_Msk             ((uint32_t)0x7ul << NUART_DATA_BITS_Pos)
 
-#define NUART_PARITY_Pos                12
+/** @brief      UART Parity position.
+ */
+#define NUART_PARITY_Pos                7
+
+/** @brief      UART Parity mask.
+ */
 #define NUART_PARITY_Msk                (3ul << NUART_PARITY_Pos)
 
-#define NUART_STOP_BITS_Pos             14
+/** @brief      UART Stop bits position.
+ */
+#define NUART_STOP_BITS_Pos             9
+
+/** @brief      UART Stop bits mask.
+ */
 #define NUART_STOP_BITS_Msk             (3ul << NUART_STOP_BITS_Pos)
 
-#define NUART_FLOW_CONTROL_Pos          16
+/** @brief      UART Flow Control position.
+ */
+#define NUART_FLOW_CONTROL_Pos          11
+
+/** @brief      UART Flow Control position.
+ */
 #define NUART_FLOW_CONTROL_Msk          (3ul << NUART_FLOW_CONTROL_Pos)
 
-#define NUART_CPOL_Pos                  18
+/** @brief      UART Clock polarity position.
+ */
+#define NUART_CPOL_Pos                  13
+
+/** @brief      UART Clock polarity mask.
+ */
 #define NUART_CPOL_Msk                  (1ul << NUART_CPOL_Pos)
 
-#define NUART_CPHA_Pos                  19
+/** @brief      UART Clock phase position.
+ */
+#define NUART_CPHA_Pos                  14
+
+/** @brief      UART Clock phase mask.
+ */
 #define NUART_CPHA_Msk                  (1ul << NUART_CPHA_Pos)
 
-#define NUART_COMMAND_Pos               22u
+/** @brief      UART command position.
+ */
+#define NUART_COMMAND_Pos               15u
+
+/** @brief      UART command mask.
+ */
 #define NUART_COMMAND_Msk               (0xful << NUART_COMMAND_Pos)
 
 /** @name UART control codes: mode
@@ -177,7 +207,7 @@ typedef void (*nuart_callback)(struct nuart * uart, uint32_t events);
 
 /** @brief      Synchronous Slave (external clock signal).
  */
-#define NUART_MODE_SYNCHRONOUS_SLAVE    (0x03UL << NUART_MODE_Pos)
+#define NUART_MODE_SYNCHRONOUS_SLAVE    (0x03ul << NUART_MODE_Pos)
 
 /** @brief      UART Single-wire (half-duplex); arg = Baudrate.
  */
@@ -199,51 +229,105 @@ typedef void (*nuart_callback)(struct nuart * uart, uint32_t events);
 /** @name UART control codes: Data Bits
  *  @{ */
 
-#define NUART_DATA_BITS_5               (5UL << NUART_DATA_BITS_Pos)    ///< 5 Data bits
-#define NUART_DATA_BITS_6               (6UL << NUART_DATA_BITS_Pos)    ///< 6 Data bit
-#define NUART_DATA_BITS_7               (7UL << NUART_DATA_BITS_Pos)    ///< 7 Data bits
-#define NUART_DATA_BITS_8               (0ul << NUART_DATA_BITS_Pos)    ///< 8 Data bits (default)
-#define NUART_DATA_BITS_9               (1ul << NUART_DATA_BITS_Pos)    ///< 9 Data bits
+/** @brief      5 Data bits
+ */
+#define NUART_DATA_BITS_5               (5UL << NUART_DATA_BITS_Pos)
+
+/** @brief      6 Data bits
+ */
+#define NUART_DATA_BITS_6               (6UL << NUART_DATA_BITS_Pos)
+
+/** @brief      7 Data bits
+ */
+#define NUART_DATA_BITS_7               (7UL << NUART_DATA_BITS_Pos)
+
+/** @brief      8 Data bits
+ */
+#define NUART_DATA_BITS_8               (0ul << NUART_DATA_BITS_Pos)
+
+/** @brief      9 Data bits
+ */
+#define NUART_DATA_BITS_9               (1ul << NUART_DATA_BITS_Pos)
 
 /** @} */
 /** @name UART control codes: Parity
  *  @{ */
 
-#define NUART_PARITY_NONE               (0ul << NUART_PARITY_Pos)       ///< No Parity (default)
-#define NUART_PARITY_EVEN               (1ul << NUART_PARITY_Pos)       ///< Even Parity
-#define NUART_PARITY_ODD                (2ul << NUART_PARITY_Pos)       ///< Odd Parity
+/** @brief      No Parity.
+ */
+#define NUART_PARITY_NONE               (0ul << NUART_PARITY_Pos)
+
+/** @brief      Even Parity.
+ */
+#define NUART_PARITY_EVEN               (1ul << NUART_PARITY_Pos)
+
+/** @brief      Odd Parity.
+ */
+#define NUART_PARITY_ODD                (2ul << NUART_PARITY_Pos)
 
 /** @} */
 /** @name UART control codes: Stop Bits
  *  @{ */
 
-#define NUART_STOP_BITS_1               (0ul << NUART_STOP_BITS_Pos)    ///< 1 Stop bit (default)
-#define NUART_STOP_BITS_2               (1ul << NUART_STOP_BITS_Pos)    ///< 2 Stop bits
-#define NUART_STOP_BITS_1_5             (2ul << NUART_STOP_BITS_Pos)    ///< 1.5 Stop bits
-#define NUART_STOP_BITS_0_5             (3UL << NUART_STOP_BITS_Pos)    ///< 0.5 Stop bits
+/** @brief      1 Stop bit.
+ */
+#define NUART_STOP_BITS_1               (0ul << NUART_STOP_BITS_Pos)
+
+/** @brief      2 Stop bit.
+ */
+#define NUART_STOP_BITS_2               (1ul << NUART_STOP_BITS_Pos)
+
+/** @brief      1.5 Stop bit.
+ */
+#define NUART_STOP_BITS_1_5             (2ul << NUART_STOP_BITS_Pos)
+
+/** @brief      0.5 Stop bit.
+ */
+#define NUART_STOP_BITS_0_5             (3ul << NUART_STOP_BITS_Pos)
 
 /** @} */
 /** @name UART control codes: Flow Control
  *  @{ */
 
-#define NUART_FLOW_CONTROL_NONE         (0ul << NUART_FLOW_CONTROL_Pos) ///< No Flow Control (default)
-#define NUART_FLOW_CONTROL_RTS          (1ul << NUART_FLOW_CONTROL_Pos) ///< RTS Flow Control
-#define NUART_FLOW_CONTROL_CTS          (2ul << NUART_FLOW_CONTROL_Pos) ///< CTS Flow Control
-#define NUART_FLOW_CONTROL_RTS_CTS      (3UL << NUART_FLOW_CONTROL_Pos) ///< RTS/CTS Flow Control
+/** @brief      No Flow Control.
+ */
+#define NUART_FLOW_CONTROL_NONE         (0ul << NUART_FLOW_CONTROL_Pos)
+
+/** @brief      RTS Flow Control.
+ */
+#define NUART_FLOW_CONTROL_RTS          (1ul << NUART_FLOW_CONTROL_Pos)
+
+/** @brief      CTS Flow Control.
+ */
+#define NUART_FLOW_CONTROL_CTS          (2ul << NUART_FLOW_CONTROL_Pos)
+
+/** @brief      RTS/CTS Flow Control.
+ */
+#define NUART_FLOW_CONTROL_RTS_CTS      (3ul << NUART_FLOW_CONTROL_Pos)
 
 /** @} */
 /** @name UART control codes: Clock Polarity (Synchronous mode)
  *  @{ */
 
-#define NUART_CPOL0                     (0ul << NUART_CPOL_Pos)         ///< CPOL = 0 (default)
-#define NUART_CPOL1                     (1ul << NUART_CPOL_Pos)         ///< CPOL = 1
+/** @brief      CPOL = 0.
+ */
+#define NUART_CPOL_0                    (0ul << NUART_CPOL_Pos)
+
+/** @brief      CPOL = 1.
+ */
+#define NUART_CPOL_1                    (1ul << NUART_CPOL_Pos)
 
 /** @} */
 /** @name UART control codes: Clock Phase (Synchronous mode)
  *  @{ */
 
-#define NUART_CPHA0                     (0ul << NUART_CPHA_Pos)         ///< CPHA = 0 (default)
-#define NUART_CPHA1                     (1ul << NUART_CPHA_Pos)         ///< CPHA = 1
+/** @brief      CPHA = 0.
+ */
+#define NUART_CPHA_0                    (0ul << NUART_CPHA_Pos)
+
+/** @brief      CPHA = 1.
+ */
+#define NUART_CPHA_1                    (1ul << NUART_CPHA_Pos)
 
 /** @} */
 /** @name UART control codes: Miscellaneous Controls
@@ -252,7 +336,7 @@ typedef void (*nuart_callback)(struct nuart * uart, uint32_t events);
 #define NUART_SET_DEFAULT_TX_VALUE      (0x10ul << NUART_CONTROL_Pos)   ///< Set default Transmit value (Synchronous Receive only); arg = value
 #define NUART_SET_IRDA_PULSE            (0x11ul << NUART_CONTROL_Pos)   ///< Set IrDA Pulse in ns; arg: 0=3/16 of bit period  
 #define NUART_SET_SMART_CARD_GUARD_TIME (0x12ul << NUART_CONTROL_Pos)   ///< Set Smart Card Guard Time; arg = number of bit periods
-#define NUART_SET_SMART_CARD_CLOCK      (0x13UL << NUART_CONTROL_Pos)   ///< Set Smart Card Clock in Hz; arg: 0=Clock not generated
+#define NUART_SET_SMART_CARD_CLOCK      (0x13ul << NUART_CONTROL_Pos)   ///< Set Smart Card Clock in Hz; arg: 0=Clock not generated
 #define NUART_CONTROL_SMART_CARD_NACK   (0x14UL << NUART_CONTROL_Pos)   ///< Smart Card NACK generation; arg: 0=disabled, 1=enabled
 #define NUART_CONTROL_TX                (0x15UL << NUART_CONTROL_Pos)   ///< Transmitter; arg: 0=disabled, 1=enabled
 #define NUART_CONTROL_RX                (0x16UL << NUART_CONTROL_Pos)   ///< Receiver; arg: 0=disabled, 1=enabled
@@ -262,9 +346,17 @@ typedef void (*nuart_callback)(struct nuart * uart, uint32_t events);
 /** @name UART control codes: Commands
  *  @{ */
 
-#define NUART_ABORT_SEND                (0x1ul << NUART_COMMAND_Pos)   ///< Abort \ref NUART_Send
-#define NUART_ABORT_RECEIVE             (0x2ul << NUART_COMMAND_Pos)   ///< Abort \ref NUART_Receive
-#define NUART_ABORT_TRANSFER            (0x3ul << NUART_COMMAND_Pos) ///< Abort \ref NUART_Transfer
+/** @brief      Abort @ref nuart_send.
+ */
+#define NUART_ABORT_SEND                (0x1ul << NUART_COMMAND_Pos)
+
+/** @brief      Abort @ref nuart_receive.
+ */
+#define NUART_ABORT_RECEIVE             (0x2ul << NUART_COMMAND_Pos)
+
+/** @brief      Abort @ref nuart_transfer.
+ */
+#define NUART_ABORT_TRANSFER            (0x3ul << NUART_COMMAND_Pos)
 
 /** @} */
 /** @} *//*==================================================================*/
@@ -274,12 +366,23 @@ typedef void (*nuart_callback)(struct nuart * uart, uint32_t events);
 
 struct nuart;
 
-void nuart_init(struct nuart * uart);
+void nuart_init(struct nuart * uart, nuart_callback * callback);
 
 void nuart_term(struct nuart * uart);
 
 uint32_t nuart_capabilities(const struct nuart * uart);
 
+void nuart_control(struct nuart * uart, uint32_t control_code, uint32_t arg);
+
+void nuart_send(struct nuart * uart, const void * data, size_t size);
+
+void nuart_receive(struct nuart * uart, void * data, size_t size);
+
+void nuart_transfer(struct nuart * uart, const void * output, void * input, size_t size);
+
+uint32_t nuart_rx_count(const struct nuart * uart);
+
+uint32_t nuart_tx_count(const struct nuart * uart);
 
 #ifdef __cplusplus
 }
