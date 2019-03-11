@@ -40,6 +40,8 @@ extern "C" {
 #define NPLATFORM_FILE                  __FILE__
 
 #define NPLATFORM_LINE                  __LINE__
+    
+#define NPLATFORM_UNUSED_ARG(x)         (void)x
 
 #define NPLATFORM_NAKED(x)              __attribute__((naked)) x
 

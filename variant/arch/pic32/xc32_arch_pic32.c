@@ -22,33 +22,3 @@ void narch_cpu_stop(void)
 {
     for (;;);
 }
-
-narch_uint narch_exp2(uint_fast8_t x)
-{
-    static const narch_uint exp2[8] =
-    {
-        0x01,
-        0x02,
-        0x04,
-        0x08,
-        0x10,
-        0x20,
-        0x40,
-        0x80
-    };
-    return exp2[x];
-}
-
-uint_fast8_t narch_log2(narch_uint x)
-{
-    static const uint_fast8_t log2_table[256] =
-    {
-#define LT(n) n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n
-        0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,
-        LT(4), LT(5), LT(5), LT(6), LT(6), LT(6), LT(6),
-        LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7)
-#undef LT
-    };
-    
-    return log2_table[x];
-}

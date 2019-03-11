@@ -445,7 +445,7 @@ uint_fast8_t narch_log2(narch_uint x);
 #define NSIGNATURE_STATIC                   ((unsigned int)0xdeadbee2u)
 #define NSIGNATURE_STDHEAP                  ((unsigned int)0xdeadbee3u)
 #define NSIGNATURE_TIMER                    ((unsigned int)0xdeadcee0u)
-#define NSIGNATURE_THREAD                   ((unsigned int)0xdeaddee0u)
+#define NSIGNATURE_TASK                   ((unsigned int)0xdeaddee0u)
 #define NSIGNATURE_EPA                      ((unsigned int)0xdeadfeeau)
 #define NSIGNATURE_EQUEUE                   ((unsigned int)0xdeadfeebu)
 #define NSIGNATURE_ETIMER                   ((unsigned int)0xdeadfeecu)
@@ -645,10 +645,15 @@ uint_fast8_t narch_log2(narch_uint x);
  *  @brief      Power of 2 macros.
  *  @{ */
 
-/** @brief      Right mask lookup table
+/** @brief      Right aligned bit mask lookup table
+ *  @notapi
  */
-extern const uint32_t nbits_right_mask[33];
+extern const uint32_t g_np_bits_right_mask[33];
 
+/** @brief      Left aligned bit mask lookup table
+ *  @notapi
+ */
+extern const uint32_t g_np_bits_left_mask[33];
 
 /** @brief      Determining if an integer is a power of 2
  *  @note       For more details please refer to the following URL:
@@ -661,7 +666,13 @@ extern const uint32_t nbits_right_mask[33];
  *  @note       If the value of argument @a v is greater than 32 then the
  *              behaviour undefined.
  */
-#define nbits_to_mask(v)        nbits_right_mask[v]
+#define nbits_to_right_mask(v)          g_np_bits_right_mask[v]
+
+/** @brief      Create a bit mask of width @a v bits.
+ *  @note       If the value of argument @a v is greater than 32 then the
+ *              behaviour undefined.
+ */
+#define nbits_to_left_mask(v)           g_np_bits_left_mask[v]
 
 /** @} */
 /** @defgroup   bits_byteextract Byte extract
@@ -688,7 +699,7 @@ extern const uint32_t nbits_right_mask[33];
  * @param       val - signed 24 bit integer
  * @return
  */
-#define n_ext_i24(value)                ncore_ext_i24(value)
+#define n_ext_i24(value)                ncpu_ext_i24(value)
 
 /** @} */
 /** @defgroup   bits_conv Data convert
@@ -710,17 +721,20 @@ typedef narch_uint nbitarray_s;
 
 #define nbitarray_s_set(a_array, a_bit)                                     \
         do {                                                                \
-            *(a_array) |= (0x1u << (a_bit));                                \
+            *(a_array) |= narch_exp2(a_bit);                                \
         } while (0)
 
 #define nbitarray_s_clear(a_array, a_bit)                                   \
         do {                                                                \
-            *(a_array) &= ~(0x1u << (a_bit));                               \
+            *(a_array) &= ~narch_exp2(a_bit);                               \
         } while (0)
 
 #define nbitarray_s_msbs(a_array)       narch_log2(*(a_array))
 
 #define nbitarray_s_is_empty(a_array)   (*(a_array) == 0)
+
+#define nbitarray_s_is_set(a_array, a_bit)                                  \
+        (*(a_array) & narch_exp2(a_bit))
 
 /** @} */
 /** @defgroup   bits_bitarray_x Extended bit array
@@ -742,6 +756,8 @@ void nbitarray_x_clear(nbitarray_x * array, uint_fast8_t bit);
 uint_fast8_t nbitarray_x_msbs(const nbitarray_x * array);
 
 #define nbitarray_x_is_empty(a_array)	((a_array)[0] == 0u)
+
+bool nbitarray_x_is_set(nbitarray_x * array, uint_fast8_t bit);
 
 /** @} */
 /** @} *//*==================================================================*/
@@ -1057,7 +1073,7 @@ void nlist_sll_remove_from(struct nlist_sll * current, struct nlist_sll * node);
 bool nlist_sll_is_empty(const struct nlist_sll * node);
 
 /** @} *//*==================================================================*/
-/** @defgroup   nlist_sll Doubly linked list module
+/** @defgroup   nlist_dll Doubly linked list module
  *  @brief      Doubly linked list module
  *  @{ *//*==================================================================*/
 
@@ -1682,7 +1698,7 @@ void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
 
 /** @} */
 /** @} *//*==================================================================*/
-/** @defgroup   nlogger Extended logger module
+/** @defgroup   nlogger_x Extended logger module
  *  @brief      Extended logger module
  *  @{ *//*==================================================================*/
 
@@ -1913,7 +1929,11 @@ void ntask_start(struct ntask * task);
 
 void ntask_stop(struct ntask * task);
 
-void ntask_schedule(void);
+void ntask_schedule_start(void);
+
+#if (NCONFIG_EXITABLE_SCHEDULER == 1)
+void ntask_schedule_stop(void);
+#endif
 
 enum ntask_state ntask_state(const struct ntask * task);
 

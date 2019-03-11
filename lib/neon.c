@@ -23,29 +23,8 @@
 
 #include "neon.h"
 
-struct ntask
-{
-    ntask_fn * fn;
-    void * arg;
-    enum ntask_state state;
-    struct ntask_local_storage
-    {
-        enum nerror_id error;
-    } tls;
-    NSIGNATURE_DECLARE
-};
 
-
-/** @brief		Scheduler context structure
- */
-struct ntask_schedule
-{
-	uint_fast8_t current_prio;     /**< Speed optimization, current thread priority. */
-    struct ntask mempool[NCONFIG_TASK_INSTANCES];     /**< Thread instances. */
-    struct ntask_queue ready;		/**< Ready queue */
-};
-
-const uint32_t nbits_right_mask[33] =
+const uint32_t g_np_bits_right_mask[33] =
 {
     [ 0] = 0x00000000u,
     [ 1] = 0x00000001u,
@@ -81,10 +60,6 @@ const uint32_t nbits_right_mask[33] =
     [31] = 0x7fffffffu,
     [32] = 0xffffffffu
 };
-
-/** @brief		Scheduler context
- */
-static struct ntask_schedule g_task_schedule;
 
 #if (NCONFIG_TASK_INSTANCES > NBITARRAY_X_MAX_SIZE)
 # error "The limit of maximum task instances has been exceeded!"
@@ -128,10 +103,11 @@ void nbitarray_x_set(nbitarray_x * array, uint_fast8_t bit)
 	uint_fast8_t group;
 	uint_fast8_t pos;
 
-	group = (uint_fast8_t)((bit / NARCH_DATA_WIDTH) + 1u);
-	pos = bit % NARCH_DATA_WIDTH;
-	array[group] |= 0x1u << pos;
-	array[0] |= 0x1u << (group - 1u);
+	group = bit >> NBITS_LOG2_8(NARCH_DATA_WIDTH);  /* bit / NARCH_DATA_WIDTH */
+	pos = bit & (NARCH_DATA_WIDTH - 1u);            /* bit % NARCH_DATA_WIDTH */
+    
+	array[group + 1u] |= 0x1u << pos;
+	array[0] |= 0x1u << group;
 }
 
 void nbitarray_x_clear(nbitarray_x * array, uint_fast8_t bit)
@@ -139,8 +115,8 @@ void nbitarray_x_clear(nbitarray_x * array, uint_fast8_t bit)
 	uint_fast8_t group;
 	uint_fast8_t pos;
 
-	group = bit / NARCH_DATA_WIDTH;
-	pos = bit % NARCH_DATA_WIDTH;
+	group = bit >> NBITS_LOG2_8(NARCH_DATA_WIDTH);  /* bit / NARCH_DATA_WIDTH */
+	pos = bit & (NARCH_DATA_WIDTH - 1u);            /* bit % NARCH_DATA_WIDTH */
 
 	array[group + 1u] &= ~(0x1u << pos);
 
@@ -160,41 +136,21 @@ uint_fast8_t nbitarray_x_msbs(const nbitarray_x * array)
 	return (uint_fast8_t)(group * (uint_fast8_t)NARCH_DATA_WIDTH + pos);
 }
 
-struct nlist_dll * nlist_dll_init(struct nlist_dll * node)
+bool nbitarray_x_is_set(nbitarray_x * array, uint_fast8_t bit)
 {
-    node->next = node;
-    node->prev = node;
+    uint_fast8_t group;
+	uint_fast8_t pos;
 
-    return (node);
+	group = bit >> NBITS_LOG2_8(NARCH_DATA_WIDTH);  /* bit / NARCH_DATA_WIDTH */
+	pos = bit & (NARCH_DATA_WIDTH - 1u);            /* bit % NARCH_DATA_WIDTH */
+    
+    return array[group + 1u] & (0x1u << pos);
 }
 
-struct nlist_dll * nlist_dll_add_after(struct nlist_dll * current,
-        struct nlist_dll * node)
-{
-    node->next          = current;
-    node->prev          = current->prev;
-    current->prev->next = node;
-    current->prev       = node;
-
-    return (node);
-}
-
-struct nlist_dll * nlist_dll_add_before(struct nlist_dll * current,
-        struct nlist_dll * node)
-{
-    node->prev          = current;
-    node->next          = current->next;
-    current->next->prev = node;
-    current->next       = node;
-
-    return (node);
-}
-
-void nlist_dll_remove(struct nlist_dll * node)
-{
-    node->next->prev = node->prev;
-    node->prev->next = node->next;
-}
+/** @} *//*==================================================================*/
+/** @defgroup   nlist_sll_impl Singly linked list module implementation
+ *  @brief      Singly linked list module implementation
+ *  @{ *//*==================================================================*/
 
 struct nlist_sll * nlist_sll_init(struct nlist_sll * node)
 {
@@ -203,12 +159,6 @@ struct nlist_sll * nlist_sll_init(struct nlist_sll * node)
     return (node);
 }
 
-/*
- * NOTE:
- * This function is not inlined since doing so would generate bigger executable
- * by around 200bytes (gcc-arm-none-eabi, 4.9.3, all optimizations) per each
- * library user.
- */
 struct nlist_sll * nlist_sll_prev(struct nlist_sll * const node)
 {
     struct nlist_sll * tmp = node;
@@ -254,63 +204,51 @@ bool nlist_sll_is_empty(const struct nlist_sll * node)
     return (!!(node->next == node));
 }
 
-void npqueue_sentinel_shift(struct npqueue_sentinel * sentinel)
-{
-    struct npqueue * next = npqueue_next(sentinel);
+/** @} *//*==================================================================*/
+/** @defgroup   nlist_dll_impl Doubly linked list module implementation
+ *  @brief      Doubly linked list module implementation
+ *  @{ *//*==================================================================*/
 
-    nlist_dll_remove(&sentinel->list);
-    nlist_dll_add_before(&next->list, &sentinel->list);
-}
-
-struct npqueue * npqueue_init(struct npqueue * node, uint_fast8_t priority)
+struct nlist_dll * nlist_dll_init(struct nlist_dll * node)
 {
-    nlist_dll_init(&node->list);
-    npqueue_priority_set(node, priority);
+    node->next = node;
+    node->prev = node;
 
     return (node);
 }
 
-void npqueue_term(struct npqueue * node)
+struct nlist_dll * nlist_dll_add_after(struct nlist_dll * current,
+        struct nlist_dll * node)
 {
-    npqueue_priority_set(node, 0);
-    nlist_dll_init(&node->list);
+    node->next          = current;
+    node->prev          = current->prev;
+    current->prev->next = node;
+    current->prev       = node;
+
+    return (node);
 }
 
-void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
-        struct npqueue * node)
+struct nlist_dll * nlist_dll_add_before(struct nlist_dll * current,
+        struct nlist_dll * node)
 {
-    struct nlist_dll * current_list;
+    node->prev          = current;
+    node->next          = current->next;
+    current->next->prev = node;
+    current->next       = node;
 
-    for (NLIST_DLL_EACH(current_list, &sentinel->list)) {
-        struct npqueue * current = npqueue_from_list(current_list);
-
-        if (current->priority < node->priority) {
-            break;
-        }
-    }
-    nlist_dll_add_after(current_list, &node->list);
+    return (node);
 }
 
-
-void np_logger_x_print(struct nlogger_instance * instance, uint8_t level,
-    const char * msg, ...)
+void nlist_dll_remove(struct nlist_dll * node)
 {
-    if (instance->level >= level) {
-        va_list args;
-        va_start(args, msg);
-        vprintf(msg, args);
-        va_end(args);
-    }
+    node->next->prev = node->prev;
+    node->prev->next = node->next;
 }
 
-void np_logger_x_set_level(struct nlogger_instance * instance, uint8_t level)
-{
-    instance->level = level;
-}
-
-static void np_fiber_task_dispatch(struct ntask * task, void * arg)
-{
-}
+/** @} *//*==================================================================*/
+/** @defgroup   nqueue_lqueue_impl Lightweight queue module implementation
+ *  @brief      Lightweight queue module implementation
+ *  @{ *//*==================================================================*/
 
 void np_lqueue_base_init(struct np_lqueue_base * qb, uint8_t elements)
 {
@@ -367,11 +305,116 @@ uint32_t np_lqueue_base_tail(const struct np_lqueue_base * qb)
     return (qb->tail);
 }
 
+/** @} *//*==================================================================*/
+/** @defgroup   nqueue_pqueue_impl Priority sorted queue module implementation
+ *  @brief      Priority sorted queue module implementation
+ *  @{ *//*==================================================================*/
+
+void npqueue_sentinel_shift(struct npqueue_sentinel * sentinel)
+{
+    struct npqueue * next = npqueue_next(sentinel);
+
+    nlist_dll_remove(&sentinel->list);
+    nlist_dll_add_before(&next->list, &sentinel->list);
+}
+
+struct npqueue * npqueue_init(struct npqueue * node, uint_fast8_t priority)
+{
+    nlist_dll_init(&node->list);
+    npqueue_priority_set(node, priority);
+
+    return (node);
+}
+
+void npqueue_term(struct npqueue * node)
+{
+    npqueue_priority_set(node, 0);
+    nlist_dll_init(&node->list);
+}
+
+void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
+        struct npqueue * node)
+{
+    struct nlist_dll * current_list;
+
+    for (NLIST_DLL_EACH(current_list, &sentinel->list)) {
+        struct npqueue * current = npqueue_from_list(current_list);
+
+        if (current->priority < node->priority) {
+            break;
+        }
+    }
+    nlist_dll_add_after(current_list, &node->list);
+}
+
+/** @} *//*==================================================================*/
+/** @defgroup   nlogger_x_impl Extended logger module implementation
+ *  @brief      Extended logger module implementation
+ *  @{ *//*==================================================================*/
+
+void np_logger_x_print(struct nlogger_instance * instance, uint8_t level,
+    const char * msg, ...)
+{
+    if (instance->level >= level) {
+        va_list args;
+        va_start(args, msg);
+        vprintf(msg, args);
+        va_end(args);
+    }
+}
+
+void np_logger_x_set_level(struct nlogger_instance * instance, uint8_t level)
+{
+    instance->level = level;
+}
+
+/** @} *//*==================================================================*/
+/** @defgroup   nlogger Basic logger module implementation
+ *  @brief      Basic logger module implementation
+ *  @{ *//*==================================================================*/
+
+/** @} *//*==================================================================*/
+/** @defgroup   ntask_impl Task implementation
+ *  @brief      Task implementation
+ *  @{ *//*==================================================================*/
+
+struct ntask
+{
+    ntask_fn *                  fn;
+    void *                      arg;
+    enum ntask_state            state;
+    struct ntask_local_storage
+    {
+        enum nerror_id              error;
+    }                           tls;
+    NSIGNATURE_DECLARE
+};
+
+/** @brief		Scheduler context structure
+ */
+struct ntask_schedule
+{
+	uint_fast8_t current_prio;                  /**< Speed optimization, 
+                                                 *   current thread priority. */
+    struct ntask mempool[NCONFIG_TASK_INSTANCES];     
+                                                /**< Thread instances. */
+    struct ntask_queue ready;                   /**< Ready queue */
+};
+
+/** @brief		Scheduler context
+ */
+static struct ntask_schedule g_task_schedule;
+
 static inline 
-void dispatch(struct ntask * task)
+void task_dispatch(struct ntask * task)
 {
     task->fn(task->arg);
 }
+
+static void default_idle_task(void * arg)
+{
+    NPLATFORM_UNUSED_ARG(arg);
+}   
 
 #define task_from_prio(ctx, prio)		(&(ctx)->mempool[prio])
 
@@ -379,26 +422,30 @@ void dispatch(struct ntask * task)
 
 #if (NCONFIG_TASK_INSTANCES <= NBITARRAY_S_MAX_SIZE)
 
-#define queue_insert(queue, prio)                                           \
-    nbitarray_s_set(&(queue)->bitarray, (prio))
+#define queue_insert(a_queue, a_prio)                                       \
+    nbitarray_s_set(&(a_queue)->bitarray, (a_prio))
 
-#define queue_remove(queue, prio)                                           \
-    nbitarray_s_clear(&(queue)->bitarray, (prio))
+#define queue_remove(a_queue, a_prio)                                       \
+        nbitarray_s_clear(&(a_queue)->bitarray, (a_prio))
 
-#define queue_get_highest(queue)                                            \
-	nbitarray_s_msbs(&(queue)->bitarray)
+#define queue_get_highest(a_queue)                                          \
+        nbitarray_s_msbs(&(a_queue)->bitarray)
 
+#define queue_is_set(a_queue, a_prio)                                       \
+        nbitarray_s_is_set(&(a_queue)->bitarray, (a_prio))
 #else
 
-#define queue_insert(queue, prio)                                           \
-    nbitarray_x_set(&(queue)->bitarray[0], (prio))
+#define queue_insert(a_queue, a_prio)                                       \
+        nbitarray_x_set(&(a_queue)->bitarray[0], (a_prio))
 
-#define queue_remove(queue, prio)                                           \
-    nbitarray_x_clear(&(queue)->bitarray[0], (prio));
+#define queue_remove(a_queue, a_prio)                                       \
+        nbitarray_x_clear(&(a_queue)->bitarray[0], (a_prio))
 
-#define queue_get_highest(queue)                                            \
-	nbitarray_x_msbs(&(queue)->bitarray[0])
+#define queue_get_highest(a_queue)                                          \
+        nbitarray_x_msbs(&(a_queue)->bitarray[0])
 
+#define queue_is_set(a_queue, a_prio)                                       \
+        nbitarray_x_is_set(&(a_queue)->bitarray[0], (a_prio))
 #endif
 
 struct ntask * ntask_create(ntask_fn * fn, void * arg, uint_fast8_t prio)
@@ -411,8 +458,8 @@ struct ntask * ntask_create(ntask_fn * fn, void * arg, uint_fast8_t prio)
 
     task = task_from_prio(ctx, prio);
 
-    NREQUIRE(NSIGNATURE_OF(task) != NSIGNATURE_THREAD);
-    NOBLIGATION(NSIGNATURE_IS(task, NSIGNATURE_THREAD));
+    NREQUIRE(NSIGNATURE_OF(task) != NSIGNATURE_TASK);
+    NOBLIGATION(NSIGNATURE_IS(task, NSIGNATURE_TASK));
 
     task->fn = fn;
     task->arg = arg;
@@ -423,17 +470,17 @@ struct ntask * ntask_create(ntask_fn * fn, void * arg, uint_fast8_t prio)
 
 void ntask_delete(struct ntask * task)
 {
-	NREQUIRE(NSIGNATURE_OF(task) == NSIGNATURE_THREAD);
+	NREQUIRE(NSIGNATURE_OF(task) == NSIGNATURE_TASK);
 	NREQUIRE(task->state == NTASK_DORMANT);
     task->state = NTASK_UNINITIALIZED;
-    NOBLIGATION(NSIGNATURE_IS(task, ~NSIGNATURE_THREAD));
+    NOBLIGATION(NSIGNATURE_IS(task, ~NSIGNATURE_TASK));
 }
 
 void ntask_start(struct ntask * task)
 {
     struct ntask_schedule * ctx = &g_task_schedule;
 
-    NREQUIRE(NSIGNATURE_OF(task) == NSIGNATURE_THREAD);
+    NREQUIRE(NSIGNATURE_OF(task) == NSIGNATURE_TASK);
     NREQUIRE(task->state == NTASK_DORMANT);
 
                                                /* Insert task to ready queue */
@@ -452,7 +499,7 @@ void ntask_start(struct ntask * task)
  */
 void ntask_stop(struct ntask * task)
 {
-	NREQUIRE(NSIGNATURE_OF(task) == NSIGNATURE_THREAD);
+	NREQUIRE(NSIGNATURE_OF(task) == NSIGNATURE_TASK);
 	NREQUIRE(task->state != NTASK_UNINITIALIZED);
 	NREQUIRE(task->state != NTASK_DORMANT);
 
@@ -467,7 +514,7 @@ void ntask_stop(struct ntask * task)
         }
         case NTASK_BLOCKED: {
             task->state = NTASK_CANCELLED;                              /* 2 */
-            dispatch(task);
+            task_dispatch(task);
             break;
         }
         default:
@@ -476,18 +523,16 @@ void ntask_stop(struct ntask * task)
     task->state = NTASK_DORMANT;                                        /* 4 */
 }
 
-static void idle_task(void * arg)
-{
-    /* */
-}
-
 /*
+ * 1. If no ready task is set then set the default idle task.
  */
-void ntask_schedule(void)
+void ntask_schedule_start(void)
 {
     struct ntask_schedule * ctx = &g_task_schedule;
 
-    ntask_start(ntask_create(idle_task, NULL, 0));
+    if (!queue_is_set(&ctx->ready, 0)) {                                /* 1 */
+        ntask_start(ntask_create(default_idle_task, NULL, 0));
+    }
     
 #if (NCONFIG_EXITABLE_SCHEDULER == 1)
                                     /* While there are ready tasks in system */
@@ -501,7 +546,7 @@ void ntask_schedule(void)
                                                        /* Fetch the new task */
         ctx->current_prio = prio;
                                                        /* Execute the thread */
-        dispatch(task_from_prio(ctx, prio));
+        task_dispatch(task_from_prio(ctx, prio));
     }
     
 #if (NCONFIG_EXITABLE_SCHEDULER == 1)
@@ -523,9 +568,16 @@ void ntask_schedule(void)
 #endif
 }
 
+#if (NCONFIG_EXITABLE_SCHEDULER == 1)
+void ntask_schedule_stop(void)
+{
+    should_exit = true;
+}
+#endif
+
 enum ntask_state ntask_state(const struct ntask * task)
 {
-	NREQUIRE(NSIGNATURE_OF(task) == NSIGNATURE_THREAD);
+	NREQUIRE(NSIGNATURE_OF(task) == NSIGNATURE_TASK);
 
 	return task->state;
 }
@@ -558,11 +610,10 @@ void ntask_queue_block(struct ntask_queue * queue)
     task_from_prio(ctx, prio)->state = NTASK_BLOCKED;
 }
 
-/*===========================================================================*/
-/*
- * Fiber task implementation
- */
-/*===========================================================================*/
+/** @} *//*==================================================================*/
+/** @defgroup   nfiber_task_impl Fiber task implementation
+ *  @brief      Fiber task implementation
+ *  @{ *//*==================================================================*/
 
 struct nfiber_task * nfiber_task_create( 
         nfiber_fn * fn, 
@@ -584,7 +635,6 @@ void nfiber_task_stop(struct nfiber_task * fiber)
 {
     
 }
-
 
 void nfiber_sem_init(struct nfiber_sem * sem)
 {
