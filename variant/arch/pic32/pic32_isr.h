@@ -26,34 +26,53 @@
  *  @brief       Variant architecture for PIC32.
  *  @{ */
 
-#ifndef NEON_ARCH_VARIANT_PIC32_H_
-#define NEON_ARCH_VARIANT_PIC32_H_
+#ifndef NEON_PIC32_ISR_H_
+#define NEON_PIC32_ISR_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define NARCH_ID                        "pic32"
-#define NARCH_DATA_WIDTH                32 /* sizeof(narch_uint) * 8 */
-#define NARCH_PIC32                     1
-
-typedef uint32_t narch_uint;
-
-/* TODO: Use static assert to compare NARCH_DATA_WIDTH and sizeof(narch_uint) */
-
-static inline
-narch_uint narch_exp2(uint_fast8_t x)
+enum pic32_isr_id
 {
-    return ((narch_uint)0x1u << x);
-}
+    PIC32_ISR_U5E,
+    PIC32_ISR_U5RX,
+    PIC32_ISR_U5TX     
+};
+    
+void pic32_isr_resolve_iec(
+        enum pic32_isr_id isr_id, 
+        volatile uint32_t ** reg, 
+        uint_fast8_t * bit);
 
-static inline
-uint_fast8_t narch_log2(narch_uint x)
-{
-    return (uint_fast8_t)((uint_fast8_t)(NARCH_DATA_WIDTH - 1u) - (uint_fast8_t)__builtin_clz(x));
-}
+void pic32_isr_resolve_ifs(
+        enum pic32_isr_id isr_id, 
+        volatile uint32_t ** reg, 
+        uint_fast8_t * bit);
+
+void pic32_isr_resolve_ipc(
+        enum pic32_isr_id isr_id, 
+        volatile uint32_t ** reg, 
+        uint_fast8_t * bit);
+
+void pic32_isr_enable(enum pic32_isr_id isr_id);
+
+void pic32_isr_disable(enum pic32_isr_id isr_id);
+
+bool pic32_isr_is_enabled(enum pic32_isr_id isr_id);
+
+void pic32_isr_set_flag(enum pic32_isr_id isr_id);
+
+void  pic32_isr_clear_flag(enum pic32_isr_id isr_id);
+
+bool pic32_isr_is_flagged(enum pic32_isr_id isr_id);
+
+void pic32_isr_set_prio(enum pic32_isr_id isr_id, uint_fast8_t prio);
+
+uint_fast8_t pic32_isr_get_prio(enum pic32_isr_id isr_id);
 
 #ifdef __cplusplus
 }
@@ -61,4 +80,4 @@ uint_fast8_t narch_log2(narch_uint x)
 
 /** @} */
 /** @} */
-#endif /* NEON_ARCH_VARIANT_PIC32_H_ */
+#endif /* NEON_PIC32_ISR_H_ */

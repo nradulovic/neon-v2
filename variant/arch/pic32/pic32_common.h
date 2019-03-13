@@ -26,8 +26,8 @@
  *  @brief       Variant architecture for PIC32.
  *  @{ */
 
-#ifndef NEON_ARCH_VARIANT_PIC32_H_
-#define NEON_ARCH_VARIANT_PIC32_H_
+#ifndef NEON_PIC32_COMMON_H_
+#define NEON_PIC32_COMMON_H_
 
 #include <stdint.h>
 
@@ -35,25 +35,17 @@
 extern "C" {
 #endif
 
-#define NARCH_ID                        "pic32"
-#define NARCH_DATA_WIDTH                32 /* sizeof(narch_uint) * 8 */
-#define NARCH_PIC32                     1
-
-typedef uint32_t narch_uint;
-
-/* TODO: Use static assert to compare NARCH_DATA_WIDTH and sizeof(narch_uint) */
-
-static inline
-narch_uint narch_exp2(uint_fast8_t x)
+    
+struct pic32_periph_reg
 {
-    return ((narch_uint)0x1u << x);
-}
+    volatile uint32_t reg;
+    volatile uint32_t clr;
+    volatile uint32_t set;
+    volatile uint32_t inv;
+};
 
-static inline
-uint_fast8_t narch_log2(narch_uint x)
-{
-    return (uint_fast8_t)((uint_fast8_t)(NARCH_DATA_WIDTH - 1u) - (uint_fast8_t)__builtin_clz(x));
-}
+#define pic32_periph_access(base)                                           \
+        ((struct pic32_periph_reg *)(base))
 
 #ifdef __cplusplus
 }
@@ -61,4 +53,4 @@ uint_fast8_t narch_log2(narch_uint x)
 
 /** @} */
 /** @} */
-#endif /* NEON_ARCH_VARIANT_PIC32_H_ */
+#endif /* NEON_PIC32_COMMON_H_ */

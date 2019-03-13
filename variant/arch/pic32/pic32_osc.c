@@ -1,6 +1,6 @@
 /*
  * Neon
- * Copyright (C)  2018  REAL-TIME CONSULTING
+ * Copyright (C) 2018   REAL-TIME CONSULTING
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the Free
@@ -15,30 +15,9 @@
  * You should have received a copy of the GNU Lesser General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-/** @file
- *  @author      Nenad Radulovic
- *  @brief       PIC32MX534F064H MCU
- *
- *  @addtogroup  mcu
- *  @{
- */
-/** @defgroup    mcu_pic32mx534f064h PIC32MX534F064H MCU
- *  @brief       PIC32MX534F064H MCU
- *  @{
- */
 
-#ifndef NEON_MCU_VARIANT_PIC32MX534F064H_H_
-#define NEON_MCU_VARIANT_PIC32MX534F064H_H_
+#include "pic32_osc.h"
 
-#define NMCU_PIC32MX534F064H
+uint32_t g_osc_pbclk;
+uint32_t g_osc_sysclk;
 
-struct nuart;
-
-#define NMCU_HAS_UART_5
-
-extern struct nuart g_uart_5;
-
-/** @} */
-/** @} */
-/*---------------------------------------------------------------------------*/
-#endif /* NEON_MCU_VARIANT_PIC32MX534F064H_H_ */

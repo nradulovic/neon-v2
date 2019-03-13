@@ -288,6 +288,10 @@ uint_fast8_t narch_log2(narch_uint x);
  *  @brief      Port Board module
  *  @{ *//*==================================================================*/
 
+/** @brief      Initialize board
+ */
+void nboard_init(void);
+
 /** @} *//*==================================================================*/
 /** @defgroup   nport_os Port OS module
  *  @brief      Port OS module
@@ -449,7 +453,7 @@ uint_fast8_t narch_log2(narch_uint x);
 #define NSIGNATURE_STATIC                   ((unsigned int)0xdeadbee2u)
 #define NSIGNATURE_STDHEAP                  ((unsigned int)0xdeadbee3u)
 #define NSIGNATURE_TIMER                    ((unsigned int)0xdeadcee0u)
-#define NSIGNATURE_TASK                   ((unsigned int)0xdeaddee0u)
+#define NSIGNATURE_TASK                     ((unsigned int)0xdeaddee0u)
 #define NSIGNATURE_EPA                      ((unsigned int)0xdeadfeeau)
 #define NSIGNATURE_EQUEUE                   ((unsigned int)0xdeadfeebu)
 #define NSIGNATURE_ETIMER                   ((unsigned int)0xdeadfeecu)
@@ -1933,7 +1937,11 @@ void ntask_start(struct ntask * task);
 
 void ntask_stop(struct ntask * task);
 
+#if (NCONFIG_EXITABLE_SCHEDULER != 1)
+NPLATFORM_NORETURN(void ntask_schedule_start(void));
+#else
 void ntask_schedule_start(void);
+#endif
 
 #if (NCONFIG_EXITABLE_SCHEDULER == 1)
 void ntask_schedule_stop(void);

@@ -17,17 +17,17 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Variant architecture for PIC32 header
+ *  @brief       Oscillator module for PIC32
  *
  *  @addtogroup  port
  *  @{ */
 
-/** @defgroup    port_pic18_variant_arch Variant architecture for PIC32
- *  @brief       Variant architecture for PIC32.
+/** @defgroup    port_pic32_osc Oscillator module for PIC32
+ *  @brief       Oscillator module for PIC32.
  *  @{ */
 
-#ifndef NEON_ARCH_VARIANT_PIC32_H_
-#define NEON_ARCH_VARIANT_PIC32_H_
+#ifndef NEON_PIC32_OSC_H_
+#define NEON_PIC32_OSC_H_
 
 #include <stdint.h>
 
@@ -35,25 +35,9 @@
 extern "C" {
 #endif
 
-#define NARCH_ID                        "pic32"
-#define NARCH_DATA_WIDTH                32 /* sizeof(narch_uint) * 8 */
-#define NARCH_PIC32                     1
+extern uint32_t g_osc_pbclk;
+extern uint32_t g_osc_sysclk;
 
-typedef uint32_t narch_uint;
-
-/* TODO: Use static assert to compare NARCH_DATA_WIDTH and sizeof(narch_uint) */
-
-static inline
-narch_uint narch_exp2(uint_fast8_t x)
-{
-    return ((narch_uint)0x1u << x);
-}
-
-static inline
-uint_fast8_t narch_log2(narch_uint x)
-{
-    return (uint_fast8_t)((uint_fast8_t)(NARCH_DATA_WIDTH - 1u) - (uint_fast8_t)__builtin_clz(x));
-}
 
 #ifdef __cplusplus
 }
@@ -61,4 +45,4 @@ uint_fast8_t narch_log2(narch_uint x)
 
 /** @} */
 /** @} */
-#endif /* NEON_ARCH_VARIANT_PIC32_H_ */
+#endif /* NEON_PIC32_OSC_H_ */

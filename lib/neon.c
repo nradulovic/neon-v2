@@ -405,7 +405,7 @@ struct ntask_schedule
  */
 static struct ntask_schedule g_task_schedule;
 
-static inline 
+NPLATFORM_INLINE
 void task_dispatch(struct ntask * task)
 {
     task->fn(task->arg);
@@ -526,7 +526,11 @@ void ntask_stop(struct ntask * task)
 /*
  * 1. If no ready task is set then set the default idle task.
  */
+#if (NCONFIG_EXITABLE_SCHEDULER != 1)
+NPLATFORM_NORETURN(void ntask_schedule_start(void))
+#else
 void ntask_schedule_start(void)
+#endif
 {
     struct ntask_schedule * ctx = &g_task_schedule;
 
