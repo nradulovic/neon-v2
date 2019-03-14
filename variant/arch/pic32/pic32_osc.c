@@ -18,6 +18,10 @@
 
 #include "pic32_osc.h"
 
-uint32_t g_osc_pbclk;
-uint32_t g_osc_sysclk;
+uint32_t g_osc_pbclk = PIC32_EXT_CLOCK;
+uint32_t g_osc_sysclk = PIC32_EXT_CLOCK;
 
+void pic32_osc_update(void)
+{
+    
+}

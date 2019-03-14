@@ -30,7 +30,8 @@
 #define NEON_PIC32_UART_H_
 
 #include <stdint.h>
-#include <stdbool.h>
+
+#include "neon_uart.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,10 +44,9 @@ struct pic32_uart_board_config
     uint8_t tx_isr_prio;
 };
 
-extern struct nuart g_uart_5;
-extern const struct pic32_uart_board_config g_uart_5_board_config;
-
-void pic32_uart_isr_handler(struct nuart * uart);
+#if (NBOARD_USES_UART_5 == 1)
+extern const struct pic32_uart_board_config PIC32_UART_5_BOARD_CONFIG;
+#endif
 
 #ifdef __cplusplus
 }

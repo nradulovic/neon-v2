@@ -16,13 +16,15 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <xc.h>
+#include <sys/attribs.h>
+
 #include "neon.h"
 #include "neon_uart.h"
 #include "pic32_isr.h"
 #include "pic32_uart.h"
 #include "pic32_common.h"
 #include "pic32_osc.h"
-#include <xc.h>
 
 #if defined(__32MX534F064H__)
 #define HAS_MODE_UEN
@@ -47,12 +49,6 @@
 #define UxSTA_URXEN_Pos                 12
 #define UxSTA_UTXINV_Pos                13
 
-#define MOD_REG(reg, mask, pos, data)                                       \
-        do {                                                                \
-            *(reg) &= ~(mask);                                              \
-            *(reg) |= ((uint32_t)(data)) << (pos);                          \
-        } while (0)
-
 struct pic32_uart_sfr
 {
     struct pic32_periph_reg mode;
@@ -71,47 +67,105 @@ struct pic32_uart_desc
     uint8_t isr_rx_id;
 };
 
-struct nuart
+struct pic32_uart
 {
     struct pic32_uart_sfr * sfr;
     const struct pic32_uart_desc * desc;
     nuart_callback * callback;
 };
 
-#if defined(NMCU_HAS_UART_5)
-static const struct pic32_uart_desc g_uart_5_desc =
+#if (NBOARD_USES_UART_1 == 1)
+static const struct pic32_uart_desc g_uart_1_desc =
 {
-    .board_config = &g_uart_5_board_config,
+    .board_config = &NBOARD_UART_1_CONFIG,
+    .capabilities = NUART_CAPA_ASYNCHRONOUS,
+    .isr_e_id = PIC32_ISR_U1E,
+    .isr_rx_id = PIC32_ISR_U1RX,
+    .isr_tx_id = PIC32_ISR_U1TX
+};
+#endif
+
+#if (NBOARD_USES_UART_2 == 1)
+static const struct pic32_uart_desc g_uart_2_desc =
+{
+    .board_config = &NBOARD_UART_2_CONFIG,
+    .capabilities = NUART_CAPA_ASYNCHRONOUS,
+    .isr_e_id = PIC32_ISR_U2E,
+    .isr_rx_id = PIC32_ISR_U2RX,
+    .isr_tx_id = PIC32_ISR_U2TX
+};
+#endif
+
+#if (NBOARD_USES_UART_3 == 1)
+static const struct pic32_uart_desc g_uart_3_desc =
+{
+    .board_config = &NBOARD_UART_3_CONFIG,
+    .capabilities = NUART_CAPA_ASYNCHRONOUS,
+    .isr_e_id = PIC32_ISR_U3E,
+    .isr_rx_id = PIC32_ISR_U3RX,
+    .isr_tx_id = PIC32_ISR_U3TX
+};
+#endif
+
+#if (NBOARD_USES_UART_4 == 1)
+static const struct pic32_uart_desc g_uart_4_desc =
+{
+    .board_config = &NBOARD_UART_4_CONFIG,
+    .capabilities = NUART_CAPA_ASYNCHRONOUS,
+    .isr_e_id = PIC32_ISR_U4E,
+    .isr_rx_id = PIC32_ISR_U4RX,
+    .isr_tx_id = PIC32_ISR_U4TX
+};
+#endif
+
+#if (NBOARD_USES_UART_5 == 1)
+static const struct pic32_uart_desc g_pic32_uart_5_desc =
+{
+    .board_config = &PIC32_UART_5_BOARD_CONFIG,
     .capabilities = NUART_CAPA_ASYNCHRONOUS,
     .isr_e_id = PIC32_ISR_U5E,
     .isr_rx_id = PIC32_ISR_U5RX,
     .isr_tx_id = PIC32_ISR_U5TX
 };
-
-struct nuart g_uart_5 =
-{
-    .sfr = (struct pic32_uart_sfr *)&U5MODE,
-    .desc = &g_uart_5_desc
-};
-
 #endif
 
-void nuart_init(struct nuart * uart, nuart_callback * callback)
+static struct pic32_uart g_pic32_uarts[] =
 {
-    uart->callback = callback;
-}
+#if (NBOARD_USES_UART_1 == 1)
+    {
+        .sfr = (struct pic32_uart_sfr *)&U1MODE,
+        .desc = &g_uart_1_desc
+    },
+#endif
+#if (NBOARD_USES_UART_2 == 1)
+    {
+        .sfr = (struct pic32_uart_sfr *)&U2MODE,
+        .desc = &g_uart_2_desc
+    },
+#endif
+#if (NBOARD_USES_UART_3 == 1)
+    {
+        .sfr = (struct pic32_uart_sfr *)&U3MODE,
+        .desc = &g_uart_3_desc
+    },
+#endif
+#if (NBOARD_USES_UART_4 == 1)
+    {
+        .sfr = (struct pic32_uart_sfr *)&U4MODE,
+        .desc = &g_uart_4_desc
+    },
+#endif
+#if (NBOARD_USES_UART_5 == 1)
+    {
+        .sfr = (struct pic32_uart_sfr *)&U5MODE,
+        .desc = &g_pic32_uart_5_desc
+    },
+#endif
+    /* There are no more than 5 UARTs available on any PIC32 */
+};
 
-void nuart_term(struct nuart * uart)
-{
-    
-}
 
-uint32_t nuart_capabilities(const struct nuart * uart)
-{
-    return uart->desc->capabilities;
-}
-
-static void uart_setup(struct nuart * uart, uint32_t control_code, uint32_t arg)
+static void pic32_uart_setup(struct pic32_uart * uart, uint32_t control_code, uint32_t arg)
 {
     uint32_t data_bits = control_code & NUART_DATA_BITS_Msk;
     uint32_t stop_bits = control_code & NUART_STOP_BITS_Msk;
@@ -121,7 +175,7 @@ static void uart_setup(struct nuart * uart, uint32_t control_code, uint32_t arg)
     NASSERT((control_code & NUART_MODE_Msk) == NUART_MODE_ASYNCHRONOUS);
 
 #if defined(HAS_MODE_ACTIVE)
-    while (sfr->mode.reg & UxMODE_ACTIVE_Msk);
+    while (sfr->mode.reg & (0x1ul << UxMODE_ACTIVE_Pos));
 #endif
     sfr->sta.reg = 0ul;
     sfr->mode.reg = 0ul;
@@ -129,9 +183,9 @@ static void uart_setup(struct nuart * uart, uint32_t control_code, uint32_t arg)
     /* Setup baudrate */
     if (arg > (g_osc_pbclk / 16)) {
         sfr->mode.set = 0x1ul << UxMODE_BRGH_Pos;
-        sfr->brg = g_osc_pbclk / (4ul * arg) - 1ul;
+        sfr->brg.reg = g_osc_pbclk / (4ul * arg) - 1ul;
     } else {
-        sfr->brg = g_osc_pbclk / (16ul * arg) - 1ul;
+        sfr->brg.reg = g_osc_pbclk / (16ul * arg) - 1ul;
     }
     
     /* Setup stop bits */
@@ -201,11 +255,50 @@ static void uart_setup(struct nuart * uart, uint32_t control_code, uint32_t arg)
     /* Setup interrupts */
 }
 
-void nuart_control(struct nuart * uart, uint32_t control_code, uint32_t arg)
+static void pic32_uart_isr_handler(enum nuart_id uart_id)
 {
+    
+}
+
+void nuart_init(enum nuart_id uart_id, nuart_callback * callback)
+{
+    struct pic32_uart * uart;
+    
+    NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic32_uarts));
+    
+    uart = &g_pic32_uarts[uart_id];
+    uart->callback = callback;
+    
+    return uart;
+}
+
+void nuart_term(enum nuart_id uart_id)
+{
+    struct pic32_uart * uart;
+    
+    NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic32_uarts));
+    
+    uart = &g_pic32_uarts[uart_id];
+}
+
+uint32_t nuart_capabilities(enum nuart_id uart_id)
+{
+    struct pic32_uart * uart;
+    
+    NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic32_uarts));
+    
+    uart = &g_pic32_uarts[uart_id];  
+
+    return uart->desc->capabilities;
+}
+
+void nuart_control(enum nuart_id uart_id, uint32_t control_code, uint32_t arg)
+{
+    struct pic32_uart * uart = &g_pic32_uarts[uart_id];
+    
     switch (control_code & NUART_COMMAND_Msk) {
         case NUART_COMMAND_SETUP:
-            uart_setup(uart, control_code, arg);
+            pic32_uart_setup(uart, control_code, arg);
             break;
         case NUART_COMMAND_ABORT_SEND:
             break;
@@ -219,32 +312,34 @@ void nuart_control(struct nuart * uart, uint32_t control_code, uint32_t arg)
     }
 }
 
-void nuart_send(struct nuart * uart, const void * data, size_t size)
+void nuart_send(enum nuart_id uart_id, const void * data, size_t size)
 {
     
 }
 
-void nuart_receive(struct nuart * uart, void * data, size_t size)
+void nuart_receive(enum nuart_id uart_id, void * data, size_t size)
 {
     
 }
 
-void nuart_transfer(struct nuart * uart, const void * output, void * input, size_t size)
+void nuart_transfer(enum nuart_id uart_id, const void * output, void * input, size_t size)
 {
     
 }
 
-uint32_t nuart_rx_count(const struct nuart * uart)
+uint32_t nuart_rx_count(const enum nuart_id uart_id)
 {
     
 }
 
-uint32_t nuart_tx_count(const struct nuart * uart)
+uint32_t nuart_tx_count(const enum nuart_id uart_id)
 {
     
 }
 
-void pic32_uart_isr_handler(struct nuart * uart)
+#if (NBOARD_USES_UART_5 == 1)
+void __ISR(_UART_5_VECTOR, ipl1AUTO) isr_pic32_mx_clicker_uart(void)
 {
-    
+    pic32_uart_isr_handler(PIC32MX_CLICKER_UART);
 }
+#endif

@@ -17,19 +17,8 @@
  */
 
 #include "board_variant/board.h"
-#include "neon_uart.h"
-#include "pic32_common.h"
-#include "pic32_isr.h"
 #include "pic32_uart.h"
-#include "pic32_osc.h"
-#include <sys/attribs.h>
 #include <xc.h>
-
-#define CONCAT_(a, b)                   a ## b
-#define CONCAT(a, b)                    CONCAT_(a, b)
-
-#define PIC32MX_CLICKER_BOARD_CONFIG(device)                                \
-        CONCAT(device, _board_config)
 
 // PIC32MX534F064H Configuration Bit Settings
 
@@ -67,21 +56,12 @@
 #pragma config BWP = OFF                // Boot Flash Write Protect bit (Protection Disabled)
 #pragma config CP = OFF                 // Code Protect (Protection Disabled)
 
-
-#if (PIC32MX_CLICKER_USE_UART == 1)
-const struct pic32_uart_board_config 
-        PIC32MX_CLICKER_BOARD_CONFIG(PIC32MX_CLICKER_UART) =
+const struct pic32_uart_board_config g_pic32mx_clicker_uart_config =
 {
     .e_isr_prio = 1,
     .rx_isr_prio = 2,
     .tx_isr_prio = 3
 };
-
-void __ISR(_UART_5_VECTOR, ipl1AUTO) isr_pic32_mx_clicker_uart(void)
-{
-    pic32_uart_isr_handler(&PIC32MX_CLICKER_UART);
-}
-#endif
 
 void nboard_init(void)
 {
@@ -89,8 +69,6 @@ void nboard_init(void)
     /* After boot default system clock is set to PRI oscillator by 
      * configuration bits. 
      */
-    g_osc_sysclk = PIC32MX_CLICKER_EXT_CLOCK;
-    g_osc_pbclk = PIC32MX_CLICKER_EXT_CLOCK;
     SYSKEY = 0x0;
     SYSKEY = 0xAA996655;
     SYSKEY = 0x556699AA;
@@ -98,16 +76,13 @@ void nboard_init(void)
     OSCCONbits.OSWEN = 1u;
     SYSKEY = 0x0;
     while (OSCCONbits.OSWEN == 1);
-    g_osc_sysclk = 80000000ul;
-    g_osc_pbclk = 80000000ul;
     
     /* Setup UART if used */
-#if (PIC32MX_CLICKER_USE_UART == 1)
-    nuart_init(&PIC32MX_CLICKER_UART, NULL);
+#if (PIC32MX_CLICKER_USES_UART == 1)
+    nuart_init(PIC32MX_CLICKER_UART, NULL);
     nuart_control(
-            &PIC32MX_CLICKER_UART, 
+            PIC32MX_CLICKER_UART, 
             PIC32MX_CLICKER_UART_CONTROL, 
             PIC32MX_CLICKER_UART_BAUDRATE);
 #endif
-    
 }

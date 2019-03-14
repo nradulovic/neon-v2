@@ -38,9 +38,21 @@ extern "C" {
 
 enum pic32_isr_id
 {
+    PIC32_ISR_U1E,  
+    PIC32_ISR_U1RX,
+    PIC32_ISR_U1TX,
+    PIC32_ISR_U2E,
+    PIC32_ISR_U2RX,
+    PIC32_ISR_U2TX,
+    PIC32_ISR_U3E,
+    PIC32_ISR_U3RX,
+    PIC32_ISR_U3TX,
+    PIC32_ISR_U4E,
+    PIC32_ISR_U4RX,
+    PIC32_ISR_U4TX,
     PIC32_ISR_U5E,
     PIC32_ISR_U5RX,
-    PIC32_ISR_U5TX     
+    PIC32_ISR_U5TX,
 };
     
 void pic32_isr_resolve_iec(

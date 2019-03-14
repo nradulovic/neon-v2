@@ -30,7 +30,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "mcu_variant/mcu.h"
+#include "board_variant/board.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -126,10 +126,6 @@ extern "C" {
  */
 #define NUART_EVENT_RX_PARITY_ERROR     ((uint32_t)0x1ul << 9)
     
-struct nuart;
-
-typedef void (nuart_callback)(struct nuart * uart, uint32_t events);
-
 /** @} *//*==================================================================*/
 /** @defgroup   nuart_control UART control codes
  *  @brief      UART control codes
@@ -371,23 +367,47 @@ typedef void (nuart_callback)(struct nuart * uart, uint32_t events);
  *  @brief      UART functions
  *  @{ *//*==================================================================*/
 
-void nuart_init(struct nuart * uart, nuart_callback * callback);
+enum nuart_id
+{
+#if (NBOARD_USES_UART_1 == 1)
+    NUART_ID_1,
+#endif
+#if (NBOARD_USES_UART_2 == 1)
+    NUART_ID_2,
+#endif
+#if (NBOARD_USES_UART_3 == 1)
+    NUART_ID_3,
+#endif
+#if (NBOARD_USES_UART_4 == 1)
+    NUART_ID_4,
+#endif
+#if (NBOARD_USES_UART_5 == 1)
+    NUART_ID_5,
+#endif
+#if (NBOARD_USES_UART_6 == 1)
+    NUART_ID_6,
+#endif
+};
 
-void nuart_term(struct nuart * uart);
+typedef void (nuart_callback)(enum nuart_id uart_id, uint32_t events);
 
-uint32_t nuart_capabilities(const struct nuart * uart);
+void nuart_init(enum nuart_id uart_id, nuart_callback * callback);
 
-void nuart_control(struct nuart * uart, uint32_t control_code, uint32_t arg);
+void nuart_term(enum nuart_id uart_id);
 
-void nuart_send(struct nuart * uart, const void * data, size_t size);
+uint32_t nuart_capabilities(enum nuart_id uart_id);
 
-void nuart_receive(struct nuart * uart, void * data, size_t size);
+void nuart_control(enum nuart_id uart_id, uint32_t control_code, uint32_t arg);
 
-void nuart_transfer(struct nuart * uart, const void * output, void * input, size_t size);
+void nuart_send(enum nuart_id uart_id, const void * data, size_t size);
 
-uint32_t nuart_rx_count(const struct nuart * uart);
+void nuart_receive(enum nuart_id uart_id, void * data, size_t size);
 
-uint32_t nuart_tx_count(const struct nuart * uart);
+void nuart_transfer(enum nuart_id uart_id, const void * output, void * input, size_t size);
+
+uint32_t nuart_rx_count(enum nuart_id uart_id);
+
+uint32_t nuart_tx_count(enum nuart_id uart_id);
 
 #ifdef __cplusplus
 }

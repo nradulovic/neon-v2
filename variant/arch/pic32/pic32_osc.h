@@ -31,8 +31,14 @@
 
 #include <stdint.h>
 
+#include "board_variant/board.h"
+
 #ifdef __cplusplus
 extern "C" {
+#endif
+    
+#ifndef PIC32_EXT_CLOCK
+#error "PIC32 based board needs to declare the external clock in PIC32_EXT_CLOCK"
 #endif
 
 extern uint32_t g_osc_pbclk;
