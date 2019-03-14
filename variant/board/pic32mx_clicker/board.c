@@ -18,6 +18,8 @@
 
 #include "board_variant/board.h"
 #include "pic32_uart.h"
+#include "pic32_isr.h"
+#include "pic32_osc.h"
 #include <xc.h>
 
 // PIC32MX534F064H Configuration Bit Settings
@@ -58,9 +60,7 @@
 
 const struct pic32_uart_board_config g_pic32mx_clicker_uart_config =
 {
-    .e_isr_prio = 1,
-    .rx_isr_prio = 2,
-    .tx_isr_prio = 3
+    .e_rx_tx_isr_prio = PIC32_ISR_PRIO(3,3),
 };
 
 void nboard_init(void)

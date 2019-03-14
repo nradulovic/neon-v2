@@ -37,13 +37,16 @@
 extern "C" {
 #endif
     
-#ifndef PIC32_EXT_CLOCK
-#error "PIC32 based board needs to declare the external clock in PIC32_EXT_CLOCK"
+#ifndef PIC32_EXT_PRI_CLOCK_HZ
+#error "PIC32 based board needs to declare the primary clock frequency in PIC32_EXT_CLOCK"
 #endif
 
-extern uint32_t g_osc_pbclk;
-extern uint32_t g_osc_sysclk;
+#ifndef PIC32_EXT_SEC_CLOCK_HZ
+#error "PIC32 based board needs to declare the secondary clock frequency in PIC32_EXT_SEC_CLOCK"
+#endif
 
+uint32_t pic32_osc_get_sysclk_hz(void);
+uint32_t pic32_osc_get_pbclk_hz(void);
 
 #ifdef __cplusplus
 }

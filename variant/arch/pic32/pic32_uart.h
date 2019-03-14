@@ -39,14 +39,10 @@ extern "C" {
 
 struct pic32_uart_board_config
 {
-    uint8_t e_isr_prio;
-    uint8_t rx_isr_prio;
-    uint8_t tx_isr_prio;
+    uint8_t e_rx_tx_isr_prio;
 };
 
-#if (NBOARD_USES_UART_5 == 1)
 extern const struct pic32_uart_board_config PIC32_UART_5_BOARD_CONFIG;
-#endif
 
 #ifdef __cplusplus
 }

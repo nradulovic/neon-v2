@@ -46,7 +46,8 @@ extern "C" {
     
 #define PIC32MX_CLICKER_USES_UART       1
 
-#define PIC32_EXT_CLOCK                 8000000ul
+#define PIC32_EXT_PRI_CLOCK_HZ             8000000ul
+#define PIC32_EXT_SEC_CLOCK_HZ             32768ul
 
 #if (PIC32MX_CLICKER_USES_UART == 1)
         

@@ -32,59 +32,75 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "pic32_common.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+    
+#define PIC32_ISR_PRIO(prio, subprio)                                       \
+        ((((prio) & 0x7u) << 2u) | ((subprio) & 0x3u))
 
 enum pic32_isr_id
 {
-    PIC32_ISR_U1E,  
-    PIC32_ISR_U1RX,
-    PIC32_ISR_U1TX,
-    PIC32_ISR_U2E,
-    PIC32_ISR_U2RX,
-    PIC32_ISR_U2TX,
-    PIC32_ISR_U3E,
-    PIC32_ISR_U3RX,
-    PIC32_ISR_U3TX,
-    PIC32_ISR_U4E,
-    PIC32_ISR_U4RX,
-    PIC32_ISR_U4TX,
-    PIC32_ISR_U5E,
-    PIC32_ISR_U5RX,
-    PIC32_ISR_U5TX,
+    PIC32_ISR_U1E_RX_TX,
+    PIC32_ISR_U2E_RX_TX,
+    PIC32_ISR_U3E_RX_TX,
+    PIC32_ISR_U4E_RX_TX,
+    PIC32_ISR_U5E_RX_TX,
 };
-    
+
 void pic32_isr_resolve_iec(
-        enum pic32_isr_id isr_id, 
-        volatile uint32_t ** reg, 
+        enum pic32_isr_id vector_id, 
+        struct pic32_periph_reg ** iec,
         uint_fast8_t * bit);
 
 void pic32_isr_resolve_ifs(
-        enum pic32_isr_id isr_id, 
-        volatile uint32_t ** reg, 
+        enum pic32_isr_id vector_id, 
+        struct pic32_periph_reg ** ifs, 
         uint_fast8_t * bit);
 
-void pic32_isr_resolve_ipc(
-        enum pic32_isr_id isr_id, 
-        volatile uint32_t ** reg, 
-        uint_fast8_t * bit);
+#define pic32_isr_resolved_enable(en_reg, en_bit, en_offset)                \
+        do {                                                                \
+            (en_reg)->set = (0x1ul << (en_offset)) << (en_bit);             \
+        } while (0)
 
-void pic32_isr_enable(enum pic32_isr_id isr_id);
+#define pic32_isr_resolved_disable(en_reg, en_bit, en_offset)               \
+        do {                                                                \
+            (en_reg)->clr = (0x1ul << (en_offset)) << (en_bit);              \
+        } while (0)
 
-void pic32_isr_disable(enum pic32_isr_id isr_id);
+#define pic32_isr_resolved_is_enabled(en_reg, en_bit, en_offset)            \
+        ((en_reg)->reg & ((0x1ul << (en_offset)) << (en_bit)))
 
-bool pic32_isr_is_enabled(enum pic32_isr_id isr_id);
+#define pic32_isr_resolved_set_flag(flag_reg, flag_bit, flag_offset)        \
+        do {                                                                \
+            (flag_reg)->set = (0x1ul << (flag_offset)) << (flag_bit);       \
+        } while (0)
 
-void pic32_isr_set_flag(enum pic32_isr_id isr_id);
+#define pic32_isr_resolved_clear_flag(flag_reg, flag_bit, flag_offset)      \
+        do {                                                                \
+            (flag_reg)->clr = (0x1ul << (flag_offset)) << (flag_bit);        \
+        } while (0)
 
-void  pic32_isr_clear_flag(enum pic32_isr_id isr_id);
+#define pic32_isr_resolved_is_flagged(flag_reg, flag_bit, flag_offset)      \
+        ((flag_reg)->reg & ((0x1ul << (flag_offset)) << (flag_bit)))
 
-bool pic32_isr_is_flagged(enum pic32_isr_id isr_id);
+void pic32_isr_enable(enum pic32_isr_id vector_id, uint_fast8_t offset);
 
-void pic32_isr_set_prio(enum pic32_isr_id isr_id, uint_fast8_t prio);
+void pic32_isr_disable(enum pic32_isr_id vector_id, uint_fast8_t offset);
 
-uint_fast8_t pic32_isr_get_prio(enum pic32_isr_id isr_id);
+bool pic32_isr_is_enabled(enum pic32_isr_id vector_id, uint_fast8_t offset);
+
+void pic32_isr_set_flag(enum pic32_isr_id vector_id, uint_fast8_t offset);
+
+void  pic32_isr_clear_flag(enum pic32_isr_id vector_id, uint_fast8_t offset);
+
+bool pic32_isr_is_flagged(enum pic32_isr_id vector_id, uint_fast8_t offset);
+
+void pic32_isr_set_prio(enum pic32_isr_id vector_id, uint_fast8_t prio);
+
+uint_fast8_t pic32_isr_get_prio(enum pic32_isr_id vector_id);
 
 #ifdef __cplusplus
 }
