@@ -201,6 +201,19 @@ extern "C" {
 #define NPLATFORM_TIME                  __TIME__
 #endif
 
+#if (NPLATFORM_BROKEN_INLINE == 1)
+#if defined(NEON_C_SOURCE)
+#define NEON_INLINE_DECL(x)             x
+#define NEON_INLINE_DEF(x)              x
+#else
+#define NEON_INLINE_DECL(x)             x;
+#define NEON_INLINE_DEF(x)
+#endif
+#else
+#define NEON_INLINE_DECL(x)             NPLATFORM_INLINE x
+#define NEON_INLINE_DEF(x)              x
+#endif
+
 /** @} */
 /** @} *//*==================================================================*/
 /** @defgroup   nport_arch Port architecture module
@@ -951,21 +964,43 @@ struct nlist_sll
     +-----+
  @endverbatim
  */
-struct nlist_sll * nlist_sll_init(struct nlist_sll * node);
+NEON_INLINE_DECL(
+struct nlist_sll * nlist_sll_init(struct nlist_sll * node))
+NEON_INLINE_DEF(
+{
+    node->next = node;
+
+    return node;
+})
 
 /** @brief      Return the next node of @a node in linked list.
  *  @param[in]  node
  *              A list node or sentinel.
  *  @return     Next node.
  */
-#define nlist_sll_next(a_node)          (a_node)->next
+NEON_INLINE_DECL(
+struct nlist_sll * nlist_sll_next(struct nlist_sll * node))
+NEON_INLINE_DEF(
+{
+    return node->next;
+})
 
 /** @brief      Return previous node of @a node in linked list.
  *  @param[in]  node
  *              A list node or sentinel.
  *  @return     Previous node.
  */
-struct nlist_sll * nlist_sll_prev(struct nlist_sll * const node);
+NEON_INLINE_DECL(
+struct nlist_sll * nlist_sll_prev(struct nlist_sll * const node))
+NEON_INLINE_DEF(
+{
+    struct nlist_sll * tmp = node;
+
+    while (tmp->next != node) {
+        tmp = tmp->next;
+    }
+    return tmp;
+})
 
 /** @brief      Insert node (N) after current node (C).
  *  @param[in]  current
@@ -991,7 +1026,15 @@ struct nlist_sll * nlist_sll_prev(struct nlist_sll * const node);
         +-----+    +-----+    +-----+    +-----+
  @endverbatim
  */
-void nlist_sll_add_after(struct nlist_sll * current, struct nlist_sll * node);
+NEON_INLINE_DECL(
+void nlist_sll_add_after(struct nlist_sll * current, struct nlist_sll * node))
+NEON_INLINE_DEF(
+{
+    struct nlist_sll * prev = nlist_sll_prev(current);
+
+    node->next = prev->next;
+    prev->next = node;
+})
 
 /** @brief      Insert node (N) before current node (C).
  *  @param[in]  current
@@ -1017,9 +1060,48 @@ void nlist_sll_add_after(struct nlist_sll * current, struct nlist_sll * node);
         +-----+    +-----+    +-----+    +-----+
  @endverbatim
  */
+NEON_INLINE_DECL(
 struct nlist_sll * nlist_sll_add_before(
         struct nlist_sll * current,
-        struct nlist_sll * node);
+        struct nlist_sll * node))
+NEON_INLINE_DEF(
+{
+    node->next = current->next;
+    current->next = node;
+
+    return (node);
+})
+
+/** @brief      Remove a node (N) which is next from current (C) node
+ *  @param[in]  node
+ *              A list node.
+ *
+ *  Before calling this function:
+ @verbatim
+        +-----+    +-----+    +-----+    +-----+
+        |     |--->|     |--->|     |--->|     |-->next
+        |  1  |    |  C  |    |  N  |    |  2  |
+        |     |    |     |    |     |    |     |
+        +-----+    +-----+    +-----+    +-----+
+ @endverbatim
+ *
+ *  After call to this function:
+ @verbatim
+                                                +-----------+
+        +-----+    +-----+    +-----+           |  +-----+  |
+        |     |--->|     |--->|     |-->next    +->|     |--+
+        |  1  |    |  C  |    |  2  |              |  N  |
+        |     |    |     |    |     |              |     |
+        +-----+    +-----+    +-----+              +-----+
+ @endverbatim
+ */
+NEON_INLINE_DECL(
+void nlist_sll_remove_from(struct nlist_sll * current, struct nlist_sll * node))
+NEON_INLINE_DEF(
+{
+    current->next = node->next;
+    (void)nlist_sll_init(node);
+})
 
 /** @brief      Remove a node (N)
  *  @param[in]  node
@@ -1044,32 +1126,14 @@ struct nlist_sll * nlist_sll_add_before(
         +-----+    +-----+              +-----+
  @endverbatim
  */
-void nlist_sll_remove(struct nlist_sll * node);
+NEON_INLINE_DECL(
+void nlist_sll_remove(struct nlist_sll * node))
+NEON_INLINE_DEF(
+{
+    struct nlist_sll * prev = nlist_sll_prev(node);
 
-/** @brief      Remove a node (N)
- *  @param[in]  node
- *              A list node.
- *
- *  Before calling this function:
- @verbatim
-        +-----+    +-----+    +-----+    +-----+
-        |     |--->|     |--->|     |--->|     |-->next
-        |  1  |    |  C  |    |  N  |    |  2  |
-        |     |    |     |    |     |    |     |
-        +-----+    +-----+    +-----+    +-----+
- @endverbatim
- *
- *  After call to this function:
- @verbatim
-                                                +-----------+
-        +-----+    +-----+    +-----+           |  +-----+  |
-        |     |--->|     |--->|     |-->next    +->|     |--+
-        |  1  |    |  C  |    |  2  |              |  N  |
-        |     |    |     |    |     |              |     |
-        +-----+    +-----+    +-----+              +-----+
- @endverbatim
- */
-void nlist_sll_remove_from(struct nlist_sll * current, struct nlist_sll * node);
+    nlist_sll_remove_from(prev, node);
+})
 
 /** @brief      Check if a list @a node is empty or not.
  *  @param[in]  node
@@ -1078,7 +1142,12 @@ void nlist_sll_remove_from(struct nlist_sll * current, struct nlist_sll * node);
  *  @retval     true - The list is empty.
  *  @retval     false - The list contains at least one node.
  */
-bool nlist_sll_is_empty(const struct nlist_sll * node);
+NEON_INLINE_DECL(
+bool nlist_sll_is_empty(const struct nlist_sll * node))
+NEON_INLINE_DEF(
+{
+    return !!(node->next == node);
+})
 
 /** @} *//*==================================================================*/
 /** @defgroup   nlist_dll Doubly linked list module
@@ -1243,7 +1312,15 @@ struct nlist_dll
       +-----------+
  @endverbatim
  */
-struct nlist_dll * nlist_dll_init(struct nlist_dll * node);
+NEON_INLINE_DECL(
+struct nlist_dll * nlist_dll_init(struct nlist_dll * node))
+NEON_INLINE_DEF(
+{
+    node->next = node;
+    node->prev = node;
+
+    return node;
+})
 
 /** @brief      Terminate a list sentinel or node.
  *  @param[in]  node
@@ -1267,24 +1344,36 @@ struct nlist_dll * nlist_dll_init(struct nlist_dll * node);
          +-----+
  @endverbatim
  */
-#define nlist_dll_term(a_node)                                              \
-        do {                                                                \
-            (a_node)->next = NULL;                                          \
-        } while (0)
+NEON_INLINE_DECL(
+void nlist_dll_term(struct nlist_dll * node))
+NEON_INLINE_DEF(
+{
+    node->next = NULL;
+})
 
 /** @brief      Return the next node of @a node in linked list.
  *  @param[in]  node
  *              A list node or sentinel.
  *  @return     Next node.
  */
-#define nlist_dll_next(a_node)  (a_node)->next
+NEON_INLINE_DECL(
+struct nlist_dll * nlist_dll_next(struct nlist_dll * node))
+NEON_INLINE_DEF(
+{
+    return node->next;
+})
 
 /** @brief      Return previous node of @a node in linked list.
  *  @param[in]  node
  *              A list node or sentinel.
  *  @return     Previous node.
  */
-#define nlist_dll_prev(a_node)   (a_node)->prev
+NEON_INLINE_DECL(
+struct nlist_dll * nlist_dll_prev(struct nlist_dll * node))
+NEON_INLINE_DEF(
+{
+    return node->prev;
+})
 
 /** @brief      Insert node (N) before current node (C).
  *  @param[in]  current
@@ -1310,9 +1399,19 @@ struct nlist_dll * nlist_dll_init(struct nlist_dll * node);
         +-----+    +-----+    +-----+    +-----+
  @endverbatim
  */
+NEON_INLINE_DECL(
 struct nlist_dll * nlist_dll_add_after(
 		struct nlist_dll * current,
-        struct nlist_dll * node);
+        struct nlist_dll * node))
+NEON_INLINE_DEF(
+{
+    node->next          = current;
+    node->prev          = current->prev;
+    current->prev->next = node;
+    current->prev       = node;
+
+    return node;
+})
 
 /** @brief      Insert node (N) after current node (C).
  *  @param[in]  current
@@ -1338,9 +1437,19 @@ struct nlist_dll * nlist_dll_add_after(
         +-----+    +-----+    +-----+    +-----+
  @endverbatim
  */
+NEON_INLINE_DECL(
 struct nlist_dll * nlist_dll_add_before(
 		struct nlist_dll * current,
-        struct nlist_dll * node);
+        struct nlist_dll * node))
+NEON_INLINE_DEF(
+{
+    node->prev          = current;
+    node->next          = current->next;
+    current->next->prev = node;
+    current->next       = node;
+
+    return node;
+})
 
 /** @brief      Remove a node (N)
  *  @param[in]  node
@@ -1366,7 +1475,13 @@ struct nlist_dll * nlist_dll_add_before(
                                     ---
  @endverbatim
  */
-void nlist_dll_remove(struct nlist_dll * node);
+NEON_INLINE_DECL(
+void nlist_dll_remove(struct nlist_dll * node))
+NEON_INLINE_DEF(
+{
+    node->next->prev = node->prev;
+    node->prev->next = node->next;
+})
 
 /** @brief      Check if a list @a node is empty or not.
  *  @param[in]  node

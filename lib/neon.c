@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#define NEON_C_SOURCE
 #include "neon.h"
 
 
@@ -147,103 +148,6 @@ bool nbitarray_x_is_set(nbitarray_x * array, uint_fast8_t bit)
     return array[group + 1u] & (0x1u << pos);
 }
 
-/** @} *//*==================================================================*/
-/** @defgroup   nlist_sll_impl Singly linked list module implementation
- *  @brief      Singly linked list module implementation
- *  @{ *//*==================================================================*/
-
-struct nlist_sll * nlist_sll_init(struct nlist_sll * node)
-{
-    node->next = node;
-
-    return (node);
-}
-
-struct nlist_sll * nlist_sll_prev(struct nlist_sll * const node)
-{
-    struct nlist_sll * tmp = node;
-
-    while (tmp->next != node) {
-        tmp = tmp->next;
-    }
-    return (tmp);
-}
-
-void nlist_sll_add_after(struct nlist_sll * current, struct nlist_sll * node)
-{
-    struct nlist_sll * prev = nlist_sll_prev(current);
-
-    node->next = prev->next;
-    prev->next = node;
-}
-
-struct nlist_sll * nlist_sll_add_before(struct nlist_sll * current,
-        struct nlist_sll * node)
-{
-    node->next = current->next;
-    current->next = node;
-
-    return (node);
-}
-
-void nlist_sll_remove(struct nlist_sll * node)
-{
-    struct nlist_sll * prev = nlist_sll_prev(node);
-
-    nlist_sll_remove_from(prev, node);
-}
-
-void nlist_sll_remove_from(struct nlist_sll * prev, struct nlist_sll * node)
-{
-    prev->next = node->next;
-    node->next = node;
-}
-
-bool nlist_sll_is_empty(const struct nlist_sll * node)
-{
-    return (!!(node->next == node));
-}
-
-/** @} *//*==================================================================*/
-/** @defgroup   nlist_dll_impl Doubly linked list module implementation
- *  @brief      Doubly linked list module implementation
- *  @{ *//*==================================================================*/
-
-struct nlist_dll * nlist_dll_init(struct nlist_dll * node)
-{
-    node->next = node;
-    node->prev = node;
-
-    return (node);
-}
-
-struct nlist_dll * nlist_dll_add_after(struct nlist_dll * current,
-        struct nlist_dll * node)
-{
-    node->next          = current;
-    node->prev          = current->prev;
-    current->prev->next = node;
-    current->prev       = node;
-
-    return (node);
-}
-
-struct nlist_dll * nlist_dll_add_before(struct nlist_dll * current,
-        struct nlist_dll * node)
-{
-    node->prev          = current;
-    node->next          = current->next;
-    current->next->prev = node;
-    current->next       = node;
-
-    return (node);
-}
-
-void nlist_dll_remove(struct nlist_dll * node)
-{
-    node->next->prev = node->prev;
-    node->prev->next = node->next;
-}
 
 /** @} *//*==================================================================*/
 /** @defgroup   nqueue_lqueue_impl Lightweight queue module implementation

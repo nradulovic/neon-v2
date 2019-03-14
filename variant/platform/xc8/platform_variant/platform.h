@@ -56,6 +56,8 @@ extern "C" {
 #define NPLATFORM_INLINE        		static inline
 
 #define NPLATFORM_INLINE_ALWAYS 		NPLATFORM_INLINE
+    
+#define NPLATFORM_BROKEN_INLINE         1
 
 #define NPLATFORM_CONTAINER_OF(ptr, type, member)                      \
     ((type *)((char *)ptr - offsetof(type, member)))
