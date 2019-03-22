@@ -31,15 +31,29 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <platform_variant/platform.h>
+
 #include <xc.h>
 
+#include "platform_variant/platform.h"
+
 #if defined(NCONFIG_ARCH_CONFIG)
-#include NCONFIG_ARCH_CONFIG
+#include "neon_arch_config.h"
 #endif
 
 #if !defined(NCONFIG_USE_EXCLUSIVE_ACCESS)
 #define NCONFIG_USE_EXCLUSIVE_ACCESS    1
+#endif
+
+#if !defined(NCONFIG_ARCH_ISR_LOCK_CODE)
+#define NCONFIG_ARCH_ISR_LOCK_CODE      7
+#endif
+
+#if !defined(NCONFIG_ARCH_TIMER_SOURCE)
+#define NCONFIG_ARCH_TIMER_SOURCE       1
+#endif
+
+#if !defined(NCONFIG_ARCH_TIMER_FREQ_HZ)
+#define NCONFIG_ARCH_TIMER_FREQ_HZ      1000
 #endif
 
 #ifdef __cplusplus
@@ -114,17 +128,45 @@ void narch_atomic_clear_bit(narch_uint * p, uint_fast8_t bit)
 #define NARCH_ENABLE_INTERRUPTS()       __builtin_enable_interrupts()
 
 #define NARCH_ISR_STATE_DECL(name)      narch_uint name
-#define NARCH_ISR_LOCK(local_state)                                         \
-    do {                                                                    \
-        *(local_state) = NARCH_DISABLE_INTERRUPTS();                        \
-    } while (0)
+#define NARCH_ISR_LOCK(local_state)     np_arch_isr_lock(local_state)
     
-#define NARCH_ISR_UNLOCK(local_state)                                       \
-    do {                                                                    \
-        if (*(local_state) & _CP0_STATUS_IE_MASK) {                         \
-            NARCH_ENABLE_INTERRUPTS();                                      \
-        }                                                                   \
-    } while (0)
+#define NARCH_ISR_UNLOCK(local_state)   np_arch_isr_unlock(local_state)
+
+
+static inline
+void np_arch_isr_lock(narch_uint * local_state)
+{
+    unsigned int                ipl_status;
+
+    ipl_status  = _CP0_GET_STATUS();
+    *local_state = ipl_status;
+    ipl_status &= ~_CP0_STATUS_IPL_MASK;
+    ipl_status |= NCONFIG_ARCH_ISR_LOCK_CODE << _CP0_STATUS_IPL_POSITION;
+    _CP0_SET_STATUS(ipl_status);
+}
+
+static inline
+void np_arch_isr_unlock(const narch_uint * local_state)
+{
+    unsigned int                ipl_status;
+
+    ipl_status  = _CP0_GET_STATUS();
+    ipl_status &= ~_CP0_STATUS_IPL_MASK;
+    ipl_status |= *local_state & _CP0_STATUS_IPL_MASK;
+    _CP0_SET_STATUS(ipl_status);
+}
+
+
+void narch_init(void);
+void narch_term(void);
+
+#if (NCONFIG_ARCH_TIMER_SOURCE == 1)
+void narch_timer_enable(void);
+void narch_timer_disable(void);
+#else
+#define narch_timer_enable()                    (void)0
+#define narch_timer_disable()                   (void)0
+#endif
 
 #ifdef __cplusplus
 }

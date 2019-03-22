@@ -37,11 +37,11 @@
 extern "C" {
 #endif
     
-#if !defined(PIC32_EXT_PRI_CLOCK_HZ)
+#if !defined(PIC32_BOARD_OSC_PRI_CLOCK_HZ)
 #error "PIC32 based board needs to declare the primary clock frequency in PIC32_EXT_CLOCK"
 #endif
 
-#if !defined(PIC32_EXT_SEC_CLOCK_HZ)
+#if !defined(PIC32_BOARD_OSC_SEC_CLOCK_HZ)
 #error "PIC32 based board needs to declare the secondary clock frequency in PIC32_EXT_SEC_CLOCK"
 #endif
     

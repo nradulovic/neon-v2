@@ -55,18 +55,18 @@ uint32_t pic32_osc_get_sysclk_hz(void)
             break;
         case 2u:
             /* Primary Oscillator (XT, HS or EC) */
-            sysclk_hz = PIC32_EXT_PRI_CLOCK_HZ;
+            sysclk_hz = PIC32_BOARD_OSC_PRI_CLOCK_HZ;
             break;
         case 3u:
             /* Primary Oscillator with PLL module (XTPLL, HSPLL or ECPLL) */
             sysclk_hz = 
-                    (PIC32_EXT_PRI_CLOCK_HZ / pllidiv[DEVCFG2bits.FPLLIDIV]) 
+                    (PIC32_BOARD_OSC_PRI_CLOCK_HZ / pllidiv[DEVCFG2bits.FPLLIDIV]) 
                     * pllmult[OSCCONbits.PLLMULT]
                     / pllodiv_frcdiv_pbdiv[OSCCONbits.PLLODIV];
             break;
         case 4u:
             /* Secondary Oscillator (SOSC) */
-            sysclk_hz = PIC32_EXT_SEC_CLOCK_HZ;
+            sysclk_hz = PIC32_BOARD_OSC_SEC_CLOCK_HZ;
             break;
         case 5u:
             /* Internal Low-Power RC (LPRC) Oscillator */

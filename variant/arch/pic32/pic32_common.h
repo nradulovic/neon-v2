@@ -30,6 +30,7 @@
 #define NEON_PIC32_COMMON_H_
 
 #include <stdint.h>
+#include <sys/attribs.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,6 +47,13 @@ struct __attribute__((packed , aligned(4))) pic32_periph_reg
 
 #define pic32_periph_access(base)                                           \
         ((struct pic32_periph_reg *)(base))
+
+
+#define PIC32_NEON_ISR_IPL_MAX                  NCONFIG_ARCH_ISR_LOCK_CODE
+
+#define PIC32__CONCAT(a, b)             a##b
+#define PIC32_CONCAT(a, b)              PIC32__CONCAT(a, b)
+#define PIC32_SOFT_ISR_DECL(v, p)       __ISR(v, PIC32_CONCAT(PIC32_CONCAT(ipl, p), SOFT))
 
 #ifdef __cplusplus
 }

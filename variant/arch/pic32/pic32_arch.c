@@ -16,9 +16,94 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <xc.h>
+#include <sys/attribs.h>
+
 #include "arch_variant/arch.h"
+
+#include "pic32_osc.h"
+#include "pic32_isr.h"
+
+#if (NCONFIG_ARCH_TIMER_SOURCE == 1)
+static void timer_init(void)
+{
+    /* Disable timer */
+    _CP0_BIS_CAUSE(_CP0_CAUSE_DC_MASK);
+
+    /* Disable ISR */
+    IEC0CLR = _IEC0_CTIE_MASK;
+
+    /* Set ISR priority */
+    IPC0CLR = 0x7u << IPC0_CTIP_SHIFT;
+    IPC0SET = NCONFIG_ARCH_ISR_LOCK_CODE << IPC0_CTIP_SHIFT;
+}
+#endif
+
+void narch_init(void)
+{
+    /* Setup interrupt chip: enable multivector mode */
+    pic32_isr_init();
+#if (NCONFIG_ARCH_TIMER_SOURCE == 1)
+    timer_init();
+#endif
+}
 
 void narch_cpu_stop(void)
 {
     for (;;);
 }
+
+#if (NCONFIG_ARCH_TIMER_SOURCE == 1)
+void narch_timer_enable(void)
+{
+    uint32_t cause;
+    uint32_t compare;
+
+    /* Set and enable timer */
+    cause  = _CP0_GET_CAUSE();
+    _CP0_SET_CAUSE(cause | _CP0_CAUSE_DC_MASK);
+    _CP0_SET_COUNT(0u);
+    compare = NCONFIG_ARCH_TIMER_FREQ_HZ / pic32_osc_get_sysclk_hz();
+    _CP0_SET_COMPARE(compare);
+    _CP0_SET_CAUSE(cause & ~_CP0_CAUSE_DC_MASK);
+
+    /* Enable ISR */
+    IFS0CLR = _IFS0_CTIF_MASK;
+    IEC0SET = _IEC0_CTIE_MASK;
+}
+
+void narch_timer_disable(void)
+{
+    uint32_t cause;
+
+    /* Disable ISR */
+    IEC0CLR = _IEC0_CTIE_MASK;
+
+    /* Disable timer */
+    cause  = _CP0_GET_CAUSE();
+    cause |= _CP0_CAUSE_DC_MASK;
+    _CP0_SET_CAUSE(cause);
+}
+
+extern void nsys_timer_isr(void);
+
+void PIC32_SOFT_ISR_DECL(_CORE_TIMER_VECTOR, PIC32_NEON_ISR_IPL_MAX) arch_timer_isr(void)
+{
+    uint32_t cause;
+    uint32_t compare;
+
+    /* Disable timer */
+    cause  = _CP0_GET_CAUSE();
+    _CP0_SET_CAUSE(cause | _CP0_CAUSE_DC_MASK);
+
+    /* Reload value */
+    compare = _CP0_GET_COMPARE();
+    _CP0_SET_COUNT(0u);
+    _CP0_SET_COMPARE(compare);
+
+    /* Enable timer */
+    _CP0_SET_CAUSE(cause);
+
+    nsys_timer_isr();
+}
+#endif /* (NCONFIG_ARCH_TIMER_SOURCE == 1) */

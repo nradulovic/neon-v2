@@ -61,7 +61,7 @@
 
 const struct pic32_uart_board_config g_pic32_uart_5_board_config =
 {
-    .isr_vector_prio = PIC32_ISR_PRIO(3,3),
+    .isr_vector_prio = PIC32_ISR_PRIO(PIC32MX_CLICKER_UART_ISR_PRIO, 0),
     .control_code = PIC32MX_CLICKER_UART_CONTROL,
     .arg = PIC32MX_CLICKER_UART_BAUDRATE
 };
@@ -70,16 +70,19 @@ void nboard_init(void)
 {
     /* Disable JTAG since it is not available on this board */
     DDPCONbits.JTAGEN = 0;
-    
+
+    /* Initialise architecture */
+    narch_init();
+
     /* Setup clocks */
-    /* After boot default system clock is set to PRI oscillator by 
+    /* After boot default system clock is set to PRI oscillator by
      * configuration bits. Which with 8MHz crystal means that the main clock is
-     * 8MHz. When using the PRIPLL clock source the main clock becomes 80MHz. 
+     * 8MHz. When using the PRIPLL clock source the main clock becomes 80MHz.
      */
     pic32_osc_new_source(PIC32_OSC_SOURCE_PRIPLL);
-    
-    /* Setup interrupt chip: enable multivector mode */
-    pic32_isr_init();
+
+    /* Enable architecture timer */
+    narch_timer_enable();
 
     /* Setup UART if used */
     pic32_uart_init();

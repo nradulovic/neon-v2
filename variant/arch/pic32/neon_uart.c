@@ -184,7 +184,7 @@ static struct pic32_uart g_pic32_uarts[] =
 };
 
 static void pic32_uart_setup_baudrate(
-        struct pic32_uart_sfr * sfr, 
+        struct pic32_uart_sfr * sfr,
         uint32_t baudrate)
 {
     uint32_t pbclk;
@@ -192,11 +192,11 @@ static void pic32_uart_setup_baudrate(
     uint32_t brgh_hi;
 
     pbclk = pic32_osc_get_pbclk_hz();
-    
+
     /* Find the BRG Value */
     brgh_lo = (((pbclk >> 4u) + (baudrate >> 1u)) / baudrate) - 1u;
     brgh_hi = (((pbclk >> 2u) + (baudrate >> 1u)) / baudrate) - 1u;
-    
+
     if (brgh_hi <= UINT16_MAX) {
         /* Set BRGH */
         sfr->mode.set = UxMODE_BRGH_MASK;
@@ -211,14 +211,14 @@ static void pic32_uart_setup_baudrate(
 static void pic32_uart_setup(
         struct pic32_uart * uart,
         const struct pic32_uart_desc * desc,
-        uint32_t control_code, 
+        uint32_t control_code,
         uint32_t arg)
 {
     uint32_t data_bits = control_code & NUART_DATA_BITS_Msk;
     uint32_t stop_bits = control_code & NUART_STOP_BITS_Msk;
     uint32_t parity = control_code & NUART_PARITY_Msk;
     struct pic32_uart_sfr * sfr = uart->sfr;
-    
+
     NASSERT((control_code & NUART_MODE_Msk) == NUART_MODE_ASYNCHRONOUS);
 
 #if defined(HAS_MODE_ACTIVE)
@@ -230,20 +230,20 @@ static void pic32_uart_setup(
     /* Setup stop bits */
     NASSERT((stop_bits == NUART_STOP_BITS_1) || \
             (stop_bits == NUART_STOP_BITS_2));
-    
+
     if (stop_bits == NUART_STOP_BITS_2) {
         sfr->mode.set = UxMODE_STSEL_MASK;
     }
-    
+
     /* Setup data bits & parity */
     NASSERT((data_bits == NUART_DATA_BITS_8) || \
             (data_bits == NUART_DATA_BITS_9));
-    
+
     if (data_bits == NUART_DATA_BITS_8) {
         NASSERT((parity == NUART_PARITY_NONE) || \
                 (parity == NUART_PARITY_EVEN) || \
                 (parity == NUART_PARITY_ODD));
-        
+
         if (parity == NUART_PARITY_ODD) {
             sfr->mode.set = 0x2u << UxMODE_PDSEL_POS;
         } else if (parity == NUART_PARITY_EVEN) {
@@ -253,7 +253,7 @@ static void pic32_uart_setup(
         NASSERT(parity == NUART_PARITY_NONE);
         sfr->mode.set = 0x3u << UxMODE_PDSEL_POS;
     }
-    
+
     /* Setup data polarity */
     if ((control_code & NUART_CPOL_Msk) == NUART_CPOL_1) {
         sfr->mode.set = UxMODE_RXINV_MASK;
@@ -261,20 +261,20 @@ static void pic32_uart_setup(
     }
     /* Setup data phase */
     NASSERT((control_code & NUART_CPHA_Msk) == NUART_CPHA_0);
-    
+
     /* Setup low-power wakeup event: TODO: Create API for this feature. */
     /* MODE:WAKE -> leave to zero: Wake up is disabled. */
     /* MODE:SIDL -> leave to zero: Continue operation in Idle mode. */
-    
+
     /* Setup flow control */
 #if defined(HAS_MODE_UEN)
     {
         uint32_t flow_control = control_code & NUART_FLOW_CONTROL_Msk;
-         
+
         NASSERT((flow_control == NUART_FLOW_CONTROL_NONE) || \
             (flow_control == NUART_FLOW_CONTROL_RTS)  || \
             (flow_control == NUART_FLOW_CONTROL_RTS_CTS));
-    
+
         if (flow_control == NUART_FLOW_CONTROL_RTS) {
             sfr->mode.set = 0x1ul << UxMODE_UEN_POS;
         } else if (flow_control == NUART_FLOW_CONTROL_RTS_CTS) {
@@ -287,27 +287,27 @@ static void pic32_uart_setup(
 #if defined(HAS_MODE_RTSMD)
     /* Setup MODE:RTSMD -> leave to zero: UxRTS pin in Flow Control Mode. */
 #endif
-    
+
     /* Setup interrupts */
     pic32_isr_irq_clear(desc->isr_irq_e);
     pic32_isr_irq_clear(desc->isr_irq_rx);
     pic32_isr_irq_clear(desc->isr_irq_tx);
     pic32_isr_vector_set_prio(
-            desc->isr_vector, 
+            desc->isr_vector,
             desc->board_config->isr_vector_prio);
-    
+
     /* In 4-level FIFO:
      *  Interrupt is generated when all characters have been transmitted
-     * 
+     *
      * In 8-level FIFO:
-     *  Interrupt is generated and asserted when all characters have been 
+     *  Interrupt is generated and asserted when all characters have been
      *  transmitted
      */
     uart->sfr->sta.set = 0x1ul << UxSTA_UTXISEL_POS;
-    
+
     /* Setup baudrate */
     pic32_uart_setup_baudrate(sfr, arg);
-    
+
     /* Enable transmit and receive and UART */
     sfr->sta.set = (UxSTA_UTXEN_MASK | UxSTA_URXEN_MASK);
     sfr->mode.set = UxMODE_ON_MASK; /* Turn on UART peripheral */
@@ -315,7 +315,7 @@ static void pic32_uart_setup(
 
 static void pic32_uart_write_tx_fifo(struct pic32_uart * uart)
 {
-    while (((uart->sfr->sta.reg & UxSTA_UTXBF_MASK) == 0) && 
+    while (((uart->sfr->sta.reg & UxSTA_UTXBF_MASK) == 0) &&
             (uart->current_byte_out < uart->buff_size)) {
         uart->sfr->txreg.reg = uart->buff_out[uart->current_byte_out];
         uart->current_byte_out++;
@@ -324,7 +324,7 @@ static void pic32_uart_write_tx_fifo(struct pic32_uart * uart)
 
 static void pic32_uart_read_rx_fifo(struct pic32_uart * uart)
 {
-    while (((uart->sfr->sta.reg & UxSTA_URXDA_MASK) == 1) && 
+    while (((uart->sfr->sta.reg & UxSTA_URXDA_MASK) == 1) &&
             (uart->current_byte_in < uart->buff_size)) {
         uart->buff_in[uart->current_byte_in] = uart->sfr->rxreg.reg;
         uart->current_byte_in++;
@@ -332,15 +332,15 @@ static void pic32_uart_read_rx_fifo(struct pic32_uart * uart)
 }
 
 static void pic32_uart_isr_handler(
-        struct pic32_uart * uart, 
+        struct pic32_uart * uart,
         const struct pic32_uart_desc * desc)
 {
     uint32_t events = 0u;
-    
+
     if (pic32_isr_irq_is_set(desc->isr_irq_e)) {
         /* UART x Error interrupt */
         uint32_t status = uart->sfr->sta.reg;
-        
+
         if (status & UxSTA_OERR_MASK) {
             uart->sfr->sta.clr = UxSTA_OERR_MASK;
             events |= NUART_EVENT_RX_OVERFLOW;
@@ -353,12 +353,12 @@ static void pic32_uart_isr_handler(
         }
         pic32_isr_irq_clear(desc->isr_irq_e);
     }
-    
+
     if (pic32_isr_irq_is_set(desc->isr_irq_rx)) {
         /* UART x Receiver interrupt */
         pic32_uart_read_rx_fifo(uart);
         pic32_isr_irq_clear(desc->isr_irq_rx);
-        
+
         if (uart->current_byte_out == uart->buff_size) {
             pic32_isr_irq_disable(desc->isr_irq_rx);
             pic32_isr_irq_disable(desc->isr_irq_e);
@@ -369,13 +369,13 @@ static void pic32_uart_isr_handler(
         /* UART x Transmitter interrupt */
         pic32_uart_write_tx_fifo(uart);
         pic32_isr_irq_clear(desc->isr_irq_tx);
-        
+
         if (uart->current_byte_out == uart->buff_size) {
             pic32_isr_irq_disable(desc->isr_irq_tx);
             events |= NUART_EVENT_SEND_COMPLETE;
         }
     }
-    
+
     if (events != 0u) {
         uart->callback(uart_id_from_uart(uart), events);
     }
@@ -385,8 +385,8 @@ void pic32_uart_init(void)
 {
 #if (NBOARD_USES_UART_5 == 1)
     nuart_control(
-            NUART_ID_5, 
-            g_pic32_uart_5_board_config.control_code, 
+            NUART_ID_5,
+            g_pic32_uart_5_board_config.control_code,
             g_pic32_uart_5_board_config.arg);
 #endif
 }
@@ -394,10 +394,10 @@ void pic32_uart_init(void)
 void nuart_init(enum nuart_id uart_id, nuart_callback * callback)
 {
     struct pic32_uart * uart;
-    
+
     NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic32_uarts));
     NASSERT(callback != NULL);
-    
+
     uart = &g_pic32_uarts[uart_id];
     uart->callback = callback;
 }
@@ -405,19 +405,19 @@ void nuart_init(enum nuart_id uart_id, nuart_callback * callback)
 void nuart_term(enum nuart_id uart_id)
 {
     struct pic32_uart * uart;
-    
+
     NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic32_uarts));
-    
+
     uart = &g_pic32_uarts[uart_id];
 }
 
 uint32_t nuart_capabilities(enum nuart_id uart_id)
 {
     const struct pic32_uart_desc * desc;
-    
+
     NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic32_uarts_desc));
-    
-    desc = &g_pic32_uarts_desc[uart_id];  
+
+    desc = &g_pic32_uarts_desc[uart_id];
 
     return desc->capabilities;
 }
@@ -426,7 +426,7 @@ void nuart_control(enum nuart_id uart_id, uint32_t control_code, uint32_t arg)
 {
     struct pic32_uart * uart = &g_pic32_uarts[uart_id];
     const struct pic32_uart_desc * desc = &g_pic32_uarts_desc[uart_id];
-    
+
     switch (control_code & NUART_COMMAND_Msk) {
         case NUART_COMMAND_SETUP:
             pic32_uart_setup(uart, desc, control_code, arg);
@@ -447,18 +447,18 @@ void nuart_send(enum nuart_id uart_id, const void * data, size_t size)
 {
     struct pic32_uart * uart;
     const struct pic32_uart_desc * desc;
-    
+
     NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic32_uarts));
-    
+
     uart = &g_pic32_uarts[uart_id];
     desc = &g_pic32_uarts_desc[uart_id];
-    
+
     NASSERT(uart->callback != NULL);
-    
+
     uart->buff_out = data;
     uart->buff_size = size;
     uart->current_byte_out = 0u;
-    
+
     /*
      * First, fill in the available buffer.
      */
@@ -470,14 +470,14 @@ void nuart_receive(enum nuart_id uart_id, void * data, size_t size)
 {
     struct pic32_uart * uart;
     const struct pic32_uart_desc * desc;
-    
+
     NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic32_uarts));
-    
+
     uart = &g_pic32_uarts[uart_id];
     desc = &g_pic32_uarts_desc[uart_id];
-    
+
     NASSERT(uart->callback != NULL);
-    
+
     uart->buff_in = data;
     uart->buff_size = size;
     uart->current_byte_out = 0u;
@@ -486,26 +486,26 @@ void nuart_receive(enum nuart_id uart_id, void * data, size_t size)
 }
 
 void nuart_transfer(
-        enum nuart_id uart_id, 
-        const void * output, 
-        void * input, 
+        enum nuart_id uart_id,
+        const void * output,
+        void * input,
         size_t size)
 {
     struct pic32_uart * uart;
     const struct pic32_uart_desc * desc;
-    
+
     NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic32_uarts));
-    
+
     uart = &g_pic32_uarts[uart_id];
     desc = &g_pic32_uarts_desc[uart_id];
-    
+
     NASSERT(uart->callback != NULL);
-    
+
     uart->buff_out = output;
     uart->buff_in = input;
     uart->buff_size = size;
     uart->current_byte_out = 0u;
-    
+
     /*
      * First, fill in the available buffer.
      */
@@ -543,11 +543,15 @@ void __ISR(_UART_4_VECTOR, ipl1AUTO) pic32_uart_4_isr_handler(void)
 }
 #endif
 
+
 #if (NBOARD_USES_UART_5 == 1)
-void __ISR(_UART_5_VECTOR, ipl1AUTO) pic32_uart_5_isr_handler(void)
+#if !defined(PIC32_BOARD_UART_5_ISR_PRIO)
+#error "Define PIC32_BOARD_UART_5_ISR_PRIO to declare ISR with proper ISR priority"
+#endif
+void PIC32_SOFT_ISR_DECL(_UART_5_VECTOR, PIC32_BOARD_UART_5_ISR_PRIO) pic32_uart_5_isr_handler(void)
 {
     pic32_uart_isr_handler(
-            &g_pic32_uarts[NUART_ID_5], 
+            &g_pic32_uarts[NUART_ID_5],
             &g_pic32_uarts_desc[NUART_ID_5]);
 }
 #endif

@@ -110,7 +110,7 @@ void nbitarray_x_set(nbitarray_x * array, uint_fast8_t bit)
 
 	group = bit >> NBITS_LOG2_8(NARCH_DATA_WIDTH); /* bit / NARCH_DATA_WIDTH */
 	pos = bit & (NARCH_DATA_WIDTH - 1u);           /* bit % NARCH_DATA_WIDTH */
-    
+
     array[group + 1u] |= narch_exp2(pos);                               /* 1 */
     array[0] |= narch_exp2(group);                                      /* 2 */
 }
@@ -119,12 +119,12 @@ void nbitarray_x_clear(nbitarray_x * array, uint_fast8_t bit)
 {
 	uint_fast8_t group;
 	uint_fast8_t pos;
-    
+
 	group = bit >> NBITS_LOG2_8(NARCH_DATA_WIDTH); /* bit / NARCH_DATA_WIDTH */
 	pos = bit & (NARCH_DATA_WIDTH - 1u);           /* bit % NARCH_DATA_WIDTH */
 
     array[group + 1u] &= ~narch_exp2(pos);                              /* 1 */
-        
+
     if (array[group + 1u] == 0u) {
         array[0] &= ~narch_exp2(group);                                 /* 2 */
     }
@@ -133,10 +133,10 @@ void nbitarray_x_clear(nbitarray_x * array, uint_fast8_t bit)
 #if (NEON_HAS_BITARRAY_X_ATOMICS == 1)
 /*
  * It is safe to have two independent atomic operations when we first set group
- * value and then set group indicator bit. Even when we are interrupted right 
- * in between the calls, the consistency of the array is sustained because 
+ * value and then set group indicator bit. Even when we are interrupted right
+ * in between the calls, the consistency of the array is sustained because
  * group indicator is set after group value.
- * 
+ *
  * 1. Set group value
  * 2. Set group indicator.
  */
@@ -147,7 +147,7 @@ void nbitarray_x_set_atomic(nbitarray_x * array, uint_fast8_t bit)
 
 	group = bit >> NBITS_LOG2_8(NARCH_DATA_WIDTH); /* bit / NARCH_DATA_WIDTH */
 	pos = bit & (NARCH_DATA_WIDTH - 1u);           /* bit % NARCH_DATA_WIDTH */
-    
+
 	narch_atomic_set_bit(&array[group + 1u], pos);                      /* 1 */
     narch_atomic_set_bit(&array[0], group);                             /* 2 */
 }
@@ -158,7 +158,7 @@ void nbitarray_x_clear_atomic(nbitarray_x * array, uint_fast8_t bit)
 	uint_fast8_t pos;
     narch_uint group_val_c;
     narch_uint group_val_n;
-        
+
 	group = bit >> NBITS_LOG2_8(NARCH_DATA_WIDTH); /* bit / NARCH_DATA_WIDTH */
 	pos = bit & (NARCH_DATA_WIDTH - 1u);           /* bit % NARCH_DATA_WIDTH */
 
@@ -172,8 +172,8 @@ void nbitarray_x_clear_atomic(nbitarray_x * array, uint_fast8_t bit)
             narch_atomic_set_bit(&array[0], group);
         }
     } while (!narch_compare_and_swap(
-            &array[group + 1], 
-            group_val_c, 
+            &array[group + 1],
+            group_val_c,
             group_val_n));
 }
 #endif /* (NEON_HAS_BITARRAY_X_ATOMICS == 1) */
@@ -196,7 +196,7 @@ bool nbitarray_x_is_set(const nbitarray_x * array, uint_fast8_t bit)
 
 	group = bit >> NBITS_LOG2_8(NARCH_DATA_WIDTH); /* bit / NARCH_DATA_WIDTH */
 	pos = bit & (NARCH_DATA_WIDTH - 1u);           /* bit % NARCH_DATA_WIDTH */
-    
+
     return !!(array[group + 1u] & narch_exp2(pos));
 }
 
@@ -241,7 +241,7 @@ int_fast8_t nlqueue_super_idx_fifo_atomic(struct np_lqueue_super * qb)
     int_fast8_t retval;
     struct np_lqueue_super qc;
     struct np_lqueue_super qn;
-    
+
     do {
         qc.u.ui = qb->u.ui;
         qn.u.ui = qc.u.ui;
@@ -257,13 +257,13 @@ int32_t nlqueue_super_idx_lifo_atomic(struct np_lqueue_super * qb)
     int32_t retval;
     struct np_lqueue_super qc;
     struct np_lqueue_super qn;
-    
+
     do {
         qc.u.ui = qb->u.ui;
         qn.u.ui = qc.u.ui;
         retval = nlqueue_super_idx_lifo(&qn);
     } while (!narch_compare_and_swap(&qb->u.ui, qc.u.ui, qn.u.ui));
-    
+
     return retval;
 }
 #endif
@@ -274,7 +274,7 @@ int_fast8_t nlqueue_super_idx_get_atomic(struct np_lqueue_super * qb)
     int_fast8_t retval;
     struct np_lqueue_super qc;
     struct np_lqueue_super qn;
-    
+
     do {
         qc.u.ui = qb->u.ui;
         qn.u.ui = qc.u.ui;
@@ -381,19 +381,19 @@ NPLATFORM_INLINE
 struct nevent make_event(const struct nevent_x * event_x)
 {
     struct nevent event;
-    
+
     event.u.x = event_x;
-    
+
     return event;
 }
 #else
-NPLATFORM_INLINE 
+NPLATFORM_INLINE
 struct nevent make_signal(uint_fast8_t signal)
 {
     struct nevent event;
-    
+
     event.u.signal = signal;
-    
+
     return event;
 }
 #endif
@@ -449,13 +449,13 @@ static void sm_fsm_dispatch(struct nsm * sm, struct nevent event)
  */
 static struct nepa_schedule
 {
-	struct nepa * current;                      /**< Speed optimization, 
+	struct nepa * current;                      /**< Speed optimization,
                                                  *   current thread priority. */
     struct nepa_queue
     {
 #if (NCONFIG_EPA_INSTANCES <= NBITARRAY_S_MAX_SIZE)
-        nbitarray_s bitarray;                   /**< Simple bit array is used 
-                                                 * when small number of task 
+        nbitarray_s bitarray;                   /**< Simple bit array is used
+                                                 * when small number of task
                                                  * is used. */
 #else
         nbitarray_x bitarray[NBITARRAY_DEF(NCONFIG_EPA_INSTANCES)];
@@ -473,9 +473,9 @@ static naction default_idle_epa(struct nsm * sm, struct nevent event)
 {
     NPLATFORM_UNUSED_ARG(sm);
     NPLATFORM_UNUSED_ARG(event);
-    
+
     return NACTION_HANDLED;
-}   
+}
 
 #define epa_from_prio(a_ctx, a_prio)    (&(a_ctx)->mempool[a_prio])
 
@@ -483,7 +483,7 @@ static naction default_idle_epa(struct nsm * sm, struct nevent event)
 #define prio_from_epa(a_ctx, a_epa)     ((a_epa)->task.prio)
 #else
 #define prio_from_epa(a_ctx, a_epa)     ((a_epa) - &(a_ctx)->mempool[0])
-#endif 
+#endif
 
 #if (NCONFIG_EPA_INSTANCES <= NBITARRAY_S_MAX_SIZE)
 
@@ -538,7 +538,7 @@ static naction default_idle_epa(struct nsm * sm, struct nevent event)
 
 
 static void event_q_init(
-        struct nevent_q * event_q, 
+        struct nevent_q * event_q,
         const struct nepa_define * define)
 {
     NLQUEUE_INIT_DYNAMIC(event_q, define->event_q_size, define->event_q_storage);
@@ -547,7 +547,7 @@ static void event_q_init(
 static void sm_init(struct nsm * sm, const struct nepa_define * define)
 {
 #if (NCONFIG_EPA_USE_HSM == 1)
-    sm->dispatch = define->type = NEPA_HSM_TYPE ? hsm_dispatch : fsm_dispatch; 
+    sm->dispatch = define->type = NEPA_HSM_TYPE ? hsm_dispatch : fsm_dispatch;
 #endif
     sm->state = define->init_state;
     sm->ws = define->ws;
@@ -561,7 +561,7 @@ static void task_init(struct ntask * task, uint_fast8_t prio)
 #endif
 
 struct nepa * nepa_create(
-        uint_fast8_t prio, 
+        uint_fast8_t prio,
         const struct nepa_define * define)
 {
     struct nepa_schedule * ctx = &g_epa_schedule;
@@ -591,18 +591,18 @@ void nepa_delete(struct nepa * epa)
     (void)epa;
 }
 
-/* 
- * 
+/*
+ *
  * 1. Insert EPA to priority queue 'ready'
  *    a) insert it in atomic mode
  *    b) insert it in plain mode protected by critical section macros
- * 
+ *
  * NOTES:
  * 1. The bool 'pending' is true when a queue was empty before calling this
  *    function. It will trigger calling the queue_insert_atomic. In rare cases
  *    it can be set (false positive) when multiple nepa_send_event functions
  *    are called from different execution contexts. The single side effect would
- *    be that queue_insert_atomic is called multiple times, which is not 
+ *    be that queue_insert_atomic is called multiple times, which is not
  *    dangerous, it only cost additional CPU execution time.
  */
 nerror nepa_send_event(struct nepa * epa, struct nevent event)
@@ -613,13 +613,13 @@ nerror nepa_send_event(struct nepa * epa, struct nevent event)
     NREQUIRE(NSIGNATURE_OF(epa) == NSIGNATURE_EPA);
 
 #if (NCONFIG_EVENT_USE_EVENT_X == 1)
-    
-    
+
+
 #if defined(PRIO_QUEUE_INSERT_ATOMIC) && defined(NLQUEUE_IDX_FIFO_ATOMIC) \
     && defined(NLQUEUE_IS_FIRST_ATOMIC)
     {
         int_fast8_t idx;
-        
+
         idx = NLQUEUE_IDX_FIFO_ATOMIC(&epa->event_q);
 
         if (idx >= 0) {
@@ -627,7 +627,7 @@ nerror nepa_send_event(struct nepa * epa, struct nevent event)
                                                                /* See note 1 */
                                                                         /* 1a*/
             if (NLQUEUE_IS_FIRST_ATOMIC(&epa->event_q)) {
-                PRIO_QUEUE_INSERT_ATOMIC(&ctx->ready, prio_from_epa(ctx, epa));  
+                PRIO_QUEUE_INSERT_ATOMIC(&ctx->ready, prio_from_epa(ctx, epa));
             }
             error = EOK;
         } else {
@@ -638,13 +638,13 @@ nerror nepa_send_event(struct nepa * epa, struct nevent event)
     {
         NCRITICAL_STATE_DECL(local)
         int_fast8_t idx;
-        
+
         NCRITICAL_LOCK(&local, NULL);
         idx = NLQUEUE_IDX_FIFO(&epa->event_q);
 
         if (idx >= 0) {
             NLQUEUE_IDX_REFERENCE(&epa->event_q, idx) = event;
-            PRIO_QUEUE_INSERT(&ctx->ready, prio_from_epa(ctx, epa));  
+            PRIO_QUEUE_INSERT(&ctx->ready, prio_from_epa(ctx, epa));
             error = EOK;
         } else {
             error = -EOBJ_INVALID;
@@ -654,6 +654,20 @@ nerror nepa_send_event(struct nepa * epa, struct nevent event)
 #endif
 #endif
     return error;
+}
+
+void nsys_init(void)
+{
+    narch_init();
+    nmcu_init();
+    nboard_init();
+    nos_init();
+    nplatform_init();
+}
+
+void nsys_timer_isr(void)
+{
+    
 }
 
 /*
@@ -677,7 +691,7 @@ NPLATFORM_NORETURN(void nsys_schedule_start(void))
     if (!PRIO_QUEUE_IS_SET(&ctx->ready, 0)) {                           /* 1 */
         nepa_create(0, &idle_epa);
     }
-    
+
 #if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
                                     /* While there are ready tasks in system */
     while (!should_exit) {
@@ -692,21 +706,21 @@ NPLATFORM_NORETURN(void nsys_schedule_start(void))
                                                        /* Fetch the new task */
         epa = epa_from_prio(ctx, prio);
         ctx->current = epa;
-        
+
 #if defined(NLQUEUE_IS_FIRST_ATOMIC) && defined(PRIO_QUEUE_REMOVE_ATOMIC) \
     && defined(NLQUEUE_IDX_GET_ATOMIC)
         if (NLQUEUE_IS_FIRST_ATOMIC(&epa->event_q)) {
             PRIO_QUEUE_REMOVE_ATOMIC(&ctx->ready, prio);
         }
-                                                       
+
         event = NLQUEUE_IDX_REFERENCE(
-                &epa->event_q, 
+                &epa->event_q,
                 NLQUEUE_IDX_GET_ATOMIC(&epa->event_q));
 #else
         {
             NCRITICAL_STATE_DECL(local)
             NCRITICAL_LOCK(&local, NULL);
-            
+
             if (NLQUEUE_IS_FIRST(&epa->event_q)) {
                 PRIO_QUEUE_REMOVE(&ctx->ready, prio);
             }
@@ -721,21 +735,21 @@ NPLATFORM_NORETURN(void nsys_schedule_start(void))
         sm_fsm_dispatch(&epa->sm, event);
 #endif
     }
-    
+
 #if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
     for (uint_fast8_t prio = 0u; prio < NCONFIG_EPA_INSTANCES; prio) {
         struct ntask * task;
-        
+
         task = epa_from_prio(ctx, prio);
-        
+
         ntask_stop(task);
     }
-    
+
     for (uint_fast8_t prio = 0u; prio < NCONFIG_EPA_INSTANCES; prio) {
         struct ntask * task;
-        
+
         task = epa_from_prio(ctx, prio);
-        
+
         ntask_delete(task);
     }
 #endif
