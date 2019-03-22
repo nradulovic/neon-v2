@@ -50,8 +50,7 @@ extern "C" {
 
 #define NTESTSUITE_PRINT_HEADER()                                           \
     nlogger_info("Build info: %s - %s\n", NPLATFORM_DATE, NPLATFORM_TIME);  \
-    nlogger_info("Port platform ID: %s\n", nplatform_id);                   \
-    nlogger_info("Port platform build: %s\n", nplatform_build);
+    nlogger_info("Port platform ID: %s\n", NPLATFORM_ID)
 
 #define NTESTSUITE_EXPECT_UINT(a_number)                                    \
     do {                                                                    \

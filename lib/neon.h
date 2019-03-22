@@ -83,7 +83,10 @@ extern "C" {
 #if !defined(NCONFIG_ENABLE_DEBUG) || defined(__DOXYGEN__)
 #define NCONFIG_ENABLE_DEBUG            0
 #endif
-
+#if !defined(NCONFIG_LOGGER_BUFFER_SIZE) || defined(__DOXYGEN__)
+#define NCONFIG_LOGGER_BUFFER_SIZE      255
+#endif
+    
 /** @brief      Configure if event module will use extended events.
  *
  *  If this macro is set to '1' then extended events will be used. If this

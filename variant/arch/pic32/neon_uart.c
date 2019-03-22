@@ -386,7 +386,7 @@ void pic32_uart_init(void)
 #if (NBOARD_USES_UART_5 == 1)
     nuart_control(
             NUART_ID_5,
-            g_pic32_uart_5_board_config.control_code,
+            g_pic32_uart_5_board_config.control_code | NUART_COMMAND_SETUP,
             g_pic32_uart_5_board_config.arg);
 #endif
 }

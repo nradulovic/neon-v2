@@ -54,7 +54,7 @@ static void testsuite_test_failed(uint32_t line)
                  */
     nlogger_err("Test FAILED at %s() in %s:%u\n", 
         g_np_testsuite_context.test->name, 
-        g_np_testsuite_context.fixture->file, line);
+        g_np_testsuite_context.fixture.file, line);
 }
 
 int np_testsuite_print_overview(void)
@@ -107,13 +107,16 @@ void np_testsuite_run(const struct np_testsuite_test * test)
 	g_np_testsuite_context.test = test;
 	g_np_testsuite_context.should_exit = false;
     if (g_np_testsuite_context.fixture.total == 0u) {
-        nlogger_info("Test %s:%s\n", test->file, fixture->name);
+        nlogger_info("Test %s:%s\n", 
+                g_np_testsuite_context.fixture.file, 
+                g_np_testsuite_context.fixture.name);
     }
 	g_np_testsuite_context.total_tests++;
 	g_np_testsuite_context.fixture.total++;
 
 	if (g_np_testsuite_context.fixture.setup) {
-		nlogger_debug("D: Setup fixture %s for test %s.\n", fixture->name,
+		nlogger_debug("D: Setup fixture %s for test %s.\n", 
+                g_np_testsuite_context.fixture.name,
 				test->name);
 		g_np_testsuite_context.fixture.setup();
 	}
@@ -124,7 +127,7 @@ void np_testsuite_run(const struct np_testsuite_test * test)
 	}
 	if (g_np_testsuite_context.fixture.teardown) {
 		nlogger_debug("D: Teardown fixture %s for test %s\n",
-				fixture->name,
+				g_np_testsuite_context.fixture.name,
 				test->name);
 		g_np_testsuite_context.fixture.teardown();
 	}

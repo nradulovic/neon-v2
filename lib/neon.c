@@ -332,6 +332,15 @@ void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
  *  @brief      Extended logger module implementation
  *  @{ *//*==================================================================*/
 
+#if (NCONFIG_ENABLE_LOGGER == 1)
+static struct logger_q nlqueue(char, NCONFIG_LOGGER_BUFFER_SIZE) g_logger_q;
+#endif
+
+static void logger_init(void)
+{
+    NLQUEUE_INIT(&g_logger_q);
+}
+
 struct nlogger_instance np_logger_global =
 {
     .level = NLOGGER_LEVEL_INFO
@@ -341,10 +350,12 @@ void np_logger_x_print(struct nlogger_instance * instance, uint8_t level,
     const char * msg, ...)
 {
     if (instance->level >= level) {
+        static char buffer[100];
         va_list args;
         va_start(args, msg);
-        vprintf(msg, args);
+        vsnprintf(buffer, sizeof(buffer), msg, args);
         va_end(args);
+        
     }
 }
 
@@ -658,11 +669,8 @@ nerror nepa_send_event(struct nepa * epa, struct nevent event)
 
 void nsys_init(void)
 {
-    narch_init();
-    nmcu_init();
+    logger_init();
     nboard_init();
-    nos_init();
-    nplatform_init();
 }
 
 void nsys_timer_isr(void)

@@ -40,10 +40,18 @@ extern "C" {
 /*---------------------------------------------------------------------------*/
 
 #define NPLATFORM_GCC					1
+    
+#define NPLATFORM_ID                    "xc32"
+    
+#define NPLATFORM_DATE                  __DATE__
+    
+#define NPLATFORM_TIME                  __TIME__
 
 #define NPLATFORM_FILE                  __FILE__
 
 #define NPLATFORM_LINE                  __LINE__
+    
+#define NPLATFORM_FUNC                  __func__
     
 #define NPLATFORM_UNUSED_ARG(x)         (void)x
 
