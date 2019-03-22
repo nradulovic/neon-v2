@@ -43,7 +43,7 @@ extern "C" {
 #endif
 
 #define NTESTSUITE_PRINT_RESULTS(a_fixture)                                 \
-	np_testsuite_print_results(&(a_fixture))
+	np_testsuite_print_results()
 
 #define NTESTSUITE_PRINT_OVERVIEW()                                         \
 	np_testsuite_print_overview()
@@ -124,15 +124,9 @@ extern "C" {
     } while (0)
 
 #define NTESTSUITE_FIXTURE(a_name, a_setup, a_teardown)                     \
-    struct np_testsuite_fixture a_name = {                                  \
-        .setup = a_setup,                                                   \
-        .teardown = a_teardown,                                             \
-        .name = # a_name,                                                   \
-        .total = 0u,                                                        \
-        .failed = 0u,                                                       \
-    }
+    np_testsuite_set_fixture(a_setup, a_teardown, # a_name, NPLATFORM_FILE)
 
-#if (!NCONFIG_TESTSUITE_STOP_ON_ERROR)
+#if (!NCONFIG_TESTSUITE_CONTINUE_ON_ERROR)
 #define NP_TESTSUITE_EVALUATE(val)                                          \
         if (np_testsuite_actual(NPLATFORM_LINE, (val))) {                   \
             return;                                                         \
@@ -153,21 +147,12 @@ enum np_testsuite_type
     NP_TESTSUITE_TYPE_STR,
 };
 
-struct np_testsuite_fixture
-{
-    void (* setup)(void);
-    void (* teardown)(void);
-    const char * name;
-    uint8_t total;
-    uint8_t failed;
-};
 
 #define NTESTSUITE_TEST(test_name) \
     static void test_name(void); \
-    static struct np_testsuite_test testsuite_ ## test_name = { \
+    static const struct np_testsuite_test testsuite_ ## test_name = { \
     	.test_fn = test_name, \
     	.name = # test_name, \
-    	.file = NPLATFORM_FILE, \
     };\
     static void test_name(void)
 
@@ -175,7 +160,6 @@ struct np_testsuite_test
 {
 	void (*test_fn)(void);
 	const char * name;
-	const char * file;
 };
 
 union np_testsuite_test_val
@@ -188,14 +172,20 @@ union np_testsuite_test_val
 };
 
 #define NTESTSUITE_RUN(fixture, test) \
-		np_testsuite_run(&(fixture), &(testsuite_ ## test))
+		np_testsuite_run(&(testsuite_ ## test))
 
 int np_testsuite_print_overview(void);
 
-void np_testsuite_print_results(const struct np_testsuite_fixture * fixture);
+void np_testsuite_print_results(void);
 
-void np_testsuite_run(struct np_testsuite_fixture * fixture,
-		const struct np_testsuite_test * test);
+void np_testsuite_run(const struct np_testsuite_test * test);
+
+void np_testsuite_set_fixture(
+        void (* setup)(void),
+        void (* teardown)(void),
+        const char * name,
+        const char * file);
+
 void np_testsuite_expect(union np_testsuite_test_val value, enum np_testsuite_type type);
 
 bool np_testsuite_actual(uint32_t line, union np_testsuite_test_val value);

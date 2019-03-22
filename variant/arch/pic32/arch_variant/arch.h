@@ -30,6 +30,17 @@
 #define NEON_ARCH_VARIANT_PIC32_H_
 
 #include <stdint.h>
+#include <stdbool.h>
+#include <platform_variant/platform.h>
+#include <xc.h>
+
+#if defined(NCONFIG_ARCH_CONFIG)
+#include NCONFIG_ARCH_CONFIG
+#endif
+
+#if !defined(NCONFIG_USE_EXCLUSIVE_ACCESS)
+#define NCONFIG_USE_EXCLUSIVE_ACCESS    1
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,23 +48,83 @@ extern "C" {
 
 #define NARCH_ID                        "pic32"
 #define NARCH_DATA_WIDTH                32 /* sizeof(narch_uint) * 8 */
+#define NARCH_ALIGN                     4
 #define NARCH_PIC32                     1
-
+    
+/*
+ * Architecture has equally efficient 8bit load-store instructions, no benefit
+ * in using uint_fast8_t
+ */
+#define NARCH_HAS_U8_LS                 1
+/*
+ * Atomic CAS depends on NCONFIG option.
+ */    
+#if (NCONFIG_USE_EXCLUSIVE_ACCESS == 1)
+#define NARCH_HAS_CAS                   1
+#else
+#define NARCH_HAS_CAS                   0
+#endif
+    
+/*
+ * Atomic set/clear depends on CAS on PIC32
+ */
+#if (NARCH_HAS_CAS == 1)
+#define NARCH_HAS_ATOMIC_SET_CLEAR_BIT  1
+#else
+#define NARCH_HAS_ATOMIC_SET_CLEAR_BIT  0
+#endif
+    
 typedef uint32_t narch_uint;
 
 /* TODO: Use static assert to compare NARCH_DATA_WIDTH and sizeof(narch_uint) */
 
-static inline
+NPLATFORM_INLINE
 narch_uint narch_exp2(uint_fast8_t x)
 {
     return ((narch_uint)0x1u << x);
 }
 
-static inline
+NPLATFORM_INLINE
 uint_fast8_t narch_log2(narch_uint x)
 {
-    return (uint_fast8_t)((uint_fast8_t)(NARCH_DATA_WIDTH - 1u) - (uint_fast8_t)__builtin_clz(x));
+    return (uint_fast8_t)((NARCH_DATA_WIDTH - 1u) - __builtin_clz(x));
 }
+
+#if (NARCH_HAS_CAS == 1)
+NPLATFORM_INLINE
+bool narch_compare_and_swap(narch_uint * p, narch_uint oldval, narch_uint newval)
+{
+    return __sync_bool_compare_and_swap(p, oldval, newval);
+}
+
+NPLATFORM_INLINE
+void narch_atomic_set_bit(narch_uint * p, uint_fast8_t bit)
+{
+    __sync_fetch_and_or(p, narch_exp2(bit));
+}
+
+NPLATFORM_INLINE
+void narch_atomic_clear_bit(narch_uint * p, uint_fast8_t bit)
+{
+    __sync_fetch_and_and(p, ~narch_exp2(bit));
+}
+#endif /* (NARCH_HAS_CAS == 1) */
+
+#define NARCH_DISABLE_INTERRUPTS()      __builtin_disable_interrupts()
+#define NARCH_ENABLE_INTERRUPTS()       __builtin_enable_interrupts()
+
+#define NARCH_ISR_STATE_DECL(name)      narch_uint name
+#define NARCH_ISR_LOCK(local_state)                                         \
+    do {                                                                    \
+        *(local_state) = NARCH_DISABLE_INTERRUPTS();                        \
+    } while (0)
+    
+#define NARCH_ISR_UNLOCK(local_state)                                       \
+    do {                                                                    \
+        if (*(local_state) & _CP0_STATUS_IE_MASK) {                         \
+            NARCH_ENABLE_INTERRUPTS();                                      \
+        }                                                                   \
+    } while (0)
 
 #ifdef __cplusplus
 }

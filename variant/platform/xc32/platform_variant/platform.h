@@ -63,7 +63,7 @@ extern "C" {
 
 #define NPLATFORM_BROKEN_INLINE         0
     
-#define NPLATFORM_CONTAINER_OF(ptr, type, member)                      \
+#define NPLATFORM_CONTAINER_OF(ptr, type, member)                           \
     ((type *)((char *)ptr - offsetof(type, member)))
 
 #ifdef __cplusplus

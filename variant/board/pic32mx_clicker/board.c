@@ -17,6 +17,7 @@
  */
 
 #include "board_variant/board.h"
+#include "arch_variant/arch.h"
 #include "pic32_uart.h"
 #include "pic32_isr.h"
 #include "pic32_osc.h"
@@ -58,31 +59,28 @@
 #pragma config BWP = OFF                // Boot Flash Write Protect bit (Protection Disabled)
 #pragma config CP = OFF                 // Code Protect (Protection Disabled)
 
-const struct pic32_uart_board_config g_pic32mx_clicker_uart_config =
+const struct pic32_uart_board_config g_pic32_uart_5_board_config =
 {
-    .e_rx_tx_isr_prio = PIC32_ISR_PRIO(3,3),
+    .isr_vector_prio = PIC32_ISR_PRIO(3,3),
+    .control_code = PIC32MX_CLICKER_UART_CONTROL,
+    .arg = PIC32MX_CLICKER_UART_BAUDRATE
 };
 
 void nboard_init(void)
 {
-    /* Setup clocks, phase 1 */
-    /* After boot default system clock is set to PRI oscillator by 
-     * configuration bits. 
-     */
-    SYSKEY = 0x0;
-    SYSKEY = 0xAA996655;
-    SYSKEY = 0x556699AA;
-    OSCCONbits.NOSC = 0x3u; /*  Primary Oscillator with PLL module (XTPLL, HSPLL or ECPLL) */
-    OSCCONbits.OSWEN = 1u;
-    SYSKEY = 0x0;
-    while (OSCCONbits.OSWEN == 1);
+    /* Disable JTAG since it is not available on this board */
+    DDPCONbits.JTAGEN = 0;
     
+    /* Setup clocks */
+    /* After boot default system clock is set to PRI oscillator by 
+     * configuration bits. Which with 8MHz crystal means that the main clock is
+     * 8MHz. When using the PRIPLL clock source the main clock becomes 80MHz. 
+     */
+    pic32_osc_new_source(PIC32_OSC_SOURCE_PRIPLL);
+    
+    /* Setup interrupt chip: enable multivector mode */
+    pic32_isr_init();
+
     /* Setup UART if used */
-#if (PIC32MX_CLICKER_USES_UART == 1)
-    nuart_init(PIC32MX_CLICKER_UART, NULL);
-    nuart_control(
-            PIC32MX_CLICKER_UART, 
-            PIC32MX_CLICKER_UART_CONTROL, 
-            PIC32MX_CLICKER_UART_BAUDRATE);
-#endif
+    pic32_uart_init();
 }

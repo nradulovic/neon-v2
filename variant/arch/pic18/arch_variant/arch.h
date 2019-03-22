@@ -30,15 +30,30 @@
 #define NEON_ARCH_VARIANT_PIC18_H_
 
 #include <stdint.h>
+#include <xc.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define NARCH_ID "pic18"
-#define NARCH_DATA_WIDTH 8 /* sizeof(narch_uint) * 8 */
-#define NARCH_PIC18 1
-
+#define NARCH_ID                        "pic18"
+#define NARCH_DATA_WIDTH                8 /* sizeof(narch_uint) * 8 */
+#define NARCH_PIC18                     1
+#define NARCH_ALIGN                     1
+#define NARCH_HAS_EXCLUSIVE_LS          0
+    
+#define NARCH_ISR_STATE_DECL(name)      narch_uint name
+#define NARCH_ISR_DISABLE(local_state)                                      \
+    do {                                                                    \
+        *(local_state) = INTCONbits.GIE;                                    \
+        while (INTCONbits.GIE == 1) {                                       \
+            INTCONbits.GIE == 0;                                            \
+        }                                                                   \
+    } while (0)
+    
+#define NARCH_ISR_RESTORE(local_state)                                      \
+    INTCONbits.GIE = *(local_state)
+    
 typedef uint8_t narch_uint;
 
 /* TODO: Use static assert to compare NARCH_DATA_WIDTH and sizeof(narch_uint) */

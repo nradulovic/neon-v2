@@ -19,27 +19,26 @@
 #include <xc.h>
 
 #include "pic32_osc.h"
-#include "neon.h"
 
 #define INTERNAL_FRC_HZ                        8000000ul
 #define INTERNAL_LPRC_HZ                       31250ul
 
-static const uint32_t pllodiv_frcdiv_pbdiv[8] =
+static const uint16_t pllodiv_frcdiv_pbdiv[8] =
 {
     1u, 2u, 4u, 8u, 16u, 32u, 64u, 256u
 };
     
 uint32_t pic32_osc_get_sysclk_hz(void)
 {
-    static const uint32_t pllmult[8] =
+    static const uint8_t pllmult[8] =
     {
         15u, 16u, 17u, 18u, 19u, 20u, 21u, 24u
     };
-    static const uint32_t pllidiv[8] =
+    static const uint8_t pllidiv[8] =
     {
         1u, 2u, 3u, 4u, 5u, 6u, 10u, 12u
     };
-    uint32_t sysclk_hz;
+    uint32_t sysclk_hz = 0u;
     
     switch (OSCCONbits.COSC & 0x7u) {
         case 0u:
@@ -56,12 +55,10 @@ uint32_t pic32_osc_get_sysclk_hz(void)
             break;
         case 2u:
             /* Primary Oscillator (XT, HS or EC) */
-            NASSERT(PIC32_EXT_PRI_CLOCK_HZ != 0);
             sysclk_hz = PIC32_EXT_PRI_CLOCK_HZ;
             break;
         case 3u:
             /* Primary Oscillator with PLL module (XTPLL, HSPLL or ECPLL) */
-            NASSERT(PIC32_EXT_PRI_CLOCK_HZ != 0);
             sysclk_hz = 
                     (PIC32_EXT_PRI_CLOCK_HZ / pllidiv[DEVCFG2bits.FPLLIDIV]) 
                     * pllmult[OSCCONbits.PLLMULT]
@@ -69,7 +66,6 @@ uint32_t pic32_osc_get_sysclk_hz(void)
             break;
         case 4u:
             /* Secondary Oscillator (SOSC) */
-            NASSERT(PIC32_EXT_SEC_CLOCK_HZ != 0);
             sysclk_hz = PIC32_EXT_SEC_CLOCK_HZ;
             break;
         case 5u:
@@ -94,4 +90,23 @@ uint32_t pic32_osc_get_sysclk_hz(void)
 uint32_t pic32_osc_get_pbclk_hz(void)
 {
     return pic32_osc_get_sysclk_hz() / pllodiv_frcdiv_pbdiv[OSCCONbits.PBDIV];
+}
+
+
+void pic32_osc_new_source(enum pic32_osc_source source)
+{
+    SYSKEY = 0x00000000;
+	SYSKEY = 0xAA996655;
+	SYSKEY = 0x556699AA;
+    switch (source) {
+        case PIC32_OSC_SOURCE_PRIPLL:
+            OSCCONbits.NOSC = 0x3u; 
+            break;
+        default:
+            return;
+    }
+    OSCCONbits.OSWEN = 1u;
+    SYSKEY = 0x00000000;
+    
+    while (OSCCONbits.OSWEN == 1);
 }

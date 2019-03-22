@@ -405,10 +405,6 @@ void nuart_receive(enum nuart_id uart_id, void * data, size_t size);
 
 void nuart_transfer(enum nuart_id uart_id, const void * output, void * input, size_t size);
 
-uint32_t nuart_rx_count(enum nuart_id uart_id);
-
-uint32_t nuart_tx_count(enum nuart_id uart_id);
-
 #ifdef __cplusplus
 }
 #endif

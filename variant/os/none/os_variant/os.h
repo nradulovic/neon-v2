@@ -30,9 +30,20 @@
 #ifndef NEON_OS_VARIANT_NONE_H_
 #define NEON_OS_VARIANT_NONE_H_
 
+#include "arch_variant/arch.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+    
+#define NCRITICAL_DECL(name)            
+#define NCRITICAL_STATE_DECL(name)      NARCH_ISR_STATE_DECL(name);
+#define NCRITICAL_INIT(instance)        
+#define NCRITICAL_LOCK(local_state, instance)                               \
+        NARCH_ISR_LOCK(local_state)
+    
+#define NCRITICAL_UNLOCK(local_state, instance)                             \
+        NARCH_ISR_UNLOCK(local_state)
 
 #ifdef __cplusplus
 }

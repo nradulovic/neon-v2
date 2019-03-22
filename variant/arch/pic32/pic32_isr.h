@@ -41,66 +41,77 @@ extern "C" {
 #define PIC32_ISR_PRIO(prio, subprio)                                       \
         ((((prio) & 0x7u) << 2u) | ((subprio) & 0x3u))
 
-enum pic32_isr_id
+#define pic32_isr_iec_reg(irq_no)                                           \
+        (&((pic32_periph_access(&IEC0))[(irq_no) >> 5]))
+
+#define pic32_isr_iec_mask(irq_no)                                          \
+        (0x1u << ((irq_no) & 0x1fu))
+    
+#define pic32_isr_ifs_reg(irq_no)                                           \
+        (&((pic32_periph_access(&IFS0))[(irq_no) >> 5]))
+
+#define pic32_isr_ifs_mask(irq_no)                                          \
+        pic32_isr_iec_mask(irq_no)
+
+static inline
+void pic32_isr_irq_enable(uint_fast8_t irq_no)
 {
-    PIC32_ISR_U1E_RX_TX,
-    PIC32_ISR_U2E_RX_TX,
-    PIC32_ISR_U3E_RX_TX,
-    PIC32_ISR_U4E_RX_TX,
-    PIC32_ISR_U5E_RX_TX,
-};
+    struct pic32_periph_reg * iec = pic32_isr_iec_reg(irq_no);
+    uint32_t mask = pic32_isr_iec_mask(irq_no);
+    
+    iec->set = mask;
+}
 
-void pic32_isr_resolve_iec(
-        enum pic32_isr_id vector_id, 
-        struct pic32_periph_reg ** iec,
-        uint_fast8_t * bit);
+static inline
+void pic32_isr_irq_disable(uint_fast8_t irq_no)
+{
+    struct pic32_periph_reg * iec = pic32_isr_iec_reg(irq_no);
+    uint32_t mask = pic32_isr_iec_mask(irq_no);
+    
+    iec->clr = mask;
+}
 
-void pic32_isr_resolve_ifs(
-        enum pic32_isr_id vector_id, 
-        struct pic32_periph_reg ** ifs, 
-        uint_fast8_t * bit);
+static inline
+bool pic32_isr_irq_is_enabled(uint_fast8_t irq_no)
+{
+    struct pic32_periph_reg * iec = pic32_isr_iec_reg(irq_no);
+    uint32_t mask = pic32_isr_iec_mask(irq_no);
+    
+    return !!(iec->reg & mask);
+}
 
-#define pic32_isr_resolved_enable(en_reg, en_bit, en_offset)                \
-        do {                                                                \
-            (en_reg)->set = (0x1ul << (en_offset)) << (en_bit);             \
-        } while (0)
+static inline
+void pic32_isr_irq_set(uint_fast8_t irq_no)
+{
+    struct pic32_periph_reg * ifs = pic32_isr_ifs_reg(irq_no);
+    uint32_t mask = pic32_isr_ifs_mask(irq_no);
+    
+    ifs->set = mask;
+}
 
-#define pic32_isr_resolved_disable(en_reg, en_bit, en_offset)               \
-        do {                                                                \
-            (en_reg)->clr = (0x1ul << (en_offset)) << (en_bit);              \
-        } while (0)
+static inline
+void pic32_isr_irq_clear(uint_fast8_t irq_no)
+{
+    struct pic32_periph_reg * ifs = pic32_isr_ifs_reg(irq_no);
+    uint32_t mask = pic32_isr_ifs_mask(irq_no);
+    
+    ifs->clr = mask;
+}
 
-#define pic32_isr_resolved_is_enabled(en_reg, en_bit, en_offset)            \
-        ((en_reg)->reg & ((0x1ul << (en_offset)) << (en_bit)))
+static inline
+bool pic32_isr_irq_is_set(uint_fast8_t irq_no)
+{
+    struct pic32_periph_reg * ifs = pic32_isr_ifs_reg(irq_no);
+    uint32_t mask = pic32_isr_ifs_mask(irq_no);
+    
+    return !!(ifs->reg & mask);
+}
 
-#define pic32_isr_resolved_set_flag(flag_reg, flag_bit, flag_offset)        \
-        do {                                                                \
-            (flag_reg)->set = (0x1ul << (flag_offset)) << (flag_bit);       \
-        } while (0)
+void pic32_isr_vector_set_prio(uint_fast8_t vector_no, uint_fast8_t prio);
 
-#define pic32_isr_resolved_clear_flag(flag_reg, flag_bit, flag_offset)      \
-        do {                                                                \
-            (flag_reg)->clr = (0x1ul << (flag_offset)) << (flag_bit);        \
-        } while (0)
+uint_fast8_t pic32_isr_vector_get_prio(uint_fast8_t vector_no);
 
-#define pic32_isr_resolved_is_flagged(flag_reg, flag_bit, flag_offset)      \
-        ((flag_reg)->reg & ((0x1ul << (flag_offset)) << (flag_bit)))
-
-void pic32_isr_enable(enum pic32_isr_id vector_id, uint_fast8_t offset);
-
-void pic32_isr_disable(enum pic32_isr_id vector_id, uint_fast8_t offset);
-
-bool pic32_isr_is_enabled(enum pic32_isr_id vector_id, uint_fast8_t offset);
-
-void pic32_isr_set_flag(enum pic32_isr_id vector_id, uint_fast8_t offset);
-
-void  pic32_isr_clear_flag(enum pic32_isr_id vector_id, uint_fast8_t offset);
-
-bool pic32_isr_is_flagged(enum pic32_isr_id vector_id, uint_fast8_t offset);
-
-void pic32_isr_set_prio(enum pic32_isr_id vector_id, uint_fast8_t prio);
-
-uint_fast8_t pic32_isr_get_prio(enum pic32_isr_id vector_id);
+void pic32_isr_init(void);
 
 #ifdef __cplusplus
 }

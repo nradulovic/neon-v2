@@ -36,7 +36,7 @@ extern "C" {
 #endif
 
     
-struct pic32_periph_reg
+struct __attribute__((packed , aligned(4))) pic32_periph_reg
 {
     volatile uint32_t reg;
     volatile uint32_t clr;

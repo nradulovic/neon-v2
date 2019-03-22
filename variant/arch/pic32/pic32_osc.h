@@ -37,16 +37,23 @@
 extern "C" {
 #endif
     
-#ifndef PIC32_EXT_PRI_CLOCK_HZ
+#if !defined(PIC32_EXT_PRI_CLOCK_HZ)
 #error "PIC32 based board needs to declare the primary clock frequency in PIC32_EXT_CLOCK"
 #endif
 
-#ifndef PIC32_EXT_SEC_CLOCK_HZ
+#if !defined(PIC32_EXT_SEC_CLOCK_HZ)
 #error "PIC32 based board needs to declare the secondary clock frequency in PIC32_EXT_SEC_CLOCK"
 #endif
+    
+enum pic32_osc_source
+{
+    /*  Primary Oscillator with PLL module (XTPLL, HSPLL or ECPLL) */
+    PIC32_OSC_SOURCE_PRIPLL,
+};
 
 uint32_t pic32_osc_get_sysclk_hz(void);
 uint32_t pic32_osc_get_pbclk_hz(void);
+void pic32_osc_new_source(enum pic32_osc_source source);
 
 #ifdef __cplusplus
 }

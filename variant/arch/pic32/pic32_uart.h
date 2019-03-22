@@ -39,10 +39,14 @@ extern "C" {
 
 struct pic32_uart_board_config
 {
-    uint8_t e_rx_tx_isr_prio;
+    uint32_t control_code;
+    uint32_t arg;
+    uint8_t isr_vector_prio;
 };
 
-extern const struct pic32_uart_board_config PIC32_UART_5_BOARD_CONFIG;
+extern const struct pic32_uart_board_config g_pic32_uart_5_board_config;
+
+void pic32_uart_init(void);
 
 #ifdef __cplusplus
 }

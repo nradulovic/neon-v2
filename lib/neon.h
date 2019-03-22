@@ -19,8 +19,8 @@
  *  @author      Nenad Radulovic
  *  @brief       Neon header
  *
- *  @defgroup    lib_task Task
- *  @brief       Task
+ *  @defgroup    neon Neon library
+ *  @brief       Neon library interface
  *  @{
  */
 
@@ -45,35 +45,91 @@ extern "C" {
  *  @brief      Configuration module
  *  @{ *//*==================================================================*/
 
+/*
+ * Use "neon_config.h" file to customize various modules  of the Neon
+ * library. Each project should have its own configuration file.
+ */
 #if defined(NCONFIG_PROJECT_CONFIG)
 #include "neon_config.h"
 #endif
 
+/** @brief      Configure if logger module is enabled.
+ *
+ *  This macro defines if Neon should be compiled with logger support. If this
+ *  module is not enabled all API calls will be replaced by
+ *  preprocessor to empty macros thus not consumimg RAM or const memory.
+ *
+ *  When this macro is set to '1' the module is enabled, when the macro is set
+ *  to '0' the module is disabled. Using any other value is undefined
+ *  behaviour.
+ */
 #if !defined(NCONFIG_ENABLE_LOGGER) || defined(__DOXYGEN__)
-#define NCONFIG_ENABLE_LOGGER 0
+#define NCONFIG_ENABLE_LOGGER           0
 #endif
 
+/** @brief      Configure if debug module is enabled.
+ *
+ *  This macro defines if Neon should be compiled with debug support. If this
+ *  module is not enabled all API calls will be replaced by
+ *  preprocessor to empty macros thus not consumimg RAM or const memory.
+ *  Debug component also uses logger component. If logger is not enabled
+ *  then debug module will only stop the execution of the application in case
+ *  of failed assertion.
+ *
+ *  When this macro is set to '1' the module is enabled, when the macro is set
+ *  to '0' the module is disabled. Using any other value is undefined
+ *  behaviour.
+ */
 #if !defined(NCONFIG_ENABLE_DEBUG) || defined(__DOXYGEN__)
-#define NCONFIG_ENABLE_DEBUG 0
+#define NCONFIG_ENABLE_DEBUG            0
 #endif
 
-#if !defined(NCONFIG_TASK_INSTANCES) || defined(__DOXYGEN__)
-#define NCONFIG_TASK_INSTANCES 8
+/** @brief      Configure if event module will use extended events.
+ *
+ *  If this macro is set to '1' then extended events will be used. If this
+ *  macro is set '0' then event module will support only signals. If any
+ *  other
+ */
+#if !defined(NCONFIG_EVENT_USE_EVENT_X) || defined(__DOXYGEN__)
+#define NCONFIG_EVENT_USE_EVENT_X          1
 #endif
 
-#if !defined(NCONFIG_EXITABLE_SCHEDULER) || defined(__DOXYGEN__)
-#define NCONFIG_EXITABLE_SCHEDULER 0
+#if !defined(NCONFIG_EPA_INSTANCES) || defined(__DOXYGEN__)
+#define NCONFIG_EPA_INSTANCES           8
+#endif
+    
+#if !defined(NCONFIG_EPA_USE_HSM) || defined(__DOXYGEN__)
+#define NCONFIG_EPA_USE_HSM             0
+#endif
+    
+#if !defined(NCONFIG_EPA_HSM_LEVELS) || defined(__DOXYGEN__)
+#define NCONFIG_EPA_HSM_LEVELS          8
 #endif
 
-#if !defined(NCONFIG_TESTSUITE_STOP_ON_ERROR) || defined(__DOXYGEN__)
-#define NCONFIG_TESTSUITE_STOP_ON_ERROR 1
+#if !defined(NCONFIG_SYS_EXITABLE_SCHEDULER) || defined(__DOXYGEN__)
+#define NCONFIG_SYS_EXITABLE_SCHEDULER  0
+#endif
+
+#if !defined(NCONFIG_TESTSUITE_CONTINUE_ON_ERROR) || defined(__DOXYGEN__)
+#define NCONFIG_TESTSUITE_CONTINUE_ON_ERROR 0
+#endif
+    
+#if !defined(NCONFIG_EVENT_X_USE_DYNAMIC) || defined(__DOXYGEN__)
+#define NCONFIG_EVENT_X_USE_DYNAMIC      0
+#endif
+    
+#if !defined(NCONFIG_MEM_OPTIMIZATION) || defined(__DOXYGEN__)
+#define NCONFIG_MEM_OPTIMIZATION        0
 #endif
 
 #define NCONFIG_ID															\
 	  ((uint32_t)NCONFIG_ENABLE_LOGGER << 31) 								\
 	| ((uint32_t)NCONFIG_ENABLE_DEBUG << 30) 								\
-	| ((uint32_t)NCONFIG_TESTSUITE_STOP_ON_ERROR << 29)						\
-	| ((uint32_t)NCONFIG_TASK_INSTANCES << 0)
+    | ((uint32_t)NCONFIG_EVENT_USE_EVENT_X << 29) 								\
+	| ((uint32_t)NCONFIG_TESTSUITE_CONTINUE_ON_ERROR << 24)					\
+    | ((uint32_t)NCONFIG_EVENT_X_USE_DYNAMIC << 8)                          \
+    | ((uint32_t)NCONFIG_EPA_USE_HSM << 1)                                  \
+	| ((uint32_t)NCONFIG_EPA_INSTANCES << 0)
 
 #define nconfig_validate()													\
 	do {																	\
@@ -230,6 +286,13 @@ extern "C" {
 #define NARCH_ID                "unknown"
 #endif
 
+/** @brief      This macro is defined to 1 if current architecture has exclusive
+ *              load/store access.
+ */
+#if defined(__DOXYGEN__)
+#define NARCH_HAS_CAS
+#endif
+    
 /** @brief      Each port defines a macro named NARCH_xxx.
  *
  *  For example, the ARM based architectures will define 'NARCH_ARM'. In
@@ -246,7 +309,7 @@ extern "C" {
 #if defined(__DOXYGEN__)
 #define NARCH_DATA_WIDTH              8
 #endif
-
+    
 /** @} */
 /** @defgroup   arch_cpu Architecture CPU operations
  *  @brief      Architecture CPU operations.
@@ -268,7 +331,7 @@ void narch_cpu_stop(void);
  *  @note       Do not use bit >= 32 since it will result in undefined
  *              behaviour.
  */
-void narch_set_bit(uint32_t * u32, uint_fast8_t bit);
+void narch_atomic_set_bit(uint32_t * u32, uint_fast8_t bit);
 
 /** @brief      Clear a bit in unsigned integer 32-bit variable
  *  @param      u32
@@ -278,7 +341,7 @@ void narch_set_bit(uint32_t * u32, uint_fast8_t bit);
  *  @note       Do not use bit >= 32 since it will result in undefined
  *              behaviour.
  */
-void narch_clear_bit(uint32_t * u32, uint_fast8_t bit);
+void narch_atomic_clear_bit(uint32_t * u32, uint_fast8_t bit);
 
 /** @brief      Calculate exponent of 2.
  */
@@ -310,6 +373,47 @@ void nboard_init(void);
  *  @brief      Port OS module
  *  @{ *//*==================================================================*/
 
+#if defined(__DOXYGEN__)
+#define NOS_MUTEX_DECL(mutex_name)
+#endif
+
+#if defined(__DOXYGEN__)
+#define NOS_MUTEX_INIT(mutex)
+#endif
+
+#if defined(__DOXYGEN__)
+#define NOS_MUTEX_LOCK(mutex)
+#endif
+
+#if defined(__DOXYGEN__)
+#define NOS_MUTEX_UNLOCK(mutex)
+#endif
+
+/** @} *//*==================================================================*/
+/** @defgroup   nport_critical Port critical module
+ *  @brief      Port critical module
+ *  @{ *//*==================================================================*/
+
+#if defined(__DOXYGEN__)
+#define NCRITICAL_DECL(name)
+#endif
+
+#if defined(__DOXYGEN__)
+#define NCRITICAL_STATE_DECL(name)
+#endif
+
+#if defined(__DOXYGEN__)
+#define NCRITICAL_INIT(instance)
+#endif
+
+#if defined(__DOXYGEN__)
+#define NCRITICAL_LOCK(local_state, instance)
+#endif
+
+#if defined(__DOXYGEN__)
+#define NCRITICAL_UNLOCK(local_state, instance)
+#endif
+
 /** @} *//*==================================================================*/
 /** @defgroup   ndebug Debug module
  *  @brief      Debug module
@@ -321,11 +425,12 @@ void nboard_init(void);
  *  @{
  */
 #if (NCONFIG_ENABLE_DEBUG == 1)
-#define NDEBUG_IS_ENABLED 1
+#define NDEBUG_IS_ENABLED               1
+static const char g_debug_filename[] = NPLATFORM_FILE;
 #else
 /** @brief      Macro that returns current ndebug configuration
  */
-#define NDEBUG_IS_ENABLED 0
+#define NDEBUG_IS_ENABLED               0
 #endif
 
 /** @} */
@@ -377,7 +482,7 @@ void nboard_init(void);
 #define NASSERT_ALWAYS_ACTION(text, action)                                 \
     do {																	\
     	nlogger_err("Failed assert %s at %s:%u in %s\n", text, 				\
-    		NPLATFORM_FUNC, NPLATFORM_LINE, NPLATFORM_FILE);				\
+    		NPLATFORM_FUNC, NPLATFORM_LINE, &g_debug_filename);				\
     	action;																\
     } while (0)
 #else
@@ -394,10 +499,10 @@ void nboard_init(void);
  *              macro is executed.
  */
 #if (NDEBUG_IS_ENABLED == 1)
-#define NASSERT_ALWAYS(text)                                                 \
+#define NASSERT_ALWAYS(text)                                                \
     do {																	\
     	nlogger_err("Failed assert %s at %s:%u in %s\n", text, 				\
-    		NPLATFORM_FUNC, NPLATFORM_LINE, NPLATFORM_FILE);				\
+    		NPLATFORM_FUNC, NPLATFORM_LINE, &g_debug_filename);				\
     	narch_cpu_stop();													\
     } while (0)
 #else
@@ -454,56 +559,55 @@ void nboard_init(void);
  *  @param      expr
  *              Expression : C expression : condition which must be 'true'.
  */
-#define NASSERT_INTERNAL(expr)            NASSERT(expr)
+#define NASSERT_INTERNAL(expr)          NASSERT(expr)
 
 /** @} */
 /** @defgroup   Object debug signatures
  *  @brief      During debugging the objects will use the signatures.
  *  @{ */
 
-#define NSIGNATURE_HEAP                     ((unsigned int)0xdeadbee0u)
-#define NSIGNATURE_POOL                     ((unsigned int)0xdeadbee1u)
-#define NSIGNATURE_STATIC                   ((unsigned int)0xdeadbee2u)
-#define NSIGNATURE_STDHEAP                  ((unsigned int)0xdeadbee3u)
-#define NSIGNATURE_TIMER                    ((unsigned int)0xdeadcee0u)
-#define NSIGNATURE_TASK                     ((unsigned int)0xdeaddee0u)
-#define NSIGNATURE_EPA                      ((unsigned int)0xdeadfeeau)
-#define NSIGNATURE_EQUEUE                   ((unsigned int)0xdeadfeebu)
-#define NSIGNATURE_ETIMER                   ((unsigned int)0xdeadfeecu)
-#define NSIGNATURE_EVENT                    ((unsigned int)0xdeadfeedu)
-#define NSIGNATURE_SM                       ((unsigned int)0xdeadfeeeu)
-#define NSIGNATURE_DEFER                    ((unsigned int)0xdeadfeefu)
+#define NSIGNATURE_HEAP                 ((unsigned int)0xdeadbee0u)
+#define NSIGNATURE_POOL                 ((unsigned int)0xdeadbee1u)
+#define NSIGNATURE_STATIC               ((unsigned int)0xdeadbee2u)
+#define NSIGNATURE_STDHEAP              ((unsigned int)0xdeadbee3u)
+#define NSIGNATURE_TIMER                ((unsigned int)0xdeadcee0u)
+#define NSIGNATURE_EPA                  ((unsigned int)0xdeaddee0u)
+#define NSIGNATURE_EQUEUE               ((unsigned int)0xdeadfeebu)
+#define NSIGNATURE_ETIMER               ((unsigned int)0xdeadfeecu)
+#define NSIGNATURE_EVENT                ((unsigned int)0xdeadfeedu)
+#define NSIGNATURE_SM                   ((unsigned int)0xdeadfeeeu)
+#define NSIGNATURE_DEFER                ((unsigned int)0xdeadfeefu)
 
-#if (NDEBUG_IS_ENABLED == 1)
-#define NSIGNATURE_DECLARE                     unsigned int _signature;
-#define NSIGNATURE_INITIALIZER(signature)   ._signature = signature,
+#if (NDEBUG_IS_ENABLED == 1) || defined(__DOXYGEN__)
+#define NSIGNATURE_DECLARE              unsigned int _signature;
+
+#define NSIGNATURE_INITIALIZER(signature)                                   \
+        ._signature = signature,
+
 #else
 #define NSIGNATURE_DECLARE
 #define NSIGNATURE_INITIALIZER(signature)
 #endif
 
-#define NSIGNATURE_OF(object)    			((object) ? (object)->_signature : 0)
-#define NSIGNATURE_IS(object, signature)    (object)->_signature = (signature)
+#define NSIGNATURE_OF(object)                                               \
+        ((object) ? (object)->_signature : 0)
 
-/** @defgroup   Object debug signatures
- *  @brief      During debugging the objects will use the signatures.
+#define NSIGNATURE_IS(object, signature)                                    \
+        (object)->_signature = (signature)
+
+/** @defgroup   Static assert
+ *  @brief      Static assert (compile time check)
  *  @{ */
 
-#define ASSERT_CONCAT_(a, b) a##b
-#define ASSERT_CONCAT(a, b) ASSERT_CONCAT_(a, b)
-/* These can't be used after statements in c89. */
-#ifdef __COUNTER__
-  /* microsoft */
-  #define STATIC_ASSERT(e,m) \
-    enum { ASSERT_CONCAT(static_assert_, __COUNTER__) = 1/(!!(e)) }
-#else
-  /* This can't be used twice on the same line so ensure if using in headers
-   * that the headers are not included twice (by wrapping in #ifndef...#endif)
-   * Note it doesn't cause an issue when used on same line of separate modules
-   * compiled with gcc -combine -fwhole-program.  */
-  #define STATIC_ASSERT(e,m) \
-    enum { ASSERT_CONCAT(assert_line_, __LINE__) = 1/(!!(e)) }
-#endif
+#define ASSERT_CONCAT_(a, b)            a##b
+#define ASSERT_CONCAT(a, b)             ASSERT_CONCAT_(a, b)
+
+/* This can't be used twice on the same line so ensure if using in headers
+ * that the headers are not included twice (by wrapping in #ifndef...#endif)
+ * Note it doesn't cause an issue when used on same line of separate modules
+ * compiled with gcc -combine -fwhole-program.  */
+#define STATIC_ASSERT(e, m)                                                 \
+        enum m { ASSERT_CONCAT(m, ASSERT_CONCAT(_assert_line_, __LINE__)) = 1/(!!(e)) }
 
 /** @} */
 
@@ -736,26 +840,63 @@ float nbits_u32tof(uint32_t val);
  *  @brief      Functions for manipulating NARCH_DATA_WIDTH-bit array.
  *  @{ */
 
+/** @brief      Defines what is the maximum number of bits in bitaarray_s
+ *  @hideinitializer
+ */
 #define NBITARRAY_S_MAX_SIZE            NARCH_DATA_WIDTH
 
+/** @brief      Bitarray s type
+ */
 typedef narch_uint nbitarray_s;
 
+/** @brief      Set a bit in the array.
+ *  @hideinitializer
+ */
 #define nbitarray_s_set(a_array, a_bit)                                     \
         do {                                                                \
             *(a_array) |= narch_exp2(a_bit);                                \
         } while (0)
 
+/** @brief      Clear a bit in the array.
+ *  @hideinitializer
+ */
 #define nbitarray_s_clear(a_array, a_bit)                                   \
         do {                                                                \
-            *(a_array) &= ~narch_exp2(a_bit);                               \
+            *(a_array) |= narch_exp2(a_bit);                                \
         } while (0)
 
+/** @brief      Get the first set bit in the array .
+ */
 #define nbitarray_s_msbs(a_array)       narch_log2(*(a_array))
 
+/** @brief      Returns true if no bit is set in whole array.
+ *  @hideinitializer
+ */
 #define nbitarray_s_is_empty(a_array)   (*(a_array) == 0)
 
+/** @brief      Evaluates if a specified bit is set in the array.
+ */
 #define nbitarray_s_is_set(a_array, a_bit)                                  \
         (*(a_array) & narch_exp2(a_bit))
+
+#if (NARCH_HAS_ATOMIC_SET_CLEAR_BIT == 1) || defined(__DOXYGEN__)
+
+/** @brief      When this macro is set 1 then atomic access calls are available.
+ *  @hideinitializer
+ */
+#define NEON_HAS_BITARRAY_S_ATOMICS     1
+
+/** @brief      Atomically set a bit in the array.
+ */
+#define nbitarray_s_set_atomic(a_array, a_bit)                              \
+        narch_atomic_set_bit((a_array), (a_bit))
+
+/** @brief      Atomically clear a bit in the array.
+ */
+#define nbitarray_s_clear_atomic(a_array, a_bit)                            \
+        narch_atomic_clear_bit((a_array), (a_bit))
+
+#endif /* (NARCH_HAS_ATOMIC_SET_CLEAR_BIT == 1) */
 
 /** @} */
 /** @defgroup   bits_bitarray_x Extended bit array
@@ -763,22 +904,59 @@ typedef narch_uint nbitarray_s;
  *              NARCH_DATA_WIDTH bits.
  *  @{ */
 
+/** @brief      Bitarray x type
+ */
 typedef narch_uint nbitarray_x;
 
+/** @brief      Define an array of size bits.
+ *  @hideinitializer
+ */
 #define NBITARRAY_X_DEF(bits)                                               \
         NBITS_DIVIDE_ROUNDUP((bits), NARCH_DATA_WIDTH) + 1
 
 /** @brief      Specifies the maximum number of bits in @a nbitarray_x array.
+ *  @hideinitializer
  */
 #define NBITARRAY_X_MAX_SIZE            (NARCH_DATA_WIDTH * NARCH_DATA_WIDTH)
 
+/** @brief      Set a bit in the array.
+ */
 void nbitarray_x_set(nbitarray_x * array, uint_fast8_t bit);
+
+/** @brief      Clear a bit in the array.
+ */
 void nbitarray_x_clear(nbitarray_x * array, uint_fast8_t bit);
+
+/** @brief      Get the first set bit in the array .
+ */
 uint_fast8_t nbitarray_x_msbs(const nbitarray_x * array);
 
+/** @brief      Returns true if no bit is set in whole array.
+ *  @hideinitializer
+ */
 #define nbitarray_x_is_empty(a_array)	((a_array)[0] == 0u)
 
-bool nbitarray_x_is_set(nbitarray_x * array, uint_fast8_t bit);
+/** @brief      Evaluates if a specified bit is set in the array.
+ */
+bool nbitarray_x_is_set(const nbitarray_x * array, uint_fast8_t bit);
+
+#if (NARCH_HAS_CAS == 1) || defined(__DOXYGEN__)
+
+/** @brief      When this macro is set 1 then atomic access calls are available.
+ *  @hideinitializer
+ */
+#define NEON_HAS_BITARRAY_X_ATOMICS     1
+
+/** @brief      Atomically set a bit in the array.
+ */
+void nbitarray_x_set_atomic(nbitarray_x * array, uint_fast8_t bit);
+
+/** @brief      Atomically clear a bit in the array.
+ */
+void nbitarray_x_clear_atomic(nbitarray_x * array, uint_fast8_t bit);
+#else
+#define NEON_HAS_BITARRAY_X_ATOMICS     0
+#endif /* (NARCH_HAS_EXCLUSIVE_LS == 1) */ 
 
 /** @} */
 /** @} *//*==================================================================*/
@@ -800,10 +978,13 @@ bool nbitarray_x_is_set(nbitarray_x * array, uint_fast8_t bit);
  */
 enum nerror_id
 {
+    EOK,
     EOBJ_INVALID,                               /**< Invalid object error */
     EOBJ_INITIALIZED,
     EARG_OUTOFRANGE,                            /**< Argument is out of range */
 };
+
+typedef enum nerror_id nerror;
 
 /** @} */
 /** @} *//*==================================================================*/
@@ -1507,37 +1688,83 @@ NEON_INLINE_DEF(
  *
  *  @param    	T
  *    			Type of items in this queue.
- *  @param    	elements
- *    			Number of elements in queue buffer.
+ *  
+ *  @code
+ *  struct event_queue nlqueue(void *, 16);
+ *  @endcode
  *
  *  @note    	The macro can accept the parameter @a elements which is
  *              greater than 2 and equal to a number which is power of 2.
  *  @api
  */
-#define nlqueue(T, elements)     										    \
+#define nlqueue_dynamic(T)                                                  \
     { 																		\
-    	struct np_lqueue_base base; 										\
-    	T np_qb_buffer[	((elements < 2) || !NBITS_IS_POWEROF2(elements)) ?  \
-    		-1 : elements]; 												\
+    	struct np_lqueue_super super; 										\
+    	T * np_qb_buffer;                                                   \
     }
+
+#define nlqueue(T, size)                                                    \
+    {                                                                       \
+        struct np_lqueue_super super; 										\
+        T np_qb_buffer[size];                                               \
+    }
+        
+
+/** @brief    	Lightweight base structure.
+ *  @notapi
+ */
+struct NPLATFORM_PACKED(NPLATFORM_ALIGN(NARCH_ALIGN, np_lqueue_super))
+{
+    union np_lqueue_super_union
+    {
+#if (NARCH_HAS_CAS == 1)
+        uint32_t                    ui;
+#endif
+#if (NARCH_HAS_U8_LS == 1)        
+        struct np_lqueue_super_struct
+        {
+            uint8_t                     head;
+            uint8_t                     tail;
+            uint8_t                     empty;
+            uint8_t                     mask;
+        }                           m;
+#else
+        struct np_lqueue_super_struct
+        {
+            uint_fast8_t                head;
+            uint_fast8_t                tail;
+            uint_fast8_t                empty;
+            uint_fast8_t                mask;
+        }                           m;
+#endif
+    }                           u;
+};
 
 /** @brief      Initialize a queue structure
  *  @param      Q
  *              Pointer to lightweight queue.
  *  @mseffect
  */
-#define NLQUEUE_INIT(Q)     												\
-        np_lqueue_base_init(&(Q)->base, NBITS_ARRAY_SIZE((Q)->np_qb_buffer))
+#define NLQUEUE_INIT_DYNAMIC(Q, a_size_bytes, a_storage)                    \
+        do {                                                                \
+            np_lqueue_super_init(                                           \
+                    &(Q)->super,                                            \
+                    (a_size_bytes) / sizeof(*(Q)->np_qb_buffer));           \
+            (Q)->np_qb_buffer = (a_storage);                                \
+        } while (0)
+
+#define NLQUEUE_INIT(Q)                                                     \
+        np_lqueue_super_init(                                               \
+                &(Q)->super,                                                \
+                NBITS_ARRAY_SIZE((Q)->np_qb_buffer))
+
 
 /** @brief      Put an item to queue in FIFO mode.
  *  @param      Q
  *              Pointer to lightweight queue.
- *  @note       Before calling this function ensure that queue is not full, see
- *     			@ref nlqueue_is_full.
  *  @mseffect
  */
-#define NLQUEUE_PUT_FIFO(Q, item)     										\
-        (Q)->np_qb_buffer[np_lqueue_base_put_fifo(&(Q)->base)] = (item)
+#define NLQUEUE_IDX_FIFO(Q)             nlqueue_super_idx_fifo(&(Q)->super)
 
 /** @brief      Put an item to queue in LIFO mode.
  *  @param      Q
@@ -1546,8 +1773,7 @@ NEON_INLINE_DEF(
  *     			@ref nqueue_is_full.
  *  @mseffect
  */
-#define NLQUEUE_PUT_LIFO(Q, item)     										\
-        (Q)->np_qb_buffer[np_lqueue_base_put_lifo(&(Q)->base)] = (item)
+#define NLQUEUE_IDX_LIFO(Q)             nlqueue_super_idx_lifo(&(Q)->super)
 
 /** @brief      Get an item from the queue buffer.
  *  @param      Q
@@ -1556,8 +1782,44 @@ NEON_INLINE_DEF(
  *              @ref nqueue_is_empty.
  *  @mseffect
  */
-#define NLQUEUE_GET(Q)    													\
-        (Q)->np_qb_buffer[np_lqueue_base_get(&(Q)->base)]
+#define NLQUEUE_IDX_GET(Q)              nlqueue_super_idx_get(&(Q)->super)
+
+#define NLQUEUE_IDX_REFERENCE(Q, a_index)                                   \
+        (Q)->np_qb_buffer[(a_index)]
+
+/** @brief      Put an item to queue in FIFO mode.
+ *  @param      Q
+ *              Pointer to lightweight queue.
+ *  @note       Before calling this function ensure that queue is not full, see
+ *     			@ref nqueue_is_full.
+ *  @mseffect
+ */
+#define NLQUEUE_PUT_FIFO(Q, a_item)                                         \
+        do {                                                                \
+            (Q)->np_qb_buffer[NLQUEUE_IDX_FIFO(Q)] = (a_item);              \
+        } while (0)
+
+/** @brief      Put an item to queue in LIFO mode.
+ *  @param      Q
+ *              Pointer to lightweight queue.
+ *  @note       Before calling this function ensure that queue is not full, see
+ *     			@ref nqueue_is_full.
+ *  @mseffect
+ */
+#define NLQUEUE_PUT_LIFO(Q, a_item)                                         \
+        do {                                                                \
+            (Q)->np_qb_buffer[NLQUEUE_IDX_LIFO(Q)] = (a_item);              \
+        } while (0)
+
+/** @brief      Get an item from the queue buffer.
+ *  @param      Q
+ *              Pointer to lightweight queue.
+ *  @note       Before calling this function ensure that queue has an item. See
+ *              @ref nqueue_is_empty.
+ *  @mseffect
+ */
+#define NLQUEUE_GET(Q)                                                      \
+        (Q)->np_qb_buffer[NLQUEUE_IDX_GET(Q)]
 
 /** @brief      Peek to queue head; the item is not removed from queue.
  *
@@ -1569,7 +1831,7 @@ NEON_INLINE_DEF(
  *  @mseffect
  */
 #define NLQUEUE_HEAD(Q)    													\
-        (Q)->np_qb_buffer[np_lqueue_base_head(&(Q)->base)]
+        (Q)->np_qb_buffer[np_lqueue_super_head(&(Q)->super)]
 
 /** @brief      Peek to queue tail; the item is not removed from queue.
  *
@@ -1581,19 +1843,19 @@ NEON_INLINE_DEF(
  *  @mseffect
  */
 #define NLQUEUE_TAIL(Q)    													\
-        (Q)->np_qb_buffer[np_lqueue_base_tail(&(Q)->base)]
+        (Q)->np_qb_buffer[np_lqueue_super_tail(&(Q)->super)]
 
 /** @brief      Returns the queue buffer size in number of elements.
  *  @param      Q
  *              Pointer to lightweight queue.
  */
-#define NLQUEUE_SIZE(Q)    				(Q)->base.mask + 1u
+#define NLQUEUE_SIZE(Q)    				(Q)->super.u.m.mask + 1u
 
 /** @brief      Returns the current number of free elements in queue buffer.
  *  @param      Q
  *              Pointer to lightweight queue.
  */
-#define NLQUEUE_EMPTY(Q)    			(Q)->base.empty
+#define NLQUEUE_EMPTY(Q)    			(Q)->super.u.m.empty
 
 /** @brief      Return true if queue is full else false.
  *  @param      Q
@@ -1607,24 +1869,39 @@ NEON_INLINE_DEF(
  */
 #define NLQUEUE_IS_EMPTY(Q)    			(NLQUEUE_EMPTY(Q) == NLQUEUE_SIZE(Q))
 
-/** @brief    	Lightweight base structure.
- *  @notapi
+/** @brief      Return true if queue has only single element.
+ *  @param      Q
+ *              Pointer to lightweight queue.
  */
-struct np_lqueue_base
-{
-	uint_fast8_t head;
-	uint_fast8_t tail;
-	uint_fast8_t empty;
-	uint_fast8_t mask;
-};
+#define NLQUEUE_IS_FIRST(Q)                                                 \
+        ((Q)->super.u.m.empty == (Q)->super.u.m.mask)
+
+#if (NARCH_DATA_WIDTH == 32) && (NARCH_HAS_CAS == 1) || defined(__DOXYGEN__)
+#define NLQUEUE_IDX_FIFO_ATOMIC(Q)                                          \
+        nlqueue_super_idx_fifo_atomic(&(Q)->super)
+
+#define NLQUEUE_IDX_LIFO_ATOMIC(Q)                                          \
+        nlqueue_super_idx_lifo_atomic(&(Q)->super)
+
+#define NLQUEUE_IDX_GET_ATOMIC(Q)                                           \
+        nlqueue_super_idx_get_atomic(&(Q)->super)
+
+#define NLQUEUE_IS_EMPTY_ATOMIC(Q)                                          \
+        nlqueue_super_is_empty_atomic(&(Q)->super)
+
+#define NLQUEUE_IS_FIRST_ATOMIC(Q)                                          \
+        nlqueue_super_is_first_atomic(&(Q)->super)
+
+STATIC_ASSERT(sizeof(uint32_t) == sizeof(struct np_lqueue_super_struct), np_lqueue_size_check);
+#endif
 
 /** @brief      Initialise the base queue structure.
- *  @param      qb
- *              Pointer to lightweight queue base.
+ *  @param      lqs
+ *              Pointer to lightweight queue super.
  *  @param      elements
  *  @notapi
  */
-void np_lqueue_base_init(struct np_lqueue_base * qb, uint8_t elements);
+void np_lqueue_super_init(struct np_lqueue_super * lqs, uint8_t elements);
 
 /** @brief      Put an item to queue in FIFO mode.
  *  @param      qb
@@ -1632,7 +1909,21 @@ void np_lqueue_base_init(struct np_lqueue_base * qb, uint8_t elements);
  *  @return     Index of the item where it should be put.
  *  @notapi
  */
-uint32_t np_lqueue_base_put_fifo(struct np_lqueue_base * qb);
+NEON_INLINE_DECL(int_fast8_t nlqueue_super_idx_fifo(
+        struct np_lqueue_super * qb))
+NEON_INLINE_DEF(
+{
+    int_fast8_t retval;
+    
+    if (qb->u.m.empty != 0u) {
+        qb->u.m.empty--;
+        retval = qb->u.m.head--;
+        qb->u.m.head &= qb->u.m.mask;
+    } else {
+        retval = -1;
+    }
+    return retval;
+})
 
 /** @brief      Put an item to queue in LIFO mode.
  *  @param      qb
@@ -1640,7 +1931,20 @@ uint32_t np_lqueue_base_put_fifo(struct np_lqueue_base * qb);
  *  @return     Index of the item where it should be put.
  *  @notapi
  */
-uint32_t np_lqueue_base_put_lifo(struct np_lqueue_base * qb);
+NEON_INLINE_DECL(int32_t nlqueue_super_idx_lifo(struct np_lqueue_super * qb))
+NEON_INLINE_DEF(
+{
+    int32_t retval;
+    
+    if (qb->u.m.empty != 0u) {
+        qb->u.m.empty--;
+        retval = qb->u.m.head--;
+        qb->u.m.head &= qb->u.m.mask;
+    } else {
+        retval = -1;
+    }
+    return retval;
+})
 
 /** @brief      Get an item from the queue buffer.
  *  @param      qb
@@ -1648,7 +1952,15 @@ uint32_t np_lqueue_base_put_lifo(struct np_lqueue_base * qb);
  *  @return     Index of the item which was got from the queue.
  *  @notapi
  */
-uint32_t np_lqueue_base_get(struct np_lqueue_base * qb);
+NEON_INLINE_DECL(int_fast8_t nlqueue_super_idx_get(struct np_lqueue_super * qb))
+NEON_INLINE_DEF(
+{
+    qb->u.m.head++;
+    qb->u.m.head &= qb->u.m.mask;
+    qb->u.m.empty++;
+
+    return qb->u.m.head;
+})
 
 /** @brief      Peek to queue head; the item is not removed from queue.
  *  @param      qb
@@ -1656,7 +1968,7 @@ uint32_t np_lqueue_base_get(struct np_lqueue_base * qb);
  *  @return     Index of the item where the queue head is located.
  *  @notapi
  */
-uint32_t np_lqueue_base_head(const struct np_lqueue_base * qb);
+int_fast8_t np_lqueue_super_head(const struct np_lqueue_super * qb);
 
 /** @brief      Peek to queue head; the item is not removed from queue.
  *  @param      qb
@@ -1664,7 +1976,45 @@ uint32_t np_lqueue_base_head(const struct np_lqueue_base * qb);
  *  @return     Index of the item where the queue tail is located.
  *  @notapi
  */
-uint32_t np_lqueue_base_tail(const struct np_lqueue_base * qb);
+int_fast8_t np_lqueue_super_tail(const struct np_lqueue_super * qb);
+
+#if defined(NLQUEUR_IDX_FIFO_ATOMIC)
+int_fast8_t nlqueue_super_idx_fifo_atomic(struct np_lqueue_super * lqs);
+#endif
+
+#if defined(NLQUEUE_IDX_LIFO_ATOMIC)
+int_fast8_t nlqueue_super_idx_lifo_atomic(struct np_lqueue_super * lqs);
+#endif
+
+#if defined(NLQUEUE_IDX_GET_ATOMIC)
+int_fast8_t nlqueue_super_idx_get_atomic(struct np_lqueue_super * lqs);
+#endif
+
+#if defined(NLQUEUE_IS_EMPTY_ATOMIC)
+NEON_INLINE_DECL(bool nlqueue_super_is_empty_atomic(
+        const struct np_lqueue_super * lqs))
+NEON_INLINE_DEF(
+{
+    struct np_lqueue_super lqsc;
+    
+    lqsc.u.ui = ((volatile const struct np_lqueue_super *)lqs)->u.ui;
+    
+    return !!(lqsc.u.m.empty == (lqsc.u.m.mask + 1u));
+})
+#endif
+
+#if defined(NLQUEUE_IS_FIRST_ATOMIC)
+NEON_INLINE_DECL(bool nlqueue_super_is_first_atomic(
+        const struct np_lqueue_super * lqs))
+NEON_INLINE_DEF(
+{
+    struct np_lqueue_super lqsc;
+    
+    lqsc.u.ui = ((volatile const struct np_lqueue_super *)lqs)->u.ui;
+    
+    return !!(lqsc.u.m.empty == lqsc.u.m.mask);
+})
+#endif
 
 /** @} *//*==================================================================*/
 /** @defgroup   nqueue_pqueue Priority sorted queue module
@@ -1951,59 +2301,223 @@ enum nlogger_levels
 #define nlogger_err(msg, ...)           nlogger_x_err(NULL, msg, __VA_ARGS__)
 
 /** @} */
+
 /** @} *//*==================================================================*/
-/** @defgroup   ntask Task module
- *  @brief      Task module
+/** @defgroup   nsys System module
+ *  @brief      System module
  *  @{ *//*==================================================================*/
 
-/** @brief  	The highest task priority value.
+void nsys_init(void);
+
+#if (NCONFIG_SYS_EXITABLE_SCHEDULER != 1)
+NPLATFORM_NORETURN(void nsys_schedule_start(void));
+#else
+void nsys_schedule_start(void);
+#endif
+
+#if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
+void nsys_schedule_stop(void);
+#endif
+
+/** @} *//*==================================================================*/
+/** @defgroup   nevent Event module
+ *  @brief      Event module
+ *  @{ *//*==================================================================*/
+
+struct nmem;
+
+#if (NCONFIG_EVENT_USE_EVENT_X == 1)
+#define NEVENT_X_INITIALIZER(a_id, a_size)                                  \
+                {                                                           \
+                    .id = (a_id),                                           \
+                }                                                           
+        
+#endif
+
+struct nevent
+{
+    union nevent_union
+    {
+        uint_fast8_t signal;
+#if (NCONFIG_EVENT_USE_EVENT_X == 1)
+        struct NPLATFORM_PACKED(nevent_x)
+        {
+            uint_fast16_t id;
+#if (NCONFIG_EVENT_X_USE_DYNAMIC == 1)
+            uint_fast16_t attrib;
+            uint_fast16_t ref;
+            uint_fast16_t size;
+            struct nmem * allocator;
+#endif /* (NCONFIG_EVENT_X_USE_DYNAMIC == 1) */
+        } const * x;
+#endif /* (NCONFIG_EVENT_USE_EVENT_X == 1) */
+    } u;
+};
+
+/** @} *//*==================================================================*/
+/** @defgroup   nstate_machine_processor State machine processor module
+ *  @brief      State machine processor module
+ *  @{ *//*==================================================================*/
+
+/**
+ * @brief       Get the state machine workspace pointer
+ * @api
+ */
+#define nsm_wspace(sm)                  ((sm)->wspace)
+
+/**
+ * @brief       State machine action, given event was handled.
+ * @return      Actions enumerator @ref NACTION_HANDLED.
+ * @api
+ */
+#define nsm_event_handled()             (NACTION_HANDLED)
+
+/**
+ * @brief       State machine action, given event was ignored.
+ * @return      Actions enumerator @ref NACTION_IGNORED.
+ * @api
+ */
+#define nsm_event_ignored()             (NACTION_IGNORED)
+
+/**
+ * @brief       State machine action, state is returning its super state
+ * @param       sm
+ *              Pointer to the state machine
+ * @param       state_ptr
+ *              State function pointer to super state
+ * @return      Actions enumerator @ref NACTION_SUPER.
+ * @api
+ */
+#define nsm_super_state(sm, state_ptr)                                      \
+        ((sm)->state = (state_ptr), NP_SMP_SUPER_STATE)
+
+/**
+ * @brief       State machine action, state machine wants to transit to new
+ *              state
+ * @param       sm
+ *              Pointer to the state machine
+ * @param       state_ptr
+ *              State function pointer to new state
+ * @return      Actions enumerator @ref NACTION_TRANSIT_TO.
+ * @api
+ */
+#define nsm_transit_to(sm, state_ptr)                                       \
+        ((sm)->state = (state_ptr), NP_SMP_TRANSIT_TO)
+
+/** @brief       State machine event identifications
+ */
+enum nsm_event
+{
+    NSM_SUPER           = 0u,           /**<@brief Get the state super state  */
+    NSM_ENTRY           = 1u,           /**<@brief Process state entry        */
+    NSM_EXIT            = 2u,           /**<@brief Process state exit         */
+    NSM_INIT            = 3u,           /**<@brief Process state init         */
+    NSM_NULL            = 14u,          /**<@brief NULL event                 */
+    NEVENT_USER_ID      = 15u
+};
+
+/** @brief      Returned actions enumerator
+ *  
+ * This enumerator is for internal use only. It defines what actions should 
+ * dispatcher execute for the given state machine.
+ * 
+ * @note        Do not use this enumerator directly, but use the appropriate
+ *              naction_*() function.
+ * @notapi
+ */
+typedef enum np_action
+{
+    NP_SMP_SUPER_STATE       = 0u,           /**< Returns super state        */
+    NP_SMP_TRANSIT_TO  = 1u,           /**< Transit to a state         */
+    NACTION_HANDLED     = 2u,           /**< Event is handled           */
+    NACTION_IGNORED     = 3u            /**< Event is ignored           */
+} naction;
+
+enum nepa_type
+{
+    NEPA_FSM_TYPE,
+    NEPA_HSM_TYPE
+};
+
+struct nsm;
+
+/**
+ * @brief       State function prototype
+ * @param       sm
+ *              Pointer to state machine being executed
+ * @param       event
+ *              Pointer to event that has been dispatched to the state machine
+ * @return      Action enumerator of the specified state. Action enumerator can
+ *              be one of the following:
+ *              - @ref NACTION_SUPER - state is returning its super state
+ *              - @ref NACTION_TRANSIT_TO - state machine wants to transit to
+ *                  new state
+ *              - @ref NACTION_HANDLED - given event was handled
+ *              - @ref NACTION_IGNORED - given event was ignored
+ * @note        Do not use return enumerator directly but use the appropriate
+ *              naction_*() function.
+ * @api
+ */
+typedef naction (nstate_fn)(struct nsm *, struct nevent);
+
+struct nsm
+{
+#if (NCONFIG_EPA_USE_HSM == 1)
+#if (NCONFIG_MEM_OPTIMIZATION == 0)
+    nstate_fn * dispatch;
+#else
+    enum nepa_type dispatch_type;
+#endif
+#endif
+    nstate_fn * state;
+    void * ws;
+};
+
+/** @} *//*==================================================================*/
+/** @defgroup   nepa Event Processing Agent (EPA) module
+ *  @brief      Event Processing Agent (EPA) module
+ *  @{ *//*==================================================================*/
+
+/** @brief  	The highest EPA priority value.
  *
- *  The task with this priority has the highest urgency to be selected and
+ *  The EPA with this priority has the highest urgency to be selected and
  *  dispatched by scheduler.
  */
-#define NTASK_PRIO_MAX                  255
+#define NEPA_PRIO_MAX                   255
 
-/** @brief		The lowest task priority value
+/** @brief		The lowest EPA priority value
  */
-#define NTASK_PRIO_MIN                  0
+#define NEPA_PRIO_MIN                   0
 
-/** @brief		The current thread.
+/** @brief		The current EPA.
  */
-#define ncurrent                        ntask_current()
+#define ncurrent                        nepa_current()
 
-/** @brief		The current thread error.
- */
-#define nerror                          ncurrent->tls.error
-
-struct ntask;
-
-/** @brief		Task function pointer
- */
-typedef void (ntask_fn)(void * arg);
-
-enum ntask_state
+struct ntask
 {
-    NTASK_UNINITIALIZED         = 0,
-    NTASK_DORMANT               = 251,
-    NTASK_READY                 = 252,
-    NTASK_CANCELLED             = 253,
-    NTASK_BLOCKED               = 254
+    uint_fast8_t prio;
 };
 
-/** @brief      Task ready/wait queue
- */
-struct ntask_queue
+struct nepa
 {
-#if (NCONFIG_TASK_INSTANCES <= NBITARRAY_S_MAX_SIZE)
-    nbitarray_s bitarray;               /**< Simple bit array is used when small
-                                         *   number of task is used.
-                                         */
-#else
-    nbitarray_x bitarray[NBITARRAY_DEF(NCONFIG_TASK_INSTANCES)];
+    NSIGNATURE_DECLARE
+#if (NCONFIG_MEM_OPTIMIZATION == 0)
+    struct ntask task;
 #endif
+    struct nsm sm;
+    struct nevent_q nlqueue_dynamic(struct nevent) event_q;
 };
 
-struct ntask * ntask_current(void);
+struct nepa_define
+{
+    nstate_fn * init_state;
+    struct nevent * event_q_storage;
+    size_t event_q_size;
+    void * ws;
+    enum nepa_type type;
+};
+
+struct nepa * nepa_current(void);
 
 /** @brief		Create a task instance
  *  @param      fn
@@ -2034,13 +2548,15 @@ struct ntask * ntask_current(void);
  *  @note       The function can be called before and after the scheduler has
  *              been started.
  */
-struct ntask * ntask_create(ntask_fn * fn, void * arg, uint_fast8_t prio);
+struct nepa * nepa_create(
+        uint_fast8_t prio, 
+        const struct nepa_define * define);
 
 /** @brief		Delete the task instance.
  *  @param		task
  *  			Task structure.
  */
-void ntask_delete(struct ntask * task);
+void nepa_delete(struct nepa * epa);
 
 /** @brief 		Start a task
  *  @param		task
@@ -2048,283 +2564,7 @@ void ntask_delete(struct ntask * task);
  *
  *  When a task is started its state is changed to @ref NTASK_READY.
  */
-void ntask_start(struct ntask * task);
 
-void ntask_stop(struct ntask * task);
-
-#if (NCONFIG_EXITABLE_SCHEDULER != 1)
-NPLATFORM_NORETURN(void ntask_schedule_start(void));
-#else
-void ntask_schedule_start(void);
-#endif
-
-#if (NCONFIG_EXITABLE_SCHEDULER == 1)
-void ntask_schedule_stop(void);
-#endif
-
-enum ntask_state ntask_state(const struct ntask * task);
-
-void ntask_queue_ready(struct ntask_queue * queue);
-
-void ntask_queue_block(struct ntask_queue * queue);
-
-/** @} *//*==================================================================*/
-/** @defgroup   nfiber Fiber module
- *  @brief      Fiber module
- *  @{ *//*==================================================================*/
-
-/** @defgroup   fiber_state Fiber states
- *  @brief      Fiber states.
- *  @{ */
-
-#define NFIBER_DORMANT 0
-#define NFIBER_YIELDED 1
-#define NFIBER_BLOCKED 2
-#define NFIBER_TERMINATED 3
-
-/** @} */
-/** @defgroup   fiber_decl Fiber declarations
- *  @brief      Fiber declarations.
- *  @{ */
-
-struct nfiber;
-
-typedef uint_fast8_t (nfiber_fn)(struct nfiber * fb, void * arg);
-
-struct nfiber
-{
-    uint32_t ctx;
-};
-
-/** @} */
-/** @defgroup   fiber_init Fiber initialization
- *  @brief      Fiber initialization.
- *  @{ */
-
-#define nfiber_init(fb)                      NP_FIBER_CTX_INIT(&(fb)->ctx)
-
-/** @} */
-/** @name       Declaration and definition
- *  @{ */
-
-/** @brief      Declaration of a fiber.
- *
- *  This macro is used to declare a fiber. All fibers must be declared with
- *  this macro.
- *
- *  @param      fiber_proto
- *              The name and arguments of the C function implementing the
- *              fiber.
- *
- *  @hideinitializer
- */
-#define NFIBER(fiber_proto)             uint_fast8_t fiber_proto
-
-/** @brief      Declare the start of a fiber inside the C function.
- *
- *  This macro is used to declare the starting point of a fiber. It should be
- *  placed at the start of the function in which the fiber runs. All C
- *  statements above the NFIBER_BEGIN() invokation will be executed each time
- *  the fiber is scheduled.
- *
- *  @param      fb
- *              A pointer to the fiber control structure.
- *
- *  @hideinitializer
- */
-#define NFIBER_BEGIN(fb)                                                    \
-    do {                                                                    \
-        struct nfiber * np_lfb = (fb);                                      \
-        NP_FIBER_CTX_BEGIN(&np_lfb->ctx)
-
-/** @brief      Declare the end of a fiber.
- *
- *  This macro is used for declaring that a fiber ends. It must always be used
- *  together with a matching NFIBER_BEGIN() macro.
- *
- *  @hideinitializer
- */
-#define NFIBER_END()                                                        \
-        NP_FIBER_CTX_END(&np_lfb->ctx, NFIBER_TERMINATED);                  \
-    } while (0)
-
-/** @} */
-/** @name Exiting and restarting
- *  @{
- */
-
-/**
- * Exit the fiber.
- *
- * This macro causes the fiber to exit. If the fiber was
- * spawned by another fiber, the parent fiber will become
- * unblocked and can continue to run.
- *
- * \hideinitializer
- */
-#define nfiber_exit()    			                                        \
-    NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_TERMINATED, 2000u);
-
-/** @} */
-/** @name Calling a fiber
- *  @{ */
-
-/** @brief      Schedule a fiber.
- *
- *  This function schedules a fiber. The return value of the function is 
- *  non-zero if the fiber is running or zero if the fiber has exited.
- *
- *  @param      fiber_fn 
- *              The call to the C function implementing the fiber to be 
- *              scheduled.
- *
- *  @hideinitializer
- */
-#define nfiber_dispatch(fiber_fn)    fiber_fn
-
-/** @} */
-/** @name       Blocked wait
- *  @{ */
-
-/** @brief      Block and wait until condition is true.
- *
- *  This macro blocks the fiber until the specified condition is true.
- *
- *  @param      condition 
- *              The condition expression.
- *  @hideinitializer
- */
-#define nfiber_wait_until(condition)                                        \
-        while (!(condition)) {    			                                \
-            NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_BLOCKED, 0u);    		\
-        }
-
-/** @brief      Block and wait while condition is true.
- *
- *  This function blocks and waits while condition is true. See PT_WAIT_UNTIL().
- *
- *  @param      condition 
- *              The condition expression.
- *  @hideinitializer
- */
-#define nfiber_wait_while(condition)    nfiber_wait_until(!(condition))
-
-/** @} */
-/** @name Hierarchical fibers
- *  @{ */
-
-/** @brief      Block and wait until a child fiber completes.
- *
- *  This macro schedules a child fiber. The current fiber will block until the 
- *  child fiber completes.
- *
- *  @note       The child fiber must be manually initialized with the PT_INIT() 
- *              function before this function is used.
- *  @param      fiber_fn 
- *              The child fiber with arguments.
- *  @hideinitializer
- */
-#define nfiber_call(fiber_fn)                                               \
-        nfiber_wait_until(nfiber_dispatch(fiber_fn) == NFIBER_TERMINATED)
-
-/** @} */
-/** @name Yielding from a fiber
- *  @{ */
-
-/** @brief      Yield from the current fiber.
- *
- *  This function will yield the fiber, thereby allowing other processing to 
- *  take place in the system.
- *
- *  @hideinitializer
- */
-#define nfiber_yield()    	                                                \
-        NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_YIELDED, 1000u)
-
-#define nfiber_block()                                                      \
-        NP_FIBER_CTX_SAVE(&np_lfb->ctx, NFIBER_BLOCKED, 2000u)
-
-/** @} */
-/** @defgroup   fiber_decl Fiber declarations
- *  @brief      Fiber declarations.
- *  @{ */
-
-struct nfiber_task
-{
-    struct nfiber fiber;
-    nfiber_fn * fiber_fn;
-    struct ntask * task;
-};
-
-/** @brief      Initialise a fiber task.
- *
- *  Initialises a fiber task. Initialisation must be done prior to starting to
- *  execute the fiber.
- *
- *  @param      fiber
- *              A pointer to the fiber control structure.
- */
-struct nfiber_task * nfiber_task_create(
-        nfiber_fn * fn, 
-        void * arg,
-        uint_fast8_t prio);
-
-void nfiber_task_delete(struct nfiber_task * fiber);
-
-void nfiber_task_start(struct nfiber_task * fiber);
-
-void nfiber_task_stop(struct nfiber_task * fiber);
-
-/** @} */
-/** @defgroup   fiber_ctx Fiber context macros
- *  @brief      Fiber context macros.
- *  @note       These macros are not part of the public API.
- *  @{ */
-
-/** @brief      Initialize the fiber context.
- *  @hideinitializer
- *  @notapi
- */
-#define NP_FIBER_CTX_INIT(ctx)              *(ctx) = 0;
-
-/** @brief      Retrieve previously saved context.
- *  @hideinitializer
- *  @notapi
- */
-#define NP_FIBER_CTX_BEGIN(ctx)             switch(*(ctx)) { case 0:
-
-/** @brief      Save the context.
- *  @hideinitializer
- *  @notapi
- */
-#define NP_FIBER_CTX_SAVE(ctx, r, offset)                                   \
-        *(ctx) = __LINE__ + offset; return (r); case __LINE__ + offset:
-
-/** @brief      End the current execution context.
- *  @hideinitializer
- *  @notapi
- */
-#define NP_FIBER_CTX_END(ctx, r)                                            \
-        *(ctx) = __LINE__; case __LINE__: ;} return (r)
-
-/** @} */
-/** @} */
-/** @} *//*==================================================================*/
-/** @defgroup   nfiber Fiber semaphore module
- *  @brief      Fiber semaphore module
- *  @{ *//*==================================================================*/
-
-struct nfiber_sem
-{
-    struct ntask_queue queue;
-    int32_t c;
-};
-
-void nfiber_sem_init(struct nfiber_sem * sem);
-void nfiber_sem_term(struct nfiber_sem * sem);
-
-#define NFIBER_SEM_WAIT(sem)
-#define NFIBER_SEM_SIGNAL(sem)
 
 /** @} */
 

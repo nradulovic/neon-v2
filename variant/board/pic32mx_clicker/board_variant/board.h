@@ -44,20 +44,14 @@ extern "C" {
     
 #define NBOARD_PIC32MX_CLICKER
     
-#define PIC32MX_CLICKER_USES_UART       1
+#define PIC32_EXT_PRI_CLOCK_HZ          8000000ul
+#define PIC32_EXT_SEC_CLOCK_HZ          32768ul
 
-#define PIC32_EXT_PRI_CLOCK_HZ             8000000ul
-#define PIC32_EXT_SEC_CLOCK_HZ             32768ul
-
-#if (PIC32MX_CLICKER_USES_UART == 1)
-        
 #define PIC32MX_CLICKER_UART            NUART_ID_5
 #define PIC32MX_CLICKER_UART_CONTROL    0 /* Async mode, 8n1 */
 #define PIC32MX_CLICKER_UART_BAUDRATE   115200
     
 #define NBOARD_USES_UART_5              1
-#define PIC32_UART_5_BOARD_CONFIG             g_pic32mx_clicker_uart_config
-#endif
 
 #ifdef __cplusplus
 }
