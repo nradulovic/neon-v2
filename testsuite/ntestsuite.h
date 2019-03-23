@@ -49,8 +49,8 @@ extern "C" {
 	np_testsuite_print_overview()
 
 #define NTESTSUITE_PRINT_HEADER()                                           \
-    nlogger_info("Build info: %s - %s\n", NPLATFORM_DATE, NPLATFORM_TIME);  \
-    nlogger_info("Port platform ID: %s\n", NPLATFORM_ID)
+    nlogger_info("\n\r\n\rBuild info: %s - %s\r\n", NPLATFORM_DATE, NPLATFORM_TIME);  \
+    nlogger_info("Port platform ID: %s\r\n", NPLATFORM_ID)
 
 #define NTESTSUITE_EXPECT_UINT(a_number)                                    \
     do {                                                                    \

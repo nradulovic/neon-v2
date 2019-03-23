@@ -213,9 +213,9 @@ void np_lqueue_super_init(struct np_lqueue_super * lqs, uint8_t elements)
     lqs->u.m.mask = elements - 1u;
 }
 
-int32_t np_lqueue_super_head(const struct np_lqueue_super * qb)
+int_fast8_t np_lqueue_super_head(const struct np_lqueue_super * qb)
 {
-    int32_t real_head;
+    int_fast8_t real_head;
 
     real_head = qb->u.m.head;
     real_head++;
@@ -332,6 +332,8 @@ void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
  *  @brief      Extended logger module implementation
  *  @{ *//*==================================================================*/
 
+#include "neon_uart.h"
+
 #if (NCONFIG_ENABLE_LOGGER == 1)
 static struct logger_q nlqueue(char, NCONFIG_LOGGER_BUFFER_SIZE) g_logger_q;
 #endif
@@ -346,22 +348,38 @@ struct nlogger_instance np_logger_global =
     .level = NLOGGER_LEVEL_INFO
 };
 
+
 void np_logger_x_print(struct nlogger_instance * instance, uint8_t level,
     const char * msg, ...)
 {
     if (instance->level >= level) {
-        static char buffer[100];
+        char buffer[83];
+        int retval;
+
         va_list args;
         va_start(args, msg);
-        vsnprintf(buffer, sizeof(buffer), msg, args);
+        retval = vsnprintf(buffer, sizeof(buffer), msg, args);
         va_end(args);
-        
+
+        if (retval > 0) {
+            if (retval >= (sizeof(buffer) - 2)) {
+                buffer[sizeof(buffer) - 1] = '\r';
+                buffer[sizeof(buffer) - 2] = '\n';
+                retval = sizeof(buffer);
+            }
+            nuart_send_sync(NUART_ID_5, buffer, retval);
+        }
     }
 }
 
 void np_logger_x_set_level(struct nlogger_instance * instance, uint8_t level)
 {
     instance->level = level;
+}
+
+void np_logger_x_set_drain(struct nlogger_instance * instance)
+{
+
 }
 
 /** @} *//*==================================================================*/
@@ -675,7 +693,7 @@ void nsys_init(void)
 
 void nsys_timer_isr(void)
 {
-    
+
 }
 
 /*

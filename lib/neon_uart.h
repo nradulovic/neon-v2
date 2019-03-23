@@ -401,6 +401,8 @@ void nuart_control(enum nuart_id uart_id, uint32_t control_code, uint32_t arg);
 
 void nuart_send(enum nuart_id uart_id, const void * data, size_t size);
 
+void nuart_send_sync(enum nuart_id uart_id, const void * data, size_t size);
+
 void nuart_receive(enum nuart_id uart_id, void * data, size_t size);
 
 void nuart_transfer(enum nuart_id uart_id, const void * output, void * input, size_t size);

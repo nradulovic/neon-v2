@@ -48,24 +48,24 @@ static void testsuite_test_failed(uint32_t line)
 {
     (void)line; /* Suppress compiler warning when nlogger is not enabled. */
                 /*
-                 * When nlogger is not enabled, all the arguments which are 
+                 * When nlogger is not enabled, all the arguments which are
                  * normally used by nlogger will not be used. This will make
                  * the compiler complain about unused variables.
                  */
-    nlogger_err("Test FAILED at %s() in %s:%u\n", 
-        g_np_testsuite_context.test->name, 
+    nlogger_err("Test FAILED at %s() in %s:%u\n\r",
+        g_np_testsuite_context.test->name,
         g_np_testsuite_context.fixture.file, line);
 }
 
 int np_testsuite_print_overview(void)
 {
 	if (g_np_testsuite_context.total_failed_tests != 0u) {
-		nlogger_info("\n\n  Total tests  : %u\n  Total FAILED : %u\n",
+		nlogger_info("\n\r\n\r  Total tests  : %u\n\r  Total FAILED : %u\n\r",
 			g_np_testsuite_context.total_tests,
 			g_np_testsuite_context.total_failed_tests);
         return 1;
 	} else {
-		nlogger_info("\n\n  Total tests  : %u\n",
+		nlogger_info("\n\r\n\r  Total tests  : %u\n\r",
 			g_np_testsuite_context.total_tests);
         return 0;
 	}
@@ -74,11 +74,11 @@ int np_testsuite_print_overview(void)
 void np_testsuite_print_results(void)
 {
 	if (g_np_testsuite_context.fixture.failed != 0u) {
-		nlogger_info("  Total  %u\n  FAILED %u\n", 
+		nlogger_info("  Total  %u\n\r  FAILED %u\n\r",
                 g_np_testsuite_context.fixture.total,
 				g_np_testsuite_context.fixture.failed);
 	} else {
-		nlogger_info("  Total %u  OK\n", g_np_testsuite_context.fixture.total);
+		nlogger_info("  Total %u  OK\n\r", g_np_testsuite_context.fixture.total);
 	}
 }
 
@@ -107,15 +107,15 @@ void np_testsuite_run(const struct np_testsuite_test * test)
 	g_np_testsuite_context.test = test;
 	g_np_testsuite_context.should_exit = false;
     if (g_np_testsuite_context.fixture.total == 0u) {
-        nlogger_info("Test %s:%s\n", 
-                g_np_testsuite_context.fixture.file, 
+        nlogger_info("Test %s:%s\n\r",
+                g_np_testsuite_context.fixture.file,
                 g_np_testsuite_context.fixture.name);
     }
 	g_np_testsuite_context.total_tests++;
 	g_np_testsuite_context.fixture.total++;
 
 	if (g_np_testsuite_context.fixture.setup) {
-		nlogger_debug("D: Setup fixture %s for test %s.\n", 
+		nlogger_debug("D: Setup fixture %s for test %s.\n\r",
                 g_np_testsuite_context.fixture.name,
 				test->name);
 		g_np_testsuite_context.fixture.setup();
@@ -126,7 +126,7 @@ void np_testsuite_run(const struct np_testsuite_test * test)
 		g_np_testsuite_context.fixture.failed++;
 	}
 	if (g_np_testsuite_context.fixture.teardown) {
-		nlogger_debug("D: Teardown fixture %s for test %s\n",
+		nlogger_debug("D: Teardown fixture %s for test %s\n\r",
 				g_np_testsuite_context.fixture.name,
 				test->name);
 		g_np_testsuite_context.fixture.teardown();
@@ -142,8 +142,8 @@ bool np_testsuite_actual(uint32_t line, union np_testsuite_test_val actual)
             if (actual.b !=
                 g_np_testsuite_context.test_case.expected.b) {
                 testsuite_test_failed(line);
-		        nlogger_err("  Expected : %s\n"
-                            "  Actual   : %s\n",
+		        nlogger_err("  Expected : %s\n\r"
+                            "  Actual   : %s\n\r",
                             g_np_testsuite_context.test_case.expected.b ?
                                 "true" : "false",
                             actual.b ?
@@ -155,8 +155,8 @@ bool np_testsuite_actual(uint32_t line, union np_testsuite_test_val actual)
             if (actual.ui !=
                 g_np_testsuite_context.test_case.expected.ui) {
                 testsuite_test_failed(line);
-		        nlogger_err("  Expected : %u\n"
-                            "  Actual   : %u\n",
+		        nlogger_err("  Expected : %u\n\r"
+                            "  Actual   : %u\n\r",
                             g_np_testsuite_context.test_case.expected.ui,
                             actual.ui);
 		        retval = true;
@@ -166,8 +166,8 @@ bool np_testsuite_actual(uint32_t line, union np_testsuite_test_val actual)
             if (actual.si !=
                 g_np_testsuite_context.test_case.expected.si) {
                 testsuite_test_failed(line);
-		        nlogger_err("  Expected : %d\n"
-                            "  Actual   : %d\n",
+		        nlogger_err("  Expected : %d\n\r"
+                            "  Actual   : %d\n\r",
                             g_np_testsuite_context.test_case.expected.si,
                             actual.si);
 		        retval = true;
@@ -177,8 +177,8 @@ bool np_testsuite_actual(uint32_t line, union np_testsuite_test_val actual)
             if (actual.ptr !=
                 g_np_testsuite_context.test_case.expected.ptr) {
                 testsuite_test_failed(line);
-		        nlogger_err("  Expected : %p\n"
-                            "  Actual   : %p\n",
+		        nlogger_err("  Expected : %p\n\r"
+                            "  Actual   : %p\n\r",
                             g_np_testsuite_context.test_case.expected.ptr,
                             actual.ptr);
 		        retval = true;
@@ -188,8 +188,8 @@ bool np_testsuite_actual(uint32_t line, union np_testsuite_test_val actual)
             if (strcmp(actual.str,
                 g_np_testsuite_context.test_case.expected.str) != 0) {
                 testsuite_test_failed(line);
-		        nlogger_err("  Expected : %p\n"
-                            "  Actual   : %p\n",
+		        nlogger_err("  Expected : %p\n\r"
+                            "  Actual   : %p\n\r",
                             g_np_testsuite_context.test_case.expected.ptr,
                             actual.ptr);
 		        retval = true;

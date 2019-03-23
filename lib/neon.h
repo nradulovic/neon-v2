@@ -484,7 +484,7 @@ static const char g_debug_filename[] = NPLATFORM_FILE;
 #if (NDEBUG_IS_ENABLED == 1)
 #define NASSERT_ALWAYS_ACTION(text, action)                                 \
     do {																	\
-    	nlogger_err("Failed assert %s at %s:%u in %s\n", text, 				\
+    	nlogger_err("Failed assert %s at %s:%u in %s\n\r", text,            \
     		NPLATFORM_FUNC, NPLATFORM_LINE, &g_debug_filename);				\
     	action;																\
     } while (0)
@@ -504,7 +504,7 @@ static const char g_debug_filename[] = NPLATFORM_FILE;
 #if (NDEBUG_IS_ENABLED == 1)
 #define NASSERT_ALWAYS(text)                                                \
     do {																	\
-    	nlogger_err("Failed assert %s at %s:%u in %s\n", text, 				\
+    	nlogger_err("Failed assert %s at %s:%u in %s\n\r", text, 			\
     		NPLATFORM_FUNC, NPLATFORM_LINE, &g_debug_filename);				\
     	narch_cpu_stop();													\
     } while (0)
@@ -1920,8 +1920,8 @@ NEON_INLINE_DEF(
     
     if (qb->u.m.empty != 0u) {
         qb->u.m.empty--;
-        retval = qb->u.m.head--;
-        qb->u.m.head &= qb->u.m.mask;
+        retval = qb->u.m.tail++;
+        qb->u.m.tail &= qb->u.m.mask;
     } else {
         retval = -1;
     }
@@ -2235,11 +2235,14 @@ void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
 #define nlogger_x_set_level(instance, level)
 #endif
 
+typedef void (nlogger_drain)(const char * text, size_t size);
+
 struct nlogger_instance
 {
     struct nlist_sll list;
     const char * name;
     uint8_t level;
+    nlogger_drain * drain;
 };
 
 /** @brief      Global logger.
