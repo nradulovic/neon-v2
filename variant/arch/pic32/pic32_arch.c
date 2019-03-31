@@ -37,15 +37,15 @@ static void timer_init(void)
     /* Set ISR priority */
     IPC0CLR = 0x7u << IPC0_CTIP_SHIFT;
     IPC0SET = NCONFIG_ARCH_ISR_LOCK_CODE << IPC0_CTIP_SHIFT;
-    nlogger_info("PIC32 TT: %uHz", NCONFIG_ARCH_TIMER_FREQ_HZ);
+    nlogger_info("PIC32 TT: %uHz\r\n", NCONFIG_ARCH_TIMER_FREQ_HZ);
 }
 #endif
 
 void narch_init(void)
 {
-    nlogger_info("PIC32: %u shadow register set(s)\r\n",
+    nlogger_info("PIC32 CPU: %u shadow register set(s)\r\n",
             (_CP0_GET_SRSCTL() >> _CP0_SRSCTL_HSS_POSITION) + 1u);
-    nlogger_info("PIC32: Processor %x Version %x\r\n",
+    nlogger_info("PIC32 CPU: Processor %x Version %x\r\n",
             (_CP0_GET_PRID() >> 8) & 0xffu,
             (_CP0_GET_PRID() >> 0) & 0xffu);
     /* Setup interrupt chip: enable multivector mode */

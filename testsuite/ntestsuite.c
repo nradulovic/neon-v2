@@ -30,7 +30,6 @@ struct np_testsuite_context
         const char * name;
         const char * file;
         uint8_t total;
-        uint8_t failed;
     } fixture;
     struct np_testsuite_test_case
     {
@@ -38,49 +37,18 @@ struct np_testsuite_context
         enum np_testsuite_type type;
     } test_case;
     uint16_t total_tests;
-    uint16_t total_failed_tests;
-    volatile bool should_exit;
 };
 
 static struct np_testsuite_context g_np_testsuite_context;
 
-static void testsuite_test_failed(uint32_t line)
+void np_testsuite_print_overview(void)
 {
-    (void)line; /* Suppress compiler warning when nlogger is not enabled. */
-                /*
-                 * When nlogger is not enabled, all the arguments which are
-                 * normally used by nlogger will not be used. This will make
-                 * the compiler complain about unused variables.
-                 */
-    nlogger_err("Test FAILED at %s() in %s:%u\n\r",
-        g_np_testsuite_context.test->name,
-        g_np_testsuite_context.fixture.file, line);
-}
-
-int np_testsuite_print_overview(void)
-{
-    if (g_np_testsuite_context.total_failed_tests != 0u) {
-        nlogger_info("\n\r\n\r  Total  %u\n\r  FAILED %u\n\r",
-                g_np_testsuite_context.total_tests,
-                g_np_testsuite_context.total_failed_tests);
-        return 1;
-    } else {
-        nlogger_info("\n\r\n\r  Total  %u\n\r",
-                g_np_testsuite_context.total_tests);
-    return 0;
-    }
+    nlogger_info("\n\r\n\r  Total  %u\n\r", g_np_testsuite_context.total_tests);
 }
 
 void np_testsuite_print_results(void)
 {
-    if (g_np_testsuite_context.fixture.failed != 0u) {
-        nlogger_info("  Total  %u\n\r  FAILED %u\n\r",
-                g_np_testsuite_context.fixture.total,
-                g_np_testsuite_context.fixture.failed);
-    } else {
-        nlogger_info("  Total  %u  OK\n\r",
-                g_np_testsuite_context.fixture.total);
-    }
+    nlogger_info("  Total  %u\n\r", g_np_testsuite_context.fixture.total);
 }
 
 void np_testsuite_set_fixture(
@@ -94,7 +62,6 @@ void np_testsuite_set_fixture(
     g_np_testsuite_context.fixture.name = name;
     g_np_testsuite_context.fixture.file = file;
     g_np_testsuite_context.fixture.total = 0u;
-    g_np_testsuite_context.fixture.failed = 0u;
 }
 
 void np_testsuite_expect(union np_testsuite_test_val value, enum np_testsuite_type type)
@@ -106,7 +73,6 @@ void np_testsuite_expect(union np_testsuite_test_val value, enum np_testsuite_ty
 void np_testsuite_run(const struct np_testsuite_test * test)
 {
 	g_np_testsuite_context.test = test;
-	g_np_testsuite_context.should_exit = false;
     if (g_np_testsuite_context.fixture.total == 0u) {
         nlogger_info("Test %s:%s\n\r",
                 g_np_testsuite_context.fixture.file,
@@ -122,10 +88,6 @@ void np_testsuite_run(const struct np_testsuite_test * test)
 		g_np_testsuite_context.fixture.setup();
 	}
     test->test_fn();
-	if (g_np_testsuite_context.should_exit == true) {
-		g_np_testsuite_context.total_failed_tests++;
-		g_np_testsuite_context.fixture.failed++;
-	}
 	if (g_np_testsuite_context.fixture.teardown) {
 		nlogger_debug("D: Teardown fixture %s for test %s\n\r",
 				g_np_testsuite_context.fixture.name,
@@ -134,62 +96,67 @@ void np_testsuite_run(const struct np_testsuite_test * test)
 	}
 }
 
-bool np_testsuite_actual(uint32_t line, union np_testsuite_test_val actual)
+void np_testsuite_actual(uint32_t line, union np_testsuite_test_val actual)
 {
-    bool retval = false;
+    bool should_block = false;
 
     switch (g_np_testsuite_context.test_case.type) {
         case NP_TESTSUITE_TYPE_BOOL:
             if (actual.b !=
                 g_np_testsuite_context.test_case.expected.b) {
-                testsuite_test_failed(line);
                 nlogger_err("  Expected: %u\n\r  Actual  : %u\n\r",
                         g_np_testsuite_context.test_case.expected.b,
                         actual.b);
-                retval = true;
+                should_block = true;
             }
             break;
         case NP_TESTSUITE_TYPE_UINT:
             if (actual.ui !=
                 g_np_testsuite_context.test_case.expected.ui) {
-                testsuite_test_failed(line);
                 nlogger_err("  Expected: %u\n\r  Actual  : %u\n\r",
                         g_np_testsuite_context.test_case.expected.ui,
                         actual.ui);
-                retval = true;
+                should_block = true;
             }
             break;
         case NP_TESTSUITE_TYPE_INT:
             if (actual.si !=
                 g_np_testsuite_context.test_case.expected.si) {
-                testsuite_test_failed(line);
-		nlogger_err("  Expected: %d\n\r  Actual  : %d\n\r",
+        		nlogger_err("  Expected: %d\n\r  Actual  : %d\n\r",
                         g_np_testsuite_context.test_case.expected.si,
                         actual.si);
-                retval = true;
+                should_block = true;
             }
             break;
         case NP_TESTSUITE_TYPE_PTR:
             if (actual.ptr !=
                 g_np_testsuite_context.test_case.expected.ptr) {
-                testsuite_test_failed(line);
                 nlogger_err("  Expected: %p\n\r  Actual  : %p\n\r",
                         g_np_testsuite_context.test_case.expected.ptr,
                         actual.ptr);
-                retval = true;
+                should_block = true;
             }
             break;
         case NP_TESTSUITE_TYPE_STR:
             if (strcmp(actual.str,
                 g_np_testsuite_context.test_case.expected.str) != 0) {
-                testsuite_test_failed(line);
                 nlogger_err("  Expected : %s\n\r  Actual   : %s\n\r",
                         g_np_testsuite_context.test_case.expected.str,
                         actual.str);
-                retval = true;
+                should_block = true;
             }
             break;
     }
-    g_np_testsuite_context.should_exit = retval;
-    return retval;
+    if (should_block) {
+        (void)line; /* Suppress compiler warning when nlogger is not enabled. */
+                /*
+                 * When nlogger is not enabled, all the arguments which are
+                 * normally used by nlogger will not be used. This will make
+                 * the compiler complain about unused variables.
+                 */
+        nlogger_err("Test FAILED at %s() in %s:%u\n\r",
+            g_np_testsuite_context.test->name,
+            g_np_testsuite_context.fixture.file, line);
+        narch_cpu_stop();
+    }
 }

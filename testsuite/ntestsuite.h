@@ -125,17 +125,8 @@ extern "C" {
 #define NTESTSUITE_FIXTURE(a_name, a_setup, a_teardown)                     \
     np_testsuite_set_fixture(a_setup, a_teardown, # a_name, NPLATFORM_FILE)
 
-#if (!NCONFIG_TESTSUITE_CONTINUE_ON_ERROR)
 #define NP_TESTSUITE_EVALUATE(val)                                          \
-        if (np_testsuite_actual(NPLATFORM_LINE, (val))) {                   \
-            return;                                                         \
-        }
-#else
-#define NP_TESTSUITE_EVALUATE(val)                                          \
-        if (np_testsuite_actual(NPLATFORM_LINE, (val))) {                   \
-            narch_cpu_stop();                                               \
-        }
-#endif
+        np_testsuite_actual(NPLATFORM_LINE, (val))
 
 enum np_testsuite_type
 {
@@ -173,7 +164,7 @@ union np_testsuite_test_val
 #define NTESTSUITE_RUN(fixture, test) \
 		np_testsuite_run(&(testsuite_ ## test))
 
-int np_testsuite_print_overview(void);
+void np_testsuite_print_overview(void);
 
 void np_testsuite_print_results(void);
 
@@ -187,7 +178,7 @@ void np_testsuite_set_fixture(
 
 void np_testsuite_expect(union np_testsuite_test_val value, enum np_testsuite_type type);
 
-bool np_testsuite_actual(uint32_t line, union np_testsuite_test_val value);
+void np_testsuite_actual(uint32_t line, union np_testsuite_test_val value);
 
 #ifdef __cplusplus
 }

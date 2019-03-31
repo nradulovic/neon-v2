@@ -64,7 +64,7 @@ extern "C" {
  *  behaviour.
  */
 #if !defined(NCONFIG_ENABLE_LOGGER) || defined(__DOXYGEN__)
-#define NCONFIG_ENABLE_LOGGER           0
+#define NCONFIG_ENABLE_LOGGER           1
 #endif
 
 /** @brief      Configure if debug module is enabled.
@@ -115,10 +115,6 @@ extern "C" {
 #if !defined(NCONFIG_SYS_EXITABLE_SCHEDULER) || defined(__DOXYGEN__)
 #define NCONFIG_SYS_EXITABLE_SCHEDULER  0
 #endif
-
-#if !defined(NCONFIG_TESTSUITE_CONTINUE_ON_ERROR) || defined(__DOXYGEN__)
-#define NCONFIG_TESTSUITE_CONTINUE_ON_ERROR 0
-#endif
     
 #if !defined(NCONFIG_EVENT_USE_DYNAMIC) || defined(__DOXYGEN__)
 #define NCONFIG_EVENT_USE_DYNAMIC       0
@@ -131,7 +127,6 @@ extern "C" {
 #define NCONFIG_ID															\
 	  ((uint32_t)NCONFIG_ENABLE_LOGGER << 31) 								\
 	| ((uint32_t)NCONFIG_ENABLE_DEBUG << 30) 								\
-	| ((uint32_t)NCONFIG_TESTSUITE_CONTINUE_ON_ERROR << 24)					\
     | ((uint32_t)NCONFIG_EVENT_USE_DYNAMIC << 8)                            \
     | ((uint32_t)NCONFIG_EPA_USE_HSM << 1)                                  \
 	| ((uint32_t)NCONFIG_EPA_INSTANCES << 0)
@@ -823,7 +818,7 @@ typedef narch_uint nbitarray_s;
  */
 #define nbitarray_s_clear(a_array, a_bit)                                   \
         do {                                                                \
-            *(a_array) |= narch_exp2(a_bit);                                \
+            *(a_array) &= ~narch_exp2(a_bit);                                \
         } while (0)
 
 /** @brief      Get the first set bit in the array .
@@ -1665,19 +1660,19 @@ NEON_INLINE_DEF(
 #define nlqueue_dynamic(T)                                                  \
     { 																		\
     	struct nlqueue super;        										\
-    	T * np_qb_buffer;                                                   \
+    	T * np_lq_storage;                                                  \
     }
 
 #define nlqueue_dynamic_storage(T, size)                                    \
     {                                                                       \
-        T storage[(((size < 2) || !NBITS_IS_POWEROF2(size)) ?               \
+        T np_lq_storage[(((size < 2) || !NBITS_IS_POWEROF2(size)) ?         \
     		-1 : size)];                                                    \
     }
         
 #define nlqueue(T, size)                                                    \
     {                                                                       \
         struct nlqueue super;                                               \
-        T np_qb_buffer[(((size < 2) || !NBITS_IS_POWEROF2(size)) ?          \
+        T np_lq_storage[(((size < 2) || !NBITS_IS_POWEROF2(size)) ?         \
     		-1 : size)];                                                    \
     }
         
@@ -1704,14 +1699,14 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
         do {                                                                \
             np_lqueue_super_init(                                           \
                     &(Q)->super,                                            \
-                    (a_size_bytes) / sizeof(*(Q)->np_qb_buffer));           \
-            (Q)->np_qb_buffer = (a_storage);                                \
+                    (a_size_bytes) / sizeof(*(Q)->np_lq_storage));           \
+            (Q)->np_lq_storage = (a_storage);                                \
         } while (0)
 
 #define NLQUEUE_INIT(Q)                                                     \
         np_lqueue_super_init(                                               \
                 &(Q)->super,                                                \
-                NBITS_IS_POWEROF2(NBITS_ARRAY_SIZE((Q)->np_qb_buffer)))
+                NBITS_ARRAY_SIZE((Q)->np_lq_storage))
 
 
 /** @brief      Put an item to queue in FIFO mode.
@@ -1740,7 +1735,7 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
 #define NLQUEUE_IDX_GET(Q)              nlqueue_super_idx_get(&(Q)->super)
 
 #define NLQUEUE_IDX_REFERENCE(Q, a_index)                                   \
-        (Q)->np_qb_buffer[(a_index)]
+        (Q)->np_lq_storage[(a_index)]
 
 /** @brief      Put an item to queue in FIFO mode.
  *  @param      Q
@@ -1751,7 +1746,7 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
  */
 #define NLQUEUE_PUT_FIFO(Q, a_item)                                         \
         do {                                                                \
-            (Q)->np_qb_buffer[NLQUEUE_IDX_FIFO(Q)] = (a_item);              \
+            (Q)->np_lq_storage[NLQUEUE_IDX_FIFO(Q)] = (a_item);              \
         } while (0)
 
 /** @brief      Put an item to queue in LIFO mode.
@@ -1763,7 +1758,7 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
  */
 #define NLQUEUE_PUT_LIFO(Q, a_item)                                         \
         do {                                                                \
-            (Q)->np_qb_buffer[NLQUEUE_IDX_LIFO(Q)] = (a_item);              \
+            (Q)->np_lq_storage[NLQUEUE_IDX_LIFO(Q)] = (a_item);              \
         } while (0)
 
 /** @brief      Get an item from the queue buffer.
@@ -1774,7 +1769,7 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
  *  @mseffect
  */
 #define NLQUEUE_GET(Q)                                                      \
-        (Q)->np_qb_buffer[nlqueue_super_idx_get(NLQUEUE(Q))]
+        (Q)->np_lq_storage[nlqueue_super_idx_get(NLQUEUE(Q))]
 
 /** @brief      Peek to queue head; the item is not removed from queue.
  *
@@ -1786,7 +1781,7 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
  *  @mseffect
  */
 #define NLQUEUE_HEAD(Q)    													\
-        (Q)->np_qb_buffer[np_lqueue_super_head(&(Q)->super)]
+        (Q)->np_lq_storage[np_lqueue_super_head(&(Q)->super)]
 
 /** @brief      Peek to queue tail; the item is not removed from queue.
  *
@@ -1798,7 +1793,7 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
  *  @mseffect
  */
 #define NLQUEUE_TAIL(Q)    													\
-        (Q)->np_qb_buffer[np_lqueue_super_tail(&(Q)->super)]
+        (Q)->np_lq_storage[np_lqueue_super_tail(&(Q)->super)]
 
 /** @brief      Returns the queue buffer size in number of elements.
  *  @param      Q
@@ -2283,7 +2278,11 @@ enum nsm_event
     NSM_ENTRY           = 1u,           /**<@brief Process state entry        */
     NSM_EXIT            = 2u,           /**<@brief Process state exit         */
     NSM_INIT            = 3u,           /**<@brief Process state init         */
-    NSM_NULL            = 14u,          /**<@brief NULL event                 */
+    NSIGNAL_RETRIGGER    = 8u,
+    NSIGNAL_AFTER        = 9u,
+    NSIGNAL_EVERY        = 10u,
+    NEVENT_NULL            = 14u,          /**<@brief NULL event                 */
+    
     NEVENT_USER_ID      = 15u
 };
 
@@ -2366,10 +2365,10 @@ typedef nsm_action (nstate_fn)(struct nsm *, const struct nevent *);
                 {                                                           \
                     .head = 0                                               \
                     .tail = 1,                                              \
-                    .empty = NBITS_ARRAY_SIZE(&(a_queue)->storage),         \
-                    .mask = NBITS_ARRAY_SIZE(&(a_queue)->storage) - 1u,     \
+                    .empty = NBITS_ARRAY_SIZE(&(a_queue)->np_lq_storage),         \
+                    .mask = NBITS_ARRAY_SIZE(&(a_queue)->np_lq_storage) - 1u,     \
                 },                                                          \
-                .np_qb_buffer = &g_logger_queue.storage[0],                 \
+                .np_lq_storage = &(a_queue)->np_lq_storage[0],                \
             },                                                              \
         }
 #else
@@ -2386,10 +2385,10 @@ typedef nsm_action (nstate_fn)(struct nsm *, const struct nevent *);
                 {                                                           \
                     .head = 0,                                              \
                     .tail = 1,                                              \
-                    .empty = NBITS_ARRAY_SIZE(&(a_queue)->storage),         \
-                    .mask = NBITS_ARRAY_SIZE(&(a_queue)->storage) - 1u,     \
+                    .empty = NBITS_ARRAY_SIZE((a_queue)->np_lq_storage),         \
+                    .mask = NBITS_ARRAY_SIZE((a_queue)->np_lq_storage) - 1u,     \
                 },                                                          \
-                .np_qb_buffer = &(a_queue)->storage[0],                     \
+                .np_lq_storage = &(a_queue)->np_lq_storage[0],              \
             },                                                              \
         }
 #endif

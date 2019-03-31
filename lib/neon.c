@@ -308,7 +308,6 @@ void np_mem_pool_free(struct nmem_pool * pool, void * mem)
     struct nlist_sll * current = mem;
     NCRITICAL_STATE_DECL(local)
 
-    nlist_sll_init(current);
     NCRITICAL_LOCK(&local, NULL);
     pool->free++;
     nlist_sll_add_after(&pool->next, current);
@@ -338,6 +337,7 @@ static struct logger_pool  g_logger_pool;
 static struct logger_queue g_logger_queue;
 static struct logger_line * g_current;
 
+
 static void logger_send_callback(void)
 {
     np_mem_pool_free(NMEM_POOL(&g_logger_pool), g_current);
@@ -366,14 +366,16 @@ bool nlogger_flush(void)
         if (line->size == 0) {
             continue;
         }
-        while (!nuart_is_idle(NUART_ID_5)) {
-            narch_cpu_idle();
-        }
         g_current = line;
         nuart_send(NUART_ID_5, &line->text[0], line->size);
+        
+        while (!nuart_is_idle(NUART_ID_5)) {
+        narch_cpu_idle();
+        }
         NCRITICAL_LOCK(&local, NULL);
     }
     NCRITICAL_UNLOCK(&local, NULL);
+
     return true;
 }
 
@@ -502,14 +504,20 @@ void * nevent_create(struct nmem_pool * pool, uint_fast16_t id)
  *  @brief      State machine processor module implementation
  *  @{ *//*==================================================================*/
 
-#define sm_event(event)                 &g_sm_events[(event)]
+#define sm_event(event)                 &g_events[(event)]
 
-static const struct nevent g_sm_events[4] =
+static const struct nevent g_events[] =
 {
-    NEVENT_INITIALIZER(NSM_SUPER),
-    NEVENT_INITIALIZER(NSM_ENTRY),
-    NEVENT_INITIALIZER(NSM_EXIT),
-    NEVENT_INITIALIZER(NSM_INIT)
+    [NSM_SUPER] = NEVENT_INITIALIZER(NSM_SUPER),
+    [NSM_ENTRY] = NEVENT_INITIALIZER(NSM_ENTRY),
+    [NSM_EXIT] = NEVENT_INITIALIZER(NSM_EXIT),
+    [NSM_INIT] = NEVENT_INITIALIZER(NSM_INIT),
+    
+    [NSIGNAL_RETRIGGER] = NEVENT_INITIALIZER(NSIGNAL_RETRIGGER),
+    [NSIGNAL_AFTER] = NEVENT_INITIALIZER(NSIGNAL_AFTER),
+    [NSIGNAL_EVERY] = NEVENT_INITIALIZER(NSIGNAL_EVERY),
+    
+    [NEVENT_NULL] = NEVENT_INITIALIZER(NEVENT_NULL),
 };
 
 #if (NCONFIG_EPA_USE_HSM == 1)
@@ -651,7 +659,7 @@ struct nepa * nepa_current(void)
 
 nerror nepa_send_signal(struct nepa * epa, uint_fast16_t signal)
 {
-    return EOK;
+    return nepa_send_event(epa, &g_events[signal]);
 }
 
 /*
@@ -697,9 +705,9 @@ nerror nepa_send_event(struct nepa * epa, const struct nevent * event)
 static nsm_action idle_state_init(struct nsm * sm, const struct nevent * event)
 {
     NPLATFORM_UNUSED_ARG(sm);
-    NPLATFORM_UNUSED_ARG(event);
+    nepa_send_event(ncurrent, event);
 
-    return nsm_event_handled();
+    return nsm_event_ignored();
 }
 
 static struct idle_epa_queue nevent_queue(2) idle_epa_queue;
@@ -747,6 +755,7 @@ NPLATFORM_NORETURN(void nsys_schedule_start(void))
 #else
     while (true) {
 #endif
+        NCRITICAL_STATE_DECL(local)
         struct nepa * epa;
         const struct nevent * event;
         uint_fast8_t prio;
@@ -755,14 +764,13 @@ NPLATFORM_NORETURN(void nsys_schedule_start(void))
                                                        /* Fetch the new task */
         epa = epa_from_prio(prio);
         ctx->current = epa;
-        NCRITICAL_STATE_DECL(local)
         NCRITICAL_LOCK(&local, NULL);
-
         if (NLQUEUE_IS_FIRST(&epa->equeue)) {
             prio_queue_remove(&ctx->ready, prio);
         }
         event = NLQUEUE_GET(&epa->equeue);
         NCRITICAL_UNLOCK(&local, NULL);
+        
                                                           /* Execute the EPA */
         sm_dispatch(&epa->sm, event);
         event_delete(event);
