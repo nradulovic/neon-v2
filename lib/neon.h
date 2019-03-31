@@ -83,20 +83,23 @@ extern "C" {
 #if !defined(NCONFIG_ENABLE_DEBUG) || defined(__DOXYGEN__)
 #define NCONFIG_ENABLE_DEBUG            0
 #endif
-#if !defined(NCONFIG_LOGGER_BUFFER_SIZE) || defined(__DOXYGEN__)
-#define NCONFIG_LOGGER_BUFFER_SIZE      255
-#endif
-    
-/** @brief      Configure if event module will use extended events.
- *
- *  If this macro is set to '1' then extended events will be used. If this
- *  macro is set '0' then event module will support only signals. If any
- *  other
- */
-#if !defined(NCONFIG_EVENT_USE_EVENT_X) || defined(__DOXYGEN__)
-#define NCONFIG_EVENT_USE_EVENT_X          1
+
+#if !defined(NCONFIG_LOGGER_BUFFER_LINES) || defined(__DOXYGEN__)
+#define NCONFIG_LOGGER_BUFFER_LINES     16
 #endif
 
+#if !defined(NCONFIG_LOGGER_LINE_SIZE) || defined(__DOXYGEN__)
+#define NCONFIG_LOGGER_LINE_SIZE        83
+#endif
+    
+#if !defined(NCONFIG_LOGGER_LEVEL) || defined(__DOXYGEN__)
+#define NCONFIG_LOGGER_LEVEL            3
+#endif
+
+#if !defined(NCONFIG_LOGGER_EPA_PRIO) || defined(__DOXYGEN__)
+#define NCONFIG_LOGGER_EPA_PRIO         1
+#endif
+    
 #if !defined(NCONFIG_EPA_INSTANCES) || defined(__DOXYGEN__)
 #define NCONFIG_EPA_INSTANCES           8
 #endif
@@ -117,8 +120,8 @@ extern "C" {
 #define NCONFIG_TESTSUITE_CONTINUE_ON_ERROR 0
 #endif
     
-#if !defined(NCONFIG_EVENT_X_USE_DYNAMIC) || defined(__DOXYGEN__)
-#define NCONFIG_EVENT_X_USE_DYNAMIC      0
+#if !defined(NCONFIG_EVENT_USE_DYNAMIC) || defined(__DOXYGEN__)
+#define NCONFIG_EVENT_USE_DYNAMIC       0
 #endif
     
 #if !defined(NCONFIG_MEM_OPTIMIZATION) || defined(__DOXYGEN__)
@@ -128,9 +131,8 @@ extern "C" {
 #define NCONFIG_ID															\
 	  ((uint32_t)NCONFIG_ENABLE_LOGGER << 31) 								\
 	| ((uint32_t)NCONFIG_ENABLE_DEBUG << 30) 								\
-    | ((uint32_t)NCONFIG_EVENT_USE_EVENT_X << 29) 								\
 	| ((uint32_t)NCONFIG_TESTSUITE_CONTINUE_ON_ERROR << 24)					\
-    | ((uint32_t)NCONFIG_EVENT_X_USE_DYNAMIC << 8)                          \
+    | ((uint32_t)NCONFIG_EVENT_USE_DYNAMIC << 8)                            \
     | ((uint32_t)NCONFIG_EPA_USE_HSM << 1)                                  \
 	| ((uint32_t)NCONFIG_EPA_INSTANCES << 0)
 
@@ -293,7 +295,7 @@ extern "C" {
  *              load/store access.
  */
 #if defined(__DOXYGEN__)
-#define NARCH_HAS_CAS
+#define NARCH_HAS_ATOMICS
 #endif
     
 /** @brief      Each port defines a macro named NARCH_xxx.
@@ -324,7 +326,9 @@ extern "C" {
  *  Usually you want to stop the execution in case of some serious error. When
  *  a High Level OS is used, this function will terminate the current process.
  */
-void narch_cpu_stop(void);
+#if defined(__DOXYGEN__)
+#define narch_cpu_stop()
+#endif
 
 /** @brief      Set a bit in unsigned 32-bit integer variable
  *  @param      u32
@@ -457,42 +461,6 @@ static const char g_debug_filename[] = NPLATFORM_FILE;
 #define NASSERT(expr)                   (void)0
 #endif
 
-/** @brief      Generic assert macro with action.
- *  @param      msg
- *              Message : a standard error message, see
- *              @ref standard_error_messages.
- *  @param      expr
- *              Expression : C expression : condition which must be 'true'.
- *  @param		action
- *  			Expression : C expression : expression which will be executed
- *  			when asser fails.
- */
-#define NASSERT_ACTION(expr, action)                                        \
-    if (!(expr)) {                                                          \
-    	NASSERT_ALWAYS_ACTION(# expr, action);								\
-    }
-
-/** @brief      Assert macro that will always execute (no conditional) with
- *              action.
- *  @param      msg
- *              Message : a standard error message, see
- *              @ref Standard error messages.
- *  @param      text
- *              Text : string : a text which will be printed when this assert
- *              macro is executed.
- */
-#if (NDEBUG_IS_ENABLED == 1)
-#define NASSERT_ALWAYS_ACTION(text, action)                                 \
-    do {																	\
-    	nlogger_err("Failed assert %s at %s:%u in %s\n\r", text,            \
-    		NPLATFORM_FUNC, NPLATFORM_LINE, &g_debug_filename);				\
-    	action;																\
-    } while (0)
-#else
-#define NASSERT_ALWAYS_ACTION(text, action)    								\
-	action
-#endif
-
 /** @brief      Assert macro that will always execute (no conditional).
  *  @param      msg
  *              Message : a standard error message, see
@@ -503,11 +471,7 @@ static const char g_debug_filename[] = NPLATFORM_FILE;
  */
 #if (NDEBUG_IS_ENABLED == 1)
 #define NASSERT_ALWAYS(text)                                                \
-    do {																	\
-    	nlogger_err("Failed assert %s at %s:%u in %s\n\r", text, 			\
-    		NPLATFORM_FUNC, NPLATFORM_LINE, &g_debug_filename);				\
-    	narch_cpu_stop();													\
-    } while (0)
+        nassert(text, &g_debug_filename[0], NPLATFORM_FUNC, NPLATFORM_LINE)
 #else
 #define NASSERT_ALWAYS(text)             (void)0
 #endif
@@ -534,23 +498,11 @@ static const char g_debug_filename[] = NPLATFORM_FILE;
  */
 #define NREQUIRE(expr)                  NASSERT(expr)
 
-/** @brief      Make sure the caller has fulfilled all contract preconditions
- *  @param      expr
- *              Expression : C expression : condition which must be 'true'.
- */
-#define NREQUIRE_ACTION(expr, action)   NASSERT_ACTION(expr, action)
-
 /** @brief      Make sure the callee has fulfilled all contract postconditions
  *  @param      expr
  *              Expression : C expression : condition which must be 'true'.
  */
 #define NENSURE(expr)                   NASSERT(expr)
-
-/** @brief      Make sure the callee has fulfilled all contract postconditions
- *  @param      expr
- *              Expression : C expression : condition which must be 'true'.
- */
-#define NENSURE_ACTION(expr, action)    NASSERT_ACTION(expr, action)
 
 /**@} */
 /** @defgroup    debug_internal Internal checking
@@ -611,6 +563,12 @@ static const char g_debug_filename[] = NPLATFORM_FILE;
  * compiled with gcc -combine -fwhole-program.  */
 #define STATIC_ASSERT(e, m)                                                 \
         enum m { ASSERT_CONCAT(m, ASSERT_CONCAT(_assert_line_, __LINE__)) = 1/(!!(e)) }
+
+NPLATFORM_NORETURN(void nassert(
+        const char * text, 
+        const char * file, 
+        const char * func, 
+        uint32_t line));
 
 /** @} */
 
@@ -943,7 +901,7 @@ uint_fast8_t nbitarray_x_msbs(const nbitarray_x * array);
  */
 bool nbitarray_x_is_set(const nbitarray_x * array, uint_fast8_t bit);
 
-#if (NARCH_HAS_CAS == 1) || defined(__DOXYGEN__)
+#if (NARCH_HAS_ATOMICS == 1) || defined(__DOXYGEN__)
 
 /** @brief      When this macro is set 1 then atomic access calls are available.
  *  @hideinitializer
@@ -1280,11 +1238,15 @@ NEON_INLINE_DEF(
  @endverbatim
  */
 NEON_INLINE_DECL(
-void nlist_sll_remove_from(struct nlist_sll * current, struct nlist_sll * node))
+struct nlist_sll * nlist_sll_remove_from(struct nlist_sll * current))
 NEON_INLINE_DEF(
 {
+    struct nlist_sll * node;
+    
+    node = current->next;
     current->next = node->next;
-    (void)nlist_sll_init(node);
+    
+    return nlist_sll_init(node);
 })
 
 /** @brief      Remove a node (N)
@@ -1316,7 +1278,7 @@ NEON_INLINE_DEF(
 {
     struct nlist_sll * prev = nlist_sll_prev(node);
 
-    nlist_sll_remove_from(prev, node);
+    nlist_sll_remove_from(prev);
 })
 
 /** @brief      Check if a list @a node is empty or not.
@@ -1702,46 +1664,36 @@ NEON_INLINE_DEF(
  */
 #define nlqueue_dynamic(T)                                                  \
     { 																		\
-    	struct np_lqueue_super super; 										\
+    	struct nlqueue super;        										\
     	T * np_qb_buffer;                                                   \
     }
 
+#define nlqueue_dynamic_storage(T, size)                                    \
+    {                                                                       \
+        T storage[(((size < 2) || !NBITS_IS_POWEROF2(size)) ?               \
+    		-1 : size)];                                                    \
+    }
+        
 #define nlqueue(T, size)                                                    \
     {                                                                       \
-        struct np_lqueue_super super; 										\
-        T np_qb_buffer[size];                                               \
+        struct nlqueue super;                                               \
+        T np_qb_buffer[(((size < 2) || !NBITS_IS_POWEROF2(size)) ?          \
+    		-1 : size)];                                                    \
     }
         
 
 /** @brief    	Lightweight base structure.
  *  @notapi
  */
-struct NPLATFORM_PACKED(NPLATFORM_ALIGN(NARCH_ALIGN, np_lqueue_super))
+struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
 {
-    union np_lqueue_super_union
-    {
-#if (NARCH_HAS_CAS == 1)
-        uint32_t                    ui;
-#endif
-#if (NARCH_HAS_U8_LS == 1)        
-        struct np_lqueue_super_struct
-        {
-            uint8_t                     head;
-            uint8_t                     tail;
-            uint8_t                     empty;
-            uint8_t                     mask;
-        }                           m;
-#else
-        struct np_lqueue_super_struct
-        {
-            uint_fast8_t                head;
-            uint_fast8_t                tail;
-            uint_fast8_t                empty;
-            uint_fast8_t                mask;
-        }                           m;
-#endif
-    }                           u;
+    uint_fast8_t                head;
+    uint_fast8_t                tail;
+    uint_fast8_t                empty;
+    uint_fast8_t                mask;
 };
+
+#define NLQUEUE(Q)                      (&(Q)->super)
 
 /** @brief      Initialize a queue structure
  *  @param      Q
@@ -1759,7 +1711,7 @@ struct NPLATFORM_PACKED(NPLATFORM_ALIGN(NARCH_ALIGN, np_lqueue_super))
 #define NLQUEUE_INIT(Q)                                                     \
         np_lqueue_super_init(                                               \
                 &(Q)->super,                                                \
-                NBITS_ARRAY_SIZE((Q)->np_qb_buffer))
+                NBITS_IS_POWEROF2(NBITS_ARRAY_SIZE((Q)->np_qb_buffer)))
 
 
 /** @brief      Put an item to queue in FIFO mode.
@@ -1822,7 +1774,7 @@ struct NPLATFORM_PACKED(NPLATFORM_ALIGN(NARCH_ALIGN, np_lqueue_super))
  *  @mseffect
  */
 #define NLQUEUE_GET(Q)                                                      \
-        (Q)->np_qb_buffer[NLQUEUE_IDX_GET(Q)]
+        (Q)->np_qb_buffer[nlqueue_super_idx_get(NLQUEUE(Q))]
 
 /** @brief      Peek to queue head; the item is not removed from queue.
  *
@@ -1852,13 +1804,13 @@ struct NPLATFORM_PACKED(NPLATFORM_ALIGN(NARCH_ALIGN, np_lqueue_super))
  *  @param      Q
  *              Pointer to lightweight queue.
  */
-#define NLQUEUE_SIZE(Q)    				(Q)->super.u.m.mask + 1u
+#define NLQUEUE_SIZE(Q)    				(Q)->super.mask + 1u
 
 /** @brief      Returns the current number of free elements in queue buffer.
  *  @param      Q
  *              Pointer to lightweight queue.
  */
-#define NLQUEUE_EMPTY(Q)    			(Q)->super.u.m.empty
+#define NLQUEUE_EMPTY(Q)    			(Q)->super.empty
 
 /** @brief      Return true if queue is full else false.
  *  @param      Q
@@ -1877,26 +1829,7 @@ struct NPLATFORM_PACKED(NPLATFORM_ALIGN(NARCH_ALIGN, np_lqueue_super))
  *              Pointer to lightweight queue.
  */
 #define NLQUEUE_IS_FIRST(Q)                                                 \
-        ((Q)->super.u.m.empty == (Q)->super.u.m.mask)
-
-#if (NARCH_DATA_WIDTH == 32) && (NARCH_HAS_CAS == 1) || defined(__DOXYGEN__)
-#define NLQUEUE_IDX_FIFO_ATOMIC(Q)                                          \
-        nlqueue_super_idx_fifo_atomic(&(Q)->super)
-
-#define NLQUEUE_IDX_LIFO_ATOMIC(Q)                                          \
-        nlqueue_super_idx_lifo_atomic(&(Q)->super)
-
-#define NLQUEUE_IDX_GET_ATOMIC(Q)                                           \
-        nlqueue_super_idx_get_atomic(&(Q)->super)
-
-#define NLQUEUE_IS_EMPTY_ATOMIC(Q)                                          \
-        nlqueue_super_is_empty_atomic(&(Q)->super)
-
-#define NLQUEUE_IS_FIRST_ATOMIC(Q)                                          \
-        nlqueue_super_is_first_atomic(&(Q)->super)
-
-STATIC_ASSERT(sizeof(uint32_t) == sizeof(struct np_lqueue_super_struct), np_lqueue_size_check);
-#endif
+        ((Q)->super.empty == (Q)->super.mask)
 
 /** @brief      Initialise the base queue structure.
  *  @param      lqs
@@ -1904,7 +1837,7 @@ STATIC_ASSERT(sizeof(uint32_t) == sizeof(struct np_lqueue_super_struct), np_lque
  *  @param      elements
  *  @notapi
  */
-void np_lqueue_super_init(struct np_lqueue_super * lqs, uint8_t elements);
+void np_lqueue_super_init(struct nlqueue * lqs, uint8_t elements);
 
 /** @brief      Put an item to queue in FIFO mode.
  *  @param      qb
@@ -1912,16 +1845,15 @@ void np_lqueue_super_init(struct np_lqueue_super * lqs, uint8_t elements);
  *  @return     Index of the item where it should be put.
  *  @notapi
  */
-NEON_INLINE_DECL(int_fast8_t nlqueue_super_idx_fifo(
-        struct np_lqueue_super * qb))
+NEON_INLINE_DECL(int_fast8_t nlqueue_super_idx_fifo(struct nlqueue * qb))
 NEON_INLINE_DEF(
 {
     int_fast8_t retval;
     
-    if (qb->u.m.empty != 0u) {
-        qb->u.m.empty--;
-        retval = qb->u.m.tail++;
-        qb->u.m.tail &= qb->u.m.mask;
+    if (qb->empty != 0u) {
+        qb->empty--;
+        retval = qb->tail++;
+        qb->tail &= qb->mask;
     } else {
         retval = -1;
     }
@@ -1934,15 +1866,15 @@ NEON_INLINE_DEF(
  *  @return     Index of the item where it should be put.
  *  @notapi
  */
-NEON_INLINE_DECL(int32_t nlqueue_super_idx_lifo(struct np_lqueue_super * qb))
+NEON_INLINE_DECL(int32_t nlqueue_super_idx_lifo(struct nlqueue * qb))
 NEON_INLINE_DEF(
 {
     int32_t retval;
     
-    if (qb->u.m.empty != 0u) {
-        qb->u.m.empty--;
-        retval = qb->u.m.head--;
-        qb->u.m.head &= qb->u.m.mask;
+    if (qb->empty != 0u) {
+        qb->empty--;
+        retval = qb->head--;
+        qb->head &= qb->mask;
     } else {
         retval = -1;
     }
@@ -1955,14 +1887,14 @@ NEON_INLINE_DEF(
  *  @return     Index of the item which was got from the queue.
  *  @notapi
  */
-NEON_INLINE_DECL(int_fast8_t nlqueue_super_idx_get(struct np_lqueue_super * qb))
+NEON_INLINE_DECL(int_fast8_t nlqueue_super_idx_get(struct nlqueue * qb))
 NEON_INLINE_DEF(
 {
-    qb->u.m.head++;
-    qb->u.m.head &= qb->u.m.mask;
-    qb->u.m.empty++;
+    qb->head++;
+    qb->head &= qb->mask;
+    qb->empty++;
 
-    return qb->u.m.head;
+    return qb->head;
 })
 
 /** @brief      Peek to queue head; the item is not removed from queue.
@@ -1971,7 +1903,7 @@ NEON_INLINE_DEF(
  *  @return     Index of the item where the queue head is located.
  *  @notapi
  */
-int_fast8_t np_lqueue_super_head(const struct np_lqueue_super * qb);
+int_fast8_t np_lqueue_super_head(const struct nlqueue * qb);
 
 /** @brief      Peek to queue head; the item is not removed from queue.
  *  @param      qb
@@ -1979,45 +1911,7 @@ int_fast8_t np_lqueue_super_head(const struct np_lqueue_super * qb);
  *  @return     Index of the item where the queue tail is located.
  *  @notapi
  */
-int_fast8_t np_lqueue_super_tail(const struct np_lqueue_super * qb);
-
-#if defined(NLQUEUR_IDX_FIFO_ATOMIC)
-int_fast8_t nlqueue_super_idx_fifo_atomic(struct np_lqueue_super * lqs);
-#endif
-
-#if defined(NLQUEUE_IDX_LIFO_ATOMIC)
-int_fast8_t nlqueue_super_idx_lifo_atomic(struct np_lqueue_super * lqs);
-#endif
-
-#if defined(NLQUEUE_IDX_GET_ATOMIC)
-int_fast8_t nlqueue_super_idx_get_atomic(struct np_lqueue_super * lqs);
-#endif
-
-#if defined(NLQUEUE_IS_EMPTY_ATOMIC)
-NEON_INLINE_DECL(bool nlqueue_super_is_empty_atomic(
-        const struct np_lqueue_super * lqs))
-NEON_INLINE_DEF(
-{
-    struct np_lqueue_super lqsc;
-    
-    lqsc.u.ui = ((volatile const struct np_lqueue_super *)lqs)->u.ui;
-    
-    return !!(lqsc.u.m.empty == (lqsc.u.m.mask + 1u));
-})
-#endif
-
-#if defined(NLQUEUE_IS_FIRST_ATOMIC)
-NEON_INLINE_DECL(bool nlqueue_super_is_first_atomic(
-        const struct np_lqueue_super * lqs))
-NEON_INLINE_DEF(
-{
-    struct np_lqueue_super lqsc;
-    
-    lqsc.u.ui = ((volatile const struct np_lqueue_super *)lqs)->u.ui;
-    
-    return !!(lqsc.u.m.empty == lqsc.u.m.mask);
-})
-#endif
+int_fast8_t np_lqueue_super_tail(const struct nlqueue * qb);
 
 /** @} *//*==================================================================*/
 /** @defgroup   nqueue_pqueue Priority sorted queue module
@@ -2174,9 +2068,56 @@ void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
 
 /** @} */
 /** @} *//*==================================================================*/
+/** @defgroup   nmem_pool Memory pool module
+ *  @brief      Memory pool module
+ *  @{ *//*==================================================================*/
+
+struct nmem_pool
+{
+    struct nlist_sll next;
+    uint32_t free;
+    uint32_t element_size;
+};
+
+#define npool(T, size)  \
+    {  \
+        struct nmem_pool mem_pool;\
+        T storage[size];\
+    }
+
+#define NMEM_POOL_INIT(MP)                                                  \
+    do { \
+        np_mem_pool_init(               \
+                &(MP)->mem_pool, \
+                &(MP)->storage[0], \
+                sizeof((MP)->storage), \
+                NBITS_ARRAY_SIZE((MP)->storage)); \
+    } while (0)
+        
+void np_mem_pool_init(
+        struct nmem_pool * pool, 
+        void * storage, 
+        size_t storage_size, 
+        uint32_t elements);
+
+#define NMEM_POOL(MP)                   &(MP)->mem_pool
+
+void * np_mem_pool_alloc(struct nmem_pool * pool);
+void   np_mem_pool_free (struct nmem_pool * pool, void * mem);
+
+/** @} *//*==================================================================*/
 /** @defgroup   nlogger_x Extended logger module
  *  @brief      Extended logger module
  *  @{ *//*==================================================================*/
+
+
+/** @brief      Logger levels
+ *  @details    Default log level is @ref NLOGGER_LVL_DEBUG.
+ */
+#define NLOGGER_LEVEL_DEBUG             4
+#define NLOGGER_LEVEL_INFO              3
+#define NLOGGER_LEVEL_WARN              2
+#define NLOGGER_LEVEL_ERR               1
 
 /** @defgroup   loggerprinters Logger printers
  *  @brief      Logger printers.
@@ -2184,136 +2125,72 @@ void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
  */
 
 #if defined(NCONFIG_ENABLE_LOGGER) && (NCONFIG_ENABLE_LOGGER == 1)
-#define NLOGGER_IS_ENABLED 1
-#else
 /** @brief      Macro that returns current nlogger configuration
  */
-#define NLOGGER_IS_ENABLED 0
+#define NLOGGER_IS_ENABLED              1
+#else
+#define NLOGGER_IS_ENABLED              0
 #endif
 
-#define NLOGGER_INITIALIZER(a_name)     {.name = a_name}
-
+#if (NLOGGER_IS_ENABLED == 1) && (NCONFIG_LOGGER_LEVEL >= 4) || defined(__DOXYGEN__)
 /** @brief      Log a debug message.
  */
-#define nlogger_x_debug(instance, msg, ...)                                 \
-        nlogger_x_print(instance, NLOGGER_LEVEL_DEBUG, msg, __VA_ARGS__)
+#define nlogger_debug(msg, ...)         nlogger_print(msg, __VA_ARGS__)
+#else
+#define nlogger_debug(msg, ...)
+#endif
 
+#if (NLOGGER_IS_ENABLED == 1) && (NCONFIG_LOGGER_LEVEL >= 3) || defined(__DOXYGEN__)
 /** @brief      Log an informational message.
  */
-#define nlogger_x_info(instance, msg, ...)                                  \
-        nlogger_x_print(instance, NLOGGER_LEVEL_INFO, msg, __VA_ARGS__)
+#define nlogger_info(msg, ...)          nlogger_print(msg, __VA_ARGS__)
+#else
+#define nlogger_info(msg, ...)
+#endif
 
+#if (NLOGGER_IS_ENABLED == 1) && (NCONFIG_LOGGER_LEVEL >= 2) || defined(__DOXYGEN__)
 /** @brief      Log a warning message.
  */
-#define nlogger_x_warn(instance, msg, ...)                                  \
-        nlogger_x_print(instance, NLOGGER_LEVEL_WARN, msg, __VA_ARGS__)
+#define nlogger_warn(msg, ...)          nlogger_print(msg, __VA_ARGS__)
+#else
+#define nlogger_warn(msg, ...)
+#endif
 
+#if (NLOGGER_IS_ENABLED == 1) && (NCONFIG_LOGGER_LEVEL >= 1) || defined(__DOXYGEN__)
 /** @brief      Log an error message.
  */
-#define nlogger_x_err(instance, msg, ...)                                   \
-        nlogger_x_print(instance, NLOGGER_LEVEL_ERR, msg, __VA_ARGS__)
-
-#if (NLOGGER_IS_ENABLED == 1)
-#define nlogger_x_print(instance, level, msg, ...)                          \
-    do {                                                                    \
-        struct nlogger_instance * _instance = (instance);                   \
-        np_logger_x_print(!_instance ? &np_logger_global : _instance, level,\
-                msg, __VA_ARGS__);                                          \
-    } while (0)
+#define nlogger_err(msg, ...)           nlogger_print(msg, __VA_ARGS__)
 #else
-#define nlogger_x_print(instance, level, msg, ...)
+#define nlogger_err(msg, ...)
 #endif
 
-#if (NLOGGER_IS_ENABLED == 1)
-#define nlogger_x_set_level(instance, level)                                \
-    do {                                                                    \
-        struct nlogger_instance * _instance = (instance);                   \
-        np_logger_x_set_level(!_instance ? &np_logger_global : _instance,   \
-                (level));                                                   \
-    } while (0)
+#if (NCONFIG_ENABLE_LOGGER == 1) || defined(__DOXYGEN__)
+bool nlogger_flush(void);
 #else
-#define nlogger_x_set_level(instance, level)
+#define nlogger_flush()
 #endif
 
-typedef void (nlogger_drain)(const char * text, size_t size);
-
-struct nlogger_instance
-{
-    struct nlist_sll list;
-    const char * name;
-    uint8_t level;
-    nlogger_drain * drain;
-};
-
-/** @brief      Global logger.
- *  @notapi
- */
-extern struct nlogger_instance np_logger_global;
-
+#if (NCONFIG_ENABLE_LOGGER == 1) || defined(__DOXYGEN__)
 /** @brief      Print a formated string to a logger.
- *  @notapi
  */
-void np_logger_x_print(
-        struct nlogger_instance * instance,
-        uint8_t level, 
-        const char * msg, 
-        ...);
+bool nlogger_print(const char * msg, ...);
+#else
+#define nlogger_print(msg, ...)
+#endif
 
-/** @brief      Set logger level.
- *  @notapi
- */
-void np_logger_x_set_level(struct nlogger_instance * instance, uint8_t level);
-
-/** @} */
-/** @} *//*==================================================================*/
-/** @defgroup   nlogger Basic logger module
- *  @brief      Basic logger module
- *  @{ *//*==================================================================*/
-
-/** @defgroup   loggerlevels Logger levels
- *  @brief      Logger levels.
- *  @{ */
-
-/** @brief      Logger levels
- *  @details    Default log level is @ref NLOGGER_LVL_DEBUG.
- */
-enum nlogger_levels
-{
-    NLOGGER_LEVEL_DEBUG = 4,
-    NLOGGER_LEVEL_INFO = 3,
-    NLOGGER_LEVEL_WARN = 2,
-    NLOGGER_LEVEL_ERR = 1
-};
-
-/** @} */
-/** @defgroup   loggerprinters Logger printers
- *  @brief      Logger printers.
- *  @{ */
-
-/** @brief      Log a debug message.
- */
-#define nlogger_debug(msg, ...)         nlogger_x_debug(NULL, msg, __VA_ARGS__)
-
-/** @brief      Log a informational message.
- */
-#define nlogger_info(msg, ...)          nlogger_x_info(NULL, msg, __VA_ARGS__)
-
-/** @brief      Log a warning message.
- */
-#define nlogger_warn(msg, ...)          nlogger_x_warn(NULL, msg, __VA_ARGS__)
-
-/** @brief      Log a error message.
- */
-#define nlogger_err(msg, ...)           nlogger_x_err(NULL, msg, __VA_ARGS__)
-
-/** @} */
+extern struct nepa g_nsys_epa_logger;
 
 /** @} *//*==================================================================*/
 /** @defgroup   nsys System module
  *  @brief      System module
  *  @{ *//*==================================================================*/
 
+extern struct nepa g_nsys_epa_idle;
+extern struct nepa * g_nsys_epa_list[NCONFIG_EPA_INSTANCES];
+
 void nsys_init(void);
+
+bool nsys_is_scheduler_started(void);
 
 #if (NCONFIG_SYS_EXITABLE_SCHEDULER != 1)
 NPLATFORM_NORETURN(void nsys_schedule_start(void));
@@ -2330,35 +2207,23 @@ void nsys_schedule_stop(void);
  *  @brief      Event module
  *  @{ *//*==================================================================*/
 
-struct nmem;
+#define NEVENT_INITIALIZER(a_id)                                            \
+        {                                                                   \
+            .id = (a_id),                                                   \
+        }                                                           
 
-#if (NCONFIG_EVENT_USE_EVENT_X == 1)
-#define NEVENT_X_INITIALIZER(a_id, a_size)                                  \
-                {                                                           \
-                    .id = (a_id),                                           \
-                }                                                           
-        
-#endif
+struct nmem_pool;
 
 struct nevent
 {
-    union nevent_union
-    {
-        uint_fast8_t signal;
-#if (NCONFIG_EVENT_USE_EVENT_X == 1)
-        struct NPLATFORM_PACKED(nevent_x)
-        {
-            uint_fast16_t id;
-#if (NCONFIG_EVENT_X_USE_DYNAMIC == 1)
-            uint_fast16_t attrib;
-            uint_fast16_t ref;
-            uint_fast16_t size;
-            struct nmem * allocator;
-#endif /* (NCONFIG_EVENT_X_USE_DYNAMIC == 1) */
-        } const * x;
-#endif /* (NCONFIG_EVENT_USE_EVENT_X == 1) */
-    } u;
+    uint16_t id;
+#if (NCONFIG_EVENT_USE_DYNAMIC == 1)
+    uint16_t ref;
+    struct nmem_pool * pool;
+#endif /* (NCONFIG_EVENT_USE_DYNAMIC == 1) */
 };
+
+void * nevent_create(struct nmem_pool * pool, uint_fast16_t id);
 
 /** @} *//*==================================================================*/
 /** @defgroup   nstate_machine_processor State machine processor module
@@ -2431,19 +2296,13 @@ enum nsm_event
  *              naction_*() function.
  * @notapi
  */
-typedef enum np_action
+typedef enum np_sm_action
 {
-    NP_SMP_SUPER_STATE       = 0u,           /**< Returns super state        */
-    NP_SMP_TRANSIT_TO  = 1u,           /**< Transit to a state         */
-    NACTION_HANDLED     = 2u,           /**< Event is handled           */
-    NACTION_IGNORED     = 3u            /**< Event is ignored           */
-} naction;
-
-enum nepa_type
-{
-    NEPA_FSM_TYPE,
-    NEPA_HSM_TYPE
-};
+    NP_SMP_SUPER_STATE  = 0u,                /**< Returns super state        */
+    NP_SMP_TRANSIT_TO   = 1u,                /**< Transit to a state         */
+    NACTION_HANDLED     = 2u,                /**< Event is handled           */
+    NACTION_IGNORED     = 3u,                /**< Event is ignored           */
+} nsm_action;
 
 struct nsm;
 
@@ -2464,20 +2323,7 @@ struct nsm;
  *              naction_*() function.
  * @api
  */
-typedef naction (nstate_fn)(struct nsm *, struct nevent);
-
-struct nsm
-{
-#if (NCONFIG_EPA_USE_HSM == 1)
-#if (NCONFIG_MEM_OPTIMIZATION == 0)
-    nstate_fn * dispatch;
-#else
-    enum nepa_type dispatch_type;
-#endif
-#endif
-    nstate_fn * state;
-    void * ws;
-};
+typedef nsm_action (nstate_fn)(struct nsm *, const struct nevent *);
 
 /** @} *//*==================================================================*/
 /** @defgroup   nepa Event Processing Agent (EPA) module
@@ -2499,70 +2345,85 @@ struct nsm
  */
 #define ncurrent                        nepa_current()
 
-struct ntask
+#define nevent_queue(size)                                                  \
+        nlqueue_dynamic_storage(const struct nevent *, size)
+
+#if (NCONFIG_EPA_USE_HSM == 1)
+#define NEPA_INITIALIZER(a_queue, a_type_id, a_init_state, a_ws)            \
+        {                                                                   \
+            .sm =                                                           \
+            {                                                               \
+                .type =                                                     \
+                {                                                           \
+                    .id = (a_type_id),                                      \
+                },                                                          \
+                .state = (a_init_state),                                    \
+                .ws = (a_ws),                                               \
+            },                                                              \
+            .equeue =                                                       \
+            {                                                               \
+                .super =                                                    \
+                {                                                           \
+                    .head = 0                                               \
+                    .tail = 1,                                              \
+                    .empty = NBITS_ARRAY_SIZE(&(a_queue)->storage),         \
+                    .mask = NBITS_ARRAY_SIZE(&(a_queue)->storage) - 1u,     \
+                },                                                          \
+                .np_qb_buffer = &g_logger_queue.storage[0],                 \
+            },                                                              \
+        }
+#else
+#define NEPA_INITIALIZER(a_queue, a_type_id, a_init_state, a_ws)            \
+        {                                                                   \
+            .sm =                                                           \
+            {                                                               \
+                .state = (a_init_state),                                    \
+                .ws = (a_ws),                                               \
+            },                                                              \
+            .equeue =                                                       \
+            {                                                               \
+                .super =                                                    \
+                {                                                           \
+                    .head = 0,                                              \
+                    .tail = 1,                                              \
+                    .empty = NBITS_ARRAY_SIZE(&(a_queue)->storage),         \
+                    .mask = NBITS_ARRAY_SIZE(&(a_queue)->storage) - 1u,     \
+                },                                                          \
+                .np_qb_buffer = &(a_queue)->storage[0],                     \
+            },                                                              \
+        }
+#endif
+
+enum nepa_type
 {
-    uint_fast8_t prio;
+    NEPA_FSM_TYPE,
+    NEPA_HSM_TYPE
 };
 
 struct nepa
 {
-    NSIGNATURE_DECLARE
-#if (NCONFIG_MEM_OPTIMIZATION == 0)
-    struct ntask task;
+    struct nsm
+    {
+#if (NCONFIG_EPA_USE_HSM == 1)
+        union nsm_type
+        {
+            nstate_fn *                 dispatch;
+            enum nepa_type              id;
+        }                       type;
 #endif
-    struct nsm sm;
-    struct nevent_q nlqueue_dynamic(struct nevent) event_q;
-};
-
-struct nepa_define
-{
-    nstate_fn * init_state;
-    struct nevent * event_q_storage;
-    size_t event_q_size;
-    void * ws;
-    enum nepa_type type;
+        nstate_fn *                 state;
+        void *                      ws;
+    }                           sm;
+    struct ntask
+    {
+        uint_fast8_t                prio;
+    }                           task;
+    struct nequeue nlqueue_dynamic(const struct nevent *)
+                                equeue;
+    NSIGNATURE_DECLARE
 };
 
 struct nepa * nepa_current(void);
-
-/** @brief		Create a task instance
- *  @param      fn
- *  			Pointer to task function. See @ref ntask_fn.
- *  @param		arg
- *  			Task function argument.
- *  @param		prio
- *  			Priority of the task. Minimum priority is @ref NTASK_PRIO_MIN
- *  			and maximum priority @ref NCONFIG_TASK_INSTANCES.
- *
- *  @pre		Pointer @a fn != ``NULL``.
- *  @pre		Priority @a prio < ``NCONFIG_TASK_INSTANCES``.
- *  @pre        The used priority @a prio is unique, used only by single task
- *              instance.
- *
- *  Create and initialise the task with given attributes. 
- * 
- *  Each task has a function and associated arguments. The priority of each task
- *  must be unique. No multiple tasks of same priority are allowed.
- * 
- *  The task control structure is allocated from internal task pool which size 
- *  is defined with @ref NCONFIG_TASK_INSTANCES macro. All tasks at the 
- *  beggining of firmware execution are in @reg NTASK_UNINITIALIZED state. When
- *  a task is created it is transitioned in to @ref NTASK_DORMANT state. In 
- *  order to start the task execution the function @ref ntask_start needs to be
- *  called.
- *  
- *  @note       The function can be called before and after the scheduler has
- *              been started.
- */
-struct nepa * nepa_create(
-        uint_fast8_t prio, 
-        const struct nepa_define * define);
-
-/** @brief		Delete the task instance.
- *  @param		task
- *  			Task structure.
- */
-void nepa_delete(struct nepa * epa);
 
 /** @brief 		Start a task
  *  @param		task
@@ -2571,9 +2432,11 @@ void nepa_delete(struct nepa * epa);
  *  When a task is started its state is changed to @ref NTASK_READY.
  */
 
+nerror nepa_send_signal(struct nepa * epa, uint_fast16_t signal);
+
+nerror nepa_send_event(struct nepa * epa, const struct nevent * event);
 
 /** @} */
-
 #ifdef __cplusplus
 }
 #endif

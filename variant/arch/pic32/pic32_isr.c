@@ -22,6 +22,8 @@
 #include "pic32_isr.h"
 #include "pic32_common.h"
 
+#include "neon.h"
+
 #define pic32_isr_ipc_reg(vector_no)                                        \
         (&((pic32_periph_access(&IPC0))[(vector_no) >> 2u]))
 
@@ -43,7 +45,7 @@ uint_fast8_t pic32_isr_get_prio(uint_fast8_t vector_no)
 {
     struct pic32_periph_reg * ipc = pic32_isr_ipc_reg(vector_no);
     uint32_t position = pic32_isr_ipc_position(vector_no);
-    
+
     return (ipc->reg >> position) & 0x7u;
 }
 
@@ -51,11 +53,14 @@ void pic32_isr_init(void)
 {
     NARCH_DISABLE_INTERRUPTS();
     INTCONSET = _INTCON_MVEC_MASK;
-    
+
     // set the CP0 cause IV bit high: Use the special interrupt vector (0x200)
     _CP0_BIS_CAUSE(_CP0_CAUSE_IV_MASK);
-    
-    // set the CP0 status BEV bit: Controls the location of exception vectors.
+
+    // clear the CP0 status BEV bit: Controls the location of exception vectors.
     _CP0_BIC_STATUS(_CP0_STATUS_BEV_MASK);
     NARCH_ENABLE_INTERRUPTS();
+    nlogger_info("PIC32 ISR: STATUS 0x%x CAUSE 0X%x\r\n",
+            _CP0_GET_STATUS(),
+            _CP0_GET_CAUSE());
 }

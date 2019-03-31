@@ -55,6 +55,10 @@
 #define    UxMODE_SLPEN_MASK        _U1MODE_SLPEN_MASK
 
 #define UxSTA_URXDA_MASK                _U1STA_URXDA_MASK
+#define UxSTA_RIDLE_MASK                _U1STA_RIDLE_MASK
+#define UxSTA_UTXISEL_MASK              _U1STA_UTXISEL_MASK
+#define UxSTA_UTXISEL_POS               _U1STA_UTXISEL_POSITION
+#define UxSTA_TRMT_MASK                 _U1STA_TRMT_MASK
 #define UxSTA_UTXBF_MASK                _U1STA_UTXBF_MASK
 #define UxSTA_UTXEN_MASK                _U1STA_UTXEN_MASK
 #define    UxSTA_URXEN_MASK         _U1STA_URXEN_MASK
@@ -65,8 +69,7 @@
 #define    UxSTA_MASK_POSITION      _U1STA_MASK_POSITION
 #define    UxSTA_URXISEL_MASK       _U1STA_URXISEL_MASK
 #define    UxSTA_URXISEL_POSITION   _U1STA_URXISEL_POSITION
-#define UxSTA_UTXISEL_MASK              _U1STA_UTXISEL_MASK
-#define UxSTA_UTXISEL_POS               _U1STA_UTXISEL_POSITION
+
 #define    UxSTA_OERR_MASK          _U1STA_OERR_MASK
 #define    UxSTA_UTXBRK_MASK        _U1STA_UTXBRK_MASK
 #define UxSTA_UTXINV_MASK               _U1STA_UTXINV_MASK
@@ -359,7 +362,8 @@ static void pic32_uart_isr_handler(
         pic32_uart_read_rx_fifo(uart);
         pic32_isr_irq_clear(desc->isr_irq_rx);
 
-        if (uart->current_byte_out == uart->buff_size) {
+        if (uart->current_byte_in == uart->buff_size) {
+            uart->buff_in = NULL;
             pic32_isr_irq_disable(desc->isr_irq_rx);
             pic32_isr_irq_disable(desc->isr_irq_e);
             events |= NUART_EVENT_SEND_COMPLETE;
@@ -371,6 +375,7 @@ static void pic32_uart_isr_handler(
         pic32_isr_irq_clear(desc->isr_irq_tx);
 
         if (uart->current_byte_out == uart->buff_size) {
+            uart->buff_out = NULL;
             pic32_isr_irq_disable(desc->isr_irq_tx);
             events |= NUART_EVENT_SEND_COMPLETE;
         }
@@ -384,6 +389,10 @@ static void pic32_uart_isr_handler(
 void pic32_uart_init(void)
 {
 #if (NBOARD_USES_UART_5 == 1)
+    nlogger_info("PIC32 UART: Init %u with %x:%x\r\n",
+            NUART_ID_5,
+            g_pic32_uart_5_board_config.control_code,
+            g_pic32_uart_5_board_config.arg);
     nuart_control(
             NUART_ID_5,
             g_pic32_uart_5_board_config.control_code | NUART_COMMAND_SETUP,
@@ -422,6 +431,29 @@ uint32_t nuart_capabilities(enum nuart_id uart_id)
     return desc->capabilities;
 }
 
+bool nuart_is_initialized(enum nuart_id uart_id)
+{
+    struct pic32_uart * uart;
+
+    NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic32_uarts));
+
+    uart = &g_pic32_uarts[uart_id];
+
+    return !!(uart->sfr->mode.reg & UxMODE_ON_MASK);
+}
+
+bool nuart_is_idle(enum nuart_id uart_id)
+{
+    struct pic32_uart * uart;
+
+    NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic32_uarts));
+
+    uart = &g_pic32_uarts[uart_id];
+
+    return !!((uart->sfr->sta.reg & UxSTA_TRMT_MASK) &&
+              (uart->sfr->sta.reg & UxSTA_RIDLE_MASK));
+}
+
 void nuart_control(enum nuart_id uart_id, uint32_t control_code, uint32_t arg)
 {
     struct pic32_uart * uart = &g_pic32_uarts[uart_id];
@@ -451,9 +483,10 @@ void nuart_send(enum nuart_id uart_id, const void * data, size_t size)
     NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic32_uarts));
 
     uart = &g_pic32_uarts[uart_id];
-    desc = &g_pic32_uarts_desc[uart_id];
 
     NASSERT(uart->callback != NULL);
+
+    desc = &g_pic32_uarts_desc[uart_id];
 
     uart->buff_out = data;
     uart->buff_size = size;
@@ -464,30 +497,6 @@ void nuart_send(enum nuart_id uart_id, const void * data, size_t size)
      */
     pic32_uart_write_tx_fifo(uart);
     pic32_isr_irq_enable(desc->isr_irq_tx);
-}
-static volatile bool g_send_sync_flag;
-
-static void send_sync_wait(enum nuart_id uart_id, uint32_t event)
-{
-    g_send_sync_flag = false;
-}
-
-void nuart_send_sync(enum nuart_id uart_id, const void * data, size_t size)
-{
-    nuart_callback * old_callback;
-    struct pic32_uart * uart;
-    g_send_sync_flag = true;
-
-    NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic32_uarts));
-
-    uart = &g_pic32_uarts[uart_id];
-
-    old_callback = uart->callback;
-    uart->callback = send_sync_wait;
-    nuart_send(uart_id, data, size);
-
-    while (g_send_sync_flag);
-    uart->callback = old_callback;
 }
 
 void nuart_receive(enum nuart_id uart_id, void * data, size_t size)
@@ -537,17 +546,6 @@ void nuart_transfer(
     pic32_isr_irq_enable(desc->isr_irq_e);
     pic32_isr_irq_enable(desc->isr_irq_rx);
     pic32_isr_irq_enable(desc->isr_irq_tx);
-}
-
-bool nuart_is_initialized(enum nuart_id uart_id)
-{
-    struct pic32_uart * uart;
-
-    NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic32_uarts));
-
-    uart = &g_pic32_uarts[uart_id];
-
-    return !!uart->callback;
 }
 
 #if (NBOARD_USES_UART_1 == 1)

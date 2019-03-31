@@ -387,6 +387,7 @@ enum nuart_id
 #if (NBOARD_USES_UART_6 == 1)
     NUART_ID_6,
 #endif
+    NUART_NUMBER_OF_UARTS
 };
 
 typedef void (nuart_callback)(enum nuart_id uart_id, uint32_t events);
@@ -397,11 +398,13 @@ void nuart_term(enum nuart_id uart_id);
 
 uint32_t nuart_capabilities(enum nuart_id uart_id);
 
+bool nuart_is_initialized(enum nuart_id uart_id);
+
+bool nuart_is_idle(enum nuart_id uart_id);
+
 void nuart_control(enum nuart_id uart_id, uint32_t control_code, uint32_t arg);
 
 void nuart_send(enum nuart_id uart_id, const void * data, size_t size);
-
-void nuart_send_sync(enum nuart_id uart_id, const void * data, size_t size);
 
 void nuart_receive(enum nuart_id uart_id, void * data, size_t size);
 

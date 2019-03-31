@@ -43,7 +43,7 @@ extern "C" {
 #define NARCH_HAS_EXCLUSIVE_LS          0
     
 #define NARCH_ISR_STATE_DECL(name)      narch_uint name
-#define NARCH_ISR_DISABLE(local_state)                                      \
+#define NARCH_ISR_LOCK(local_state)                                         \
     do {                                                                    \
         *(local_state) = INTCONbits.GIE;                                    \
         while (INTCONbits.GIE == 1) {                                       \
@@ -51,7 +51,7 @@ extern "C" {
         }                                                                   \
     } while (0)
     
-#define NARCH_ISR_RESTORE(local_state)                                      \
+#define NARCH_ISR_UNLOCK(local_state)                                      \
     INTCONbits.GIE = *(local_state)
     
 typedef uint8_t narch_uint;

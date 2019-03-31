@@ -74,15 +74,15 @@ extern "C" {
  * Atomic CAS depends on NCONFIG option.
  */    
 #if (NCONFIG_USE_EXCLUSIVE_ACCESS == 1)
-#define NARCH_HAS_CAS                   1
+#define NARCH_HAS_ATOMICS                   1
 #else
-#define NARCH_HAS_CAS                   0
+#define NARCH_HAS_ATOMICS                   0
 #endif
     
 /*
  * Atomic set/clear depends on CAS on PIC32
  */
-#if (NARCH_HAS_CAS == 1)
+#if (NARCH_HAS_ATOMICS == 1)
 #define NARCH_HAS_ATOMIC_SET_CLEAR_BIT  1
 #else
 #define NARCH_HAS_ATOMIC_SET_CLEAR_BIT  0
@@ -104,25 +104,31 @@ uint_fast8_t narch_log2(narch_uint x)
     return (uint_fast8_t)((NARCH_DATA_WIDTH - 1u) - __builtin_clz(x));
 }
 
-#if (NARCH_HAS_CAS == 1)
-NPLATFORM_INLINE
-bool narch_compare_and_swap(narch_uint * p, narch_uint oldval, narch_uint newval)
-{
-    return __sync_bool_compare_and_swap(p, oldval, newval);
-}
+#define narch_cpu_stop()                for(;;)
+#define narch_cpu_idle()                
+
+#if (NARCH_HAS_ATOMICS == 1)
+#define narch_compare_and_swap(p, oldval, newval)                           \
+        __sync_bool_compare_and_swap((p), (oldval), (newval))
+
+#define narch_atomic_increment(p)       __sync_fetch_and_add(p, 1)
+
+#define narch_atomic_decrement(p)       __sync_fetch_and_sub(p, 1)
 
 NPLATFORM_INLINE
-void narch_atomic_set_bit(narch_uint * p, uint_fast8_t bit)
+void narch_atomic_set_bit(uint32_t * p, uint_fast8_t bit)
 {
     __sync_fetch_and_or(p, narch_exp2(bit));
 }
 
 NPLATFORM_INLINE
-void narch_atomic_clear_bit(narch_uint * p, uint_fast8_t bit)
+void narch_atomic_clear_bit(uint32_t * p, uint_fast8_t bit)
 {
     __sync_fetch_and_and(p, ~narch_exp2(bit));
 }
 #endif /* (NARCH_HAS_CAS == 1) */
+
+#define NARCH_IS_ISR_ACTIVE()           (_CP0_GET_CAUSE() & _CP0_CAUSE_RIPL_MASK)
 
 #define NARCH_DISABLE_INTERRUPTS()      __builtin_disable_interrupts()
 #define NARCH_ENABLE_INTERRUPTS()       __builtin_enable_interrupts()

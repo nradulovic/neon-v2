@@ -40,6 +40,37 @@
 const uint32_t nconfig_compiled_id = NCONFIG_ID;
 
 /** @} *//*==================================================================*/
+/** @defgroup   ndebug_impl Debug module implementation
+ *  @brief      Debug module implementation
+ *  @{ *//*==================================================================*/
+
+volatile const char * l_text;
+volatile const char * l_file;
+volatile const char * l_func;
+volatile uint32_t     l_line;
+
+#if 0
+NPLATFORM_NORETURN(void nassert(
+        const char * text,
+        const char * file,
+        const char * func,
+        uint32_t line))
+{
+    l_text = text;
+    l_file = file;
+    l_func = func;
+    l_line = line;
+    nlogger_err("Failed assert %s at %s:%u in %s\n\r",
+                text,
+    		func,
+                line,
+                file);
+    NARCH_DISABLE_INTERRUPTS();
+    narch_cpu_stop();
+}
+#endif
+
+/** @} *//*==================================================================*/
 /** @defgroup   nbits_impl Bit operations module implementation
  *  @brief      Bit operations module implementation
  *  @{ *//*==================================================================*/
@@ -130,54 +161,6 @@ void nbitarray_x_clear(nbitarray_x * array, uint_fast8_t bit)
     }
 }
 
-#if (NEON_HAS_BITARRAY_X_ATOMICS == 1)
-/*
- * It is safe to have two independent atomic operations when we first set group
- * value and then set group indicator bit. Even when we are interrupted right
- * in between the calls, the consistency of the array is sustained because
- * group indicator is set after group value.
- *
- * 1. Set group value
- * 2. Set group indicator.
- */
-void nbitarray_x_set_atomic(nbitarray_x * array, uint_fast8_t bit)
-{
-	uint_fast8_t group;
-	uint_fast8_t pos;
-
-	group = bit >> NBITS_LOG2_8(NARCH_DATA_WIDTH); /* bit / NARCH_DATA_WIDTH */
-	pos = bit & (NARCH_DATA_WIDTH - 1u);           /* bit % NARCH_DATA_WIDTH */
-
-	narch_atomic_set_bit(&array[group + 1u], pos);                      /* 1 */
-    narch_atomic_set_bit(&array[0], group);                             /* 2 */
-}
-
-void nbitarray_x_clear_atomic(nbitarray_x * array, uint_fast8_t bit)
-{
-	uint_fast8_t group;
-	uint_fast8_t pos;
-    narch_uint group_val_c;
-    narch_uint group_val_n;
-
-	group = bit >> NBITS_LOG2_8(NARCH_DATA_WIDTH); /* bit / NARCH_DATA_WIDTH */
-	pos = bit & (NARCH_DATA_WIDTH - 1u);           /* bit % NARCH_DATA_WIDTH */
-
-    do {
-        group_val_c = array[group + 1u];
-        group_val_n = group_val_c & ~narch_exp2(pos);
-
-        if (group_val_n == 0u) {
-            narch_atomic_clear_bit(&array[0], group);
-        } else {
-            narch_atomic_set_bit(&array[0], group);
-        }
-    } while (!narch_compare_and_swap(
-            &array[group + 1],
-            group_val_c,
-            group_val_n));
-}
-#endif /* (NEON_HAS_BITARRAY_X_ATOMICS == 1) */
-
 uint_fast8_t nbitarray_x_msbs(const nbitarray_x * array)
 {
 	uint_fast8_t group;
@@ -205,85 +188,35 @@ bool nbitarray_x_is_set(const nbitarray_x * array, uint_fast8_t bit)
  *  @brief      Lightweight queue module implementation
  *  @{ *//*==================================================================*/
 
-void np_lqueue_super_init(struct np_lqueue_super * lqs, uint8_t elements)
+void np_lqueue_super_init(struct nlqueue * lqs, uint8_t elements)
 {
-    lqs->u.m.head = 0u;
-    lqs->u.m.tail = 1u;
-    lqs->u.m.empty = elements;
-    lqs->u.m.mask = elements - 1u;
+    lqs->head = 0u;
+    lqs->tail = 1u;
+    lqs->empty = elements;
+    lqs->mask = elements - 1u;
 }
 
-int_fast8_t np_lqueue_super_head(const struct np_lqueue_super * qb)
+int_fast8_t np_lqueue_super_head(const struct nlqueue * qb)
 {
     int_fast8_t real_head;
 
-    real_head = qb->u.m.head;
+    real_head = qb->head;
     real_head++;
-    real_head &= qb->u.m.mask;
+    real_head &= qb->mask;
 
     return real_head;
 }
 
-int_fast8_t np_lqueue_super_tail(const struct np_lqueue_super * qb)
+int_fast8_t np_lqueue_super_tail(const struct nlqueue * qb)
 {
     int_fast8_t real_tail;
 
-    real_tail = qb->u.m.tail;
+    real_tail = qb->tail;
     real_tail--;
-    real_tail &= qb->u.m.mask;
+    real_tail &= qb->mask;
 
     return real_tail;
 }
-
-#if defined(NLQUEUE_IDX_FIFO_ATOMIC)
-int_fast8_t nlqueue_super_idx_fifo_atomic(struct np_lqueue_super * qb)
-{
-    int_fast8_t retval;
-    struct np_lqueue_super qc;
-    struct np_lqueue_super qn;
-
-    do {
-        qc.u.ui = qb->u.ui;
-        qn.u.ui = qc.u.ui;
-        retval = nlqueue_super_idx_fifo(&qn);
-    } while (!narch_compare_and_swap(&qb->u.ui, qc.u.ui, qn.u.ui));
-    return retval;
-}
-#endif
-
-#if defined(NLQUEUE_IDX_LIFO_ATOMIC)
-int32_t nlqueue_super_idx_lifo_atomic(struct np_lqueue_super * qb)
-{
-    int32_t retval;
-    struct np_lqueue_super qc;
-    struct np_lqueue_super qn;
-
-    do {
-        qc.u.ui = qb->u.ui;
-        qn.u.ui = qc.u.ui;
-        retval = nlqueue_super_idx_lifo(&qn);
-    } while (!narch_compare_and_swap(&qb->u.ui, qc.u.ui, qn.u.ui));
-
-    return retval;
-}
-#endif
-
-#if defined(NLQUEUE_IDX_GET_ATOMIC)
-int_fast8_t nlqueue_super_idx_get_atomic(struct np_lqueue_super * qb)
-{
-    int_fast8_t retval;
-    struct np_lqueue_super qc;
-    struct np_lqueue_super qn;
-
-    do {
-        qc.u.ui = qb->u.ui;
-        qn.u.ui = qc.u.ui;
-        retval = nlqueue_super_idx_get(&qn);
-    } while (!narch_compare_and_swap(&qb->u.ui, qc.u.ui, qn.u.ui));
-
-    return retval;
-}
-#endif
 
 /** @} *//*==================================================================*/
 /** @defgroup   nqueue_pqueue_impl Priority sorted queue module implementation
@@ -328,6 +261,61 @@ void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
 }
 
 /** @} *//*==================================================================*/
+/** @defgroup   nmem_pool)impl Memory pool implementation
+ *  @brief      Memory pool implementation
+ *  @{ *//*==================================================================*/
+
+void np_mem_pool_init(
+        struct nmem_pool * pool,
+        void * storage,
+        size_t storage_size,
+        uint32_t elements)
+{
+
+    size_t element_size = storage_size / elements;
+    char * current_element;
+
+    nlist_sll_init(&pool->next);
+    pool->free = elements;
+    current_element = storage;
+
+    for (uint32_t i = 0u; i < elements; i++) {
+        struct nlist_sll * current_list = (struct nlist_sll *)current_element;
+        nlist_sll_init(current_list);
+        nlist_sll_add_before(&pool->next, current_list);
+        current_element += element_size;
+    }
+}
+
+void * np_mem_pool_alloc(struct nmem_pool * pool)
+{
+    void * retval = NULL;
+    NCRITICAL_STATE_DECL(local)
+
+    NCRITICAL_LOCK(&local, NULL);
+    if (pool->free != 0u) {
+        pool->free--;
+        retval = nlist_sll_next(&pool->next);
+        nlist_sll_remove_from(&pool->next);
+    }
+    NCRITICAL_UNLOCK(&local, NULL);
+
+    return retval;
+}
+
+void np_mem_pool_free(struct nmem_pool * pool, void * mem)
+{
+    struct nlist_sll * current = mem;
+    NCRITICAL_STATE_DECL(local)
+
+    nlist_sll_init(current);
+    NCRITICAL_LOCK(&local, NULL);
+    pool->free++;
+    nlist_sll_add_after(&pool->next, current);
+    NCRITICAL_UNLOCK(&local, NULL);
+}
+
+/** @} *//*==================================================================*/
 /** @defgroup   nlogger_x_impl Extended logger module implementation
  *  @brief      Extended logger module implementation
  *  @{ *//*==================================================================*/
@@ -335,52 +323,108 @@ void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
 #include "neon_uart.h"
 
 #if (NCONFIG_ENABLE_LOGGER == 1)
-static struct logger_q nlqueue(char, NCONFIG_LOGGER_BUFFER_SIZE) g_logger_q;
-#endif
+struct logger_line
+{
+    uint_fast8_t size;
+    char text[NCONFIG_LOGGER_LINE_SIZE];
+} data;
+
+struct logger_pool
+        npool(struct logger_line, NCONFIG_LOGGER_BUFFER_LINES);
+struct logger_queue
+        nlqueue(struct logger_line *, NCONFIG_LOGGER_BUFFER_LINES);
+
+static struct logger_pool  g_logger_pool;
+static struct logger_queue g_logger_queue;
+static struct logger_line * g_current;
+
+static void logger_send_callback(void)
+{
+    np_mem_pool_free(NMEM_POOL(&g_logger_pool), g_current);
+}
 
 static void logger_init(void)
 {
-    NLQUEUE_INIT(&g_logger_q);
+    nuart_init(NUART_ID_5, (nuart_callback *)logger_send_callback);
+    NMEM_POOL_INIT(&g_logger_pool);
+    NLQUEUE_INIT(&g_logger_queue);
 }
 
-struct nlogger_instance np_logger_global =
+bool nlogger_flush(void)
 {
-    .level = NLOGGER_LEVEL_INFO
-};
+    NCRITICAL_STATE_DECL(local)
+    struct logger_line * line;
 
-
-void np_logger_x_print(struct nlogger_instance * instance, uint8_t level,
-    const char * msg, ...)
-{
-    if (instance->level >= level) {
-        char buffer[83];
-        int retval;
-
-        va_list args;
-        va_start(args, msg);
-        retval = vsnprintf(buffer, sizeof(buffer), msg, args);
-        va_end(args);
-
-        if (retval > 0) {
-            if (retval >= (sizeof(buffer) - 2)) {
-                buffer[sizeof(buffer) - 1] = '\r';
-                buffer[sizeof(buffer) - 2] = '\n';
-                retval = sizeof(buffer);
-            }
-            nuart_send_sync(NUART_ID_5, buffer, retval);
-        }
+    if (!nuart_is_initialized(NUART_ID_5)) {
+        return false;
     }
+    NCRITICAL_LOCK(&local, NULL);
+    while (!NLQUEUE_IS_EMPTY(&g_logger_queue)) {
+        line = NLQUEUE_GET(&g_logger_queue);
+        NCRITICAL_UNLOCK(&local, NULL);
+
+        if (line->size == 0) {
+            continue;
+        }
+        while (!nuart_is_idle(NUART_ID_5)) {
+            narch_cpu_idle();
+        }
+        g_current = line;
+        nuart_send(NUART_ID_5, &line->text[0], line->size);
+        NCRITICAL_LOCK(&local, NULL);
+    }
+    NCRITICAL_UNLOCK(&local, NULL);
+    return true;
 }
 
-void np_logger_x_set_level(struct nlogger_instance * instance, uint8_t level)
+bool nlogger_print(const char * msg, ...)
 {
-    instance->level = level;
-}
+    NCRITICAL_STATE_DECL(local)
+    struct logger_line * line;
+    uint_fast8_t empty;
+    int retval;
 
-void np_logger_x_set_drain(struct nlogger_instance * instance)
-{
+    line = np_mem_pool_alloc(NMEM_POOL(&g_logger_pool));
 
+    if (line == NULL) {
+        return false;
+    }
+
+    va_list args;
+    va_start(args, msg);
+    retval = vsnprintf(
+            &line->text[0],
+            sizeof(line->text),
+            msg,
+            args);
+    va_end(args);
+
+    line->size = 0;
+
+    if (retval < 0) {
+        np_mem_pool_free(NMEM_POOL(&g_logger_pool), line);
+        return false;
+    }
+    if ((size_t)retval >= sizeof(line->text)) {
+        retval  = sizeof(line->text);
+        line->text[sizeof(line->text) - 3u] = '>';
+        line->text[sizeof(line->text) - 2u] = '\r';
+        line->text[sizeof(line->text) - 1u] = '\n';
+    }
+    line->size = retval;
+
+    NCRITICAL_LOCK(&local, NULL);
+    NLQUEUE_PUT_FIFO(&g_logger_queue, line);
+    NCRITICAL_UNLOCK(&local, NULL);
+
+    empty = NLQUEUE_EMPTY(&g_logger_queue);
+
+    if (empty <= (NLQUEUE_SIZE(&g_logger_queue) / 2)) {
+        return nlogger_flush();
+    }
+    return true;
 }
+#endif /* (NCONFIG_ENABLE_LOGGER == 1) */
 
 /** @} *//*==================================================================*/
 /** @defgroup   nlogger_impl Basic logger module implementation
@@ -392,81 +436,124 @@ void np_logger_x_set_drain(struct nlogger_instance * instance)
  *  @brief      Event implementation
  *  @{ *//*==================================================================*/
 
+#if (NCONFIG_EVENT_USE_DYNAMIC == 1)
+static inline
+bool event_ref_down(const struct nevent * event)
+{
+    bool retval;
 
+    if (event->pool != NULL) {
+        struct nevent * l_event = (struct nevent *)event;
+        l_event->ref--;
+        retval = !(l_event->ref == 0u);
+    } else {
+        retval = false;
+    }
+    return retval;
+}
+#else
+#define event_ref_down(a_event)
+#endif
+
+#if (NCONFIG_EVENT_USE_DYNAMIC == 1)
+void event_ref_up(const struct nevent * event)
+{
+    if (event->pool != NULL) {
+        struct nevent * l_event = (struct nevent *)event;
+
+        l_event->ref++;
+    }
+}
+#else
+#define event_ref_up(a_event)
+#endif
+
+#if (NCONFIG_EVENT_USE_DYNAMIC == 1)
+void event_delete(const struct nevent * event)
+{
+    if (event_ref_down(event)) {
+        np_mem_pool_free(event->pool, (void *)event);
+    }
+}
+#else
+#define event_delete(a_event)
+#endif
+
+#if (NCONFIG_EVENT_USE_DYNAMIC == 1)
+void * nevent_create(struct nmem_pool * pool, uint_fast16_t id)
+{
+    struct nevent * event;
+
+    event = np_mem_pool_alloc(pool);
+
+    if (event == NULL) {
+        return NULL;
+    }
+    event->id = id;
+    event->ref = 0u;
+    event->pool = pool;
+
+    return event;
+}
+#endif
 
 /** @} *//*==================================================================*/
 /** @defgroup   nstate_machine_processor_impl State machine processor module implementation
  *  @brief      State machine processor module implementation
  *  @{ *//*==================================================================*/
 
-#if (NCONFIG_EVENT_USE_EVENT_X == 1)
-#define NSMP_EVENT(event)               make_event(&g_smp_events[(event)])
-#else
-#define NSMP_EVENT(event)               make_signal(event)
-#endif
+#define sm_event(event)                 &g_sm_events[(event)]
 
-#if (NCONFIG_EVENT_USE_EVENT_X == 1)
-NPLATFORM_INLINE
-struct nevent make_event(const struct nevent_x * event_x)
+static const struct nevent g_sm_events[4] =
 {
-    struct nevent event;
-
-    event.u.x = event_x;
-
-    return event;
-}
-#else
-NPLATFORM_INLINE
-struct nevent make_signal(uint_fast8_t signal)
-{
-    struct nevent event;
-
-    event.u.signal = signal;
-
-    return event;
-}
-#endif
-
-
-/*
- * NOTE: We don't use indexed initialisation here, so it must be ensured that
- *       the order of events in this array match the enumerator nsmp_events.
- */
-#if (NCONFIG_EVENT_USE_EVENT_X == 1)
-static const struct nevent_x g_smp_events[4] =
-{
-    NEVENT_X_INITIALIZER(NSM_SUPER, sizeof(struct nevent)),
-    NEVENT_X_INITIALIZER(NSM_ENTRY, sizeof(struct nevent)),
-    NEVENT_X_INITIALIZER(NSM_EXIT,  sizeof(struct nevent)),
-    NEVENT_X_INITIALIZER(NSM_INIT,  sizeof(struct nevent))
+    NEVENT_INITIALIZER(NSM_SUPER),
+    NEVENT_INITIALIZER(NSM_ENTRY),
+    NEVENT_INITIALIZER(NSM_EXIT),
+    NEVENT_INITIALIZER(NSM_INIT)
 };
+
+#if (NCONFIG_EPA_USE_HSM == 1)
+void sm_dispatch(struct nsm * sm, const struct nevent * event)
+{
+    sm->type.dispatch(sm, event);
+}
+#else
+#define sm_dispatch(a_sm, a_event)      sm_fsm_dispatch((a_sm), (a_event))
 #endif
 
-static void sm_fsm_dispatch(struct nsm * sm, struct nevent event)
+static void sm_init(struct nsm * sm)
 {
-    naction                     ret;
+    NREQUIRE(sm->state != NULL);
+
+#if (NCONFIG_EPA_USE_HSM == 1)
+    if (sm->type.id == NEPA_FSM_TYPE) {
+        sm->type.dispatch = fsm_dispatch;
+    } else {
+        sm->type.dispatch = hsm_dispatch;
+    }
+#endif
+    NPLATFORM_UNUSED_ARG(sm);
+}
+
+static nsm_action sm_fsm_dispatch(struct nsm * sm, const struct nevent * event)
+{
+    nsm_action                  ret;
     nstate_fn *                 current_state;
 
     current_state = sm->state;
 
     while ((ret = current_state(sm, event)) == NP_SMP_TRANSIT_TO) {
-#if (NDEBUG_IS_ENABLED == 1)
-        ret = current_state(sm, NSMP_EVENT(NSM_EXIT));
+        ret = current_state(sm, sm_event(NSM_EXIT));
         NREQUIRE((ret == NACTION_IGNORED) || (ret == NACTION_HANDLED));
-#else
-        (void)current_state(sm, NSMP_EVENT(NSM_EXIT));
-#endif
         current_state = sm->state;
-#if (NDEBUG_IS_ENABLED == 1)
-        ret = current_state(sm, NSMP_EVENT(NSM_ENTRY));
+        ret = current_state(sm, sm_event(NSM_ENTRY));
         NREQUIRE((ret == NACTION_IGNORED) || (ret == NACTION_HANDLED));
-#else
-        (void)current_state(sm, NSMP_EVENT(NSM_ENTRY));
-#endif
-        event = NSMP_EVENT(NSM_INIT);
+        event = sm_event(NSM_INIT);
     }
     NREQUIRE(ret != NP_SMP_SUPER_STATE);
     sm->state = current_state;
+
+    return ret;
 }
 
 /** @} *//*==================================================================*/
@@ -478,146 +565,93 @@ static void sm_fsm_dispatch(struct nsm * sm, struct nevent event)
  */
 static struct nepa_schedule
 {
-	struct nepa * current;                      /**< Speed optimization,
+    struct nepa *               current;        /**< Speed optimization,
                                                  *   current thread priority. */
     struct nepa_queue
     {
 #if (NCONFIG_EPA_INSTANCES <= NBITARRAY_S_MAX_SIZE)
-        nbitarray_s bitarray;                   /**< Simple bit array is used
+        nbitarray_s                 bitarray;   /**< Simple bit array is used
                                                  * when small number of task
                                                  * is used. */
 #else
-        nbitarray_x bitarray[NBITARRAY_DEF(NCONFIG_EPA_INSTANCES)];
+        nbitarray_x                 bitarray
+                [NBITARRAY_DEF(NCONFIG_EPA_INSTANCES)];
 #endif
-    } ready;                                    /**< Ready queue */
+    }                           ready;          /**< Ready queue */
 #if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
-    bool should_exit = false;
+    volatile bool               should_exit;
 #endif
-    struct nepa mempool[NCONFIG_EPA_INSTANCES]; /**< EPA instances. */
 } g_epa_schedule;
 
+#define epa_from_prio(a_prio)           (g_nsys_epa_list[(a_prio)])
 
-
-static naction default_idle_epa(struct nsm * sm, struct nevent event)
-{
-    NPLATFORM_UNUSED_ARG(sm);
-    NPLATFORM_UNUSED_ARG(event);
-
-    return NACTION_HANDLED;
-}
-
-#define epa_from_prio(a_ctx, a_prio)    (&(a_ctx)->mempool[a_prio])
-
-#if (NCONFIG_MEM_OPTIMIZATION == 0)
-#define prio_from_epa(a_ctx, a_epa)     ((a_epa)->task.prio)
-#else
-#define prio_from_epa(a_ctx, a_epa)     ((a_epa) - &(a_ctx)->mempool[0])
-#endif
+#define prio_from_epa(a_epa)            ((a_epa)->task.prio)
 
 #if (NCONFIG_EPA_INSTANCES <= NBITARRAY_S_MAX_SIZE)
 
-#if (NEON_HAS_BITARRAY_S_ATOMICS == 1)
-#define HAS_QUEUE_ATOMICS               1
-#define PRIO_QUEUE_INSERT_ATOMIC(a_queue, a_prio)                           \
-        nbitarray_s_set_atomic(&(a_queue)->bitarray, (a_prio))
-
-#define PRIO_QUEUE_REMOVE_ATOMIC(a_queue, a_prio)                           \
-        nbitarray_s_clear_atomic(&(a_queue)->bitarray, (a_prio))
-#else
-#define HAS_QUEUE_ATOMICS               0
-#endif /* (NEON_HAS_BITARRAY_S_ATOMICS == 1) */
-
-#define PRIO_QUEUE_INSERT(a_queue, a_prio)                                  \
+#define prio_queue_insert(a_queue, a_prio)                                  \
         nbitarray_s_set(&(a_queue)->bitarray, (a_prio))
 
-#define PRIO_QUEUE_REMOVE(a_queue, a_prio)                                       \
+#define prio_queue_remove(a_queue, a_prio)                                       \
         nbitarray_s_clear(&(a_queue)->bitarray, (a_prio))
 
-#define PRIO_QUEUE_GET_HIGHEST(a_queue)                                     \
+#define prio_queue_get_highest(a_queue)                                     \
         nbitarray_s_msbs(&(a_queue)->bitarray)
 
-#define PRIO_QUEUE_IS_SET(a_queue, a_prio)                                  \
+#define prio_queue_is_set(a_queue, a_prio)                                  \
         nbitarray_s_is_set(&(a_queue)->bitarray, (a_prio))
-#else /* (NEON_HAS_BITARRAY_S_ATOMICS == 1) */
 
-#if (NEON_HAS_BITARRAY_X_ATOMICS == 1)
-#define HAS_QUEUE_ATOMICS               1
-#define PRIO_QUEUE_INSERT_ATOMIC(a_queue, a_prio)                                \
-        nbitarray_x_set_atomic(&(a_queue)->bitarray[0], (a_prio))
-
-#define PRIO_QUEUE_REMOVE_ATOMIC(a_queue, a_prio)                                \
-        nbitarray_x_clear_atomic(&(a_queue)->bitarray[0], (a_prio))
-#else
-#define HAS_QUEUE_ATOMICS               0
-#endif /* (NEON_HAS_BITARRAY_X_ATOMICS == 1) */
+#else /* (NCONFIG_EPA_INSTANCES <= NBITARRAY_S_MAX_SIZE) */
 
 #define queue_insert(a_queue, a_prio)                                       \
         nbitarray_x_set(&(a_queue)->bitarray[0], (a_prio))
 
-#define PRIO_QUEUE_REMOVE(a_queue, a_prio)                                       \
+#define prio_queue_remove(a_queue, a_prio)                                       \
         nbitarray_x_clear(&(a_queue)->bitarray[0], (a_prio))
 
-#define PRIO_QUEUE_GET_HIGHEST(a_queue)                                          \
+#define prio_queue_get_highest(a_queue)                                          \
         nbitarray_x_msbs(&(a_queue)->bitarray[0])
 
-#define PRIO_QUEUE_IS_SET(a_queue, a_prio)                                       \
+#define prio_queue_is_set(a_queue, a_prio)                                       \
         nbitarray_x_is_set(&(a_queue)->bitarray[0], (a_prio))
-#endif
+#endif /* (NCONFIG_EPA_INSTANCES <= NBITARRAY_S_MAX_SIZE) */
 
-
-
-static void event_q_init(
-        struct nevent_q * event_q,
-        const struct nepa_define * define)
-{
-    NLQUEUE_INIT_DYNAMIC(event_q, define->event_q_size, define->event_q_storage);
-}
-
-static void sm_init(struct nsm * sm, const struct nepa_define * define)
-{
-#if (NCONFIG_EPA_USE_HSM == 1)
-    sm->dispatch = define->type = NEPA_HSM_TYPE ? hsm_dispatch : fsm_dispatch;
-#endif
-    sm->state = define->init_state;
-    sm->ws = define->ws;
-}
-
-#if (NCONFIG_MEM_OPTIMIZATION == 0)
 static void task_init(struct ntask * task, uint_fast8_t prio)
 {
     task->prio = prio;
 }
-#endif
 
-struct nepa * nepa_create(
-        uint_fast8_t prio,
-        const struct nepa_define * define)
+static void equeue_init(struct nequeue * equeue)
 {
-    struct nepa_schedule * ctx = &g_epa_schedule;
-    struct nepa * epa;
-
-    NREQUIRE(define != NULL);
-    NREQUIRE(prio < NCONFIG_EPA_INSTANCES);
-
-    epa = epa_from_prio(ctx, prio);
-
-    NREQUIRE(NSIGNATURE_OF(epa) != NSIGNATURE_EPA);
-    NOBLIGATION(NSIGNATURE_IS(epa, NSIGNATURE_EPA));
-
-#if (NCONFIG_MEM_OPTIMIZATION == 0)
-    task_init(&epa->task, prio);
-#endif
-    sm_init(&epa->sm, define);
-    event_q_init(&epa->event_q, define);
-
-    return epa;
+    NREQUIRE((equeue->np_qb_buffer != NULL) && (equeue->super.empty != 0u));
+    NREQUIRE((equeue->super.head = 0u) && (equeue->super.tail == 1u));
+    NPLATFORM_UNUSED_ARG(equeue);
 }
 
-void nepa_delete(struct nepa * epa)
+static void epa_init_all(void)
 {
-	NREQUIRE(NSIGNATURE_OF(epa) == NSIGNATURE_EPA);
-    NOBLIGATION(NSIGNATURE_IS(epa, ~NSIGNATURE_EPA));
-    (void)epa;
+    for (uint_fast8_t prio = 0u; prio < NCONFIG_EPA_INSTANCES; prio++) {
+        struct nepa * epa;
+
+        epa = epa_from_prio(prio);
+
+        if (epa != NULL) {
+            sm_init(&epa->sm);
+            task_init(&epa->task, prio);
+            equeue_init(&epa->equeue);
+            nepa_send_event(epa, sm_event(NSM_INIT));
+        }
+    }
+}
+
+struct nepa * nepa_current(void)
+{
+    return g_epa_schedule.current;
+}
+
+nerror nepa_send_signal(struct nepa * epa, uint_fast16_t signal)
+{
+    return EOK;
 }
 
 /*
@@ -634,61 +668,59 @@ void nepa_delete(struct nepa * epa)
  *    be that queue_insert_atomic is called multiple times, which is not
  *    dangerous, it only cost additional CPU execution time.
  */
-nerror nepa_send_event(struct nepa * epa, struct nevent event)
+nerror nepa_send_event(struct nepa * epa, const struct nevent * event)
 {
-    struct nepa_schedule * ctx = &g_epa_schedule;
-    nerror error;
+    NCRITICAL_STATE_DECL(local)
+    int_fast8_t idx;
+    nerror error = EOK;
 
     NREQUIRE(NSIGNATURE_OF(epa) == NSIGNATURE_EPA);
 
-#if (NCONFIG_EVENT_USE_EVENT_X == 1)
+    event_ref_up(event);
+    NCRITICAL_LOCK(&local, NULL);
+    idx = nlqueue_super_idx_fifo(NLQUEUE(&epa->equeue));
 
+    if (idx >= 0) {
+        struct nepa_schedule * ctx = &g_epa_schedule;
 
-#if defined(PRIO_QUEUE_INSERT_ATOMIC) && defined(NLQUEUE_IDX_FIFO_ATOMIC) \
-    && defined(NLQUEUE_IS_FIRST_ATOMIC)
-    {
-        int_fast8_t idx;
-
-        idx = NLQUEUE_IDX_FIFO_ATOMIC(&epa->event_q);
-
-        if (idx >= 0) {
-            NLQUEUE_IDX_REFERENCE(&epa->event_q, idx) = event;
-                                                               /* See note 1 */
-                                                                        /* 1a*/
-            if (NLQUEUE_IS_FIRST_ATOMIC(&epa->event_q)) {
-                PRIO_QUEUE_INSERT_ATOMIC(&ctx->ready, prio_from_epa(ctx, epa));
-            }
-            error = EOK;
-        } else {
-            error = -EOBJ_INVALID;
-        }
+        NLQUEUE_IDX_REFERENCE(&epa->equeue, idx) = event;
+        prio_queue_insert(&ctx->ready, prio_from_epa(epa));
+    } else {
+        event_ref_down(event);
+        error = -EOBJ_INVALID;
     }
-#else
-    {
-        NCRITICAL_STATE_DECL(local)
-        int_fast8_t idx;
-
-        NCRITICAL_LOCK(&local, NULL);
-        idx = NLQUEUE_IDX_FIFO(&epa->event_q);
-
-        if (idx >= 0) {
-            NLQUEUE_IDX_REFERENCE(&epa->event_q, idx) = event;
-            PRIO_QUEUE_INSERT(&ctx->ready, prio_from_epa(ctx, epa));
-            error = EOK;
-        } else {
-            error = -EOBJ_INVALID;
-        }
-        NCRITICAL_UNLOCK(&local, NULL);
-    }
-#endif
-#endif
+    NCRITICAL_UNLOCK(&local, NULL);
     return error;
 }
 
+
+static nsm_action idle_state_init(struct nsm * sm, const struct nevent * event)
+{
+    NPLATFORM_UNUSED_ARG(sm);
+    NPLATFORM_UNUSED_ARG(event);
+
+    return nsm_event_handled();
+}
+
+static struct idle_epa_queue nevent_queue(2) idle_epa_queue;
+struct nepa g_nsys_epa_idle = NEPA_INITIALIZER(
+            &idle_epa_queue, NEPA_FSM_TYPE, idle_state_init, NULL);
+
+
 void nsys_init(void)
 {
+#if (NCONFIG_ENABLE_LOGGER == 1)
     logger_init();
+#endif
     nboard_init();
+#if (NCONFIG_ENABLE_LOGGER == 1)
+    nlogger_flush();
+#endif
+}
+
+bool nsys_is_scheduler_started(void)
+{
+    return !!g_epa_schedule.current;
 }
 
 void nsys_timer_isr(void)
@@ -705,18 +737,9 @@ void nsys_schedule_start(void)
 NPLATFORM_NORETURN(void nsys_schedule_start(void))
 #endif
 {
-    static const struct nepa_define idle_epa = {
-        .event_q_size = 0,
-        .event_q_storage = NULL,
-        .init_state = default_idle_epa,
-        .type = NEPA_FSM_TYPE,
-        .ws = NULL,
-    };
     struct nepa_schedule * ctx = &g_epa_schedule;
 
-    if (!PRIO_QUEUE_IS_SET(&ctx->ready, 0)) {                           /* 1 */
-        nepa_create(0, &idle_epa);
-    }
+    epa_init_all();
 
 #if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
                                     /* While there are ready tasks in system */
@@ -725,41 +748,24 @@ NPLATFORM_NORETURN(void nsys_schedule_start(void))
     while (true) {
 #endif
         struct nepa * epa;
-        struct nevent event;
+        const struct nevent * event;
         uint_fast8_t prio;
                                                     /* Get the highest level */
-        prio = PRIO_QUEUE_GET_HIGHEST(&ctx->ready);
+        prio = prio_queue_get_highest(&ctx->ready);
                                                        /* Fetch the new task */
-        epa = epa_from_prio(ctx, prio);
+        epa = epa_from_prio(prio);
         ctx->current = epa;
+        NCRITICAL_STATE_DECL(local)
+        NCRITICAL_LOCK(&local, NULL);
 
-#if defined(NLQUEUE_IS_FIRST_ATOMIC) && defined(PRIO_QUEUE_REMOVE_ATOMIC) \
-    && defined(NLQUEUE_IDX_GET_ATOMIC)
-        if (NLQUEUE_IS_FIRST_ATOMIC(&epa->event_q)) {
-            PRIO_QUEUE_REMOVE_ATOMIC(&ctx->ready, prio);
+        if (NLQUEUE_IS_FIRST(&epa->equeue)) {
+            prio_queue_remove(&ctx->ready, prio);
         }
-
-        event = NLQUEUE_IDX_REFERENCE(
-                &epa->event_q,
-                NLQUEUE_IDX_GET_ATOMIC(&epa->event_q));
-#else
-        {
-            NCRITICAL_STATE_DECL(local)
-            NCRITICAL_LOCK(&local, NULL);
-
-            if (NLQUEUE_IS_FIRST(&epa->event_q)) {
-                PRIO_QUEUE_REMOVE(&ctx->ready, prio);
-            }
-            event = NLQUEUE_GET(&epa->event_q);
-            NCRITICAL_UNLOCK(&local, NULL);
-        }
-#endif
+        event = NLQUEUE_GET(&epa->equeue);
+        NCRITICAL_UNLOCK(&local, NULL);
                                                           /* Execute the EPA */
-#if (NCONFIG_EPA_USE_HSM == 1)
-        epa->dispatch.dispatch(&epa->sm, event);
-#else
-        sm_fsm_dispatch(&epa->sm, event);
-#endif
+        sm_dispatch(&epa->sm, event);
+        event_delete(event);
     }
 
 #if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)

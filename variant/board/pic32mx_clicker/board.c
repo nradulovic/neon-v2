@@ -21,6 +21,7 @@
 #include "pic32_uart.h"
 #include "pic32_isr.h"
 #include "pic32_osc.h"
+#include "neon.h"
 #include <xc.h>
 
 // PIC32MX534F064H Configuration Bit Settings
@@ -71,6 +72,8 @@ void nboard_init(void)
     /* Disable JTAG since it is not available on this board */
     DDPCONbits.JTAGEN = 0;
 
+    nlogger_info("PIC32MX_CLICKER V%u\r\n", 100);
+    
     /* Initialise architecture */
     narch_init();
 

@@ -17,7 +17,9 @@
  */
 
 #include "board_variant/board.h"
+#include "../../../mcc_generated_files/mcc.h"
 
+#if 0
 // PIC18F46K40 Configuration Bit Settings
 
 // 'C' source line config statements
@@ -80,8 +82,9 @@
 
 // CONFIG6H
 #pragma config EBTRB = OFF      // Boot Block Table Read Protection bit (Boot Block (000000-0007FFh) not protected from table reads executed in other blocks)
+#endif
 
 void nboard_init(void)
 {
-    
+    SYSTEM_Initialize();
 }
