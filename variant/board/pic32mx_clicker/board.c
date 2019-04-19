@@ -72,7 +72,7 @@ void nboard_init(void)
     /* Disable JTAG since it is not available on this board */
     DDPCONbits.JTAGEN = 0;
 
-    nlogger_info("PIC32MX_CLICKER V%u\r\n", 100);
+    nlogger_info(NBOARD_PIC32MX_CLICKER " V1.00", 0);
     
     /* Initialise architecture */
     narch_init();

@@ -17,12 +17,11 @@
  */
 
 #include <xc.h>
-#include <sys/attribs.h>
 
 #include "arch_variant/arch.h"
 
-#include "pic32_osc.h"
-#include "pic32_isr.h"
+#include "pic18_osc.h"
+#include "pic18_isr.h"
 #include "neon.h"
 
 #if (NCONFIG_ARCH_TIMER_SOURCE == 1)
@@ -45,13 +44,12 @@ static void timer_init(void)
 
 void narch_init(void)
 {
-    nlogger_info("PIC32 ARCH: %u shadow register set(s)",
-            (_CP0_GET_SRSCTL() >> _CP0_SRSCTL_HSS_POSITION) + 1u);
-    nlogger_info("PIC32 ARCH: Processor %x Version %x",
-            (_CP0_GET_PRID() >> 8) & 0xffu,
-            (_CP0_GET_PRID() >> 0) & 0xffu);
-    /* Setup interrupt chip: enable multivector mode */
-    pic32_isr_init();
+    nlogger_info("PIC18 ARCH: Processor %x Version %x",
+            *(const uint16_t *)0x3ffffe,
+            *(const uint16_t *)0x3ffffc);
+    /* Setup interrupt chip */
+    pic18_isr_init();
+    
 #if (NCONFIG_ARCH_TIMER_SOURCE == 1)
     timer_init();
 #endif
@@ -111,3 +109,38 @@ void PIC32_SOFT_ISR_DECL(_CORE_TIMER_VECTOR, PIC32_NEON_ISR_IPL_MAX) arch_timer_
     nsys_timer_isr();
 }
 #endif /* (NCONFIG_ARCH_TIMER_SOURCE == 1) */
+
+void narch_cpu_stop(void)
+{
+    for (;;);
+}
+
+narch_uint narch_exp2(uint_fast8_t x)
+{
+    static const narch_uint exp2[8] =
+    {
+        0x01,
+        0x02,
+        0x04,
+        0x08,
+        0x10,
+        0x20,
+        0x40,
+        0x80
+    };
+    return exp2[x];
+}
+
+uint_fast8_t narch_log2(narch_uint x)
+{
+    static const uint_fast8_t log2_table[256] =
+    {
+#define LT(n) n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n
+        0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,
+        LT(4), LT(5), LT(5), LT(6), LT(6), LT(6), LT(6),
+        LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7), LT(7)
+#undef LT
+    };
+    
+    return log2_table[x];
+}

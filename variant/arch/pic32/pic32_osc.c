@@ -97,7 +97,7 @@ uint32_t pic32_osc_get_pbclk_hz(void)
 
 void pic32_osc_new_source(enum pic32_osc_source source)
 {
-    nlogger_info("PIC32 OSC: Setting clock source to %d\r\n", source);
+    nlogger_info("PIC32 OSC: Setting clock source to %d", source);
 
     SYSKEY = 0x00000000;
 	SYSKEY = 0xAA996655;
@@ -114,6 +114,6 @@ void pic32_osc_new_source(enum pic32_osc_source source)
 
     while (OSCCONbits.OSWEN == 1);
 
-    nlogger_info("PIC32 OSC: CPU clock %uHz\r\n", pic32_osc_get_sysclk_hz());
-    nlogger_info("PIC32 OSC: PB  clock %uHz\r\n", pic32_osc_get_pbclk_hz());
+    nlogger_info("PIC32 OSC: CPU clock %uHz", pic32_osc_get_sysclk_hz());
+    nlogger_info("PIC32 OSC: PB  clock %uHz", pic32_osc_get_pbclk_hz());
 }

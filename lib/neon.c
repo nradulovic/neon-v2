@@ -49,7 +49,7 @@ volatile const char * l_file;
 volatile const char * l_func;
 volatile uint32_t     l_line;
 
-#if 0
+#if (NCONFIG_ENABLE_DEBUG == 1)
 NPLATFORM_NORETURN(void nassert(
         const char * text,
         const char * file,
@@ -60,12 +60,17 @@ NPLATFORM_NORETURN(void nassert(
     l_file = file;
     l_func = func;
     l_line = line;
-    nlogger_err("Failed assert %s at %s:%u in %s\n\r",
-                text,
+    nlogger_err(
+            "\r\nFAILED ASSERTION at:\r\n file: %s\r\n func: %s()\r\n line: %u",
+            file,
     		func,
-                line,
-                file);
-    NARCH_DISABLE_INTERRUPTS();
+            line);
+    nlogger_err("Expression that failed:\r\n '%s'", text);
+    nlogger_err("Build details:\r\n %s - %s", 
+            nplatform_date, 
+            nplatform_time);
+    nlogger_err("Platform:\r\n %s", nplatform_id);
+    nlogger_flush();
     narch_cpu_stop();
 }
 #endif
@@ -310,7 +315,7 @@ void np_mem_pool_free(struct nmem_pool * pool, void * mem)
 
     NCRITICAL_LOCK(&local, NULL);
     pool->free++;
-    nlist_sll_add_after(&pool->next, current);
+    nlist_sll_add_before(&pool->next, current);
     NCRITICAL_UNLOCK(&local, NULL);
 }
 
@@ -319,112 +324,87 @@ void np_mem_pool_free(struct nmem_pool * pool, void * mem)
  *  @brief      Extended logger module implementation
  *  @{ *//*==================================================================*/
 
-#include "neon_uart.h"
-
 #if (NCONFIG_ENABLE_LOGGER == 1)
-struct logger_line
+
+#include "neon_stdout.h"
+
+#if !defined(NBOARD_USES_STD_STREAM) || (NBOARD_USES_STD_STREAM == 0)
+#error "Logger is enabled but board didn't define a stream."
+#endif
+
+static struct logger_buffer
 {
-    uint_fast8_t size;
-    char text[NCONFIG_LOGGER_LINE_SIZE];
-} data;
-
-struct logger_pool
-        npool(struct logger_line, NCONFIG_LOGGER_BUFFER_LINES);
-struct logger_queue
-        nlqueue(struct logger_line *, NCONFIG_LOGGER_BUFFER_LINES);
-
-static struct logger_pool  g_logger_pool;
-static struct logger_queue g_logger_queue;
-static struct logger_line * g_current;
+    uint_fast16_t current;
+    char text[NCONFIG_LOGGER_BUFFER_SIZE];
+} g_logger_buffer;
 
 
 static void logger_send_callback(void)
 {
-    np_mem_pool_free(NMEM_POOL(&g_logger_pool), g_current);
+    g_logger_buffer.current = 0u;
 }
 
 static void logger_init(void)
 {
-    nuart_init(NUART_ID_5, (nuart_callback *)logger_send_callback);
-    NMEM_POOL_INIT(&g_logger_pool);
-    NLQUEUE_INIT(&g_logger_queue);
+    NSTREAM_INIT(logger_send_callback);
 }
 
 bool nlogger_flush(void)
 {
-    NCRITICAL_STATE_DECL(local)
-    struct logger_line * line;
-
-    if (!nuart_is_initialized(NUART_ID_5)) {
+    if (!NSTREAM_IS_INITIALIZED()) {
         return false;
     }
-    NCRITICAL_LOCK(&local, NULL);
-    while (!NLQUEUE_IS_EMPTY(&g_logger_queue)) {
-        line = NLQUEUE_GET(&g_logger_queue);
-        NCRITICAL_UNLOCK(&local, NULL);
-
-        if (line->size == 0) {
-            continue;
-        }
-        g_current = line;
-        nuart_send(NUART_ID_5, &line->text[0], line->size);
-        
-        while (!nuart_is_idle(NUART_ID_5)) {
-        narch_cpu_idle();
-        }
-        NCRITICAL_LOCK(&local, NULL);
+    if (g_logger_buffer.current == 0u) {
+        return true;
     }
-    NCRITICAL_UNLOCK(&local, NULL);
-
+    NSTREAM_SEND(&g_logger_buffer.text[0], g_logger_buffer.current);
+    
+    /* NOTE:
+     * We need a cast to volatile type in order to prevent compiler from
+     * optimizing the variable away.
+     */
+    while (*((volatile uint_fast16_t *)&g_logger_buffer.current) != 0u) {
+        narch_cpu_idle();
+    }
+    
     return true;
 }
 
 bool nlogger_print(const char * msg, ...)
 {
-    NCRITICAL_STATE_DECL(local)
-    struct logger_line * line;
-    uint_fast8_t empty;
+    uint_fast16_t empty;
     int retval;
 
-    line = np_mem_pool_alloc(NMEM_POOL(&g_logger_pool));
-
-    if (line == NULL) {
+    empty = sizeof(g_logger_buffer.text) - g_logger_buffer.current;
+    
+    if (empty < 10u) {
         return false;
     }
-
     va_list args;
     va_start(args, msg);
     retval = vsnprintf(
-            &line->text[0],
-            sizeof(line->text),
+            &g_logger_buffer.text[g_logger_buffer.current],
+            empty - 2u, /* Subtract space for \r\n characters */
             msg,
             args);
     va_end(args);
-
-    line->size = 0;
-
-    if (retval < 0) {
-        np_mem_pool_free(NMEM_POOL(&g_logger_pool), line);
+    
+    if (retval <= 0) {
         return false;
     }
-    if ((size_t)retval >= sizeof(line->text)) {
-        retval  = sizeof(line->text);
-        line->text[sizeof(line->text) - 3u] = '>';
-        line->text[sizeof(line->text) - 2u] = '\r';
-        line->text[sizeof(line->text) - 1u] = '\n';
-    }
-    line->size = retval;
 
-    NCRITICAL_LOCK(&local, NULL);
-    NLQUEUE_PUT_FIFO(&g_logger_queue, line);
-    NCRITICAL_UNLOCK(&local, NULL);
-
-    empty = NLQUEUE_EMPTY(&g_logger_queue);
-
-    if (empty <= (NLQUEUE_SIZE(&g_logger_queue) / 2)) {
+    if ((unsigned)retval > (empty - 2u)) {
+        g_logger_buffer.text[sizeof(g_logger_buffer.text) - 3u] = '>';
+        g_logger_buffer.text[sizeof(g_logger_buffer.text) - 2u] = '\r';
+        g_logger_buffer.text[sizeof(g_logger_buffer.text) - 1u] = '\n';
+        g_logger_buffer.current = sizeof(g_logger_buffer.text) - 1u;
         return nlogger_flush();
+    } else {
+        g_logger_buffer.current += retval;
+        g_logger_buffer.text[g_logger_buffer.current++] = '\r';
+        g_logger_buffer.text[g_logger_buffer.current++] = '\n';
+        return true;
     }
-    return true;
 }
 #endif /* (NCONFIG_ENABLE_LOGGER == 1) */
 
@@ -636,22 +616,6 @@ static void equeue_init(struct nequeue * equeue)
     NPLATFORM_UNUSED_ARG(equeue);
 }
 
-static void epa_init_all(void)
-{
-    for (uint_fast8_t prio = 0u; prio < NCONFIG_EPA_INSTANCES; prio++) {
-        struct nepa * epa;
-
-        epa = epa_from_prio(prio);
-
-        if (epa != NULL) {
-            sm_init(&epa->sm);
-            task_init(&epa->task, prio);
-            equeue_init(&epa->equeue);
-            nepa_send_event(epa, sm_event(NSM_INIT));
-        }
-    }
-}
-
 struct nepa * nepa_current(void)
 {
     return g_epa_schedule.current;
@@ -747,7 +711,18 @@ NPLATFORM_NORETURN(void nsys_schedule_start(void))
 {
     struct nepa_schedule * ctx = &g_epa_schedule;
 
-    epa_init_all();
+    for (uint_fast8_t prio = 0u; prio < NCONFIG_EPA_INSTANCES; prio++) {
+        struct nepa * epa;
+
+        epa = epa_from_prio(prio);
+
+        if (epa != NULL) {
+            sm_init(&epa->sm);
+            task_init(&epa->task, prio);
+            equeue_init(&epa->equeue);
+            nepa_send_event(epa, sm_event(NSM_INIT));
+        }
+    }
 
 #if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
                                     /* While there are ready tasks in system */

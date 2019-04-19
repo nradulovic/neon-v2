@@ -26,8 +26,8 @@
  *  @brief       Oscillator module for PIC32.
  *  @{ */
 
-#ifndef NEON_PIC32_OSC_H_
-#define NEON_PIC32_OSC_H_
+#ifndef NEON_PIC18_OSC_H_
+#define NEON_PIC18_OSC_H_
 
 #include <stdint.h>
 
@@ -37,23 +37,23 @@
 extern "C" {
 #endif
     
-#if !defined(PIC32_BOARD_OSC_PRI_CLOCK_HZ)
-#error "PIC32 based board needs to declare the primary clock frequency in PIC32_BOARD_OSC_PRI_CLOCK_HZ"
+#if !defined(PIC18_BOARD_OSC_PRI_CLOCK_HZ)
+#error "PIC18 based board needs to declare the primary clock frequency in PIC18_BOARD_OSC_PRI_CLOCK_HZ"
 #endif
 
-#if !defined(PIC32_BOARD_OSC_SEC_CLOCK_HZ)
-#error "PIC32 based board needs to declare the secondary clock frequency in PIC32_BOARD_OSC_SEC_CLOCK_HZ"
+#if !defined(PIC18_BOARD_OSC_SEC_CLOCK_HZ)
+#error "PIC18 based board needs to declare the secondary clock frequency in PIC18_BOARD_OSC_SEC_CLOCK_HZ"
 #endif
-    
-enum pic32_osc_source
+
+enum pic18_osc_source
 {
     /*  Primary Oscillator with PLL module (XTPLL, HSPLL or ECPLL) */
-    PIC32_OSC_SOURCE_PRIPLL,
+    PIC18_OSC_SOURCE_PRIPLL,
 };
 
-uint32_t pic32_osc_get_sysclk_hz(void);
-uint32_t pic32_osc_get_pbclk_hz(void);
-void pic32_osc_new_source(enum pic32_osc_source source);
+uint32_t pic18_osc_get_sysclk_hz(void);
+uint32_t pic18_osc_get_pbclk_hz(void);
+void pic18_osc_new_source(enum pic18_osc_source source);
 
 #ifdef __cplusplus
 }
@@ -61,4 +61,4 @@ void pic32_osc_new_source(enum pic32_osc_source source);
 
 /** @} */
 /** @} */
-#endif /* NEON_PIC32_OSC_H_ */
+#endif /* NEON_PIC18_OSC_H_ */

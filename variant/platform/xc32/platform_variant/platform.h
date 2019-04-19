@@ -74,6 +74,10 @@ extern "C" {
 #define NPLATFORM_CONTAINER_OF(ptr, type, member)                           \
     ((type *)((char *)ptr - offsetof(type, member)))
 
+extern const char * nplatform_date;
+extern const char * nplatform_time;
+extern const char * nplatform_id;
+
 #ifdef __cplusplus
 }
 #endif

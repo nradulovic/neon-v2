@@ -17,34 +17,41 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       PIC18F Monitor board
+ *  @brief       PIC18 UART specifics
  *
- *  @addtogroup  board
- *  @{
- */
-/** @defgroup    board_pic18f_monitor PIC18F Monitor board
- *  @brief       PIC18F Monitor board
- *  @{
- */
+ *  @addtogroup  port
+ *  @{ */
 
-#ifndef NEON_BOARD_VARIANT_PIC18F_MONITOR_H_
-#define NEON_BOARD_VARIANT_PIC18F_MONITOR_H_
+/** @defgroup    port_pic18_uart PIC18 UART specifics
+ *  @brief       PIC18 UART specifics
+ *  @{ */
 
-#include "mcu_variant/mcu.h"
+#ifndef NEON_PIC18_UART_H_
+#define NEON_PIC18_UART_H_
+
+#include <stdint.h>
+
+#include "neon_uart.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifndef NMCU_PIC18F46K40
-#error "PIC18F Monitor board uses PIC18F46K40"
-#endif
-    
-#define PIC18_BOARD_OSC_PRI_CLOCK_HZ    8000000
-#define PIC18_BOARD_OSC_SEC_CLOCK_HZ    0
-    
-#define NBOARD_USES_UART_1              1
-#define NBOARD_USES_STD_STREAM          1
+struct pic18_uart_board_config
+{
+    uint32_t control_code;
+    uint32_t arg;
+    uint8_t  isr_vector_prio;
+    uint8_t  tx_pin;
+    uint8_t  tx_port;
+    uint8_t  rx_pin;
+    uint8_t  rx_port;
+};
+
+extern const struct pic18_uart_board_config g_pic18_uart_1_board_config;
+
+void pic18_uart_init(void);
+void pic18_uart_isr(void);
 
 #ifdef __cplusplus
 }
@@ -52,5 +59,4 @@ extern "C" {
 
 /** @} */
 /** @} */
-/*---------------------------------------------------------------------------*/
-#endif /* NEON_BOARD_VARIANT_PIC18F_MONITOR_H_ */
+#endif /* NEON_PIC18_UART_H_ */

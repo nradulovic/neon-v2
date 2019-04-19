@@ -16,5 +16,22 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "arch_variant/arch.h"
+#include <xc.h>
 
+#include "pic18_isr.h"
+
+void pic18_isr_init(void)
+{
+    /* Enable Interrupt Priority Vectors */
+    INTCONbits.IPEN = 1;
+}
+
+__attribute__((weak)) void pic18_app_high_isr(void)
+{
+    
+}
+
+__attribute((weak)) void pic18_app_low_isr(void)
+{
+    
+}

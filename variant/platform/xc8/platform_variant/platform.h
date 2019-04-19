@@ -36,6 +36,14 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+    
+#define NPLATFORM_XC8					1
+    
+#define NPLATFORM_ID                    "xc8"
+    
+#define NPLATFORM_DATE                  __DATE__
+    
+#define NPLATFORM_TIME                  __TIME__
 
 #define NPLATFORM_FILE                  __FILE__
 
@@ -61,6 +69,11 @@ extern "C" {
 
 #define NPLATFORM_CONTAINER_OF(ptr, type, member)                      \
     ((type *)((char *)ptr - offsetof(type, member)))
+    
+    
+extern const char * nplatform_date;
+extern const char * nplatform_time;
+extern const char * nplatform_id;
     
 #ifdef __cplusplus
 }

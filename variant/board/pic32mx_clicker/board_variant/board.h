@@ -42,7 +42,7 @@ extern "C" {
 #error "PIC32MX Clicker board uses PIC32MX534F064H"
 #endif
     
-#define NBOARD_PIC32MX_CLICKER
+#define NBOARD_PIC32MX_CLICKER          "PIC32MX Clicker"
     
 #define PIC32_BOARD_OSC_PRI_CLOCK_HZ    8000000ul
 #define PIC32_BOARD_OSC_SEC_CLOCK_HZ    32768ul
@@ -54,6 +54,7 @@ extern "C" {
 #define PIC32MX_CLICKER_UART_ISR_PRIO   3
     
 #define NBOARD_USES_UART_5              1
+#define NBOARD_USES_STD_STREAM          5
 
 #ifdef __cplusplus
 }

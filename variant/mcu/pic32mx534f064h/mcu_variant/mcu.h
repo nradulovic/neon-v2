@@ -30,13 +30,11 @@
 #ifndef NEON_MCU_VARIANT_PIC32MX534F064H_H_
 #define NEON_MCU_VARIANT_PIC32MX534F064H_H_
 
-#define NMCU_PIC32MX534F064H
+#ifndef __32MX534F064H__
+#error "This implementation is for PIC32MX534F064H MCU"
+#endif
 
-struct pic32_uart;
-
-#define NMCU_HAS_UART_5
-
-extern struct pic32_uart g_uart_5;
+#define NMCU_PIC32MX534F064H            "PIC32MX534F064H"
 
 /** @} */
 /** @} */

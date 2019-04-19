@@ -90,6 +90,12 @@ extern "C" {
     
 typedef uint32_t narch_uint;
 
+#define NARCH_IS_ISR_ACTIVE()           (_CP0_GET_CAUSE() & _CP0_CAUSE_RIPL_MASK)
+
+#define NARCH_DISABLE_INTERRUPTS()      __builtin_disable_interrupts()
+#define NARCH_ENABLE_INTERRUPTS()       __builtin_enable_interrupts()
+
+
 /* TODO: Use static assert to compare NARCH_DATA_WIDTH and sizeof(narch_uint) */
 
 NPLATFORM_INLINE
@@ -104,34 +110,45 @@ uint_fast8_t narch_log2(narch_uint x)
     return (uint_fast8_t)((NARCH_DATA_WIDTH - 1u) - __builtin_clz(x));
 }
 
-#define narch_cpu_stop()                for(;;)
+NPLATFORM_INLINE
+NPLATFORM_NORETURN(void narch_cpu_stop(void))
+{
+    NARCH_DISABLE_INTERRUPTS();
+    for (;;);
+}
+
 #define narch_cpu_idle()                
 
 #if (NARCH_HAS_ATOMICS == 1)
 #define narch_compare_and_swap(p, oldval, newval)                           \
         __sync_bool_compare_and_swap((p), (oldval), (newval))
 
-#define narch_atomic_increment(p)       __sync_fetch_and_add(p, 1)
-
-#define narch_atomic_decrement(p)       __sync_fetch_and_sub(p, 1)
-
 NPLATFORM_INLINE
-void narch_atomic_set_bit(uint32_t * p, uint_fast8_t bit)
+void narch_atomic_increment(uint32_t * u32)
 {
-    __sync_fetch_and_or(p, narch_exp2(bit));
+    __sync_fetch_and_add(u32, 1);
 }
 
 NPLATFORM_INLINE
-void narch_atomic_clear_bit(uint32_t * p, uint_fast8_t bit)
+void narch_atomic_decrement(uint32_t * u32)
 {
-    __sync_fetch_and_and(p, ~narch_exp2(bit));
+    __sync_fetch_and_sub(u32, 1);
 }
+
+NPLATFORM_INLINE
+void narch_atomic_set_bit(uint32_t * u32, uint_fast8_t bit)
+{
+    __sync_fetch_and_or(u32, narch_exp2(bit));
+}
+
+NPLATFORM_INLINE
+void narch_atomic_clear_bit(uint32_t * u32, uint_fast8_t bit)
+{
+    __sync_fetch_and_and(u32, ~narch_exp2(bit));
+}
+
 #endif /* (NARCH_HAS_CAS == 1) */
 
-#define NARCH_IS_ISR_ACTIVE()           (_CP0_GET_CAUSE() & _CP0_CAUSE_RIPL_MASK)
-
-#define NARCH_DISABLE_INTERRUPTS()      __builtin_disable_interrupts()
-#define NARCH_ENABLE_INTERRUPTS()       __builtin_enable_interrupts()
 
 #define NARCH_ISR_STATE_DECL(name)      narch_uint name
 #define NARCH_ISR_LOCK(local_state)     np_arch_isr_lock(local_state)
@@ -161,7 +178,6 @@ void np_arch_isr_unlock(const narch_uint * local_state)
     ipl_status |= *local_state & _CP0_STATUS_IPL_MASK;
     _CP0_SET_STATUS(ipl_status);
 }
-
 
 void narch_init(void);
 void narch_term(void);

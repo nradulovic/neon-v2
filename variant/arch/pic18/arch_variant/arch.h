@@ -56,6 +56,13 @@ extern "C" {
     
 typedef uint8_t narch_uint;
 
+#define narch_cpu_idle()
+
+
+void narch_init(void);
+
+void narch_cpu_stop(void);
+
 /* TODO: Use static assert to compare NARCH_DATA_WIDTH and sizeof(narch_uint) */
 
 #ifdef __cplusplus

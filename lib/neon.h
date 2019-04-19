@@ -1,4 +1,4 @@
-/*
+    /*
  * Neon
  * Copyright (C) 2018   REAL-TIME CONSULTING
  *
@@ -84,22 +84,14 @@ extern "C" {
 #define NCONFIG_ENABLE_DEBUG            0
 #endif
 
-#if !defined(NCONFIG_LOGGER_BUFFER_LINES) || defined(__DOXYGEN__)
-#define NCONFIG_LOGGER_BUFFER_LINES     16
-#endif
-
-#if !defined(NCONFIG_LOGGER_LINE_SIZE) || defined(__DOXYGEN__)
-#define NCONFIG_LOGGER_LINE_SIZE        83
+#if !defined(NCONFIG_LOGGER_BUFFER_SIZE) || defined(__DOXYGEN__)
+#define NCONFIG_LOGGER_BUFFER_SIZE      1024
 #endif
     
 #if !defined(NCONFIG_LOGGER_LEVEL) || defined(__DOXYGEN__)
 #define NCONFIG_LOGGER_LEVEL            3
 #endif
 
-#if !defined(NCONFIG_LOGGER_EPA_PRIO) || defined(__DOXYGEN__)
-#define NCONFIG_LOGGER_EPA_PRIO         1
-#endif
-    
 #if !defined(NCONFIG_EPA_INSTANCES) || defined(__DOXYGEN__)
 #define NCONFIG_EPA_INSTANCES           8
 #endif
@@ -120,22 +112,18 @@ extern "C" {
 #define NCONFIG_EVENT_USE_DYNAMIC       0
 #endif
     
-#if !defined(NCONFIG_MEM_OPTIMIZATION) || defined(__DOXYGEN__)
-#define NCONFIG_MEM_OPTIMIZATION        0
-#endif
-
-#define NCONFIG_ID															\
-	  ((uint32_t)NCONFIG_ENABLE_LOGGER << 31) 								\
-	| ((uint32_t)NCONFIG_ENABLE_DEBUG << 30) 								\
+#define NCONFIG_ID                                                          \
+      (((uint32_t)NCONFIG_ENABLE_LOGGER << 31)                              \
+    | ((uint32_t)NCONFIG_ENABLE_DEBUG << 30)                                \
     | ((uint32_t)NCONFIG_EVENT_USE_DYNAMIC << 8)                            \
     | ((uint32_t)NCONFIG_EPA_USE_HSM << 1)                                  \
-	| ((uint32_t)NCONFIG_EPA_INSTANCES << 0)
+    | ((uint32_t)NCONFIG_EPA_INSTANCES << 0))
 
-#define nconfig_validate()													\
-	do {																	\
-		extern const uint32_t nconfig_compiled_id;							\
-		NASSERT(nconfig_compiled_id == NCONFIG_ID);							\
-	} while (0)
+#define nconfig_validate()                                                  \
+    do {                                                                    \
+        extern NPLATFORM_UNUSED(const uint32_t nconfig_compiled_id);        \
+        NASSERT(nconfig_compiled_id == NCONFIG_ID);                         \
+    } while (0)
 
 /** @} *//*==================================================================*/
 /** @defgroup   nport_platform Port platform module
@@ -280,7 +268,7 @@ extern "C" {
  *  @brief      Port identification macros.
  *  @{ */
 
-/** @brief		Name of the architecture (as string)
+/** @brief      Name of the architecture (as string)
  */
 #if defined(__DOXYGEN__)
 #define NARCH_ID                "unknown"
@@ -450,7 +438,7 @@ static const char g_debug_filename[] = NPLATFORM_FILE;
 #if (NDEBUG_IS_ENABLED == 1)
 #define NASSERT(expr)                                                        \
     if (!(expr)) {                                                           \
-    	NASSERT_ALWAYS(# expr);												 \
+        NASSERT_ALWAYS(# expr);                                              \
     }
 #else
 #define NASSERT(expr)                   (void)0
@@ -466,7 +454,7 @@ static const char g_debug_filename[] = NPLATFORM_FILE;
  */
 #if (NDEBUG_IS_ENABLED == 1)
 #define NASSERT_ALWAYS(text)                                                \
-        nassert(text, &g_debug_filename[0], NPLATFORM_FUNC, NPLATFORM_LINE)
+        nassert(text, NPLATFORM_FILE, NPLATFORM_FUNC, NPLATFORM_LINE)
 #else
 #define NASSERT_ALWAYS(text)             (void)0
 #endif
@@ -740,7 +728,7 @@ extern const uint32_t g_np_bits_left_mask[33];
  *  @note       For more details please refer to the following URL:
  *              https://graphics.stanford.edu/~seander/bithacks.html#DetermineIfPowerOf2
  */
-#define NBITS_IS_POWEROF2(num)    										    \
+#define NBITS_IS_POWEROF2(num)                                              \
     (((num) != 0u) && (((num) & ((num) - 1)) == 0u))
 
 /** @brief      Create a bit mask of width @a v bits.
@@ -890,7 +878,7 @@ uint_fast8_t nbitarray_x_msbs(const nbitarray_x * array);
 /** @brief      Returns true if no bit is set in whole array.
  *  @hideinitializer
  */
-#define nbitarray_x_is_empty(a_array)	((a_array)[0] == 0u)
+#define nbitarray_x_is_empty(a_array)   ((a_array)[0] == 0u)
 
 /** @brief      Evaluates if a specified bit is set in the array.
  */
@@ -972,7 +960,7 @@ typedef enum nerror_id nerror;
  *  current = NLIST_SLL_ENTRY(current_element, struct my_struct, some_list);
  *  @endcode
  */
-#define nlist_sll_entry(ptr, type, member)                                	\
+#define nlist_sll_entry(ptr, type, member)                                  \
         NPLATFORM_CONTAINER_OF(ptr, type, member)
 
 #define nlist_sll_is_null(list)         ((list)->next == NULL)
@@ -1320,7 +1308,7 @@ NEON_INLINE_DEF(
  *  @endcode
  *  @mseffect
  */
-#define nlist_dll_entry(ptr, type, member)                                	\
+#define nlist_dll_entry(ptr, type, member)                                  \
     nlist_sll_entry(ptr, type, member)
 
 #define nlist_dll_is_null(list)         ((list)->next == NULL)
@@ -1542,7 +1530,7 @@ NEON_INLINE_DEF(
  */
 NEON_INLINE_DECL(
 struct nlist_dll * nlist_dll_add_after(
-		struct nlist_dll * current,
+        struct nlist_dll * current,
         struct nlist_dll * node))
 NEON_INLINE_DEF(
 {
@@ -1580,7 +1568,7 @@ NEON_INLINE_DEF(
  */
 NEON_INLINE_DECL(
 struct nlist_dll * nlist_dll_add_before(
-		struct nlist_dll * current,
+        struct nlist_dll * current,
         struct nlist_dll * node))
 NEON_INLINE_DEF(
 {
@@ -1639,45 +1627,45 @@ NEON_INLINE_DEF(
  *  @brief      Lightweight queue module
  *  @{ *//*==================================================================*/
 
-/** @brief    	Lightweight queue custom structure.
+/** @brief      Lightweight queue custom structure.
  *
  *  Contains the Base structure and buffer of type @a T with @a elements
  *  number of elements in that buffer. The buffer contains only pointers
  *  to items, not the actual items. This macro should be used to define a
  *  custom @a nlqueue structure.
  *
- *  @param    	T
- *    			Type of items in this queue.
+ *  @param      T
+ *              Type of items in this queue.
  *  
  *  @code
  *  struct event_queue nlqueue(void *, 16);
  *  @endcode
  *
- *  @note    	The macro can accept the parameter @a elements which is
+ *  @note       The macro can accept the parameter @a elements which is
  *              greater than 2 and equal to a number which is power of 2.
  *  @api
  */
 #define nlqueue_dynamic(T)                                                  \
-    { 																		\
-    	struct nlqueue super;        										\
-    	T * np_lq_storage;                                                  \
+    {                                                                       \
+        struct nlqueue super;                                               \
+        T * np_lq_storage;                                                  \
     }
 
 #define nlqueue_dynamic_storage(T, size)                                    \
     {                                                                       \
         T np_lq_storage[(((size < 2) || !NBITS_IS_POWEROF2(size)) ?         \
-    		-1 : size)];                                                    \
+            -1 : size)];                                                    \
     }
         
 #define nlqueue(T, size)                                                    \
     {                                                                       \
         struct nlqueue super;                                               \
         T np_lq_storage[(((size < 2) || !NBITS_IS_POWEROF2(size)) ?         \
-    		-1 : size)];                                                    \
+            -1 : size)];                                                    \
     }
         
 
-/** @brief    	Lightweight base structure.
+/** @brief      Lightweight base structure.
  *  @notapi
  */
 struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
@@ -1690,9 +1678,13 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
 
 #define NLQUEUE(Q)                      (&(Q)->super)
 
-/** @brief      Initialize a queue structure
+/** @brief      Initialize a dynamic queue structure
  *  @param      Q
- *              Pointer to lightweight queue.
+ *              Pointer to dynamically allocated lightweight queue.
+ *  @param      a_size_bytes
+ *              The size of storage in bytes.
+ *  @param      a_storage
+ *              Pointer to allocated storage.
  *  @mseffect
  */
 #define NLQUEUE_INIT_DYNAMIC(Q, a_size_bytes, a_storage)                    \
@@ -1703,11 +1695,15 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
             (Q)->np_lq_storage = (a_storage);                                \
         } while (0)
 
+/** @brief      Initialize a static queue structure
+ *  @param      Q
+ *              Pointer to statically allocated lightweight queue.
+ *  @mseffect
+ */
 #define NLQUEUE_INIT(Q)                                                     \
         np_lqueue_super_init(                                               \
                 &(Q)->super,                                                \
                 NBITS_ARRAY_SIZE((Q)->np_lq_storage))
-
 
 /** @brief      Put an item to queue in FIFO mode.
  *  @param      Q
@@ -1720,7 +1716,7 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
  *  @param      Q
  *              Pointer to lightweight queue.
  *  @note       Before calling this function ensure that queue is not full, see
- *     			@ref nqueue_is_full.
+ *              @ref nqueue_is_full.
  *  @mseffect
  */
 #define NLQUEUE_IDX_LIFO(Q)             nlqueue_super_idx_lifo(&(Q)->super)
@@ -1734,6 +1730,13 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
  */
 #define NLQUEUE_IDX_GET(Q)              nlqueue_super_idx_get(&(Q)->super)
 
+/** @brief      Reference an object from queue storage.
+ *  @param      Q
+ *              Ponter to lightweight queue.
+ *  @param      a_index
+ *              Index of an object in the queue storage.
+ *  @return     A object with given index in queue storage.
+ */
 #define NLQUEUE_IDX_REFERENCE(Q, a_index)                                   \
         (Q)->np_lq_storage[(a_index)]
 
@@ -1741,24 +1744,24 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
  *  @param      Q
  *              Pointer to lightweight queue.
  *  @note       Before calling this function ensure that queue is not full, see
- *     			@ref nqueue_is_full.
+ *              @ref nqueue_is_full.
  *  @mseffect
  */
 #define NLQUEUE_PUT_FIFO(Q, a_item)                                         \
         do {                                                                \
-            (Q)->np_lq_storage[NLQUEUE_IDX_FIFO(Q)] = (a_item);              \
+            (Q)->np_lq_storage[NLQUEUE_IDX_FIFO(Q)] = (a_item);             \
         } while (0)
 
 /** @brief      Put an item to queue in LIFO mode.
  *  @param      Q
  *              Pointer to lightweight queue.
  *  @note       Before calling this function ensure that queue is not full, see
- *     			@ref nqueue_is_full.
+ *              @ref nqueue_is_full.
  *  @mseffect
  */
 #define NLQUEUE_PUT_LIFO(Q, a_item)                                         \
         do {                                                                \
-            (Q)->np_lq_storage[NLQUEUE_IDX_LIFO(Q)] = (a_item);              \
+            (Q)->np_lq_storage[NLQUEUE_IDX_LIFO(Q)] = (a_item);             \
         } while (0)
 
 /** @brief      Get an item from the queue buffer.
@@ -1780,7 +1783,7 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
  *              Pointer to lightweight queue.
  *  @mseffect
  */
-#define NLQUEUE_HEAD(Q)    													\
+#define NLQUEUE_HEAD(Q)                                                     \
         (Q)->np_lq_storage[np_lqueue_super_head(&(Q)->super)]
 
 /** @brief      Peek to queue tail; the item is not removed from queue.
@@ -1792,32 +1795,32 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
  *              Pointer to lightweight queue.
  *  @mseffect
  */
-#define NLQUEUE_TAIL(Q)    													\
+#define NLQUEUE_TAIL(Q)                                                     \
         (Q)->np_lq_storage[np_lqueue_super_tail(&(Q)->super)]
 
 /** @brief      Returns the queue buffer size in number of elements.
  *  @param      Q
  *              Pointer to lightweight queue.
  */
-#define NLQUEUE_SIZE(Q)    				(Q)->super.mask + 1u
+#define NLQUEUE_SIZE(Q)                 (Q)->super.mask + 1u
 
 /** @brief      Returns the current number of free elements in queue buffer.
  *  @param      Q
  *              Pointer to lightweight queue.
  */
-#define NLQUEUE_EMPTY(Q)    			(Q)->super.empty
+#define NLQUEUE_EMPTY(Q)                (Q)->super.empty
 
 /** @brief      Return true if queue is full else false.
  *  @param      Q
  *              Pointer to lightweight queue.
  */
-#define NLQUEUE_IS_FULL(Q)    			(!NLQUEUE_EMPTY(Q))
+#define NLQUEUE_IS_FULL(Q)              (!NLQUEUE_EMPTY(Q))
 
 /** @brief      Return true if queue is empty else false.
  *  @param      Q
  *              Pointer to lightweight queue.
  */
-#define NLQUEUE_IS_EMPTY(Q)    			(NLQUEUE_EMPTY(Q) == NLQUEUE_SIZE(Q))
+#define NLQUEUE_IS_EMPTY(Q)             (NLQUEUE_EMPTY(Q) == NLQUEUE_SIZE(Q))
 
 /** @brief      Return true if queue has only single element.
  *  @param      Q
@@ -1964,7 +1967,7 @@ void npqueue_sentinel_shift(struct npqueue_sentinel * sentinel);
  *  @brief      Priority sorted queue node.
  *  @{ */
 
-/** @brief    	Priority sorted queue node structure.
+/** @brief      Priority sorted queue node structure.
  *
  *  Each node has a priority attribute. The attribute type is 8-bit unsigned
  *  integer. The highest priority has the value 255. The lowest priority has
@@ -1976,35 +1979,35 @@ struct npqueue
     uint_fast8_t priority;                      /**< Priotity attribute */
 };
 
-/** @brief    	Convert a list entry to node entry.
- *  @param     	a_node
- *      		Pointer to a priority sorted queue node.
- *  @return    	Pointer to priority queue node structure.
+/** @brief      Convert a list entry to node entry.
+ *  @param      a_node
+ *              Pointer to a priority sorted queue node.
+ *  @return     Pointer to priority queue node structure.
  */
 #define npqueue_from_list(a_node)                                           \
         nlist_dll_entry((a_node), struct npqueue, list)
 
-/** @brief    	Initialize a node and define its priority.
+/** @brief      Initialize a node and define its priority.
  *
  *  A node structure needs to be initialized before it can be used within a
  *  queue.
  *
- *  @param     	node
- *      		Pointer to a priority sorted queue node.
+ *  @param      node
+ *              Pointer to a priority sorted queue node.
  *  @param      priority
- *      		An 8-bit unsigned integer number specifying this node priority.
- *      		The highest priority has the value 255. The lowest priority has
- *      		the value is 0.
- *  @return    	The pointer @a node.
+ *              An 8-bit unsigned integer number specifying this node priority.
+ *              The highest priority has the value 255. The lowest priority has
+ *              the value is 0.
+ *  @return     The pointer @a node.
  */
 struct npqueue * npqueue_init(struct npqueue * node, uint_fast8_t priority);
 
-/** @brief    	Terminate a node.
+/** @brief      Terminate a node.
  *
  *  The function will re-initialize the node and set the priority to zero.
  *
- *  @param     	node
- *      		Pointer to a priority sorted queue node.
+ *  @param      node
+ *              Pointer to a priority sorted queue node.
  */
 void npqueue_term(struct npqueue * node);
 
@@ -2173,8 +2176,6 @@ bool nlogger_print(const char * msg, ...);
 #define nlogger_print(msg, ...)
 #endif
 
-extern struct nepa g_nsys_epa_logger;
-
 /** @} *//*==================================================================*/
 /** @defgroup   nsys System module
  *  @brief      System module
@@ -2329,18 +2330,18 @@ typedef nsm_action (nstate_fn)(struct nsm *, const struct nevent *);
  *  @brief      Event Processing Agent (EPA) module
  *  @{ *//*==================================================================*/
 
-/** @brief  	The highest EPA priority value.
+/** @brief      The highest EPA priority value.
  *
  *  The EPA with this priority has the highest urgency to be selected and
  *  dispatched by scheduler.
  */
 #define NEPA_PRIO_MAX                   255
 
-/** @brief		The lowest EPA priority value
+/** @brief      The lowest EPA priority value
  */
 #define NEPA_PRIO_MIN                   0
 
-/** @brief		The current EPA.
+/** @brief      The current EPA.
  */
 #define ncurrent                        nepa_current()
 
@@ -2424,9 +2425,9 @@ struct nepa
 
 struct nepa * nepa_current(void);
 
-/** @brief 		Start a task
- *  @param		task
- *  			Task structure.
+/** @brief      Start a task
+ *  @param      task
+ *              Task structure.
  *
  *  When a task is started its state is changed to @ref NTASK_READY.
  */

@@ -29,6 +29,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 
 #include "board_variant/board.h"
 
@@ -88,43 +89,35 @@ extern "C" {
 
 /** @brief      Send completed; however USART may still transmit data.
  */
-#define NUART_EVENT_SEND_COMPLETE       ((uint32_t)0x1ul << 0)
+#define NUART_EVENT_TX_COMPLETE         ((uint_fast8_t)0x1ul << 0)
 
 /** @brief      Receive completed.
  */
-#define NUART_EVENT_RECEIVE_COMPLETE    ((uint32_t)0x1ul << 1)
+#define NUART_EVENT_RX_COMPLETE         ((uint_fast8_t)0x1ul << 1)
 
 /** @brief      Transfer completed.
  */
-#define NUART_EVENT_TRANSFER_COMPLETE   ((uint32_t)0x1ul << 2)
+#define NUART_EVENT_TRANSFER_COMPLETE   ((uint_fast8_t)0x1ul << 2)
     
-/** @brief      Transmit completed (optional).
- */
-#define NUART_EVENT_TX_COMPLETE         ((uint32_t)0x1ul << 3)
-
 /** @brief      Transmit data not available (Synchronous Slave).
  */
-#define NUART_EVENT_TX_UNDERFLOW        ((uint32_t)0x1ul << 4)
+#define NUART_EVENT_TX_UNDERFLOW        ((uint_fast8_t)0x1ul << 3)
     
 /** @brief      Receive data overflow.
  */
-#define NUART_EVENT_RX_OVERFLOW         ((uint32_t)0x1ul << 5)
-    
-/** @brief      Receive character timeout (optional).
- */
-#define NUART_EVENT_RX_TIMEOUT          ((uint32_t)0x1ul << 6)
+#define NUART_EVENT_RX_OVERFLOW         ((uint_fast8_t)0x1ul << 4)
     
 /** @brief      Break detected on receive.
  */
-#define NUART_EVENT_RX_BREAK            ((uint32_t)0x1ul << 7)
+#define NUART_EVENT_RX_BREAK            ((uint_fast8_t)0x1ul << 5)
     
 /** @brief      Framing error detected on receive.
  */
-#define NUART_EVENT_RX_FRAMING_ERROR    ((uint32_t)0x1ul << 8)
+#define NUART_EVENT_RX_FRAMING_ERROR    ((uint_fast8_t)0x1ul << 6)
     
 /** @brief      Parity error detected on receive.
  */
-#define NUART_EVENT_RX_PARITY_ERROR     ((uint32_t)0x1ul << 9)
+#define NUART_EVENT_RX_PARITY_ERROR     ((uint_fast8_t)0x1ul << 7)
     
 /** @} *//*==================================================================*/
 /** @defgroup   nuart_control UART control codes
@@ -387,10 +380,9 @@ enum nuart_id
 #if (NBOARD_USES_UART_6 == 1)
     NUART_ID_6,
 #endif
-    NUART_NUMBER_OF_UARTS
 };
 
-typedef void (nuart_callback)(enum nuart_id uart_id, uint32_t events);
+typedef void (nuart_callback)(enum nuart_id uart_id, uint_fast16_t events);
 
 void nuart_init(enum nuart_id uart_id, nuart_callback * callback);
 
@@ -399,8 +391,6 @@ void nuart_term(enum nuart_id uart_id);
 uint32_t nuart_capabilities(enum nuart_id uart_id);
 
 bool nuart_is_initialized(enum nuart_id uart_id);
-
-bool nuart_is_idle(enum nuart_id uart_id);
 
 void nuart_control(enum nuart_id uart_id, uint32_t control_code, uint32_t arg);
 

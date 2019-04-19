@@ -25,7 +25,7 @@
 #include "pic32_common.h"
 #include "pic32_osc.h"
 
-#if defined(__32MX534F064H__)
+#if defined(NMCU_PIC32MX534F064H)
 #define HAS_MODE_UEN
 #define HAS_MODE_RTSMD
 #define HAS_MODE_RUNOVF
@@ -295,6 +295,9 @@ static void pic32_uart_setup(
     pic32_isr_irq_clear(desc->isr_irq_e);
     pic32_isr_irq_clear(desc->isr_irq_rx);
     pic32_isr_irq_clear(desc->isr_irq_tx);
+    pic32_isr_irq_disable(desc->isr_irq_e);
+    pic32_isr_irq_disable(desc->isr_irq_rx);
+    pic32_isr_irq_disable(desc->isr_irq_tx);
     pic32_isr_vector_set_prio(
             desc->isr_vector,
             desc->board_config->isr_vector_prio);
@@ -311,6 +314,8 @@ static void pic32_uart_setup(
     /* Setup baudrate */
     pic32_uart_setup_baudrate(sfr, arg);
 
+    /* Setup GPIO mux */
+    
     /* Enable transmit and receive and UART */
     sfr->sta.set = (UxSTA_UTXEN_MASK | UxSTA_URXEN_MASK);
     sfr->mode.set = UxMODE_ON_MASK; /* Turn on UART peripheral */
@@ -389,7 +394,7 @@ static void pic32_uart_isr_handler(
 void pic32_uart_init(void)
 {
 #if (NBOARD_USES_UART_5 == 1)
-    nlogger_info("PIC32 UART: Init %u with %x:%x\r\n",
+    nlogger_info("PIC32 UART: Init %u with %x:%u",
             NUART_ID_5,
             g_pic32_uart_5_board_config.control_code,
             g_pic32_uart_5_board_config.arg);
@@ -418,6 +423,7 @@ void nuart_term(enum nuart_id uart_id)
     NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic32_uarts));
 
     uart = &g_pic32_uarts[uart_id];
+    uart->callback = NULL;
 }
 
 uint32_t nuart_capabilities(enum nuart_id uart_id)
@@ -442,18 +448,6 @@ bool nuart_is_initialized(enum nuart_id uart_id)
     return !!(uart->sfr->mode.reg & UxMODE_ON_MASK);
 }
 
-bool nuart_is_idle(enum nuart_id uart_id)
-{
-    struct pic32_uart * uart;
-
-    NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic32_uarts));
-
-    uart = &g_pic32_uarts[uart_id];
-
-    return !!((uart->sfr->sta.reg & UxSTA_TRMT_MASK) &&
-              (uart->sfr->sta.reg & UxSTA_RIDLE_MASK));
-}
-
 void nuart_control(enum nuart_id uart_id, uint32_t control_code, uint32_t arg)
 {
     struct pic32_uart * uart = &g_pic32_uarts[uart_id];
@@ -470,7 +464,7 @@ void nuart_control(enum nuart_id uart_id, uint32_t control_code, uint32_t arg)
         case NUART_COMMAND_ABORT_TRANSFER:
             break;
         default:
-            NASSERT_ALWAYS(control_code);
+            NASSERT_ALWAYS("Wrong control_code in nuart_control");
             break;
     }
 }

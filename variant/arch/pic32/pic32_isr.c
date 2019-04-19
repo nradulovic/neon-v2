@@ -36,6 +36,11 @@ void pic32_isr_vector_set_prio(uint_fast8_t vector_no, uint_fast8_t prio)
     struct pic32_periph_reg * ipc = pic32_isr_ipc_reg(vector_no);
     uint32_t position = pic32_isr_ipc_position(vector_no);
 
+    nlogger_info("PIC32 ISR: set vector %u prio to %u:%u", 
+            vector_no, 
+            prio >> 2, 
+            prio & 0x3);
+
     /* read-modify-write */
     ipc->clr = (uint32_t)0x7u << position;
     ipc->set = (uint32_t)prio  << position;
@@ -60,7 +65,9 @@ void pic32_isr_init(void)
     // clear the CP0 status BEV bit: Controls the location of exception vectors.
     _CP0_BIC_STATUS(_CP0_STATUS_BEV_MASK);
     NARCH_ENABLE_INTERRUPTS();
-    nlogger_info("PIC32 ISR: STATUS 0x%x CAUSE 0X%x\r\n",
+    nlogger_info("PIC32 ISR: STATUS 0x%x CAUSE 0x%x",
             _CP0_GET_STATUS(),
             _CP0_GET_CAUSE());
+    nlogger_info("PIC32 ISR: Neon priority ceiling %u", 
+            NCONFIG_ARCH_ISR_LOCK_CODE);
 }

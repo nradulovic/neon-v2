@@ -16,8 +16,13 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <xc.h>
+
 #include "board_variant/board.h"
-#include "../../../mcc_generated_files/mcc.h"
+#include "../../../../mcc_generated_files/mcc.h"
+#include "pic18_uart.h"
+#include "pic18_isr.h"
+#include "neon.h"
 
 #if 0
 // PIC18F46K40 Configuration Bit Settings
@@ -84,7 +89,31 @@
 #pragma config EBTRB = OFF      // Boot Block Table Read Protection bit (Boot Block (000000-0007FFh) not protected from table reads executed in other blocks)
 #endif
 
+const struct pic18_uart_board_config g_pic18_uart_1_board_config =
+{
+    .isr_vector_prio = 1,
+    .arg = 115200,
+    .control_code = 0,
+    .rx_pin = 3,
+    .rx_port = 0,
+    .tx_pin = 2,
+    .tx_port = 3
+};
+
 void nboard_init(void)
 {
     SYSTEM_Initialize();
+    narch_init();
+    pic18_uart_init();
+}
+
+void __interrupt(low_priority) pic18f_monitor_isr_low(void)
+{
+    pic18_app_low_isr();
+}
+
+void __interrupt(high_priority) pic18f_monitor_isr_high(void)
+{
+    pic18_app_high_isr();
+    pic18_uart_isr();
 }
