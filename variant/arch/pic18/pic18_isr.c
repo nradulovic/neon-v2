@@ -26,12 +26,12 @@ void pic18_isr_init(void)
     INTCONbits.IPEN = 1;
 }
 
-__attribute__((weak)) void pic18_app_high_isr(void)
+__attribute__((weak)) void pic18_isr_high_app(void)
 {
     
 }
 
-__attribute((weak)) void pic18_app_low_isr(void)
+__attribute((weak)) void pic18_isr_low_app(void)
 {
     
 }

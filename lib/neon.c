@@ -44,12 +44,13 @@ const uint32_t nconfig_compiled_id = NCONFIG_ID;
  *  @brief      Debug module implementation
  *  @{ *//*==================================================================*/
 
+#if (NCONFIG_ENABLE_DEBUG == 1)
+
 volatile const char * l_text;
 volatile const char * l_file;
 volatile const char * l_func;
 volatile uint32_t     l_line;
 
-#if (NCONFIG_ENABLE_DEBUG == 1)
 NPLATFORM_NORETURN(void nassert(
         const char * text,
         const char * file,
@@ -409,11 +410,6 @@ bool nlogger_print(const char * msg, ...)
 #endif /* (NCONFIG_ENABLE_LOGGER == 1) */
 
 /** @} *//*==================================================================*/
-/** @defgroup   nlogger_impl Basic logger module implementation
- *  @brief      Basic logger module implementation
- *  @{ *//*==================================================================*/
-
-/** @} *//*==================================================================*/
 /** @defgroup   nevent_impl Event implementation
  *  @brief      Event implementation
  *  @{ *//*==================================================================*/
@@ -580,7 +576,7 @@ static struct nepa_schedule
 #define prio_queue_insert(a_queue, a_prio)                                  \
         nbitarray_s_set(&(a_queue)->bitarray, (a_prio))
 
-#define prio_queue_remove(a_queue, a_prio)                                       \
+#define prio_queue_remove(a_queue, a_prio)                                  \
         nbitarray_s_clear(&(a_queue)->bitarray, (a_prio))
 
 #define prio_queue_get_highest(a_queue)                                     \
@@ -594,13 +590,13 @@ static struct nepa_schedule
 #define queue_insert(a_queue, a_prio)                                       \
         nbitarray_x_set(&(a_queue)->bitarray[0], (a_prio))
 
-#define prio_queue_remove(a_queue, a_prio)                                       \
+#define prio_queue_remove(a_queue, a_prio)                                  \
         nbitarray_x_clear(&(a_queue)->bitarray[0], (a_prio))
 
-#define prio_queue_get_highest(a_queue)                                          \
+#define prio_queue_get_highest(a_queue)                                     \
         nbitarray_x_msbs(&(a_queue)->bitarray[0])
 
-#define prio_queue_is_set(a_queue, a_prio)                                       \
+#define prio_queue_is_set(a_queue, a_prio)                                  \
         nbitarray_x_is_set(&(a_queue)->bitarray[0], (a_prio))
 #endif /* (NCONFIG_EPA_INSTANCES <= NBITARRAY_S_MAX_SIZE) */
 
@@ -611,10 +607,11 @@ static void task_init(struct ntask * task, uint_fast8_t prio)
 
 static void equeue_init(struct nequeue * equeue)
 {
-    NREQUIRE((equeue->np_qb_buffer != NULL) && (equeue->super.empty != 0u));
+    NREQUIRE((equeue->np_lq_storage != NULL) && (equeue->super.empty != 0u));
     NREQUIRE((equeue->super.head = 0u) && (equeue->super.tail == 1u));
     NPLATFORM_UNUSED_ARG(equeue);
 }
+
 
 struct nepa * nepa_current(void)
 {
@@ -627,7 +624,6 @@ nerror nepa_send_signal(struct nepa * epa, uint_fast16_t signal)
 }
 
 /*
- *
  * 1. Insert EPA to priority queue 'ready'
  *    a) insert it in atomic mode
  *    b) insert it in plain mode protected by critical section macros
@@ -644,27 +640,50 @@ nerror nepa_send_event(struct nepa * epa, const struct nevent * event)
 {
     NCRITICAL_STATE_DECL(local)
     int_fast8_t idx;
-    nerror error = EOK;
+    nerror error;
 
     NREQUIRE(NSIGNATURE_OF(epa) == NSIGNATURE_EPA);
 
     event_ref_up(event);
     NCRITICAL_LOCK(&local, NULL);
-    idx = nlqueue_super_idx_fifo(NLQUEUE(&epa->equeue));
+    idx = NLQUEUE_IDX_FIFO(&epa->equeue);
 
     if (idx >= 0) {
         struct nepa_schedule * ctx = &g_epa_schedule;
 
         NLQUEUE_IDX_REFERENCE(&epa->equeue, idx) = event;
         prio_queue_insert(&ctx->ready, prio_from_epa(epa));
+        NCRITICAL_UNLOCK(&local, NULL);
+        error = EOK;
     } else {
+        NCRITICAL_UNLOCK(&local, NULL);
+        /* Undo the event_ref_up step from above.
+         */
         event_ref_down(event);
         error = -EOBJ_INVALID;
     }
-    NCRITICAL_UNLOCK(&local, NULL);
+    
     return error;
 }
 
+
+/** @} *//*==================================================================*/
+/** @defgroup   nsys System module
+ *  @brief      System module
+ *  @{ *//*==================================================================*/
+
+
+/** @brief      Idle EPA Event queue
+ */
+static struct idle_epa_queue nevent_queue(2) idle_epa_queue;
+
+static nsm_action idle_state_init(struct nsm *, const struct nevent *);
+
+struct nepa g_nsys_epa_idle = NEPA_INITIALIZER(
+            &idle_epa_queue, 
+            NEPA_FSM_TYPE, 
+            idle_state_init, 
+            NULL);
 
 static nsm_action idle_state_init(struct nsm * sm, const struct nevent * event)
 {
@@ -673,11 +692,6 @@ static nsm_action idle_state_init(struct nsm * sm, const struct nevent * event)
 
     return nsm_event_ignored();
 }
-
-static struct idle_epa_queue nevent_queue(2) idle_epa_queue;
-struct nepa g_nsys_epa_idle = NEPA_INITIALIZER(
-            &idle_epa_queue, NEPA_FSM_TYPE, idle_state_init, NULL);
-
 
 void nsys_init(void)
 {
@@ -740,6 +754,7 @@ NPLATFORM_NORETURN(void nsys_schedule_start(void))
         epa = epa_from_prio(prio);
         ctx->current = epa;
         NCRITICAL_LOCK(&local, NULL);
+        
         if (NLQUEUE_IS_FIRST(&epa->equeue)) {
             prio_queue_remove(&ctx->ready, prio);
         }
@@ -777,8 +792,4 @@ void ntask_schedule_stop(void)
 }
 #endif
 
-/** @} *//*==================================================================*/
-/** @defgroup   nfiber_task_impl Fiber task implementation
- *  @brief      Fiber task implementation
- *  @{ *//*==================================================================*/
-
+/** @} */

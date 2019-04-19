@@ -39,8 +39,8 @@ extern "C" {
 
 void pic18_isr_init(void);
 
-void pic18_app_high_isr(void);
-void pic18_app_low_isr(void);
+void pic18_isr_high_app(void);
+void pic18_isr_low_app(void);
 
 #ifdef __cplusplus
 }

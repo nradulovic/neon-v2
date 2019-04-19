@@ -109,11 +109,11 @@ void nboard_init(void)
 
 void __interrupt(low_priority) pic18f_monitor_isr_low(void)
 {
-    pic18_app_low_isr();
+    pic18_isr_low_app();
 }
 
 void __interrupt(high_priority) pic18f_monitor_isr_high(void)
 {
-    pic18_app_high_isr();
+    pic18_isr_high_app();
     pic18_uart_isr();
 }

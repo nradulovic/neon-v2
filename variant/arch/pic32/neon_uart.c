@@ -371,7 +371,7 @@ static void pic32_uart_isr_handler(
             uart->buff_in = NULL;
             pic32_isr_irq_disable(desc->isr_irq_rx);
             pic32_isr_irq_disable(desc->isr_irq_e);
-            events |= NUART_EVENT_SEND_COMPLETE;
+            events |= NUART_EVENT_TX_COMPLETE;
         }
     }
     if (pic32_isr_irq_is_set(desc->isr_irq_tx)) {
@@ -382,7 +382,7 @@ static void pic32_uart_isr_handler(
         if (uart->current_byte_out == uart->buff_size) {
             uart->buff_out = NULL;
             pic32_isr_irq_disable(desc->isr_irq_tx);
-            events |= NUART_EVENT_SEND_COMPLETE;
+            events |= NUART_EVENT_TX_COMPLETE;
         }
     }
 

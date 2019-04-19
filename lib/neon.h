@@ -806,7 +806,7 @@ typedef narch_uint nbitarray_s;
  */
 #define nbitarray_s_clear(a_array, a_bit)                                   \
         do {                                                                \
-            *(a_array) &= ~narch_exp2(a_bit);                                \
+            *(a_array) &= ~narch_exp2(a_bit);                               \
         } while (0)
 
 /** @brief      Get the first set bit in the array .
@@ -1676,8 +1676,6 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
     uint_fast8_t                mask;
 };
 
-#define NLQUEUE(Q)                      (&(Q)->super)
-
 /** @brief      Initialize a dynamic queue structure
  *  @param      Q
  *              Pointer to dynamically allocated lightweight queue.
@@ -1691,8 +1689,8 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
         do {                                                                \
             np_lqueue_super_init(                                           \
                     &(Q)->super,                                            \
-                    (a_size_bytes) / sizeof(*(Q)->np_lq_storage));           \
-            (Q)->np_lq_storage = (a_storage);                                \
+                    (a_size_bytes) / sizeof(*(Q)->np_lq_storage));          \
+            (Q)->np_lq_storage = (a_storage);                               \
         } while (0)
 
 /** @brief      Initialize a static queue structure
@@ -1772,7 +1770,7 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
  *  @mseffect
  */
 #define NLQUEUE_GET(Q)                                                      \
-        (Q)->np_lq_storage[nlqueue_super_idx_get(NLQUEUE(Q))]
+        (Q)->np_lq_storage[nlqueue_super_idx_get(&(Q)->super)]
 
 /** @brief      Peek to queue head; the item is not removed from queue.
  *
@@ -2177,28 +2175,6 @@ bool nlogger_print(const char * msg, ...);
 #endif
 
 /** @} *//*==================================================================*/
-/** @defgroup   nsys System module
- *  @brief      System module
- *  @{ *//*==================================================================*/
-
-extern struct nepa g_nsys_epa_idle;
-extern struct nepa * g_nsys_epa_list[NCONFIG_EPA_INSTANCES];
-
-void nsys_init(void);
-
-bool nsys_is_scheduler_started(void);
-
-#if (NCONFIG_SYS_EXITABLE_SCHEDULER != 1)
-NPLATFORM_NORETURN(void nsys_schedule_start(void));
-#else
-void nsys_schedule_start(void);
-#endif
-
-#if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
-void nsys_schedule_stop(void);
-#endif
-
-/** @} *//*==================================================================*/
 /** @defgroup   nevent Event module
  *  @brief      Event module
  *  @{ *//*==================================================================*/
@@ -2435,6 +2411,29 @@ struct nepa * nepa_current(void);
 nerror nepa_send_signal(struct nepa * epa, uint_fast16_t signal);
 
 nerror nepa_send_event(struct nepa * epa, const struct nevent * event);
+
+
+/** @} *//*==================================================================*/
+/** @defgroup   nsys System module
+ *  @brief      System module
+ *  @{ *//*==================================================================*/
+
+extern struct nepa g_nsys_epa_idle;
+extern struct nepa * g_nsys_epa_list[NCONFIG_EPA_INSTANCES];
+
+void nsys_init(void);
+
+bool nsys_is_scheduler_started(void);
+
+#if (NCONFIG_SYS_EXITABLE_SCHEDULER != 1)
+NPLATFORM_NORETURN(void nsys_schedule_start(void));
+#else
+void nsys_schedule_start(void);
+#endif
+
+#if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
+void nsys_schedule_stop(void);
+#endif
 
 /** @} */
 #ifdef __cplusplus
