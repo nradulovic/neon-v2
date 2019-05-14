@@ -923,9 +923,9 @@ void nbitarray_x_clear_atomic(nbitarray_x * array, uint_fast8_t bit);
 enum nerror_id
 {
     EOK,
-    EOBJ_INVALID,                               /**< Invalid object error */
+    EOBJ_INVALID,                           /**< Invalid object error.        */
     EOBJ_INITIALIZED,
-    EARG_OUTOFRANGE,                            /**< Argument is out of range */
+    EARG_OUTOFRANGE,                        /**< Argument is out of range.    */
 };
 
 typedef enum nerror_id nerror;
@@ -1063,7 +1063,7 @@ typedef enum nerror_id nerror;
  */
 struct nlist_sll
 {
-    struct nlist_sll *          next;           /**< Next node in the list.*/
+    struct nlist_sll *          next;       /**< Next node in the list.       */
 };
 
 /** @brief      Initialize a list sentinel or node.
@@ -2075,19 +2075,19 @@ struct nmem_pool
     uint32_t element_size;
 };
 
-#define npool(T, size)  \
-    {  \
-        struct nmem_pool mem_pool;\
-        T storage[size];\
+#define npool(T, size)                                                      \
+    {                                                                       \
+        struct nmem_pool mem_pool;                                          \
+        T storage[size];                                                    \
     }
 
 #define NMEM_POOL_INIT(MP)                                                  \
-    do { \
-        np_mem_pool_init(               \
-                &(MP)->mem_pool, \
-                &(MP)->storage[0], \
-                sizeof((MP)->storage), \
-                NBITS_ARRAY_SIZE((MP)->storage)); \
+    do {                                                                    \
+        np_mem_pool_init(                                                   \
+                &(MP)->mem_pool,                                            \
+                &(MP)->storage[0],                                          \
+                sizeof((MP)->storage),                                      \
+                NBITS_ARRAY_SIZE((MP)->storage));                           \
     } while (0)
         
 void np_mem_pool_init(
@@ -2204,21 +2204,18 @@ void * nevent_create(struct nmem_pool * pool, uint_fast16_t id);
 
 /**
  * @brief       Get the state machine workspace pointer
- * @api
  */
 #define nsm_wspace(sm)                  ((sm)->wspace)
 
 /**
  * @brief       State machine action, given event was handled.
  * @return      Actions enumerator @ref NACTION_HANDLED.
- * @api
  */
 #define nsm_event_handled()             (NACTION_HANDLED)
 
 /**
  * @brief       State machine action, given event was ignored.
  * @return      Actions enumerator @ref NACTION_IGNORED.
- * @api
  */
 #define nsm_event_ignored()             (NACTION_IGNORED)
 
@@ -2229,7 +2226,6 @@ void * nevent_create(struct nmem_pool * pool, uint_fast16_t id);
  * @param       state_ptr
  *              State function pointer to super state
  * @return      Actions enumerator @ref NACTION_SUPER.
- * @api
  */
 #define nsm_super_state(sm, state_ptr)                                      \
         ((sm)->state = (state_ptr), NP_SMP_SUPER_STATE)
@@ -2251,16 +2247,18 @@ void * nevent_create(struct nmem_pool * pool, uint_fast16_t id);
  */
 enum nsm_event
 {
-    NSM_SUPER           = 0u,           /**<@brief Get the state super state  */
-    NSM_ENTRY           = 1u,           /**<@brief Process state entry        */
-    NSM_EXIT            = 2u,           /**<@brief Process state exit         */
-    NSM_INIT            = 3u,           /**<@brief Process state init         */
-    NSIGNAL_RETRIGGER    = 8u,
-    NSIGNAL_AFTER        = 9u,
-    NSIGNAL_EVERY        = 10u,
-    NEVENT_NULL            = 14u,          /**<@brief NULL event                 */
+    NSM_SUPER,               /**<@brief Get the state super 
+                                             *         state.
+                                             */
+    NSM_ENTRY,               /**<@brief Process state entry.   */
+    NSM_EXIT,               /**<@brief Process state exit.    */
+    NSM_INIT,               /**<@brief Process state init.    */
+    NSIGNAL_RETRIGGER,
+    NSIGNAL_AFTER,
+    NSIGNAL_EVERY,
+    NEVENT_NULL,              /**<@brief NULL event.            */
     
-    NEVENT_USER_ID      = 15u
+    NEVENT_USER_ID
 };
 
 /** @brief      Returned actions enumerator
@@ -2274,21 +2272,25 @@ enum nsm_event
  */
 typedef enum np_sm_action
 {
-    NP_SMP_SUPER_STATE  = 0u,                /**< Returns super state        */
-    NP_SMP_TRANSIT_TO   = 1u,                /**< Transit to a state         */
-    NACTION_HANDLED     = 2u,                /**< Event is handled           */
-    NACTION_IGNORED     = 3u,                /**< Event is ignored           */
+    NP_SMP_SUPER_STATE  = 0u,               /**< Returns super state          */
+    NP_SMP_TRANSIT_TO   = 1u,               /**< Transit to a state           */
+    NACTION_HANDLED     = 2u,               /**< Event is handled             */
+    NACTION_IGNORED     = 3u,               /**< Event is ignored             */
 } nsm_action;
 
 struct nsm;
 
-/**
- * @brief       State function prototype
- * @param       sm
+/** @brief      State function prototype.
+ * 
+ *  Each state machine state is described by a single state function. A state
+ *  will receive a state machine which is being executed and an event which
+ *  needs to be processed by the state function.
+ * 
+ *  @param      sm
  *              Pointer to state machine being executed
- * @param       event
+ *  @param      event
  *              Pointer to event that has been dispatched to the state machine
- * @return      Action enumerator of the specified state. Action enumerator can
+ *  @return     Action enumerator of the specified state. Action enumerator can
  *              be one of the following:
  *              - @ref NACTION_SUPER - state is returning its super state
  *              - @ref NACTION_TRANSIT_TO - state machine wants to transit to
@@ -2297,7 +2299,6 @@ struct nsm;
  *              - @ref NACTION_IGNORED - given event was ignored
  * @note        Do not use return enumerator directly but use the appropriate
  *              naction_*() function.
- * @api
  */
 typedef nsm_action (nstate_fn)(struct nsm *, const struct nevent *);
 
@@ -2314,17 +2315,55 @@ typedef nsm_action (nstate_fn)(struct nsm *, const struct nevent *);
 #define NEPA_PRIO_MAX                   255
 
 /** @brief      The lowest EPA priority value
+ *  @note       This priority level is reserved by Neon idle task.
  */
 #define NEPA_PRIO_MIN                   0
 
-/** @brief      The current EPA.
+/** @brief      The pointer to currently executed EPA.
  */
 #define ncurrent                        nepa_current()
 
-#define nevent_queue(size)                                                  \
-        nlqueue_dynamic_storage(const struct nevent *, size)
+/** @brief      Define a structure of an event queue of fixed size.
+ * 
+ *  This is a helper macro which is used to ease the process of defining an
+ *  event queue. For example, if you want to declare an event queue of a size
+ *  @a M you would use the macro in the following way:
+ * 
+ *  @code
+ *  struct my_epa_queue nevent_queue(M);
+ *  @endcode
+ * 
+ *  Then in the code you would create an instance of the structure:
+ * 
+ *  @code
+ *  static struct my_epa_queue g_my_epa_queue;
+ *  @endcode
+ * 
+ *  @param      a_size
+ *              Number of event this queue would hold.
+ */
+#define nevent_queue(a_size)                                                \
+        nlqueue_dynamic_storage(const struct nevent *, a_size)
 
-#if (NCONFIG_EPA_USE_HSM == 1)
+#if (NCONFIG_EPA_USE_HSM == 1) || defined(__DOXYGEN__)
+/** @brief      Initialize an Event Processing Agent (EPA)
+ *  
+ *  Each EPA is described by an event queue, state machine type, initial state
+ *  and a workspace storage.
+ * 
+ *  @param      a_queue
+ *              Pointer to an event queue. See @ref nevent_queue on details how
+ *              to define and instantiate a queue.
+ *  @param      a_type_id
+ *              Type of state machine, see @ref nepa_type for details.
+ *  @param      a_init_state
+ *              Initial state function of the state machine. For more details
+ *              about state functions see @ref nstate_fn.
+ *  @param      a_ws
+ *              State machine workspace. A workspace pointer is just passed to
+ *              state machine state functions. It is a void pointer, so any kind
+ *              of additional data can be passed to the state functions.
+ */
 #define NEPA_INITIALIZER(a_queue, a_type_id, a_init_state, a_ws)            \
         {                                                                   \
             .sm =                                                           \
@@ -2342,10 +2381,10 @@ typedef nsm_action (nstate_fn)(struct nsm *, const struct nevent *);
                 {                                                           \
                     .head = 0                                               \
                     .tail = 1,                                              \
-                    .empty = NBITS_ARRAY_SIZE(&(a_queue)->np_lq_storage),         \
+                    .empty = NBITS_ARRAY_SIZE(&(a_queue)->np_lq_storage),   \
                     .mask = NBITS_ARRAY_SIZE(&(a_queue)->np_lq_storage) - 1u,     \
                 },                                                          \
-                .np_lq_storage = &(a_queue)->np_lq_storage[0],                \
+                .np_lq_storage = &(a_queue)->np_lq_storage[0],              \
             },                                                              \
         }
 #else
@@ -2362,7 +2401,7 @@ typedef nsm_action (nstate_fn)(struct nsm *, const struct nevent *);
                 {                                                           \
                     .head = 0,                                              \
                     .tail = 1,                                              \
-                    .empty = NBITS_ARRAY_SIZE((a_queue)->np_lq_storage),         \
+                    .empty = NBITS_ARRAY_SIZE((a_queue)->np_lq_storage),    \
                     .mask = NBITS_ARRAY_SIZE((a_queue)->np_lq_storage) - 1u,     \
                 },                                                          \
                 .np_lq_storage = &(a_queue)->np_lq_storage[0],              \
@@ -2370,12 +2409,22 @@ typedef nsm_action (nstate_fn)(struct nsm *, const struct nevent *);
         }
 #endif
 
+/** @brief      EPA state machine type
+ *  
+ *  There are two different state machine types: a Finite State Machine (FSM)
+ *  and a Hierarchical State Machine. FSM is a subclass of a HSM, as it has only
+ *  one level of hierarchy.
+ */
 enum nepa_type
 {
-    NEPA_FSM_TYPE,
-    NEPA_HSM_TYPE
+    NEPA_FSM_TYPE,                          /**<@brief Finite State Machine.  */
+    NEPA_HSM_TYPE                           /**<@brief Hierarchical State
+                                             *         Machine.
+                                             */
 };
 
+/** @brief      Event Processing Agent (EPA)
+ */
 struct nepa
 {
     struct nsm
@@ -2400,13 +2449,6 @@ struct nepa
 };
 
 struct nepa * nepa_current(void);
-
-/** @brief      Start a task
- *  @param      task
- *              Task structure.
- *
- *  When a task is started its state is changed to @ref NTASK_READY.
- */
 
 nerror nepa_send_signal(struct nepa * epa, uint_fast16_t signal);
 

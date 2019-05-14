@@ -98,7 +98,9 @@ void pic18_osc_new_source(enum pic18_osc_source source)
             return;
     }
     
-    while (OSCCON3bits.ORDY == 0);
+    while (OSCCON3bits.ORDY == 0) {
+        ;
+    }
 
     nlogger_info("PIC18 OSC: CPU clock %uHz", pic18_osc_get_sysclk_hz());
     nlogger_info("PIC18 OSC: PB  clock %uHz", pic18_osc_get_pbclk_hz());

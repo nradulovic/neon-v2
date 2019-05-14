@@ -25,13 +25,3 @@ void pic18_isr_init(void)
     /* Enable Interrupt Priority Vectors */
     INTCONbits.IPEN = 1;
 }
-
-__attribute__((weak)) void pic18_isr_high_app(void)
-{
-    
-}
-
-__attribute((weak)) void pic18_isr_low_app(void)
-{
-    
-}

@@ -137,7 +137,9 @@ static void pic18_uart1_send(void)
     /*
      * First, fill in the available buffer.
      */
-    while (PIR3bits.TX1IF == 0);
+    while (PIR3bits.TX1IF == 0) {
+        ;
+    }
     
     TX1REG = g_pic18_uarts[NUART_ID_1].buff_out[0];
     g_pic18_uarts[NUART_ID_1].current_byte_out = 1;

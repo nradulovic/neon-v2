@@ -623,19 +623,6 @@ nerror nepa_send_signal(struct nepa * epa, uint_fast16_t signal)
     return nepa_send_event(epa, &g_events[signal]);
 }
 
-/*
- * 1. Insert EPA to priority queue 'ready'
- *    a) insert it in atomic mode
- *    b) insert it in plain mode protected by critical section macros
- *
- * NOTES:
- * 1. The bool 'pending' is true when a queue was empty before calling this
- *    function. It will trigger calling the queue_insert_atomic. In rare cases
- *    it can be set (false positive) when multiple nepa_send_event functions
- *    are called from different execution contexts. The single side effect would
- *    be that queue_insert_atomic is called multiple times, which is not
- *    dangerous, it only cost additional CPU execution time.
- */
 nerror nepa_send_event(struct nepa * epa, const struct nevent * event)
 {
     NCRITICAL_STATE_DECL(local)
@@ -666,21 +653,19 @@ nerror nepa_send_event(struct nepa * epa, const struct nevent * event)
     return error;
 }
 
-
 /** @} *//*==================================================================*/
 /** @defgroup   nsys System module
  *  @brief      System module
  *  @{ *//*==================================================================*/
 
-
 /** @brief      Idle EPA Event queue
  */
-static struct idle_epa_queue nevent_queue(2) idle_epa_queue;
+static struct epa_queue_idle nevent_queue(2) g_epa_queue_idle;
 
 static nsm_action idle_state_init(struct nsm *, const struct nevent *);
 
 struct nepa g_nsys_epa_idle = NEPA_INITIALIZER(
-            &idle_epa_queue, 
+            &g_epa_queue_idle, 
             NEPA_FSM_TYPE, 
             idle_state_init, 
             NULL);
@@ -699,9 +684,7 @@ void nsys_init(void)
     logger_init();
 #endif
     nboard_init();
-#if (NCONFIG_ENABLE_LOGGER == 1)
     nlogger_flush();
-#endif
 }
 
 bool nsys_is_scheduler_started(void)
@@ -723,13 +706,12 @@ void nsys_schedule_start(void)
 NPLATFORM_NORETURN(void nsys_schedule_start(void))
 #endif
 {
-    struct nepa_schedule * ctx = &g_epa_schedule;
-
     for (uint_fast8_t prio = 0u; prio < NCONFIG_EPA_INSTANCES; prio++) {
         struct nepa * epa;
 
         epa = epa_from_prio(prio);
 
+        /* If a priority level is not used epa pointer is NULL. */
         if (epa != NULL) {
             sm_init(&epa->sm);
             task_init(&epa->task, prio);
@@ -744,25 +726,29 @@ NPLATFORM_NORETURN(void nsys_schedule_start(void))
 #else
     while (true) {
 #endif
+        struct nepa_schedule * ctx = &g_epa_schedule;
+         
         NCRITICAL_STATE_DECL(local)
         struct nepa * epa;
         const struct nevent * event;
         uint_fast8_t prio;
-                                                    /* Get the highest level */
+                                                   /* Get the highest level. */
         prio = prio_queue_get_highest(&ctx->ready);
-                                                       /* Fetch the new task */
-        epa = epa_from_prio(prio);
+                                                       
+        epa = epa_from_prio(prio);                     /* Fetch the new EPA. */
         ctx->current = epa;
-        NCRITICAL_LOCK(&local, NULL);
-        
+        NCRITICAL_LOCK(&local, NULL);             /* Enter critical section. 
+                                                   * Check if this is the last/
+                                                   * first event in event queue.
+                                                   * If it is, then remove from
+                                                   * priority queue.
+                                                   */
         if (NLQUEUE_IS_FIRST(&epa->equeue)) {
             prio_queue_remove(&ctx->ready, prio);
         }
         event = NLQUEUE_GET(&epa->equeue);
         NCRITICAL_UNLOCK(&local, NULL);
-        
-                                                          /* Execute the EPA */
-        sm_dispatch(&epa->sm, event);
+        sm_dispatch(&epa->sm, event);                    /* Execute the EPA. */
         event_delete(event);
     }
 

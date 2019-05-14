@@ -58,56 +58,17 @@ void narch_init(void)
 #if (NCONFIG_ARCH_TIMER_SOURCE == 1)
 void narch_timer_enable(void)
 {
-    uint32_t cause;
-    uint32_t compare;
-
-    /* Set and enable timer */
-    cause  = _CP0_GET_CAUSE();
-    _CP0_SET_CAUSE(cause | _CP0_CAUSE_DC_MASK);
-    _CP0_SET_COUNT(0u);
-    compare = NCONFIG_ARCH_TIMER_FREQ_HZ / pic32_osc_get_sysclk_hz();
-    _CP0_SET_COMPARE(compare);
-    _CP0_SET_CAUSE(cause & ~_CP0_CAUSE_DC_MASK);
-
-    /* Enable ISR */
-    IFS0CLR = _IFS0_CTIF_MASK;
-    IEC0SET = _IEC0_CTIE_MASK;
+    
 }
 
 void narch_timer_disable(void)
 {
-    uint32_t cause;
-
-    /* Disable ISR */
-    IEC0CLR = _IEC0_CTIE_MASK;
-
-    /* Disable timer */
-    cause  = _CP0_GET_CAUSE();
-    cause |= _CP0_CAUSE_DC_MASK;
-    _CP0_SET_CAUSE(cause);
+   
 }
 
 extern void nsys_timer_isr(void);
 
-void PIC32_SOFT_ISR_DECL(_CORE_TIMER_VECTOR, PIC32_NEON_ISR_IPL_MAX) arch_timer_isr(void)
-{
-    uint32_t cause;
-    uint32_t compare;
 
-    /* Disable timer */
-    cause  = _CP0_GET_CAUSE();
-    _CP0_SET_CAUSE(cause | _CP0_CAUSE_DC_MASK);
-
-    /* Reload value */
-    compare = _CP0_GET_COMPARE();
-    _CP0_SET_COUNT(0u);
-    _CP0_SET_COMPARE(compare);
-
-    /* Enable timer */
-    _CP0_SET_CAUSE(cause);
-
-    nsys_timer_isr();
-}
 #endif /* (NCONFIG_ARCH_TIMER_SOURCE == 1) */
 
 void narch_cpu_stop(void)
