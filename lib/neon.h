@@ -19,8 +19,8 @@
  *  @author      Nenad Radulovic
  *  @brief       Neon header
  *
- *  @defgroup    neon Neon library
- *  @brief       Neon library interface
+ *  @defgroup    neon Neon interface
+ *  @brief       Neon interface
  *  @{
  */
 
@@ -41,8 +41,8 @@ extern "C" {
 #endif
 
 /*===========================================================================*/
-/** @defgroup   nconfig Configuration module
- *  @brief      Configuration module
+/** @defgroup   nconfig Compile time configuration module
+ *  @brief      Compile time configuration module
  *  @{ *//*==================================================================*/
 
 /*
@@ -51,20 +51,6 @@ extern "C" {
  */
 #if defined(NCONFIG_PROJECT_CONFIG)
 #include "neon_config.h"
-#endif
-
-/** @brief      Configure if logger module is enabled.
- *
- *  This macro defines if Neon should be compiled with logger support. If this
- *  module is not enabled all API calls will be replaced by
- *  preprocessor to empty macros thus not consumimg RAM or const memory.
- *
- *  When this macro is set to '1' the module is enabled, when the macro is set
- *  to '0' the module is disabled. Using any other value is undefined
- *  behaviour.
- */
-#if !defined(NCONFIG_ENABLE_LOGGER) || defined(__DOXYGEN__)
-#define NCONFIG_ENABLE_LOGGER           1
 #endif
 
 /** @brief      Configure if debug module is enabled.
@@ -79,46 +65,203 @@ extern "C" {
  *  When this macro is set to '1' the module is enabled, when the macro is set
  *  to '0' the module is disabled. Using any other value is undefined
  *  behaviour.
+ * 
+ *  Default value is 0 (debug not enabled).
+ * 
+ *  @hideinitializer
  */
 #if !defined(NCONFIG_ENABLE_DEBUG) || defined(__DOXYGEN__)
 #define NCONFIG_ENABLE_DEBUG            0
 #endif
+    
+/** @brief      Configure if logger module is enabled.
+ *
+ *  This macro defines if Neon should be compiled with logger support. If this
+ *  module is not enabled all API calls will be replaced by preprocessor with
+ *  empty macros thus not consumimg any RAM or const memory.
+ *
+ *  When this macro is set to '1' the module is enabled, when the macro is set
+ *  to '0' the module is disabled. Using any other value is undefined
+ *  behaviour.
+ * 
+ *  Default value is 1 (logger enabled).
+ * 
+ *  @hideinitializer
+ */
+#if !defined(NCONFIG_ENABLE_LOGGER) || defined(__DOXYGEN__)
+#define NCONFIG_ENABLE_LOGGER           1
+#endif
 
+/** @brief      Configure logger module buffer size (in bytes).
+ * 
+ *  The logger module uses a buffer to store messages while stream interface is
+ *  busy or still not avaialable (during boot process). When the stream 
+ *  interface becomes available all the messages in buffer will be flushed from
+ *  buffer.
+ * 
+ *  The value of this macro should be bigger then 10 (or 10 bytes). The maximum 
+ *  value of the macro is not defined, but it should not be bigger then a few 
+ *  kilobytes.
+ * 
+ *  Default value is 1024 (use 1kB for the buffer).
+ * 
+ *  @note       This configuration option is ignored when 
+ *              @ref NCONFIG_ENABLE_LOGGER is not enabled.
+ * 
+ *  @note       If new buffer size is smaller than the default size then during 
+ *              boot process (before stream is initialized) a few logger 
+ *              messages could be lost.
+ * 
+ *  @hideinitializer
+ */
 #if !defined(NCONFIG_LOGGER_BUFFER_SIZE) || defined(__DOXYGEN__)
 #define NCONFIG_LOGGER_BUFFER_SIZE      1024
 #endif
     
+/** @brief      Configure the logger level.
+ * 
+ *  The logger supports a few logger levels, see @ref Logger levels for more
+ *  details. Default logger level is @ref NLOGGER_LEVEL_INFO (3).
+ * 
+ *  The value of this macro should be in range @ref NLOGGER_LEVEL_ERROR (1) up
+ *  to @ref NLOGGER_LEVEL_DEBUG (4). Using any other value is undefined
+ *  behaviour.
+ * 
+ *  Default value is NLOGGER_LEVEL_INFO (equal to number 3).
+ * 
+ *  @note       This configuration option is ignored when
+ *              @ref NCONFIG_ENABLE_LOGGER is not enabled.
+ * 
+ *  @hideinitializer 
+ */
 #if !defined(NCONFIG_LOGGER_LEVEL) || defined(__DOXYGEN__)
-#define NCONFIG_LOGGER_LEVEL            3
+#define NCONFIG_LOGGER_LEVEL            NLOGGER_LEVEL_INFO
 #endif
 
+/** @brief      Configure how many EPA Instances are used by application
+ * 
+ *  Neon uses static allocation for all instances of EPA objects. Therefore, for
+ *  optimal memory usage each application configuration file should specify
+ *  exact number of needed EPA instances. This number will then be used to 
+ *  statically allocate the instances.
+ * 
+ *  Neon defines a number of intrisic system EPA objects (idle EPA, deferred 
+ *  ISR EPA, ...). Please, take these system EPA objects into account when 
+ *  calculating how much EPA instances are needed.
+ * 
+ *  Minimum value of this macro should be 2 (at least IDLE EPA and one 
+ *  application EPA).
+ * 
+ *  Default value is 8 (supporting up to 8 EPA instances).
+ * 
+ *  @hideinitializer
+ */
 #if !defined(NCONFIG_EPA_INSTANCES) || defined(__DOXYGEN__)
 #define NCONFIG_EPA_INSTANCES           8
 #endif
     
+/** @brief      Configure whether to support HSM state machines or not.
+ * 
+ *  As stated in more detail in @ref nepa section, there are two classes of
+ *  state machines: Finite State Machine (FSM) and Hierarchical State Machine.
+ *  
+ *  In application which use exclusively FSM this configuration option should
+ *  be disabled to allow for certain speed and size optimizations. If an
+ *  application uses at least one HSM then this option needs to be enabled.
+ *  
+ *  When this macro is set to '1' the HSM dispatcher will be compiled, when the 
+ *  macro is set to '0' the HSM dispatcher will not be compiled, therefore not
+ *  supporting HSM type EPA class. Using any other value is undefined behaviour.
+ * 
+ *  Default value is 0 (don't support HSM EPA class).
+ * 
+ *  @hideinitializer
+ */
 #if !defined(NCONFIG_EPA_USE_HSM) || defined(__DOXYGEN__)
 #define NCONFIG_EPA_USE_HSM             0
 #endif
     
+/** @brief      Configure the hierarchical levels of HSM dispatcher.
+ *  
+ *  Each HSM is characterized by the number of levels of its hierarchy. The
+ *  HSM dispatch uses this configuration option to configure itself for maximum
+ *  HSM level allowable.
+ * 
+ *  Set this value to maximum value of hierarchy level of all HSMs used in an
+ *  application. When this value is set to 1 it means that application does not
+ *  need HSM at all (disable the NCONFIG_EPA_USE_HSM). Using values smaller than
+ *  2 is undefined behaviour.
+ * 
+ *  Default value is 8 (8 hierarchical levels).
+ * 
+ *  @note       This configuration option is ignored when 
+ *              @ref NCONFIG_EPA_USE_HSM is not enabled.
+ * 
+ *  @hideinitializer
+ */
 #if !defined(NCONFIG_EPA_HSM_LEVELS) || defined(__DOXYGEN__)
 #define NCONFIG_EPA_HSM_LEVELS          8
 #endif
 
+/** @brief      Configure if loop scheduler should be exitable.
+ * 
+ *  Normally, in an embedded applications once a loop scheduler is started it is
+ *  never stopped. In this case one can rely on this fact and produce more
+ *  optimized code (acquire and never release a resource, do not compile exit
+ *  or terminate functions...). However, if there is a need to eventually exit
+ *  from loop scheduler (for example in a Linux application) then this 
+ *  configuration option should be enabled.
+ * 
+ *  Default value is 0 (exit from scheduler is not enabled).
+ * 
+ *  @hideinitializer
+ */
 #if !defined(NCONFIG_SYS_EXITABLE_SCHEDULER) || defined(__DOXYGEN__)
 #define NCONFIG_SYS_EXITABLE_SCHEDULER  0
 #endif
     
+/** @brief      Enable or disable dynamic event.
+ * 
+ *  Dynamic events can be deleted once they are processed. For more details on
+ *  dynamic events see @ref nevent section. In case the application needs this 
+ *  functionality then enable this macro.
+ * 
+ *  When this macro is set to '1' the option is enabled, when the macro is set
+ *  to '0' the option is disabled. Using any other value is undefined
+ *  behaviour.
+ * 
+ *  Default value is 0 (debug not enabled).
+ * 
+ *  @hideinitializer
+ */
 #if !defined(NCONFIG_EVENT_USE_DYNAMIC) || defined(__DOXYGEN__)
 #define NCONFIG_EVENT_USE_DYNAMIC       0
 #endif
     
+/** @brief      Create a specific configuration number from current 
+ *              compile-time configuration.
+ */
 #define NCONFIG_ID                                                          \
-      (((uint32_t)NCONFIG_ENABLE_LOGGER << 31)                              \
-    | ((uint32_t)NCONFIG_ENABLE_DEBUG << 30)                                \
-    | ((uint32_t)NCONFIG_EVENT_USE_DYNAMIC << 8)                            \
-    | ((uint32_t)NCONFIG_EPA_USE_HSM << 1)                                  \
-    | ((uint32_t)NCONFIG_EPA_INSTANCES << 0))
+      (((uint32_t)NCONFIG_ENABLE_LOGGER << 18)                              \
+    | ((uint32_t)NCONFIG_ENABLE_DEBUG << 17)                                \
+    | ((uint32_t)NCONFIG_LOGGER_LEVEL << 15)                                \
+    | ((uint32_t)NCONFIG_EPA_INSTANCES << 7)                                \
+    | ((uint32_t)NCONFIG_EPA_USE_HSM << 6)                                  \
+    | ((uint32_t)NCONFIG_EPA_HSM_LEVELS << 2)                               \
+    | ((uint32_t)NCONFIG_SYS_EXITABLE_SCHEDULER << 1)                       \
+    | ((uint32_t)NCONFIG_EVENT_USE_DYNAMIC << 0)
 
+/** @brief      Validate the configuration from application context.
+ * 
+ *  Call this macro from application main function in order to validate and
+ *  match the configuration with compiler Neon library. In case the
+ *  configuration miss-match is detected the assert will fail.
+ * 
+ *  The macro will have no effect if @ref ndebug module is not enabled (see
+ *  @ref NCONFIG_ENABLE_DEBUG).
+ * 
+ *  @hideinitializator
+ */
 #define nconfig_validate()                                                  \
     do {                                                                    \
         extern NPLATFORM_UNUSED(const uint32_t nconfig_compiled_id);        \
@@ -133,92 +276,178 @@ extern "C" {
 /** @defgroup   platformid Platform identification information
  *  @brief      Port compiler identification macros.
  *  @{ */
+    
+/** @brief      Defines a string containing the platform name.
+ * 
+ *  @hideinitializer
+ */
 #if defined(__DOXYGEN__)
-#define NPLATFORM_ID            "unknown"
+#define NPLATFORM_ID
 #endif
 
 /** @brief      Each port defines a macro named NPLATFORM_xxx.
  *
  *  For example, the GCC based compilers will define 'NPLATFORM_GCC'. ARM
- *  based compilers will define NPLATFORM_ARM.
+ *  based compilers will define 'NPLATFORM_ARM'. Consult specific platform
+ *  documentation to see which actual macros are defined.
+ * 
+ *  @hideinitializer
  */
 #if defined(__DOXYGEN__)
 #define NPLATFORM_xxx
 #endif
 
+/** @} */
 /** @defgroup   platform_compiler Platform compiler macros
  *  @brief      Port compiler helper macros.
  *  @{ */
 
 /** @brief      Compiler directive to inline a function.
- *  @note       This macro is usually defined in port.
+ *  
+ *  Place this macro in front of function declaration to declare it as inline
+ *  function. It is up to compiler to decide wheater is worth to inline a
+ *  function.
+ * 
+ *  @note       Some C compiler have really bad or limiting handling of inline
+ *              functions causing problems when using this macro. In those 
+ *              cases, a different approach has to be used in order to inline
+ *              functions.
+ * 
+ *  @hideinitializer
  */
 #if defined(__DOXYGEN__)
-#define NPLATFORM_INLINE        static inline
+#define NPLATFORM_INLINE
 #endif
 
-#if defined(__DOXYGEN__)
-#define NPLATFORM_INLINE_ALWAYS NPLATFORM_INLINE
-#endif
-
-/** @brief      Cast a member of a structure out to the containing structure
- * @param       ptr
- *              the pointer to the member.
- * @param       type
- *              the type of the container struct this is embedded in.
- * @param       member
- *              the name of the member within the struct.
+/** @brief      Another compiler directive to inline a function, but this will
+ *              force the compiler to inline the function.
+ * 
+ *  For further details see @ref NPLATFORM_INLINE.\
+ * 
+ *  @hideinitializer
  */
 #if defined(__DOXYGEN__)
-#define NPLATFORM_CONTAINER_OF(ptr, type, member)                      \
-    ((type *)((char *)ptr - offsetof(type, member)))
+#define NPLATFORM_INLINE_ALWAYS
 #endif
 
-/** @brief      Provides function name for assert macros
+/** @brief      Cast a member of a structure to the containing structure.
+ *  @param      a_ptr
+ *              The pointer to the member of a structure.
+ *  @param      a_type
+ *              The type of the container struct the member is embedded in.
+ *  @param      a_member
+ *              The name of the member within the container struct.
+ * 
+ *  @code
+ *  struct my_struct
+ *  {
+ *      int a;
+ *      int b;
+ *  } data;
+ * 
+ *  int * ptr_to_a = &data.a;
+ * 
+ *  struct my_struct * ptr_to_data = 
+ *          NPLATFORM_CONTAINER_OF(ptr_to_a, struct my_struct, a);
+ *  @endcode
+ *  @hideinitializer
  */
 #if defined(__DOXYGEN__)
-#define NPLATFORM_FUNC             "unknown"
+#define NPLATFORM_CONTAINER_OF(a_ptr, a_type, a_member)
 #endif
 
-/** @brief      Provides the free file's name which is being compiled
+/** @brief      Provides function name.
+ *  
+ *  This macro will return a string containing the function name.
+ * 
+ *  @hideinitializer
  */
 #if defined(__DOXYGEN__)
-#define NPLATFORM_FILE             "unknown"
+#define NPLATFORM_FUNC
 #endif
 
-/** @brief      Provides the free source line
+/** @brief      Provides the free file's name which is being compiled.
+ * 
+ *  This macro will return a string containing the file name.
+ * 
+ *  @hideinitializer
  */
 #if defined(__DOXYGEN__)
-#define NPLATFORM_LINE             0
+#define NPLATFORM_FILE
 #endif
 
-/** @brief      Omit function prologue/epilogue sequences
- *  @note       Using this macro when the compiler feature is not supported
- *              will generate compilation error.
+/** @brief      Provides the file source line where this macro is located at.
+ * 
+ *  This macro will just return an integer specifying the file source line 
+ *  number.
+ * 
+ *  @hideinitializer
  */
 #if defined(__DOXYGEN__)
-#define NPLATFORM_NAKED(x)              __provoke_error__ x
+#define NPLATFORM_LINE
 #endif
 
-#if defined(__DOXYGEN__)
-#define NPLATFORM_UNUSED(y)             __provoke_error__ y
-#endif
-
-/** @brief      Declare a function that will never return
+/** @brief      Omit function prologue/epilogue sequences.
+ * 
+ *  @param      a_decl
+ *              A declaration of the function.
+ * 
+ *  @hideinitializer
  */
 #if defined(__DOXYGEN__)
-#define NPLATFORM_NORETURN(x)           x
+#define NPLATFORM_NAKED(a_decl)
 #endif
 
+/** @brief      Omit warning about unused function.
+ * 
+ *  @param      a_decl
+ *              A declaration of the function.
+ * 
+ *  @hideinitializer
+ */  
 #if defined(__DOXYGEN__)
-#define NPLATFORM_PACKED(x)             __provoke_error__ x
+#define NPLATFORM_UNUSED(a_decl)
+#endif
+
+/** @brief      Declare a function that will never return.
+ * 
+ *  Use this macro to tell the compiler that the function will never return,
+ *  for example, an infinite loop is implemented inside the function. This 
+ *  allows the compiler to do further optimizations regarding stack usage and
+ *  save a few instructions in function body.
+ * 
+ *  @param      a_decl
+ *              A declaration of the function.
+ * 
+ *  @hideinitializer
+ */
+#if defined(__DOXYGEN__)
+#define NPLATFORM_NORETURN(a_decl)
+#endif
+
+/** @brief      Declare a structure as packed.
+ *  
+ *  @param      a_decl
+ *              A declaration of a structure.
+ * 
+ *  @hideinitializer
+ */
+#if defined(__DOXYGEN__)
+#define NPLATFORM_PACKED(a_decl)
 #endif
 
 /** @brief      This attribute specifies a minimum alignment (in bytes) for
  *              variables of the specified type.
+ *
+ *  @param      a_align
+ *              Alignment of the variable in bytes.
+ *  @param      a_decl
+ *              A declaration of the variable.
+ * 
+ *  @hideinitializer
  */
 #if defined(__DOXYGEN__)
-#define NPLATFORM_ALIGN(align, x)       __provoke_error__ x
+#define NPLATFORM_ALIGN(a_align, a_decl)
 #endif
 
 /** @brief      Prevent the compiler from merging or refetching accesses.
@@ -228,37 +457,63 @@ extern "C" {
  *  particular ordering.  One way to make the compiler aware of ordering is to
  *  put the two invocations of NPLATFORM_ACCESS_ONCE() in different C 
  *  statements.
+ * 
+ *  @param      a_ptr
+ *              A pointer to variable which is being accessed.
+ * 
+ *  @hideinitializer
  */
 #if defined(__DOXYGEN__)
-#define NPLATFORM_ACCESS_ONCE(x)        (*(volatile typeof(x) *)&(x))
+#define NPLATFORM_ACCESS_ONCE(a_ptr)
 #endif
 
 /** @brief      Returns current date.
+ * 
+ *  This macro will return a string containing the current date.
+ * 
+ *  @hideinitializer
  */
 #if defined(__DOXYGEN__)
-#define NPLATFORM_DATE                  __DATE__
+#define NPLATFORM_DATE
 #endif
 
 /** @brief      Returns current time.
+ * 
+ *  This macro will return a string containing the current time.
+ * 
+ *  @hideinitializer
  */
 #if defined(__DOXYGEN__)
-#define NPLATFORM_TIME                  __TIME__
+#define NPLATFORM_TIME
 #endif
 
+/** @} */
+    
+/*
+ * NOTE:
+ * The following macros are here to workaround broken C compiler inline
+ * implementations. In case a platform declares that C compiler has broken
+ * inline (NPLATFORM_BROKEN_INLINE) the following macros will be used to
+ * disable inlining and compile the function as plain (non-inline) types.
+ * 
+ * The '!defined(__DOXYGEN__) is there to stop the doxygen to document the
+ * following macros.
+ */
+#if !defined(__DOXYGEN__)
 #if (NPLATFORM_BROKEN_INLINE == 1)
 #if defined(NEON_C_SOURCE)
 #define NEON_INLINE_DECL(x)             x
 #define NEON_INLINE_DEF(x)              x
-#else
+#else /* defined(NEON_C_SOURCE) */
 #define NEON_INLINE_DECL(x)             x;
 #define NEON_INLINE_DEF(x)
-#endif
-#else
+#endif /* defined(NEON_C_SOURCE) */
+#else /* (NPLATFORM_BROKEN_INLINE == 1) */
 #define NEON_INLINE_DECL(x)             NPLATFORM_INLINE x
 #define NEON_INLINE_DEF(x)              x
-#endif
+#endif /* (NPLATFORM_BROKEN_INLINE == 1) */
+#endif /* !defined(__DOXYGEN__) */
 
-/** @} */
 /** @} *//*==================================================================*/
 /** @defgroup   nport_arch Port architecture module
  *  @brief      Port architecture module
@@ -268,14 +523,18 @@ extern "C" {
  *  @brief      Port identification macros.
  *  @{ */
 
-/** @brief      Name of the architecture (as string)
+/** @brief      Defines a string containing the architecture name.
+ * 
+ *  @hideinitializer
  */
 #if defined(__DOXYGEN__)
-#define NARCH_ID                "unknown"
+#define NARCH_ID
 #endif
 
 /** @brief      This macro is defined to 1 if current architecture has exclusive
  *              load/store access.
+ * 
+ *  @hideinitializer
  */
 #if defined(__DOXYGEN__)
 #define NARCH_HAS_ATOMICS
@@ -285,17 +544,21 @@ extern "C" {
  *
  *  For example, the ARM based architectures will define 'NARCH_ARM'. In
  *  addition to this macro it will probably define macros like 'NARCH_ARM_V7M'
- *  which identifies a subset of architecture information.
+ *  which identifies a subset of architecture information. Consult specific
+ *  architecture documentation to see which actual macros are defined.
+ * 
+ *  @hideinitializer
  */
 #if defined(__DOXYGEN__)
 #define NARCH_xxx
 #endif
 
-/** @brief      Number of bits of the used architecture
- *  @api
+/** @brief      Number of data bus bits of the used architecture
+ *  
+ *  @hideinitializer
  */
 #if defined(__DOXYGEN__)
-#define NARCH_DATA_WIDTH              8
+#define NARCH_DATA_WIDTH
 #endif
     
 /** @} */
@@ -307,7 +570,10 @@ extern "C" {
  *
  *  On embedded targets this function will actually stop the CPU execution.
  *  Usually you want to stop the execution in case of some serious error. When
- *  a High Level OS is used, this function will terminate the current process.
+ *  a High Level OS is used, this function will terminate the current process
+ *  (application).
+ * 
+ *  @hideinitializer
  */
 #if defined(__DOXYGEN__)
 #define narch_cpu_stop()
@@ -334,16 +600,23 @@ void narch_atomic_set_bit(uint32_t * u32, uint_fast8_t bit);
 void narch_atomic_clear_bit(uint32_t * u32, uint_fast8_t bit);
 
 /** @brief      Calculate exponent of 2.
+ *  @param      x
+ *              Input argument (integer which range depends on the data bus bit
+ *              width). Valid range is 0 - (@ref NARCH_DATA_WIDTH - 1).
+ *  @return     exp2(x)
  */
 narch_uint narch_exp2(uint_fast8_t x);
 
 /** @brief      Calculate logarithm of base 2.
+ *  @param      x
+ *              Input argument (integer which range depends on the data bus bit
+ *              width). Valid range is 0 - (2^ @ref NARCH_DATA_WIDTH - 1).
+ *  @return     log2(x)
  *  @example    log2(2) = 1, log2(10) = 4
  */
 uint_fast8_t narch_log2(narch_uint x);
 
 /** @} */
-
 /** @} *//*==================================================================*/
 /** @defgroup   nport_mcu Port MCU module
  *  @brief      Port MCU module
@@ -2107,14 +2380,29 @@ void   np_mem_pool_free (struct nmem_pool * pool, void * mem);
  *  @{ *//*==================================================================*/
 
 
-/** @brief      Logger levels
+/** @name       Logger levels
+ *  @brief      Logger levels
  *  @details    Default log level is @ref NLOGGER_LVL_DEBUG.
+ *  @{
+ */
+
+/** @brief      Logger messages with DEBUG importance.
  */
 #define NLOGGER_LEVEL_DEBUG             4
+
+/** @brief      Logger messages with INFO importance.
+ */
 #define NLOGGER_LEVEL_INFO              3
+
+/** @brief      Logger messages with WARNing importance.
+ */
 #define NLOGGER_LEVEL_WARN              2
+
+/** @brief      Logger message with ERRor importance.
+ */
 #define NLOGGER_LEVEL_ERR               1
 
+/** @} */
 /** @defgroup   loggerprinters Logger printers
  *  @brief      Logger printers.
  *  @{

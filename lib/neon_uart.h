@@ -119,6 +119,18 @@ extern "C" {
  */
 #define NUART_EVENT_RX_PARITY_ERROR     ((uint_fast8_t)0x1ul << 7)
     
+/** @brief      Send aborted; however USART may still transmit data.
+ */
+#define NUART_EVENT_TX_ABORTED          ((uint_fast8_t)0x1ul << 8)
+
+/** @brief      Receive aborted.
+ */
+#define NUART_EVENT_RX_ABORTED          ((uint_fast8_t)0x1ul << 9)
+
+/** @brief      Transfer aborted.
+ */
+#define NUART_EVENT_TRANSFER_ABORTED    ((uint_fast8_t)0x1ul << 10)
+    
 /** @} *//*==================================================================*/
 /** @defgroup   nuart_control UART control codes
  *  @brief      UART control codes
@@ -324,19 +336,6 @@ extern "C" {
 #define NUART_CPHA_1                    (1ul << NUART_CPHA_Pos)
 
 /** @} */
-/** @name UART control codes: Miscellaneous Controls
- *  @{ */
-
-#define NUART_SET_DEFAULT_TX_VALUE      (0x10ul << NUART_CONTROL_Pos)   ///< Set default Transmit value (Synchronous Receive only); arg = value
-#define NUART_SET_IRDA_PULSE            (0x11ul << NUART_CONTROL_Pos)   ///< Set IrDA Pulse in ns; arg: 0=3/16 of bit period  
-#define NUART_SET_SMART_CARD_GUARD_TIME (0x12ul << NUART_CONTROL_Pos)   ///< Set Smart Card Guard Time; arg = number of bit periods
-#define NUART_SET_SMART_CARD_CLOCK      (0x13ul << NUART_CONTROL_Pos)   ///< Set Smart Card Clock in Hz; arg: 0=Clock not generated
-#define NUART_CONTROL_SMART_CARD_NACK   (0x14UL << NUART_CONTROL_Pos)   ///< Smart Card NACK generation; arg: 0=disabled, 1=enabled
-#define NUART_CONTROL_TX                (0x15UL << NUART_CONTROL_Pos)   ///< Transmitter; arg: 0=disabled, 1=enabled
-#define NUART_CONTROL_RX                (0x16UL << NUART_CONTROL_Pos)   ///< Receiver; arg: 0=disabled, 1=enabled
-#define NUART_CONTROL_BREAK             (0x17UL << NUART_CONTROL_Pos)   ///< Continuous Break transmission; arg: 0=disabled, 1=enabled
-
-/** @} */
 /** @name UART control codes: Commands
  *  @{ */
 
@@ -398,13 +397,15 @@ void nuart_send(enum nuart_id uart_id, const void * data, size_t size);
 
 void nuart_receive(enum nuart_id uart_id, void * data, size_t size);
 
-void nuart_transfer(enum nuart_id uart_id, const void * output, void * input, size_t size);
+void nuart_transfer(
+        enum nuart_id uart_id, 
+        const void * output, 
+        void * input, 
+        size_t size);
 
 #ifdef __cplusplus
 }
 #endif
-
-
 
 /** @} */
 #endif /* NEON_H_ */

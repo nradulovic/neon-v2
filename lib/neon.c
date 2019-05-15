@@ -21,6 +21,9 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+/* NOTE: The following definition of NEON_C_SOURCE is used in conjuction with
+ * function inline macros.
+ */
 #define NEON_C_SOURCE
 #include "neon.h"
 

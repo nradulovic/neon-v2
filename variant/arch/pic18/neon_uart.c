@@ -30,6 +30,8 @@ static struct pic18_uart g_pic18_uarts[] =
     /* There are no more than 2 UARTs available on any PIC18 */
 };
 
+#if (NBOARD_USES_UART_1 == 1)
+
 static bool pic18_uart1_is_initialized(void)
 {
     return !!RC1STAbits.SPEN;
@@ -116,34 +118,43 @@ static void pic18_uart1_setup(
 
 static void pic18_uart1_control(uint32_t control_code, uint32_t arg)
 {
+    uint_fast16_t events = 0;
+    
     switch (control_code & NUART_COMMAND_Msk) {
         case NUART_COMMAND_SETUP:
             pic18_uart1_setup(&g_pic18_uart_1_board_config, control_code, arg);
             break;
         case NUART_COMMAND_ABORT_SEND:
+            PIE3bits.TX1IE = 0;
+            events |= NUART_EVENT_TX_ABORTED;
             break;
         case NUART_COMMAND_ABORT_RECEIVE:
+            PIE3bits.RC1IE = 0;
+            events |= NUART_EVENT_RX_ABORTED;
             break;
         case NUART_COMMAND_ABORT_TRANSFER:
+            PIE3bits.TX1IE = 0;
+            PIE3bits.RC1IE = 0;
+            events |= NUART_EVENT_TRANSFER_ABORTED;
             break;
         default:
             NASSERT_ALWAYS("Wrong control_code in nuart_control");
             break;
     }
+    
+    if (events) {
+        g_pic18_uarts[NUART_ID_1].callback(NUART_ID_1, events);
+    }
 }
 
 static void pic18_uart1_send(void)
 {
-    /*
-     * First, fill in the available buffer.
-     */
-    while (PIR3bits.TX1IF == 0) {
-        ;
-    }
-    
-    TX1REG = g_pic18_uarts[NUART_ID_1].buff_out[0];
-    g_pic18_uarts[NUART_ID_1].current_byte_out = 1;
     PIE3bits.TX1IE = 1;
+}
+
+static void pic18_uart1_receive(void)
+{
+    PIE3bits.RC1IE = 1;
 }
 
 static void pic18_uart1_isr(void)
@@ -188,6 +199,7 @@ static void pic18_uart1_isr(void)
         uart->callback(NUART_ID_1, events);
     }
 }
+#endif /* NBOARD_USES_UART_1 == 1 */
 
 void pic18_uart_init(void)
 {
@@ -286,21 +298,50 @@ void nuart_send(enum nuart_id uart_id, const void * data, size_t size)
     
     g_pic18_uarts[uart_id].buff_out = data;
     g_pic18_uarts[uart_id].buff_size = size;
+    g_pic18_uarts[NUART_ID_1].current_byte_out = 0;
     
     switch (uart_id) {
 #if (NBOARD_USES_UART_1)
         case NUART_ID_1:
             pic18_uart1_send();
-            return;
+            break;
 #endif
 #if (NBOARD_USES_UART_2)
         case NUART_ID_2:
             pic18_uart2_send();
-            return;
+            break;
 #endif  
     }
 }
 
-void nuart_receive(enum nuart_id uart_id, void * data, size_t size);
+void nuart_receive(enum nuart_id uart_id, void * data, size_t size)
+{
+    NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic18_uarts));
+    
+    g_pic18_uarts[uart_id].buff_in = data;
+    g_pic18_uarts[uart_id].buff_size = size;
+    g_pic18_uarts[uart_id].current_byte_in = 0;
+    
+    switch (uart_id) {
+#if (NBOARD_USES_UART_1)
+        case NUART_ID_1:
+            pic18_uart1_receive();
+            break;
+#endif
+#if (NBOARD_USES_UART_2)
+        case NUART_ID_2:
+            pic18_uart2_receive();
+            break;
+#endif  
+    }
+}
 
-void nuart_transfer(enum nuart_id uart_id, const void * output, void * input, size_t size);
+void nuart_transfer(
+        enum nuart_id uart_id, 
+        const void * output, 
+        void * input, 
+        size_t size)
+{
+    nuart_receive(uart_id, input, size);
+    nuart_send(uart_id, output, size);
+}
