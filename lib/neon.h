@@ -627,10 +627,6 @@ uint_fast8_t narch_log2(narch_uint x);
  *  @brief      Port Board module
  *  @{ *//*==================================================================*/
 
-/** @brief      Initialize board
- */
-void nboard_init(void);
-
 /** @} *//*==================================================================*/
 /** @defgroup   nport_os Port OS module
  *  @brief      Port OS module
