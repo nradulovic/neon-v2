@@ -249,7 +249,7 @@ extern "C" {
     | ((uint32_t)NCONFIG_EPA_USE_HSM << 6)                                  \
     | ((uint32_t)NCONFIG_EPA_HSM_LEVELS << 2)                               \
     | ((uint32_t)NCONFIG_SYS_EXITABLE_SCHEDULER << 1)                       \
-    | ((uint32_t)NCONFIG_EVENT_USE_DYNAMIC << 0)
+    | ((uint32_t)NCONFIG_EVENT_USE_DYNAMIC << 0))
 
 /** @brief      Validate the configuration from application context.
  * 
