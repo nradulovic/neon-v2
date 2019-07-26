@@ -67,7 +67,7 @@ const struct pic32_uart_board_config g_pic32_uart_5_board_config =
     .arg = PIC32MX_CLICKER_UART_BAUDRATE
 };
 
-void nboard_init(void)
+void np_board_init(void)
 {
     /* Disable JTAG since it is not available on this board */
     DDPCONbits.JTAGEN = 0;

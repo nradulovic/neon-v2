@@ -686,7 +686,7 @@ void nsys_init(void)
 #if (NCONFIG_ENABLE_LOGGER == 1)
     logger_init();
 #endif
-    nboard_init();
+    np_board_init();
     nlogger_flush();
 }
 

@@ -627,6 +627,21 @@ uint_fast8_t narch_log2(narch_uint x);
  *  @brief      Port Board module
  *  @{ *//*==================================================================*/
 
+/** @brief      Board initialization.
+ * 
+ *  Board initialization will initialize all used peripherals needed by
+ *  application. Typically, the function would initialize clock generators,
+ *  interrupt controller, at least one serial peripheral (UART), timers etc.
+ * 
+ *  The function is defined on board portable layer, which means it is board
+ *  (application) specific.
+ * 
+ *  @note       This function is not part of public API. The function will be
+ *              called by @ref nsys_init().
+ *  @notapi
+ */
+extern void np_board_init(void);
+
 /** @} *//*==================================================================*/
 /** @defgroup   nport_os Port OS module
  *  @brief      Port OS module
