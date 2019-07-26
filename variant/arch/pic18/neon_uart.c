@@ -59,40 +59,35 @@ static void pic18_uart1_setup(
     uint32_t stop_bits = control_code & NUART_STOP_BITS_Msk;
     uint32_t parity = control_code & NUART_PARITY_Msk;
     
-    NASSERT((control_code & NUART_MODE_Msk) == NUART_MODE_ASYNCHRONOUS);
-    
+    /* Reset all to default state. */
     RC1STA = 0u;
     TX1STA = 0u;
     BAUD1CON = 0u;
-    
+    /* Setup UART mode */
+    NASSERT((control_code & NUART_MODE_Msk) == NUART_MODE_ASYNCHRONOUS);
     /* Setup stop bits */
     NASSERT(stop_bits == NUART_STOP_BITS_1);
-    
     /* Setup data bits & parity */
     NASSERT((data_bits == NUART_DATA_BITS_8) || \
             (data_bits == NUART_DATA_BITS_9));
     NASSERT(parity == NUART_PARITY_NONE);
-    
+    /* Are we using 9 data bits? */
     if (data_bits == NUART_DATA_BITS_9) {
         TX1STAbits.TX9 = 1;
         RC1STAbits.RC9 = 1;
     }
-    
     /* Setup data polarity */
     if ((control_code & NUART_CPOL_Msk) == NUART_CPOL_1) {
         BAUD1CONbits.SCKP = 1;
     }
-    
     /* Setup data phase */
     NASSERT((control_code & NUART_CPHA_Msk) == NUART_CPHA_0);
-    
     /* Setup flow control */
     NASSERT((control_code & NUART_FLOW_CONTROL_Msk) == NUART_FLOW_CONTROL_NONE);
-    
     /* Setup interrupts */
     PIE3bits.RC1IE = 0;
     PIE3bits.TX1IE = 0;
-    
+    /* Is this a high priority task? */
     if (config->isr_vector_prio == 1) {
         IPR3bits.RC1IP = 1;
         IPR3bits.TX1IP = 1;
@@ -100,16 +95,12 @@ static void pic18_uart1_setup(
         IPR3bits.RC1IP = 0;
         IPR3bits.TX1IP = 0;
     }
-    
     /* Setup baudrate */
     pic18_uart1_setup_baudrate(arg);
-    
     /* Setup GPIO mux */
     RX1PPSbits.PIN = config->rx_pin;
     RX1PPSbits.PORT = config->rx_port;
-    
     (&RA0PPS)[(config->tx_port << 3) + config->tx_pin] = 0x09;
-    
     /* Enable transmit and receive and UART */
     RC1STAbits.CREN = 1;
     TX1STAbits.TXEN = 1;
@@ -163,20 +154,19 @@ static void pic18_uart1_isr(void)
     uint_fast16_t events = 0;
     
     if (PIE3bits.RC1IE & PIR3bits.RC1IF) {
-        
         while (PIR3bits.RC1IF && (uart->current_byte_in != uart->buff_size)) {
-            
+            /* Check for error: Frame error */
             if (RC1STAbits.FERR) {
                 events |= NUART_EVENT_RX_FRAMING_ERROR;
             }
-            uart->buff_in[uart->current_byte_in] = RC1REG;
-            uart->current_byte_in++;
-            
+            /* Check for error: Overflow error */
             if (RC1STAbits.OERR) {
                 events |= NUART_EVENT_RX_OVERFLOW;
                 RC1STAbits.CREN = 0;
                 RC1STAbits.CREN = 1;
             }
+            uart->buff_in[uart->current_byte_in] = RC1REG;
+            uart->current_byte_in++;
         }
 
         if (uart->current_byte_in == uart->buff_size) {
