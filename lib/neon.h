@@ -729,7 +729,6 @@ extern void np_board_init(void);
  */
 #if (NCONFIG_ENABLE_DEBUG == 1)
 #define NDEBUG_IS_ENABLED               1
-static const char g_debug_filename[] = NPLATFORM_FILE;
 #else
 /** @brief      Macro that returns current ndebug configuration
  */
