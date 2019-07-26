@@ -299,15 +299,15 @@ void np_mem_pool_init(
 void * np_mem_pool_alloc(struct nmem_pool * pool)
 {
     void * retval = NULL;
-    NCRITICAL_STATE_DECL(local)
+    NOS_CRITICAL_DECL(local)
 
-    NCRITICAL_LOCK(&local, NULL);
+    NOS_CRITICAL_LOCK(&local);
     if (pool->free != 0u) {
         pool->free--;
         retval = nlist_sll_next(&pool->next);
         nlist_sll_remove_from(&pool->next);
     }
-    NCRITICAL_UNLOCK(&local, NULL);
+    NOS_CRITICAL_UNLOCK(&local);
 
     return retval;
 }
@@ -315,12 +315,12 @@ void * np_mem_pool_alloc(struct nmem_pool * pool)
 void np_mem_pool_free(struct nmem_pool * pool, void * mem)
 {
     struct nlist_sll * current = mem;
-    NCRITICAL_STATE_DECL(local)
+    NOS_CRITICAL_DECL(local)
 
-    NCRITICAL_LOCK(&local, NULL);
+    NOS_CRITICAL_LOCK(&local);
     pool->free++;
     nlist_sll_add_before(&pool->next, current);
-    NCRITICAL_UNLOCK(&local, NULL);
+    NOS_CRITICAL_UNLOCK(&local);
 }
 
 /** @} *//*==================================================================*/
@@ -628,14 +628,14 @@ nerror nepa_send_signal(struct nepa * epa, uint_fast16_t signal)
 
 nerror nepa_send_event(struct nepa * epa, const struct nevent * event)
 {
-    NCRITICAL_STATE_DECL(local)
+    NOS_CRITICAL_DECL(local)
     int_fast8_t idx;
     nerror error;
 
     NREQUIRE(NSIGNATURE_OF(epa) == NSIGNATURE_EPA);
 
     event_ref_up(event);
-    NCRITICAL_LOCK(&local, NULL);
+    NOS_CRITICAL_LOCK(&local);
     idx = NLQUEUE_IDX_FIFO(&epa->equeue);
 
     if (idx >= 0) {
@@ -643,10 +643,10 @@ nerror nepa_send_event(struct nepa * epa, const struct nevent * event)
 
         NLQUEUE_IDX_REFERENCE(&epa->equeue, idx) = event;
         prio_queue_insert(&ctx->ready, prio_from_epa(epa));
-        NCRITICAL_UNLOCK(&local, NULL);
+        NOS_CRITICAL_UNLOCK(&local);
         error = EOK;
     } else {
-        NCRITICAL_UNLOCK(&local, NULL);
+        NOS_CRITICAL_UNLOCK(&local);
         /* Undo the event_ref_up step from above.
          */
         event_ref_down(event);
@@ -731,7 +731,7 @@ NPLATFORM_NORETURN(void nsys_schedule_start(void))
 #endif
         struct nepa_schedule * ctx = &g_epa_schedule;
          
-        NCRITICAL_STATE_DECL(local)
+        NOS_CRITICAL_DECL(local)
         struct nepa * epa;
         const struct nevent * event;
         uint_fast8_t prio;
@@ -740,7 +740,7 @@ NPLATFORM_NORETURN(void nsys_schedule_start(void))
                                                        
         epa = epa_from_prio(prio);                     /* Fetch the new EPA. */
         ctx->current = epa;
-        NCRITICAL_LOCK(&local, NULL);             /* Enter critical section. 
+        NOS_CRITICAL_LOCK(&local);                /* Enter critical section. 
                                                    * Check if this is the last/
                                                    * first event in event queue.
                                                    * If it is, then remove from
@@ -750,7 +750,7 @@ NPLATFORM_NORETURN(void nsys_schedule_start(void))
             prio_queue_remove(&ctx->ready, prio);
         }
         event = NLQUEUE_GET(&epa->equeue);
-        NCRITICAL_UNLOCK(&local, NULL);
+        NOS_CRITICAL_UNLOCK(&local);
         sm_dispatch(&epa->sm, event);                    /* Execute the EPA. */
         event_delete(event);
     }

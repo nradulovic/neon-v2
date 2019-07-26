@@ -648,29 +648,58 @@ uint_fast8_t narch_log2(narch_uint x);
 #define NOS_MUTEX_UNLOCK(mutex)
 #endif
 
-/** @} *//*==================================================================*/
-/** @defgroup   nport_critical Port critical module
- *  @brief      Port critical module
- *  @{ *//*==================================================================*/
-
+/** @brief      Declare a critical lock state variable.
+ * 
+ *  Critical lock uses a variable to store the lock state before entering a
+ *  critical section. After critical section is exited the lock state is 
+ *  restored from the variable. The variable can be declared as auto variable
+ *  (placed on stack) if a critical section is located within single function.
+ * 
+ *  @note       Do not put the semicolon (;) after macro since its 
+ *              implementation will include the necessary semicolon symbol:
+ * 
+ *  @code
+ *  NOS_CRITICAL_DECL(lock_state)  // <-- Not the missing semicolon
+ *  
+ *  NOS_CRITICAL_LOCK(&lock_state);
+ *  // Critical code here
+ *  NOS_CRITICAL_UNLOCK(&lock_state);
+ *  @endcode
+ *  @hideinitializer
+ */
 #if defined(__DOXYGEN__)
-#define NCRITICAL_DECL(name)
+#define NOS_CRITICAL_DECL(name)
 #endif
 
+/** @brief      Enter the critical code.
+ * 
+ *  Before entering the critical code, the macro will save current execution
+ *  state to @a local_state.  The local state variable must be previosly 
+ *  declared with @ref NOS_CRITICAL_DECL.
+ * 
+ *  @param      local_state
+ *              Pointer to local state variable which was declared with
+ *              @ref NOS_CRITICAL_DECL.
+ *  @hideinitializer
+ */
 #if defined(__DOXYGEN__)
-#define NCRITICAL_STATE_DECL(name)
+#define NOS_CRITICAL_LOCK(local_state)
 #endif
 
+/** @brief      Exit from critical code and restore the execution state stored
+ *              in @a local_state.
+ * 
+ *  Exit from critical code execution by restoring previosly save execution
+ *  state in @a local_state. The local state variable must be previosly 
+ *  declared with @ref NOS_CRITICAL_DECL.
+ *  
+ *  @param      local_state
+ *              Pointer to local state variable which was declared with
+ *              @ref NOS_CRITICAL_DECL.
+ *  @hideinitializer
+ */
 #if defined(__DOXYGEN__)
-#define NCRITICAL_INIT(instance)
-#endif
-
-#if defined(__DOXYGEN__)
-#define NCRITICAL_LOCK(local_state, instance)
-#endif
-
-#if defined(__DOXYGEN__)
-#define NCRITICAL_UNLOCK(local_state, instance)
+#define NOS_CRITICAL_UNLOCK(local_state)
 #endif
 
 /** @} *//*==================================================================*/

@@ -36,13 +36,12 @@
 extern "C" {
 #endif
     
-#define NCRITICAL_DECL(name)            
-#define NCRITICAL_STATE_DECL(name)      NARCH_ISR_STATE_DECL(name);
-#define NCRITICAL_INIT(instance)        
-#define NCRITICAL_LOCK(local_state, instance)                               \
+#define NOS_CRITICAL_DECL(name)                                             \
+        NARCH_ISR_STATE_DECL(name);
+
+#define NOS_CRITICAL_LOCK(local_state)                                      \
         NARCH_ISR_LOCK(local_state)
-    
-#define NCRITICAL_UNLOCK(local_state, instance)                             \
+#define NOS_CRITICAL_UNLOCK(local_state)                                    \
         NARCH_ISR_UNLOCK(local_state)
 
 #ifdef __cplusplus
