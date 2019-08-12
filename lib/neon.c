@@ -299,7 +299,7 @@ void np_mem_pool_init(
 void * np_mem_pool_alloc(struct nmem_pool * pool)
 {
     void * retval = NULL;
-    NOS_CRITICAL_DECL(local)
+    nos_critical local;
 
     NOS_CRITICAL_LOCK(&local);
     if (pool->free != 0u) {
@@ -315,7 +315,7 @@ void * np_mem_pool_alloc(struct nmem_pool * pool)
 void np_mem_pool_free(struct nmem_pool * pool, void * mem)
 {
     struct nlist_sll * current = mem;
-    NOS_CRITICAL_DECL(local)
+    nos_critical local;
 
     NOS_CRITICAL_LOCK(&local);
     pool->free++;
@@ -333,7 +333,7 @@ void np_mem_pool_free(struct nmem_pool * pool, void * mem)
 #include "neon_stdout.h"
 
 #if !defined(NBOARD_USES_STD_STREAM) || (NBOARD_USES_STD_STREAM == 0)
-#error "Logger is enabled but board didn't define a stream."
+#error "Logger is enabled but board didn't define a stream interface."
 #endif
 
 static struct logger_buffer
@@ -562,7 +562,7 @@ static struct nepa_schedule
                                                  * is used. */
 #else
         nbitarray_x                 bitarray
-                [NBITARRAY_DEF(NCONFIG_EPA_INSTANCES)];
+                [NBITARRAY_X_DEF(NCONFIG_EPA_INSTANCES)];
 #endif
     }                           ready;          /**< Ready queue */
 #if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
@@ -570,7 +570,7 @@ static struct nepa_schedule
 #endif
 } g_epa_schedule;
 
-#define epa_from_prio(a_prio)           (g_nsys_epa_list[(a_prio)])
+#define epa_from_prio(reg, a_prio)      (reg[(a_prio)])
 
 #define prio_from_epa(a_epa)            ((a_epa)->task.prio)
 
@@ -590,7 +590,7 @@ static struct nepa_schedule
 
 #else /* (NCONFIG_EPA_INSTANCES <= NBITARRAY_S_MAX_SIZE) */
 
-#define queue_insert(a_queue, a_prio)                                       \
+#define prio_queue_insert(a_queue, a_prio)                                  \
         nbitarray_x_set(&(a_queue)->bitarray[0], (a_prio))
 
 #define prio_queue_remove(a_queue, a_prio)                                  \
@@ -615,7 +615,6 @@ static void equeue_init(struct nequeue * equeue)
     NPLATFORM_UNUSED_ARG(equeue);
 }
 
-
 struct nepa * nepa_current(void)
 {
     return g_epa_schedule.current;
@@ -628,7 +627,7 @@ nerror nepa_send_signal(struct nepa * epa, uint_fast16_t signal)
 
 nerror nepa_send_event(struct nepa * epa, const struct nevent * event)
 {
-    NOS_CRITICAL_DECL(local)
+    nos_critical local;
     int_fast8_t idx;
     nerror error;
 
@@ -681,6 +680,23 @@ static nsm_action idle_state_init(struct nsm * sm, const struct nevent * event)
     return nsm_event_ignored();
 }
 
+static void schedule_initialize_epas(struct nepa ** epa_registry)
+{
+    for (uint_fast8_t prio = 0u; prio < NCONFIG_EPA_INSTANCES; prio++) {
+        struct nepa * epa;
+
+        epa = epa_from_prio(epa_registry, prio);
+
+        /* If a priority level is not used epa pointer is NULL. */
+        if (epa != NULL) {
+            sm_init(&epa->sm);
+            task_init(&epa->task, prio);
+            equeue_init(&epa->equeue);
+            nepa_send_event(epa, sm_event(NSM_INIT));
+        }
+    }
+}
+
 void nsys_init(void)
 {
 #if (NCONFIG_ENABLE_LOGGER == 1)
@@ -704,24 +720,12 @@ void nsys_timer_isr(void)
  * 1. If no ready task is set then set the default idle task.
  */
 #if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
-void nsys_schedule_start(void)
+void nsys_schedule_start(struct nepa ** epa_registry)
 #else
-NPLATFORM_NORETURN(void nsys_schedule_start(void))
+NPLATFORM_NORETURN(void nsys_schedule_start(struct nepa ** epa_registry))
 #endif
 {
-    for (uint_fast8_t prio = 0u; prio < NCONFIG_EPA_INSTANCES; prio++) {
-        struct nepa * epa;
-
-        epa = epa_from_prio(prio);
-
-        /* If a priority level is not used epa pointer is NULL. */
-        if (epa != NULL) {
-            sm_init(&epa->sm);
-            task_init(&epa->task, prio);
-            equeue_init(&epa->equeue);
-            nepa_send_event(epa, sm_event(NSM_INIT));
-        }
-    }
+    schedule_initialize_epas(epa_registry);
 
 #if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
                                     /* While there are ready tasks in system */
@@ -731,14 +735,14 @@ NPLATFORM_NORETURN(void nsys_schedule_start(void))
 #endif
         struct nepa_schedule * ctx = &g_epa_schedule;
          
-        NOS_CRITICAL_DECL(local)
+        nos_critical local;
         struct nepa * epa;
         const struct nevent * event;
         uint_fast8_t prio;
                                                    /* Get the highest level. */
         prio = prio_queue_get_highest(&ctx->ready);
                                                        
-        epa = epa_from_prio(prio);                     /* Fetch the new EPA. */
+        epa = epa_from_prio(epa_registry, prio);       /* Fetch the new EPA. */
         ctx->current = epa;
         NOS_CRITICAL_LOCK(&local);                /* Enter critical section. 
                                                    * Check if this is the last/

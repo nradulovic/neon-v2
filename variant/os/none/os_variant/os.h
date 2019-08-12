@@ -36,8 +36,7 @@
 extern "C" {
 #endif
     
-#define NOS_CRITICAL_DECL(name)                                             \
-        NARCH_ISR_STATE_DECL(name);
+typedef narch_isr_state nos_critical;
 
 #define NOS_CRITICAL_LOCK(local_state)                                      \
         NARCH_ISR_LOCK(local_state)

@@ -150,7 +150,8 @@ void narch_atomic_clear_bit(uint32_t * u32, uint_fast8_t bit)
 #endif /* (NARCH_HAS_CAS == 1) */
 
 
-#define NARCH_ISR_STATE_DECL(name)      narch_uint name
+typedef uint32_t narch_isr_state;
+
 #define NARCH_ISR_LOCK(local_state)     np_arch_isr_lock(local_state)
     
 #define NARCH_ISR_UNLOCK(local_state)   np_arch_isr_unlock(local_state)

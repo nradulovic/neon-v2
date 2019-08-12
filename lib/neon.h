@@ -2788,19 +2788,46 @@ nerror nepa_send_event(struct nepa * epa, const struct nevent * event);
  *  @{ *//*==================================================================*/
 
 extern struct nepa g_nsys_epa_idle;
-extern struct nepa * g_nsys_epa_list[NCONFIG_EPA_INSTANCES];
+
+typedef struct nepa * nsys_epa_registry[NCONFIG_EPA_INSTANCES];
 
 void nsys_init(void);
 
 bool nsys_is_scheduler_started(void);
 
-#if (NCONFIG_SYS_EXITABLE_SCHEDULER != 1)
-NPLATFORM_NORETURN(void nsys_schedule_start(void));
+/** @brief      Start executing Event Processing Agents
+ *  
+ *  This function will execute the list EPA in @a epa_registry. This is just a
+ *  registry of EPAs that application wants to execute.
+ * 
+ *  The behaviour of this function is modified by:
+ *  - NCONFIG_SYS_EXITABLE_SCHEDULER
+ *              When this argument is set to enabled (1) the scheduler can be
+ *              terminated with a call to @ref nsys_schedule_stop function. In
+ *              that case the event processing loop will stop and the function
+ *              will return.
+ *              When this argument is set to disabled (0) then the scheduler
+ *              loop can not be exited, in other words, the function is compiled
+ *              as infinite loop.
+ * 
+ *  @param      epa_registry
+ *              A registry of EPAs that application wants to be executed.
+ */
+#if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1) || defined(__DOXYGEN__)
+void nsys_schedule_start(struct nepa ** epa_registry);
 #else
-void nsys_schedule_start(void);
+NPLATFORM_NORETURN(void nsys_schedule_start(struct nepa ** epa_registry));
 #endif
 
-#if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
+/** @brief      Stop the execution of scheduler and return to main function.
+ *  
+ *  This function will create a request to the scheduler to stop the execution.
+ *  The scheduler will exit at next iteration of schedule process.
+ * 
+ *  @note       This function is not available when configuration option
+ *              @ref NCONFIG_SYS_EXITABLE_SCHEDULER is disabled (0).
+ */
+#if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1) || defined(__DOXYGEN__)
 void nsys_schedule_stop(void);
 #endif
 

@@ -42,7 +42,6 @@ extern "C" {
 #define NARCH_ALIGN                     1
 #define NARCH_HAS_EXCLUSIVE_LS          0
     
-#define NARCH_ISR_STATE_DECL(name)      narch_uint name
 #define NARCH_ISR_LOCK(local_state)                                         \
     do {                                                                    \
         *(local_state) = INTCONbits.GIE;                                    \
@@ -55,6 +54,7 @@ extern "C" {
     INTCONbits.GIE = *(local_state)
     
 typedef uint8_t narch_uint;
+typedef uint8_t narch_isr_state;
 
 #define narch_cpu_idle()
 
