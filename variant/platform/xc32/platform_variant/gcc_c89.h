@@ -17,26 +17,24 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Platform header for GCC C89 standard
+ *  @brief       Platform header for XC32 C89 standard
  *
- *  @addtogroup  mod_platform
+ *  @addtogroup  platform_xc32_common
  *  @{
  */
-/** @defgroup    platform_gcc_c89 GCC Platform for C89 standard
- *  @brief       GCC Platform for C89 standard
+/** @defgroup    platform_xc32_c89 XC32 Platform for C89 standard
+ *  @brief       XC32 Platform for C89 standard
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
-#ifndef NEON_GCC_PLATFORM_VARIANT_GCC_C89_H_
-#define NEON_GCC_PLATFORM_VARIANT_GCC_C89_H_
+#ifndef NEON_XC32_PLATFORM_VARIANT_C89_H_
+#define NEON_XC32_PLATFORM_VARIANT_C89_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 /*---------------------------------------------------------------------------*/
-
-#define PORT_C_FUNC             __FUNCTION__
 
 #ifdef __cplusplus
 }

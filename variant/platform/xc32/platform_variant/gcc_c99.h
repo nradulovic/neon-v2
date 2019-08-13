@@ -17,13 +17,13 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Platform header for GCC C99 standard
+ *  @brief       Platform header for XC32 C99 standard
  *
- *  @addtogroup  mod_platform
+ *  @addtogroup  platform_xc32_common
  *  @{
  */
-/** @defgroup    platform_gcc_c99 GCC Platform for C99 standard
- *  @brief       GCC Platform for C99 standard
+/** @defgroup    platform_xc32_c99 XC32 Platform for C99 standard
+ *  @brief       XC32 Platform for C99 standard
  *  @{
  */
 /*---------------------------------------------------------------------------*/
@@ -35,8 +35,6 @@
 extern "C" {
 #endif
 /*---------------------------------------------------------------------------*/
-
-#define NPLATFORM_FUNC          __func__
 
 #ifdef __cplusplus
 }

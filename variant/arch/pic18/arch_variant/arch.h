@@ -36,34 +36,35 @@
 extern "C" {
 #endif
 
+/** @brief      Used internally by PIC18 clients.
+ */
+#define PIC18_ARCH                      1
+
 #define NARCH_ID                        "pic18"
-#define NARCH_DATA_WIDTH                8 /* sizeof(narch_uint) * 8 */
-#define NARCH_PIC18                     1
+#define NARCH_DATA_WIDTH                8u /* sizeof(narch_uint) * 8 */
+
 #define NARCH_ALIGN                     1
 #define NARCH_HAS_EXCLUSIVE_LS          0
     
 #define NARCH_ISR_LOCK(local_state)                                         \
     do {                                                                    \
-        *(local_state) = INTCONbits.GIE;                                    \
+        (local_state)->state = INTCONbits.GIE;                              \
         while (INTCONbits.GIE == 1) {                                       \
             INTCONbits.GIE == 0;                                            \
         }                                                                   \
     } while (0)
     
-#define NARCH_ISR_UNLOCK(local_state)                                      \
-    INTCONbits.GIE = *(local_state)
+#define NARCH_ISR_UNLOCK(local_state)                                       \
+    INTCONbits.GIE = (local_state)->state
     
-typedef uint8_t narch_uint;
-typedef uint8_t narch_isr_state;
+struct narch_isr_state
+{
+    uint8_t state;
+};
 
-#define narch_cpu_idle()
-
-
-void narch_init(void);
-
-void narch_cpu_stop(void);
-
-/* TODO: Use static assert to compare NARCH_DATA_WIDTH and sizeof(narch_uint) */
+/** @brief      Used internally by PIC18 clients.
+ */
+void pic18_init(void);
 
 #ifdef __cplusplus
 }

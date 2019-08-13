@@ -42,7 +42,7 @@ static void timer_init(void)
 }
 #endif
 
-void narch_init(void)
+void pic18_init(void)
 {
     nlogger_info("PIC18 ARCH: Processor %x Version %x",
             *(const uint16_t *)0x3ffffe,
@@ -74,6 +74,11 @@ extern void nsys_timer_isr(void);
 void narch_cpu_stop(void)
 {
     for (;;);
+}
+
+void narch_cpu_sleep(void)
+{
+    
 }
 
 narch_uint narch_exp2(uint_fast8_t x)

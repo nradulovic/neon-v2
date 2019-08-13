@@ -63,7 +63,7 @@ extern "C" {
 #define NARCH_ID                        "pic32"
 #define NARCH_DATA_WIDTH                32 /* sizeof(narch_uint) * 8 */
 #define NARCH_ALIGN                     4
-#define NARCH_PIC32                     1
+#define PIC32_ARCH                      1
     
 /*
  * Architecture has equally efficient 8bit load-store instructions, no benefit
@@ -88,8 +88,6 @@ extern "C" {
 #define NARCH_HAS_ATOMIC_SET_CLEAR_BIT  0
 #endif
     
-typedef uint32_t narch_uint;
-
 #define NARCH_IS_ISR_ACTIVE()           (_CP0_GET_CAUSE() & _CP0_CAUSE_RIPL_MASK)
 
 #define NARCH_DISABLE_INTERRUPTS()      __builtin_disable_interrupts()
@@ -116,8 +114,6 @@ NPLATFORM_NORETURN(void narch_cpu_stop(void))
     NARCH_DISABLE_INTERRUPTS();
     for (;;);
 }
-
-#define narch_cpu_idle()                
 
 #if (NARCH_HAS_ATOMICS == 1)
 #define narch_compare_and_swap(p, oldval, newval)                           \
@@ -180,7 +176,7 @@ void np_arch_isr_unlock(const narch_uint * local_state)
     _CP0_SET_STATUS(ipl_status);
 }
 
-void narch_init(void);
+void pic18_init(void);
 void narch_term(void);
 
 #if (NCONFIG_ARCH_TIMER_SOURCE == 1)

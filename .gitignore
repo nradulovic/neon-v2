@@ -46,6 +46,7 @@ tags
 
 # Ignore doxygen built files
 documentation/doxyfile_version
+documentation/build/
 
 # Ignore generated folders
 **/generated/

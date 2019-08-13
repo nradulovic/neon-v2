@@ -1,6 +1,8 @@
-# Developer guidelines
+# Building Neon
 ## Contents
 1. [Introduction](#1-introduction)
+2. [Supported tools](#2-supported_tools)
+3. [Build methods](#3-build_methods)
 
 ---
 ## 1. Introduction
@@ -20,7 +22,7 @@ distributions.
 | coreutils     | 8.25              | cp --version                 |
 
 ---
-## 3. Building methods
+## 3. Build methods
 ### 3.1 Makefile method
 
 The main build method is by invoking the make command from terminal.

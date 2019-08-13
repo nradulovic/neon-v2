@@ -2,32 +2,26 @@
  * Neon
  * Copyright (C) 2018   REAL-TIME CONSULTING
  *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
- * more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along
- * with this program. If not, see <http://www.gnu.org/licenses/>.
+ * For license information refer to LGPL-3.0.md file at the root of this project.
  */
+/** @defgroup   neon_impl Neon implementation
+ *  @brief      Neon implementation
+ *  @{ *//*==================================================================*/
 
 #include <string.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdint.h>
 
-/* NOTE: The following definition of NEON_C_SOURCE is used in conjuction with
- * function inline macros.
- */
-#define NEON_C_SOURCE
 #include "neon.h"
 
 /*===========================================================================*/
+/** @defgroup   nport_impl Port generic implementation
+ *  @brief      Port generic implementation
+ *  @{ *//*==================================================================*/
+
+/** @} *//*==================================================================*/
 /** @defgroup   nconfig_impl Configuration module implementation
  *  @brief      Configuration module implementation
  *  @{ *//*==================================================================*/
@@ -40,11 +34,14 @@
 # error "The limit of maximum EPA priorities has been exceeded!"
 #endif
 
-const uint32_t nconfig_compiled_id = NCONFIG_ID;
+const uint32_t nconfig_configuration = 
+    ((uint32_t)NCONFIG_ENABLE_DEBUG << NCONFIG_ENABLE_DEBUG_BIT) | 
+    ((uint32_t)NCONFIG_ENABLE_LOGGER << NCONFIG_ENABLE_LOGGER_BIT);
+
 
 /** @} *//*==================================================================*/
-/** @defgroup   ndebug_impl Debug module implementation
- *  @brief      Debug module implementation
+/** @defgroup   ndebug_impl Debug implementation
+ *  @brief      Debug implementation
  *  @{ *//*==================================================================*/
 
 #if (NCONFIG_ENABLE_DEBUG == 1)
@@ -71,13 +68,18 @@ NPLATFORM_NORETURN(void nassert(
             line);
     nlogger_err("Expression that failed:\r\n '%s'", text);
     nlogger_err("Build details:\r\n %s - %s", 
-            nplatform_date, 
-            nplatform_time);
-    nlogger_err("Platform:\r\n %s", nplatform_id);
+            nsys_build_date, 
+            nsys_build_time);
+    nlogger_err("Platform:\r\n %s", nsys_platform_id);
     nlogger_flush();
     narch_cpu_stop();
 }
 #endif
+
+/** @} *//*==================================================================*/
+/** @defgroup   nerror_impl Error handling implementation
+ *  @brief      Error handling implementation
+ *  @{ *//*==================================================================*/
 
 /** @} *//*==================================================================*/
 /** @defgroup   nbits_impl Bit operations module implementation
@@ -139,6 +141,115 @@ float nbits_u32tof(uint32_t val)
     return retval;
 }
 
+/** @} *//*==================================================================*/
+/** @defgroup   nlist_sll_impl Singly linked list implementation
+ *  @brief      Singly linked list implementation
+ *  @{ *//*==================================================================*/
+
+/** @} *//*==================================================================*/
+/** @defgroup   nlist_dll_impl Doubly linked list implementation
+ *  @brief      Doubly linked list implementation
+ *  @{ *//*==================================================================*/
+
+/** @} *//*==================================================================*/
+/** @defgroup   nlogger_x_impl Extended logger module implementation
+ *  @brief      Extended logger module implementation
+ *  @{ *//*==================================================================*/
+
+#if (NCONFIG_ENABLE_LOGGER == 1)
+
+#include "neon_stdout.h"
+
+#if !defined(NBOARD_USES_STD_STREAM) || (NBOARD_USES_STD_STREAM == 0)
+#error "Logger is enabled but board didn't define a stream interface."
+#endif
+
+static struct logger_buffer
+{
+    uint_fast16_t current;
+    char text[NCONFIG_LOGGER_BUFFER_SIZE];
+} g_logger_buffer;
+
+
+static void logger_send_callback(void)
+{
+    g_logger_buffer.current = 0u;
+}
+
+static void logger_init(void)
+{
+    NSTREAM_INIT(logger_send_callback);
+}
+
+bool nlogger_flush(void)
+{
+    if (!NSTREAM_IS_INITIALIZED()) {
+        return false;
+    }
+    if (g_logger_buffer.current == 0u) {
+        return true;
+    }
+    NSTREAM_SEND(&g_logger_buffer.text[0], g_logger_buffer.current);
+    
+    /* NOTE:
+     * We need a cast to volatile type in order to prevent compiler from
+     * optimizing the variable away.
+     */
+    while (*((volatile uint_fast16_t *)&g_logger_buffer.current) != 0u) {
+        narch_cpu_sleep();
+    }
+    
+    return true;
+}
+
+bool nlogger_print(const char * msg, ...)
+{
+    uint_fast16_t empty;
+    int retval;
+
+    empty = sizeof(g_logger_buffer.text) - g_logger_buffer.current;
+    
+    if (empty < 10u) {
+        return false;
+    }
+    va_list args;
+    va_start(args, msg);
+    retval = vsnprintf(
+            &g_logger_buffer.text[g_logger_buffer.current],
+            empty - 2u, /* Subtract space for \r\n characters */
+            msg,
+            args);
+    va_end(args);
+    
+    if (retval <= 0) {
+        return false;
+    }
+
+    if ((unsigned)retval > (empty - 2u)) {
+        g_logger_buffer.text[sizeof(g_logger_buffer.text) - 3u] = '>';
+        g_logger_buffer.text[sizeof(g_logger_buffer.text) - 2u] = '\r';
+        g_logger_buffer.text[sizeof(g_logger_buffer.text) - 1u] = '\n';
+        g_logger_buffer.current = sizeof(g_logger_buffer.text) - 1u;
+        return nlogger_flush();
+    } else {
+        g_logger_buffer.current += retval;
+        g_logger_buffer.text[g_logger_buffer.current++] = '\r';
+        g_logger_buffer.text[g_logger_buffer.current++] = '\n';
+        return true;
+    }
+}
+#endif /* (NCONFIG_ENABLE_LOGGER == 1) */
+
+/** @} *//*==================================================================*/
+/** @defgroup   bits_bitarray_s_impl Simple bit array implementation
+ *  @brief      Simple bit array implementation.
+ *  @{ *//*==================================================================*/
+
+/** @} *//*==================================================================*/
+/** @defgroup   bits_bitarray_x_impl Extended bit array implementation
+ *  @brief      Extended bit array implementation.
+ *  @{ *//*==================================================================*/
+
 /*
  * 1. Set group value
  * 2. Set group indicator.
@@ -193,8 +304,8 @@ bool nbitarray_x_is_set(const nbitarray_x * array, uint_fast8_t bit)
 }
 
 /** @} *//*==================================================================*/
-/** @defgroup   nqueue_lqueue_impl Lightweight queue module implementation
- *  @brief      Lightweight queue module implementation
+/** @defgroup   nlqueue_impl Lightweight queue implementation
+ *  @brief      Lightweight queue implementation
  *  @{ *//*==================================================================*/
 
 void np_lqueue_super_init(struct nlqueue * lqs, uint8_t elements)
@@ -228,8 +339,8 @@ int_fast8_t np_lqueue_super_tail(const struct nlqueue * qb)
 }
 
 /** @} *//*==================================================================*/
-/** @defgroup   nqueue_pqueue_impl Priority sorted queue module implementation
- *  @brief      Priority sorted queue module implementation
+/** @defgroup   npqueue_impl Priority sorted queue implementation
+ *  @brief      Priority sorted queue implementation
  *  @{ *//*==================================================================*/
 
 void npqueue_sentinel_shift(struct npqueue_sentinel * sentinel)
@@ -270,11 +381,11 @@ void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
 }
 
 /** @} *//*==================================================================*/
-/** @defgroup   nmem_pool)impl Memory pool implementation
+/** @defgroup   nmem_pool_impl Memory pool implementation
  *  @brief      Memory pool implementation
  *  @{ *//*==================================================================*/
 
-void np_mem_pool_init(
+void nmem_pool_init(
         struct nmem_pool * pool,
         void * storage,
         size_t storage_size,
@@ -296,10 +407,10 @@ void np_mem_pool_init(
     }
 }
 
-void * np_mem_pool_alloc(struct nmem_pool * pool)
+void * nmem_pool_alloc(struct nmem_pool * pool)
 {
     void * retval = NULL;
-    nos_critical local;
+    struct nos_critical local;
 
     NOS_CRITICAL_LOCK(&local);
     if (pool->free != 0u) {
@@ -312,105 +423,16 @@ void * np_mem_pool_alloc(struct nmem_pool * pool)
     return retval;
 }
 
-void np_mem_pool_free(struct nmem_pool * pool, void * mem)
+void nmem_pool_free(struct nmem_pool * pool, void * mem)
 {
     struct nlist_sll * current = mem;
-    nos_critical local;
+    struct nos_critical local;
 
     NOS_CRITICAL_LOCK(&local);
     pool->free++;
     nlist_sll_add_before(&pool->next, current);
     NOS_CRITICAL_UNLOCK(&local);
 }
-
-/** @} *//*==================================================================*/
-/** @defgroup   nlogger_x_impl Extended logger module implementation
- *  @brief      Extended logger module implementation
- *  @{ *//*==================================================================*/
-
-#if (NCONFIG_ENABLE_LOGGER == 1)
-
-#include "neon_stdout.h"
-
-#if !defined(NBOARD_USES_STD_STREAM) || (NBOARD_USES_STD_STREAM == 0)
-#error "Logger is enabled but board didn't define a stream interface."
-#endif
-
-static struct logger_buffer
-{
-    uint_fast16_t current;
-    char text[NCONFIG_LOGGER_BUFFER_SIZE];
-} g_logger_buffer;
-
-
-static void logger_send_callback(void)
-{
-    g_logger_buffer.current = 0u;
-}
-
-static void logger_init(void)
-{
-    NSTREAM_INIT(logger_send_callback);
-}
-
-bool nlogger_flush(void)
-{
-    if (!NSTREAM_IS_INITIALIZED()) {
-        return false;
-    }
-    if (g_logger_buffer.current == 0u) {
-        return true;
-    }
-    NSTREAM_SEND(&g_logger_buffer.text[0], g_logger_buffer.current);
-    
-    /* NOTE:
-     * We need a cast to volatile type in order to prevent compiler from
-     * optimizing the variable away.
-     */
-    while (*((volatile uint_fast16_t *)&g_logger_buffer.current) != 0u) {
-        narch_cpu_idle();
-    }
-    
-    return true;
-}
-
-bool nlogger_print(const char * msg, ...)
-{
-    uint_fast16_t empty;
-    int retval;
-
-    empty = sizeof(g_logger_buffer.text) - g_logger_buffer.current;
-    
-    if (empty < 10u) {
-        return false;
-    }
-    va_list args;
-    va_start(args, msg);
-    retval = vsnprintf(
-            &g_logger_buffer.text[g_logger_buffer.current],
-            empty - 2u, /* Subtract space for \r\n characters */
-            msg,
-            args);
-    va_end(args);
-    
-    if (retval <= 0) {
-        return false;
-    }
-
-    if ((unsigned)retval > (empty - 2u)) {
-        g_logger_buffer.text[sizeof(g_logger_buffer.text) - 3u] = '>';
-        g_logger_buffer.text[sizeof(g_logger_buffer.text) - 2u] = '\r';
-        g_logger_buffer.text[sizeof(g_logger_buffer.text) - 1u] = '\n';
-        g_logger_buffer.current = sizeof(g_logger_buffer.text) - 1u;
-        return nlogger_flush();
-    } else {
-        g_logger_buffer.current += retval;
-        g_logger_buffer.text[g_logger_buffer.current++] = '\r';
-        g_logger_buffer.text[g_logger_buffer.current++] = '\n';
-        return true;
-    }
-}
-#endif /* (NCONFIG_ENABLE_LOGGER == 1) */
 
 /** @} *//*==================================================================*/
 /** @defgroup   nevent_impl Event implementation
@@ -453,7 +475,7 @@ void event_ref_up(const struct nevent * event)
 void event_delete(const struct nevent * event)
 {
     if (event_ref_down(event)) {
-        np_mem_pool_free(event->pool, (void *)event);
+        nmem_pool_free(event->pool, (void *)event);
     }
 }
 #else
@@ -465,7 +487,7 @@ void * nevent_create(struct nmem_pool * pool, uint_fast16_t id)
 {
     struct nevent * event;
 
-    event = np_mem_pool_alloc(pool);
+    event = nmem_pool_alloc(pool);
 
     if (event == NULL) {
         return NULL;
@@ -479,8 +501,8 @@ void * nevent_create(struct nmem_pool * pool, uint_fast16_t id)
 #endif
 
 /** @} *//*==================================================================*/
-/** @defgroup   nstate_machine_processor_impl State machine processor module implementation
- *  @brief      State machine processor module implementation
+/** @defgroup   nsm_impl State machine implementation
+ *  @brief      State machine implementation
  *  @{ *//*==================================================================*/
 
 #define sm_event(event)                 &g_events[(event)]
@@ -544,33 +566,11 @@ static nsm_action sm_fsm_dispatch(struct nsm * sm, const struct nevent * event)
 }
 
 /** @} *//*==================================================================*/
-/** @defgroup   nepa_impl Event Processing Agent (EPA) module implementation
- *  @brief      Event Processing Agent (EPA) module implementation
+/** @defgroup   nepa_impl Event Processing Agent (EPA) implementation
+ *  @brief      Event Processing Agent (EPA) implementation
  *  @{ *//*==================================================================*/
 
-/** @brief		Scheduler context structure
- */
-static struct nepa_schedule
-{
-    struct nepa *               current;        /**< Speed optimization,
-                                                 *   current thread priority. */
-    struct nepa_queue
-    {
-#if (NCONFIG_EPA_INSTANCES <= NBITARRAY_S_MAX_SIZE)
-        nbitarray_s                 bitarray;   /**< Simple bit array is used
-                                                 * when small number of task
-                                                 * is used. */
-#else
-        nbitarray_x                 bitarray
-                [NBITARRAY_X_DEF(NCONFIG_EPA_INSTANCES)];
-#endif
-    }                           ready;          /**< Ready queue */
-#if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
-    volatile bool               should_exit;
-#endif
-} g_epa_schedule;
-
-#define epa_from_prio(reg, a_prio)      (reg[(a_prio)])
+#define epa_from_prio(ctx, a_prio)      (&(ctx)->mempool[(a_prio)])
 
 #define prio_from_epa(a_epa)            ((a_epa)->task.prio)
 
@@ -615,11 +615,6 @@ static void equeue_init(struct nequeue * equeue)
     NPLATFORM_UNUSED_ARG(equeue);
 }
 
-struct nepa * nepa_current(void)
-{
-    return g_epa_schedule.current;
-}
-
 nerror nepa_send_signal(struct nepa * epa, uint_fast16_t signal)
 {
     return nepa_send_event(epa, &g_events[signal]);
@@ -627,7 +622,7 @@ nerror nepa_send_signal(struct nepa * epa, uint_fast16_t signal)
 
 nerror nepa_send_event(struct nepa * epa, const struct nevent * event)
 {
-    nos_critical local;
+    struct nos_critical local;
     int_fast8_t idx;
     nerror error;
 
@@ -638,10 +633,8 @@ nerror nepa_send_event(struct nepa * epa, const struct nevent * event)
     idx = NLQUEUE_IDX_FIFO(&epa->equeue);
 
     if (idx >= 0) {
-        struct nepa_schedule * ctx = &g_epa_schedule;
-
         NLQUEUE_IDX_REFERENCE(&epa->equeue, idx) = event;
-        prio_queue_insert(&ctx->ready, prio_from_epa(epa));
+        prio_queue_insert(&epa->scheduler->ready, prio_from_epa(epa));
         NOS_CRITICAL_UNLOCK(&local);
         error = EOK;
     } else {
@@ -656,76 +649,49 @@ nerror nepa_send_event(struct nepa * epa, const struct nevent * event)
 }
 
 /** @} *//*==================================================================*/
-/** @defgroup   nsys System module
- *  @brief      System module
+/** @defgroup   nscheduler_impl Scheduler implementation
+ *  @brief      Scheduler implementation
  *  @{ *//*==================================================================*/
 
-/** @brief      Idle EPA Event queue
- */
-static struct epa_queue_idle nevent_queue(2) g_epa_queue_idle;
-
-static nsm_action idle_state_init(struct nsm *, const struct nevent *);
-
-struct nepa g_nsys_epa_idle = NEPA_INITIALIZER(
-            &g_epa_queue_idle, 
-            NEPA_FSM_TYPE, 
-            idle_state_init, 
-            NULL);
-
-static nsm_action idle_state_init(struct nsm * sm, const struct nevent * event)
-{
-    NPLATFORM_UNUSED_ARG(sm);
-    nepa_send_event(ncurrent, event);
-
-    return nsm_event_ignored();
-}
-
-static void schedule_initialize_epas(struct nepa ** epa_registry)
+static void schedule_initialize_epas(
+        struct nscheduler * schedule, 
+        const struct nepa * const * epa_registry)
 {
     for (uint_fast8_t prio = 0u; prio < NCONFIG_EPA_INSTANCES; prio++) {
-        struct nepa * epa;
-
-        epa = epa_from_prio(epa_registry, prio);
-
-        /* If a priority level is not used epa pointer is NULL. */
-        if (epa != NULL) {
+        /* If a priority level is not used EPA pointer is NULL. */
+        if (epa_registry[prio] != NULL) {
+            struct nepa * epa;
+            
+            epa = epa_from_prio(schedule, prio);
+            *epa = *epa_registry[prio];
             sm_init(&epa->sm);
             task_init(&epa->task, prio);
             equeue_init(&epa->equeue);
             nepa_send_event(epa, sm_event(NSM_INIT));
+            epa->scheduler = schedule;
         }
     }
 }
 
-void nsys_init(void)
+bool nscheduler_is_started(struct nscheduler * scheduler)
 {
-#if (NCONFIG_ENABLE_LOGGER == 1)
-    logger_init();
-#endif
-    np_board_init();
-    nlogger_flush();
-}
-
-bool nsys_is_scheduler_started(void)
-{
-    return !!g_epa_schedule.current;
-}
-
-void nsys_timer_isr(void)
-{
-
+    return !!scheduler->current;
 }
 
 /*
  * 1. If no ready task is set then set the default idle task.
  */
 #if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
-void nsys_schedule_start(struct nepa ** epa_registry)
+void nscheduler_start(
+        struct nscheduler * scheduler,
+        const struct nepa * const * epa_registry)
 #else
-NPLATFORM_NORETURN(void nsys_schedule_start(struct nepa ** epa_registry))
+NPLATFORM_NORETURN(void nscheduler_start(
+        struct nscheduler * scheduler, 
+        const struct nepa * const * epa_registry))
 #endif
 {
-    schedule_initialize_epas(epa_registry);
+    schedule_initialize_epas(scheduler, epa_registry);
 
 #if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
                                     /* While there are ready tasks in system */
@@ -733,17 +699,15 @@ NPLATFORM_NORETURN(void nsys_schedule_start(struct nepa ** epa_registry))
 #else
     while (true) {
 #endif
-        struct nepa_schedule * ctx = &g_epa_schedule;
-         
-        nos_critical local;
+        struct nos_critical local;
         struct nepa * epa;
         const struct nevent * event;
         uint_fast8_t prio;
                                                    /* Get the highest level. */
-        prio = prio_queue_get_highest(&ctx->ready);
+        prio = prio_queue_get_highest(&scheduler->ready);
                                                        
-        epa = epa_from_prio(epa_registry, prio);       /* Fetch the new EPA. */
-        ctx->current = epa;
+        epa = epa_from_prio(scheduler, prio);       /* Fetch the new EPA. */
+        scheduler->current = epa;
         NOS_CRITICAL_LOCK(&local);                /* Enter critical section. 
                                                    * Check if this is the last/
                                                    * first event in event queue.
@@ -751,7 +715,7 @@ NPLATFORM_NORETURN(void nsys_schedule_start(struct nepa ** epa_registry))
                                                    * priority queue.
                                                    */
         if (NLQUEUE_IS_FIRST(&epa->equeue)) {
-            prio_queue_remove(&ctx->ready, prio);
+            prio_queue_remove(&scheduler->ready, prio);
         }
         event = NLQUEUE_GET(&epa->equeue);
         NOS_CRITICAL_UNLOCK(&local);
@@ -763,7 +727,7 @@ NPLATFORM_NORETURN(void nsys_schedule_start(struct nepa ** epa_registry))
     for (uint_fast8_t prio = 0u; prio < NCONFIG_EPA_INSTANCES; prio) {
         struct ntask * task;
 
-        task = epa_from_prio(ctx, prio);
+        task = epa_from_prio(scheduler, prio);
 
         ntask_stop(task);
     }
@@ -771,7 +735,7 @@ NPLATFORM_NORETURN(void nsys_schedule_start(struct nepa ** epa_registry))
     for (uint_fast8_t prio = 0u; prio < NCONFIG_EPA_INSTANCES; prio) {
         struct ntask * task;
 
-        task = epa_from_prio(ctx, prio);
+        task = epa_from_prio(scheduler, prio);
 
         ntask_delete(task);
     }
@@ -779,10 +743,49 @@ NPLATFORM_NORETURN(void nsys_schedule_start(struct nepa ** epa_registry))
 }
 
 #if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
-void ntask_schedule_stop(void)
+void nscheduler_stop(struct nscheduler * scheduler)
 {
-    should_exit = true;
+    scheduler->should_exit = true;
 }
 #endif
 
+/** @} *//*==================================================================*/
+/** @defgroup   nsys System module
+ *  @brief      System module
+ *  @{ *//*==================================================================*/
+
+/** @brief      Idle EPA Event queue
+ */
+static struct epa_queue_idle nevent_queue(2) g_epa_queue_idle;
+
+static nsm_action idle_state_init(struct nsm *, const struct nevent *);
+
+static nsm_action idle_state_init(struct nsm * sm, const struct nevent * event)
+{
+    NPLATFORM_UNUSED_ARG(sm);
+    NPLATFORM_UNUSED_ARG(event);
+
+    return nsm_event_ignored();
+}
+
+const char * const nsys_build_date = NPLATFORM_DATE;
+const char * const nsys_build_time = NPLATFORM_TIME;
+const char * const nsys_platform_id = NPLATFORM_ID;
+
+const struct nepa nsys_epa_idle = NEPA_INITIALIZER(
+            &g_epa_queue_idle, 
+            NEPA_FSM_TYPE, 
+            idle_state_init, 
+            NULL);
+
+void nsys_init(void)
+{
+#if (NCONFIG_ENABLE_LOGGER == 1)
+    logger_init();
+#endif
+    nboard_init();
+    nlogger_flush();
+}
+
+/** @} */
 /** @} */

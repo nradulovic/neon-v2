@@ -1,16 +1,18 @@
 # Developer guidelines
+
 ## Contents
+
 1. [Introduction](#1-introduction)
 2. [Vision](#2-vision)
 3. [Coding rules](#3-coding-rules)
 
 ---
 ## 1. Introduction
-This document is for developers who want to modify PicoBlocks source.
+This document is for developers who want to modify or contribute to  Neon source.
 
 ---
 ## 2. Vision
-Some of key principles used in development of PicoBlocks:
+Some of key principles used in development of Neon:
 - Do not offer a plenthora of source code configuration options. Offering to
   many options may confuse the user and bring in necessary burden on them to
   think about configuration (see [wiki overchoice]). Always choose and hardcode

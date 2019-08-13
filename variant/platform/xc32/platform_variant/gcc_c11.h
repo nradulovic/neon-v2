@@ -17,22 +17,28 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Platform header for GCC C11 standard
+ *  @brief       Platform header for XC32 C11 standard
  *
- *  @addtogroup  mod_platform
+ *  @addtogroup  platform_xc32_common
  *  @{
  */
-/** @defgroup    platform_gcc_c11 GCC Platform for C11 standard
- *  @brief       GCC Platform for C11 standard
+/** @defgroup    platform_xc32_c11 XC32 Platform for C89 standard
+ *  @brief       XC32 Platform for C11 standard
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
-#ifndef NEON_GCC_PLATFORM_VARIANT_GCC_C11_H_
-#define NEON_GCC_PLATFORM_VARIANT_GCC_C11_H_
+#ifndef NEON_XC32_PLATFORM_VARIANT_C11_H_
+#define NEON_XC32_PLATFORM_VARIANT_C11_H_
 
-#include "../platform_variant/gcc_c99.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+/*---------------------------------------------------------------------------*/
 
+#ifdef __cplusplus
+}
+#endif
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/

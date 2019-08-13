@@ -36,7 +36,7 @@
 extern "C" {
 #endif
 
-#ifndef NMCU_PIC18F46K40
+#ifndef PIC18F46K40_MCU
 #error "PIC18F Monitor board uses PIC18F46K40"
 #endif
     

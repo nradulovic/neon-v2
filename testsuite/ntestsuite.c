@@ -42,8 +42,8 @@ static struct np_testsuite_context g_np_testsuite_context;
 
 void ntestsuite_print_header(void)
 {
-    nlogger_info("\n\r\n\rBuild info: %s - %s", nplatform_date, nplatform_time);
-    nlogger_info("Platform ID: %s", nplatform_id);
+    nlogger_info("\n\r\n\rBuild info: %s - %s", nsys_build_date, nsys_build_time);
+    nlogger_info("Platform ID: %s", nsys_platform_id);
     nlogger_flush(); 
 }
         

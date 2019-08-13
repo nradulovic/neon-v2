@@ -99,9 +99,9 @@ const struct pic18_uart_board_config g_pic18_uart_1_board_config =
     .tx_port = 3
 };
 
-void np_board_init(void)
+void nboard_init(void)
 {
-    narch_init();
+    pic18_init();
     pic18_uart_init();
 }
 

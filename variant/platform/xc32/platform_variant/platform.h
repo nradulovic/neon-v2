@@ -29,8 +29,8 @@
  */
 /*---------------------------------------------------------------------------*/
 
-#ifndef NEON_GCC_PLATFORM_VARIANT_PLATFORM_H_
-#define NEON_GCC_PLATFORM_VARIANT_PLATFORM_H_
+#ifndef NEON_XC32_PLATFORM_VARIANT_PLATFORM_H_
+#define NEON_XC32_PLATFORM_VARIANT_PLATFORM_H_
 
 #include <stddef.h>
 
@@ -39,8 +39,6 @@ extern "C" {
 #endif
 /*---------------------------------------------------------------------------*/
 
-#define NPLATFORM_GCC					1
-    
 #define NPLATFORM_ID                    "xc32"
     
 #define NPLATFORM_DATE                  __DATE__
@@ -73,10 +71,6 @@ extern "C" {
     
 #define NPLATFORM_CONTAINER_OF(ptr, type, member)                           \
     ((type *)((char *)ptr - offsetof(type, member)))
-
-extern const char * nplatform_date;
-extern const char * nplatform_time;
-extern const char * nplatform_id;
 
 #ifdef __cplusplus
 }

@@ -30,7 +30,9 @@
 #ifndef NEON_MCU_VARIANT_PIC18F46K40_H_
 #define NEON_MCU_VARIANT_PIC18F46K40_H_
 
-#define NMCU_PIC18F46K40                "PIC18F46K40"
+/** @brief      Used internally for MCU layer
+ */
+#define PIC18F46K40_MCU                 1
 
 /** @} */
 /** @} */

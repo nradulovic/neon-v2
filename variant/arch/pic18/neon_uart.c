@@ -4,7 +4,7 @@
 #include "pic18_uart.h"
 #include "pic18_osc.h"
 
-#if defined(NMCU_PIC18F46K40)
+#if defined(PIC18F46K40_MCU)
 #endif
 
 struct pic18_uart

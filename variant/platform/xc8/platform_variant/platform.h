@@ -23,8 +23,8 @@
  *  @addtogroup  mod_platform
  *  @{
  */
-/** @defgroup    platform_gcc_common Common GCC Platform definitions
- *  @brief       Common GCC Platform definitions
+/** @defgroup    platform_xc8_common Common XC8 Platform definitions
+ *  @brief       Common XC8 Platform definitions
  *  @{
  */
 
@@ -37,8 +37,6 @@
 extern "C" {
 #endif
     
-#define NPLATFORM_XC8					1
-    
 #define NPLATFORM_ID                    "xc8"
     
 #define NPLATFORM_DATE                  __DATE__
@@ -48,6 +46,8 @@ extern "C" {
 #define NPLATFORM_FILE                  __FILE__
 
 #define NPLATFORM_LINE                  __LINE__
+    
+#define NPLATFORM_FUNC                  __func__
     
 #define NPLATFORM_UNUSED_ARG(x)         (void)x
 
@@ -69,11 +69,6 @@ extern "C" {
 
 #define NPLATFORM_CONTAINER_OF(ptr, type, member)                      \
     ((type *)((char *)ptr - offsetof(type, member)))
-    
-    
-extern const char * nplatform_date;
-extern const char * nplatform_time;
-extern const char * nplatform_id;
     
 #ifdef __cplusplus
 }

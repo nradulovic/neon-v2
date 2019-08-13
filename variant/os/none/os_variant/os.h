@@ -36,12 +36,16 @@
 extern "C" {
 #endif
     
-typedef narch_isr_state nos_critical;
+struct nos_critical
+{
+    struct narch_isr_state isr_state;
+};
 
 #define NOS_CRITICAL_LOCK(local_state)                                      \
-        NARCH_ISR_LOCK(local_state)
+        NARCH_ISR_LOCK(&(local_state)->isr_state)
+
 #define NOS_CRITICAL_UNLOCK(local_state)                                    \
-        NARCH_ISR_UNLOCK(local_state)
+        NARCH_ISR_UNLOCK(&(local_state)->isr_state)
 
 #ifdef __cplusplus
 }
