@@ -23,5 +23,13 @@
 void pic18_isr_init(void)
 {
     /* Enable Interrupt Priority Vectors */
+    INTCONbits.GIEL = 0;
+    INTCONbits.GIEH = 0;
     INTCONbits.IPEN = 1;
+}
+
+void pic18_isr_enable(void)
+{
+    INTCONbits.GIEL = 1;
+    INTCONbits.GIEH = 1;
 }

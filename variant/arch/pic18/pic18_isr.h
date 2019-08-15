@@ -38,6 +38,7 @@ extern "C" {
 #endif
 
 void pic18_isr_init(void);
+void pic18_isr_enable(void);
 
 void pic18_isr_high_app(void);
 void pic18_isr_low_app(void);

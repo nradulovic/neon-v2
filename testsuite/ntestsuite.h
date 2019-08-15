@@ -56,7 +56,7 @@ extern "C" {
 	    np_testsuite_expect(val, NP_TESTSUITE_TYPE_INT);                    \
     } while (0)
 
-#define NTESTSUITE_EXPECT_PTR(a_pointer)                                    \
+#define ntestsuite_expect_ptr(a_pointer)                                    \
     do {                                                                    \
         union np_testsuite_test_val val;                                    \
         val.ptr = (a_pointer);                                              \
@@ -76,8 +76,43 @@ extern "C" {
         val.b = (a_bool);                                                   \
 	    np_testsuite_expect(val, NP_TESTSUITE_TYPE_BOOL);                   \
     } while (0)
+
+#define ntestsuite_not_expect_uint(a_number)                                \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.ui = (a_number);                                                \
+        np_testsuite_expect(val, NP_TESTSUITE_TYPE_NOT_UINT);               \
+    } while (0)
+
+#define ntestsuite_not_expect_int(a_number)                                 \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.si = (a_number);                                                \
+	    np_testsuite_expect(val, NP_TESTSUITE_TYPE_NOT_INT);                \
+    } while (0)
+
+#define ntestsuite_not_expect_ptr(a_pointer)                                \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.ptr = (a_pointer);                                              \
+        np_testsuite_expect(val, NP_TESTSUITE_TYPE_NOT_PTR);                \
+    } while (0)
     
-#define NTESTSUITE_ACTUAL_UINT(a_number)                                    \
+#define NTESTSUITE_NOT_EXPECT_STR(a_string)                                 \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.str = (a_string);                                               \
+        np_testsuite_expect(val, NP_TESTSUITE_TYPE_NOT_STR);                \
+    } while (0)
+
+#define NTESTSUITE_NOT_EXPECT_BOOL(a_bool)                                  \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.b = (a_bool);                                                   \
+	    np_testsuite_expect(val, NP_TESTSUITE_TYPE_NOT_BOOL);               \
+    } while (0)
+    
+#define ntestsuite_actual_uint(a_number)                                    \
     do {                                                                    \
         union np_testsuite_test_val val;                                    \
         val.ui = (a_number);                                                \
@@ -91,7 +126,7 @@ extern "C" {
 	    NP_TESTSUITE_EVALUATE(val);                                         \
     } while (0)
                 
-#define NTESTSUITE_ACTUAL_PTR(a_pointer)                                    \
+#define ntestsuite_actual_ptr(a_pointer)                                    \
     do {                                                                    \
         union np_testsuite_test_val val;                                    \
         val.ptr = (a_pointer);                                              \
@@ -125,6 +160,11 @@ enum np_testsuite_type
     NP_TESTSUITE_TYPE_PTR,
     NP_TESTSUITE_TYPE_BOOL,
     NP_TESTSUITE_TYPE_STR,
+    NP_TESTSUITE_TYPE_NOT_UINT,
+    NP_TESTSUITE_TYPE_NOT_INT,
+    NP_TESTSUITE_TYPE_NOT_PTR,
+    NP_TESTSUITE_TYPE_NOT_BOOL,
+    NP_TESTSUITE_TYPE_NOT_STR,
 };
 
 
@@ -157,8 +197,6 @@ union np_testsuite_test_val
 void ntestsuite_print_header(void);
 
 void ntestsuite_print_overview(void);
-
-void ntestsuite_print_results(void);
 
 void np_testsuite_run(const struct np_testsuite_test * test);
 

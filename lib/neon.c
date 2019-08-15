@@ -34,10 +34,28 @@
 # error "The limit of maximum EPA priorities has been exceeded!"
 #endif
 
-const uint32_t nconfig_configuration = 
-    ((uint32_t)NCONFIG_ENABLE_DEBUG << NCONFIG_ENABLE_DEBUG_BIT) | 
-    ((uint32_t)NCONFIG_ENABLE_LOGGER << NCONFIG_ENABLE_LOGGER_BIT);
+const struct nconfig_entry * nconfig_record_fetch(uint8_t idx)
+{
+    static const struct nconfig_entry record[] =
+    {
+        [NCONFIG_ENTRY_ENABLE_DEBUG] = {"NCONFIG_ENABLE_DEBUG", NCONFIG_ENABLE_DEBUG},
+        [NCONFIG_ENTRY_ENABLE_LOGGER] = {"NCONFIG_ENABLE_LOGGER", NCONFIG_ENABLE_LOGGER},
+        [NCONFIG_ENTRY_LOGGER_BUFFER_SIZE] = {"NCONFIG_LOGGER_BUFFER_SIZE", NCONFIG_LOGGER_BUFFER_SIZE},
+        [NCONFIG_ENTRY_LOGGER_LEVEL] = {"NCONFIG_LOGGER_LEVEL", NCONFIG_LOGGER_LEVEL},
+        [NCONFIG_ENTRY_EPA_INSTANCES] = {"NCONFIG_EPA_INSTANCES", NCONFIG_EPA_INSTANCES},
+        [NCONFIG_ENTRY_EPA_USE_HSM] = {"NCONFIG_EPA_USE_HSM", NCONFIG_EPA_USE_HSM},
+        [NCONFIG_ENTRY_EPA_HSM_LEVELS] = {"NCONFIG_EPA_HSM_LEVELS", NCONFIG_EPA_HSM_LEVELS},
+        [NCONFIG_ENTRY_SYS_EXITABLE_SCHEDULER] = {"NCONFIG_SYS_EXITABLE_SCHEDULER", NCONFIG_SYS_EXITABLE_SCHEDULER},
+        [NCONFIG_ENTRY_EVENT_USE_DYNAMIC] = {"NCONFIG_EVENT_USE_DYNAMIC", NCONFIG_EVENT_USE_DYNAMIC},
+        [NCONFIG_ENTRY_SCHEDULER_PRIORITIES] = {"NCONFIG_SCHEDULER_PRIORITIES", NCONFIG_SCHEDULER_PRIORITIES},
+        [NCONFIG_ENTRY_USE_EXCLUSIVE_ACCESS] = {"NCONFIG_USE_EXCLUSIVE_ACCESS", NCONFIG_USE_EXCLUSIVE_ACCESS},
+    };
 
+    if (idx >= NBITS_ARRAY_SIZE(record)) {
+        return NULL;
+    }
+    return &record[idx];
+}
 
 /** @} *//*==================================================================*/
 /** @defgroup   ndebug_impl Debug implementation
@@ -166,19 +184,21 @@ float nbits_u32tof(uint32_t val)
 
 static struct logger_buffer
 {
-    uint_fast16_t current;
+    volatile uint_fast16_t current;
     char text[NCONFIG_LOGGER_BUFFER_SIZE];
 } g_logger_buffer;
 
 
-static void logger_send_callback(void)
+void NSTREAM_ISR_CALLBACK(uint_fast16_t io_event)
 {
+    NPLATFORM_UNUSED_ARG(io_event);
+
     g_logger_buffer.current = 0u;
 }
 
 static void logger_init(void)
 {
-    NSTREAM_INIT(logger_send_callback);
+    NSTREAM_INIT();
 }
 
 bool nlogger_flush(void)
@@ -191,11 +211,7 @@ bool nlogger_flush(void)
     }
     NSTREAM_SEND(&g_logger_buffer.text[0], g_logger_buffer.current);
     
-    /* NOTE:
-     * We need a cast to volatile type in order to prevent compiler from
-     * optimizing the variable away.
-     */
-    while (*((volatile uint_fast16_t *)&g_logger_buffer.current) != 0u) {
+    while (g_logger_buffer.current != 0u) {
         narch_cpu_sleep();
     }
     
@@ -634,7 +650,7 @@ nerror nepa_send_event(struct nepa * epa, const struct nevent * event)
 
     if (idx >= 0) {
         NLQUEUE_IDX_REFERENCE(&epa->equeue, idx) = event;
-        prio_queue_insert(&epa->scheduler->ready, prio_from_epa(epa));
+        //prio_queue_insert(&epa->scheduler->ready, prio_from_epa(epa));
         NOS_CRITICAL_UNLOCK(&local);
         error = EOK;
     } else {
@@ -657,25 +673,31 @@ static void schedule_initialize_epas(
         struct nscheduler * schedule, 
         const struct nepa * const * epa_registry)
 {
-    for (uint_fast8_t prio = 0u; prio < NCONFIG_EPA_INSTANCES; prio++) {
-        /* If a priority level is not used EPA pointer is NULL. */
-        if (epa_registry[prio] != NULL) {
-            struct nepa * epa;
-            
-            epa = epa_from_prio(schedule, prio);
-            *epa = *epa_registry[prio];
-            sm_init(&epa->sm);
-            task_init(&epa->task, prio);
-            equeue_init(&epa->equeue);
-            nepa_send_event(epa, sm_event(NSM_INIT));
-            epa->scheduler = schedule;
-        }
-    }
+   
 }
 
 bool nscheduler_is_started(struct nscheduler * scheduler)
 {
     return !!scheduler->current;
+}
+
+void nscheduler_task_init(
+        struct nscheduler * scheduler, 
+        struct nscheduler_task * task,
+        task_fn * fn,
+        void * arg,
+        uint8_t prio)
+{
+}
+
+void nscheduler_task_ready(struct nscheduler_task * task)
+{
+
+}
+
+void nscheduler_task_block(struct nscheduler_task * task)
+{
+
 }
 
 /*
@@ -699,28 +721,7 @@ NPLATFORM_NORETURN(void nscheduler_start(
 #else
     while (true) {
 #endif
-        struct nos_critical local;
-        struct nepa * epa;
-        const struct nevent * event;
-        uint_fast8_t prio;
-                                                   /* Get the highest level. */
-        prio = prio_queue_get_highest(&scheduler->ready);
-                                                       
-        epa = epa_from_prio(scheduler, prio);       /* Fetch the new EPA. */
-        scheduler->current = epa;
-        NOS_CRITICAL_LOCK(&local);                /* Enter critical section. 
-                                                   * Check if this is the last/
-                                                   * first event in event queue.
-                                                   * If it is, then remove from
-                                                   * priority queue.
-                                                   */
-        if (NLQUEUE_IS_FIRST(&epa->equeue)) {
-            prio_queue_remove(&scheduler->ready, prio);
-        }
-        event = NLQUEUE_GET(&epa->equeue);
-        NOS_CRITICAL_UNLOCK(&local);
-        sm_dispatch(&epa->sm, event);                    /* Execute the EPA. */
-        event_delete(event);
+     
     }
 
 #if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)

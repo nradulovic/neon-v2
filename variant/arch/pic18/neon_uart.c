@@ -1,3 +1,9 @@
+/*
+ * Neon
+ * Copyright (C) 2018   REAL-TIME CONSULTING
+ *
+ * For license information refer to LGPL-3.0.md file at the root of this project.
+ */
 
 #include "neon.h"
 #include "neon_uart.h"
@@ -9,7 +15,6 @@
 
 struct pic18_uart
 {
-    nuart_callback * callback;
     const uint8_t * buff_out;
     uint8_t * buff_in;
     size_t buff_size;
@@ -134,7 +139,7 @@ static void pic18_uart1_control(uint32_t control_code, uint32_t arg)
     }
     
     if (events) {
-        g_pic18_uarts[NUART_ID_1].callback(NUART_ID_1, events);
+        nuart_callback_1(events);
     }
 }
 
@@ -161,17 +166,17 @@ static void pic18_uart1_isr(void)
             }
             /* Check for error: Overflow error */
             if (RC1STAbits.OERR) {
-                events |= NUART_EVENT_RX_OVERFLOW;
                 RC1STAbits.CREN = 0;
                 RC1STAbits.CREN = 1;
+                events |= NUART_EVENT_RX_OVERFLOW;
             }
             uart->buff_in[uart->current_byte_in] = RC1REG;
             uart->current_byte_in++;
         }
 
         if (uart->current_byte_in == uart->buff_size) {
-            events |= NUART_EVENT_RX_COMPLETE;
             PIE3bits.RC1IE = 0;
+            events |= NUART_EVENT_RX_COMPLETE;
         }
     }
     if (PIE3bits.TX1IE & PIR3bits.TX1IF) {
@@ -186,7 +191,7 @@ static void pic18_uart1_isr(void)
     }
     
     if (events) {
-        uart->callback(NUART_ID_1, events);
+        nuart_callback_1(events);
     }
 }
 #endif /* NBOARD_USES_UART_1 == 1 */
@@ -219,8 +224,6 @@ void nuart_init(enum nuart_id uart_id, nuart_callback * callback)
 {
     NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic18_uarts));
     NASSERT(callback != NULL);
-
-    g_pic18_uarts[uart_id].callback = callback;
 }
 
 void nuart_term(enum nuart_id uart_id)
@@ -228,8 +231,6 @@ void nuart_term(enum nuart_id uart_id)
     struct pic18_uart * uart;
 
     NASSERT(uart_id < NBITS_ARRAY_SIZE(g_pic18_uarts));
-
-    g_pic18_uarts[uart_id].callback = NULL;
 }
 
 uint32_t nuart_capabilities(enum nuart_id uart_id)

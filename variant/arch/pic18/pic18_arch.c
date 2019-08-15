@@ -22,7 +22,9 @@
 
 #include "pic18_osc.h"
 #include "pic18_isr.h"
-#include "neon.h"
+#include "sys/nport.h"
+#include "sys/nconfig.h"
+#include "sys/nlogger.h"
 
 #if (NCONFIG_ARCH_TIMER_SOURCE == 1)
 static void timer_init(void)
@@ -42,14 +44,13 @@ static void timer_init(void)
 }
 #endif
 
-void pic18_init(void)
+void pic18_arch_init(void)
 {
     nlogger_info("PIC18 ARCH: Processor %x Version %x",
             *(const uint16_t *)0x3ffffe,
             *(const uint16_t *)0x3ffffc);
     /* Setup interrupt chip */
-    pic18_isr_init();
-    
+        
 #if (NCONFIG_ARCH_TIMER_SOURCE == 1)
     timer_init();
 #endif

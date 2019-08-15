@@ -38,21 +38,24 @@ extern "C" {
 
 #if (NBOARD_USES_STD_STREAM == 1)
 #define NUART_ID                        NUART_ID_1
+#define NSTREAM_ISR_CALLBACK                       nuart_callback_1
 #elif (NBOARD_USES_STD_STREAM == 2)
 #define NUART_ID                        NUART_ID_2
+#define NSTREAM_ISR_CALLBACK                       nuart_callback_2
 #elif (NBOARD_USES_STD_STREAM == 5)
 #define NUART_ID                        NUART_ID_5
+#define NSTREAM_ISR_CALLBACK                       nuart_callback_5
 #else
 #define NUART_ID                        NUART_ID_15
+#define NSTREAM_ISR_CALLBACK                       nuart_callback_15
 #endif
     
-#define NSTREAM_INIT(callback)                                              \
-        nuart_init(NUART_ID, (nuart_callback *)(callback))
+#define NSTREAM_INIT()                  nuart_init(NUART_ID, NULL)
    
 #define NSTREAM_IS_INITIALIZED()        nuart_is_initialized(NUART_ID)
     
 #define NSTREAM_SEND(buffer, size)      nuart_send(NUART_ID, (buffer), (size))
-    
+
 #elif (NBOARD_USES_STD_STREAM >= 16) && (NBOARD_USES_STD_STREAM < 32)
 #include "neon_spi.h"
 #elif (NBOARD_USES_STD_STREAM >= 32) && (NBOARD_USES_STD_STREAM < 48)

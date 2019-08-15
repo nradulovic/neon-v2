@@ -22,40 +22,48 @@
 #include "sys/nport.h"
 #include "sys/nconfig.h"
 #include "sys/nbitarray_s.h"
+#include "sys/nbitarray_x.h"
+#include "sys/nlist_dll.h"
 #include "sys/nepa.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     
+struct nscheduler_task;
+
+typedef void (task_fn)(struct nscheduler_task *, void *);
+
 /** @brief		Scheduler context structure
  */
 struct nscheduler
 {
-    struct nepa *               current;        /**< Speed optimization,
+    struct nscheduler_task *        current;    /**< Speed optimization,
                                                  *   current thread priority. */
-    struct nepa_queue
+    struct nscheduler_queue
     {
-#if (NCONFIG_EPA_INSTANCES <= NBITARRAY_S_MAX_SIZE)
+#if (NARCH_DATA_WIDTH < NCONFIG_SCHEDULER_PRIORITIES)
+        nbitarray_x                 bitarray
+                [NBITARRAY_X_DEF(NCONFIG_SCHEDULER_PRIORITIES)];
+        
+#else
         nbitarray_s                 bitarray;   /**< Simple bit array is used
                                                  * when small number of task
                                                  * is used. */
-#else
-        nbitarray_x                 bitarray
-                [NBITARRAY_X_DEF(NCONFIG_EPA_INSTANCES)];
 #endif
+        struct nlist_dll * levels[NCONFIG_SCHEDULER_PRIORITIES];
     }                           ready;          /**< Ready queue */
 #if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
     volatile bool               should_exit;
 #endif
-    struct nepa                 mempool[NCONFIG_EPA_INSTANCES];
 };
 
 struct nscheduler_task
 {
+    struct nlist_dll queue;
     struct nscheduler * scheduler;
     uint_fast8_t prio;
-    void (* task_fn)(struct nscheduler_task *, void *);
+    task_fn * fn;
     void * arg;
 };
 
@@ -63,7 +71,12 @@ struct nscheduler_task
 
 bool nscheduler_is_started(struct nscheduler * scheduler);
 
-void nscheduler_task_init(struct nscheduler_task * task);
+void nscheduler_task_init(
+        struct nscheduler * scheduler, 
+        struct nscheduler_task * task,
+        task_fn * fn,
+        void * arg,
+        uint8_t prio);
 
 void nscheduler_task_ready(struct nscheduler_task * task);
 

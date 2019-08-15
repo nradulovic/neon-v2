@@ -381,7 +381,9 @@ enum nuart_id
 #endif
 };
 
-typedef void (nuart_callback)(enum nuart_id uart_id, uint_fast16_t events);
+extern void nuart_callback_1(uint_fast16_t events);
+
+typedef void (nuart_callback)(uint_fast8_t uart_id, uint_fast16_t events);
 
 void nuart_init(enum nuart_id uart_id, nuart_callback * callback);
 

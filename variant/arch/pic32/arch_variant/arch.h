@@ -176,7 +176,7 @@ void np_arch_isr_unlock(const narch_uint * local_state)
     _CP0_SET_STATUS(ipl_status);
 }
 
-void pic18_init(void);
+void pic18_arch_init(void);
 void narch_term(void);
 
 #if (NCONFIG_ARCH_TIMER_SOURCE == 1)

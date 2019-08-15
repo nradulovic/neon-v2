@@ -18,8 +18,6 @@
 
 #include <stdint.h>
 
-#include "sys/nport.h"
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -216,19 +214,36 @@ extern "C" {
 #define NCONFIG_EVENT_USE_DYNAMIC       0
 #endif
     
+#if !defined(NCONFIG_SCHEDULER_PRIORITIES)
+#define NCONFIG_SCHEDULER_PRIORITIES    32
+#endif
+    
 #if !defined(NCONFIG_USE_EXCLUSIVE_ACCESS) 
 #define NCONFIG_USE_EXCLUSIVE_ACCESS    0
 #endif
+    
+enum nconfig_entry_id
+{
+    NCONFIG_ENTRY_ENABLE_DEBUG,
+    NCONFIG_ENTRY_ENABLE_LOGGER,
+    NCONFIG_ENTRY_LOGGER_BUFFER_SIZE,
+    NCONFIG_ENTRY_LOGGER_LEVEL,
+    NCONFIG_ENTRY_EPA_INSTANCES,
+    NCONFIG_ENTRY_EPA_USE_HSM,
+    NCONFIG_ENTRY_EPA_HSM_LEVELS,
+    NCONFIG_ENTRY_SYS_EXITABLE_SCHEDULER,
+    NCONFIG_ENTRY_EVENT_USE_DYNAMIC,
+    NCONFIG_ENTRY_SCHEDULER_PRIORITIES,
+    NCONFIG_ENTRY_USE_EXCLUSIVE_ACCESS
+};
 
-#define NCONFIG_ENABLE_DEBUG_BIT        31
-#define NCONFIG_ENABLE_LOGGER_BIT       30
-#define NCONFIG_EPA_USE_HSM_BIT         16
-#define NCONFIG_EPA_HSM_LEVELS_BIT      12
-#define NCONFIG_SYS_EXITABLE_SCHEDULER_BIT  9
-#define NCONFIG_EVENT_USE_DYNAMIC_BIT   8
-    
-    
-extern const uint32_t nconfig_configuration;
+struct nconfig_entry
+{
+    const char * name;
+    uint32_t value;
+};
+
+const struct nconfig_entry * nconfig_record_fetch(uint8_t idx);
 
 #ifdef __cplusplus
 }

@@ -219,6 +219,12 @@ extern "C" {
 #define NARCH_DATA_WIDTH                8
 #endif
     
+/** @brief      Natural alignment of CPU architecture.
+ */
+#if defined(__DOXYGEN__)
+#define NARCH_ALIGN                     1
+#endif
+    
 /** @brief      This macro is defined to 1 if current architecture has exclusive
  *              load/store access.
  */

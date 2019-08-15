@@ -101,8 +101,10 @@ const struct pic18_uart_board_config g_pic18_uart_1_board_config =
 
 void nboard_init(void)
 {
-    pic18_init();
+    pic18_arch_init();
+    pic18_isr_init();
     pic18_uart_init();
+    pic18_isr_enable();
 }
 
 void __interrupt(low_priority) pic18f_monitor_isr_low(void)

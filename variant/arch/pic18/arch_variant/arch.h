@@ -44,6 +44,8 @@ extern "C" {
 #define NARCH_DATA_WIDTH                8u /* sizeof(narch_uint) * 8 */
 
 #define NARCH_ALIGN                     1
+#define NARCH_HAS_ATOMICS               0
+    
 #define NARCH_HAS_EXCLUSIVE_LS          0
     
 #define NARCH_ISR_LOCK(local_state)                                         \
@@ -64,7 +66,7 @@ struct narch_isr_state
 
 /** @brief      Used internally by PIC18 clients.
  */
-void pic18_init(void);
+void pic18_arch_init(void);
 
 #ifdef __cplusplus
 }
