@@ -99,6 +99,11 @@ const struct pic18_uart_board_config g_pic18_uart_1_board_config =
     .tx_port = 3
 };
 
+extern void nuart_callback_1(uint_fast16_t events)
+{
+    
+}
+
 void nboard_init(void)
 {
     pic18_arch_init();

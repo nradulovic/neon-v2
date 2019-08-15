@@ -16,6 +16,7 @@
 #ifndef NEON_LOGGER_H_
 #define NEON_LOGGER_H_
 
+#include <stdio.h>
 #include <stdbool.h>
 
 #include "sys/nconfig.h"
@@ -97,7 +98,7 @@ extern "C" {
 #endif
 
 #if (NCONFIG_ENABLE_LOGGER == 1) || defined(__DOXYGEN__)
-bool nlogger_flush(void);
+#define nlogger_flush()                 nstdio_flush(&nstdio_buff)
 #else
 #define nlogger_flush()
 #endif
@@ -105,7 +106,7 @@ bool nlogger_flush(void);
 #if (NCONFIG_ENABLE_LOGGER == 1) || defined(__DOXYGEN__)
 /** @brief      Print a formated string to a logger.
  */
-bool nlogger_print(const char * msg, ...);
+#define nlogger_print                   printf
 #else
 #define nlogger_print(msg, ...)
 #endif

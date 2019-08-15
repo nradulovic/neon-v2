@@ -20,6 +20,7 @@
 #include <stdint.h>
 
 #include "sys/nport.h"
+#include "sys/nbits.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -67,10 +68,10 @@ extern "C" {
  */
 struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
 {
-    uint_fast8_t                head;
-    uint_fast8_t                tail;
-    uint_fast8_t                empty;
-    uint_fast8_t                mask;
+    uint_fast16_t               head;
+    uint_fast16_t               tail;
+    uint_fast16_t               empty;
+    uint_fast16_t               mask;
 };
 
 /** @brief      Initialize a dynamic queue structure
@@ -230,7 +231,7 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
  *  @param      elements
  *  @notapi
  */
-void np_lqueue_super_init(struct nlqueue * lqs, uint8_t elements);
+void np_lqueue_super_init(struct nlqueue * lqs, uint16_t elements);
 
 /** @brief      Put an item to queue in FIFO mode.
  *  @param      qb
@@ -243,12 +244,14 @@ int_fast8_t nlqueue_super_idx_fifo(struct nlqueue * qb)
 {
     int_fast8_t retval;
     
+    retval = qb->tail++;
+    qb->tail &= qb->mask;
+    
     if (qb->empty != 0u) {
         qb->empty--;
-        retval = qb->tail++;
-        qb->tail &= qb->mask;
     } else {
-        retval = -1;
+        qb->head++;
+        qb->head &= qb->mask;
     }
     return retval;
 }

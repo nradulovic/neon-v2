@@ -405,6 +405,12 @@ void nuart_transfer(
         void * input, 
         size_t size);
 
+void nuart_send_byte(enum nuart_id uart_id, uint8_t byte);
+
+uint8_t nuart_receive_byte(enum nuart_id uart_id);
+
+uint8_t nuart_transfer_byte(enum nuart_id uart_id, uint8_t byte);
+
 #ifdef __cplusplus
 }
 #endif

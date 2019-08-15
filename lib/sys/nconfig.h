@@ -94,6 +94,10 @@ extern "C" {
 #define NCONFIG_LOGGER_BUFFER_SIZE      1024
 #endif
     
+#if !defined(NCONFIG_LOGGER_INPUT_BUFFER_SIZE)
+#define NCONFIG_LOGGER_INPUT_BUFFER_SIZE      16
+#endif
+    
 /** @brief      Configure the logger level.
  * 
  *  The logger supports a few logger levels, see @ref Logger levels for more

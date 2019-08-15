@@ -5,6 +5,8 @@
  * For license information refer to LGPL-3.0.md file at the root of this project.
  */
 
+#include <xc.h>
+
 #include "neon.h"
 #include "neon_uart.h"
 #include "pic18_uart.h"
@@ -151,6 +153,21 @@ static void pic18_uart1_send(void)
 static void pic18_uart1_receive(void)
 {
     PIE3bits.RC1IE = 1;
+}
+
+static void pic18_uart1_send_byte(uint8_t byte)
+{
+    TX1REG = byte;
+    
+    while (!PIR3bits.TX1IF);
+    PIR3bits.TX1IF = 0;
+}
+
+static uint8_t pic18_uart1_receive_byte(void)
+{
+    while (!PIR3bits.RC1IF);
+    
+    return RC1REG;
 }
 
 static void pic18_uart1_isr(void)
@@ -335,4 +352,41 @@ void nuart_transfer(
 {
     nuart_receive(uart_id, input, size);
     nuart_send(uart_id, output, size);
+}
+
+void nuart_send_byte(enum nuart_id uart_id, uint8_t byte)
+{
+    switch (uart_id) {
+#if (NBOARD_USES_UART_1)
+        case NUART_ID_1:
+            pic18_uart1_send_byte(byte);
+            break;
+#endif
+#if (NBOARD_USES_UART_2)
+        case NUART_ID_2:
+            pic18_uart2_send_byte(byte);
+            break;
+#endif  
+    }
+}
+
+uint8_t nuart_receive_byte(enum nuart_id uart_id)
+{
+    switch (uart_id) {
+#if (NBOARD_USES_UART_1)
+        case NUART_ID_1:
+            return pic18_uart1_receive_byte();
+#endif
+#if (NBOARD_USES_UART_2)
+        case NUART_ID_2:
+            return pic18_uart1_receive_byte();
+            break;
+#endif  
+    }
+}
+
+uint8_t nuart_transfer_byte(enum nuart_id uart_id, uint8_t byte)
+{
+    nuart_send_byte(uart_id, byte);
+    return nuart_receive_byte(uart_id);
 }

@@ -170,161 +170,11 @@ float nbits_u32tof(uint32_t val)
  *  @{ *//*==================================================================*/
 
 /** @} *//*==================================================================*/
-/** @defgroup   nlogger_x_impl Extended logger module implementation
- *  @brief      Extended logger module implementation
- *  @{ *//*==================================================================*/
-
-#if (NCONFIG_ENABLE_LOGGER == 1)
-
-#include "neon_stdout.h"
-
-#if !defined(NBOARD_USES_STD_STREAM) || (NBOARD_USES_STD_STREAM == 0)
-#error "Logger is enabled but board didn't define a stream interface."
-#endif
-
-static struct logger_buffer
-{
-    volatile uint_fast16_t current;
-    char text[NCONFIG_LOGGER_BUFFER_SIZE];
-} g_logger_buffer;
-
-
-void NSTREAM_ISR_CALLBACK(uint_fast16_t io_event)
-{
-    NPLATFORM_UNUSED_ARG(io_event);
-
-    g_logger_buffer.current = 0u;
-}
-
-static void logger_init(void)
-{
-    NSTREAM_INIT();
-}
-
-bool nlogger_flush(void)
-{
-    if (!NSTREAM_IS_INITIALIZED()) {
-        return false;
-    }
-    if (g_logger_buffer.current == 0u) {
-        return true;
-    }
-    NSTREAM_SEND(&g_logger_buffer.text[0], g_logger_buffer.current);
-    
-    while (g_logger_buffer.current != 0u) {
-        narch_cpu_sleep();
-    }
-    
-    return true;
-}
-
-bool nlogger_print(const char * msg, ...)
-{
-    uint_fast16_t empty;
-    int retval;
-
-    empty = sizeof(g_logger_buffer.text) - g_logger_buffer.current;
-    
-    if (empty < 10u) {
-        return false;
-    }
-    va_list args;
-    va_start(args, msg);
-    retval = vsnprintf(
-            &g_logger_buffer.text[g_logger_buffer.current],
-            empty - 2u, /* Subtract space for \r\n characters */
-            msg,
-            args);
-    va_end(args);
-    
-    if (retval <= 0) {
-        return false;
-    }
-
-    if ((unsigned)retval > (empty - 2u)) {
-        g_logger_buffer.text[sizeof(g_logger_buffer.text) - 3u] = '>';
-        g_logger_buffer.text[sizeof(g_logger_buffer.text) - 2u] = '\r';
-        g_logger_buffer.text[sizeof(g_logger_buffer.text) - 1u] = '\n';
-        g_logger_buffer.current = sizeof(g_logger_buffer.text) - 1u;
-        return nlogger_flush();
-    } else {
-        g_logger_buffer.current += retval;
-        g_logger_buffer.text[g_logger_buffer.current++] = '\r';
-        g_logger_buffer.text[g_logger_buffer.current++] = '\n';
-        return true;
-    }
-}
-#endif /* (NCONFIG_ENABLE_LOGGER == 1) */
-
-/** @} *//*==================================================================*/
-/** @defgroup   bits_bitarray_s_impl Simple bit array implementation
- *  @brief      Simple bit array implementation.
- *  @{ *//*==================================================================*/
-
-/** @} *//*==================================================================*/
-/** @defgroup   bits_bitarray_x_impl Extended bit array implementation
- *  @brief      Extended bit array implementation.
- *  @{ *//*==================================================================*/
-
-/*
- * 1. Set group value
- * 2. Set group indicator.
- */
-void nbitarray_x_set(nbitarray_x * array, uint_fast8_t bit)
-{
-	uint_fast8_t group;
-	uint_fast8_t pos;
-
-	group = bit >> NBITS_LOG2_8(NARCH_DATA_WIDTH); /* bit / NARCH_DATA_WIDTH */
-	pos = bit & (NARCH_DATA_WIDTH - 1u);           /* bit % NARCH_DATA_WIDTH */
-
-    array[group + 1u] |= narch_exp2(pos);                               /* 1 */
-    array[0] |= narch_exp2(group);                                      /* 2 */
-}
-
-void nbitarray_x_clear(nbitarray_x * array, uint_fast8_t bit)
-{
-	uint_fast8_t group;
-	uint_fast8_t pos;
-
-	group = bit >> NBITS_LOG2_8(NARCH_DATA_WIDTH); /* bit / NARCH_DATA_WIDTH */
-	pos = bit & (NARCH_DATA_WIDTH - 1u);           /* bit % NARCH_DATA_WIDTH */
-
-    array[group + 1u] &= ~narch_exp2(pos);                              /* 1 */
-
-    if (array[group + 1u] == 0u) {
-        array[0] &= ~narch_exp2(group);                                 /* 2 */
-    }
-}
-
-uint_fast8_t nbitarray_x_msbs(const nbitarray_x * array)
-{
-	uint_fast8_t group;
-	uint_fast8_t pos;
-
-	group = narch_log2(array[0]);
-	pos = narch_log2(array[group + 1u]);
-
-	return (uint_fast8_t)(group * (uint_fast8_t)NARCH_DATA_WIDTH + pos);
-}
-
-bool nbitarray_x_is_set(const nbitarray_x * array, uint_fast8_t bit)
-{
-    uint_fast8_t group;
-	uint_fast8_t pos;
-
-	group = bit >> NBITS_LOG2_8(NARCH_DATA_WIDTH); /* bit / NARCH_DATA_WIDTH */
-	pos = bit & (NARCH_DATA_WIDTH - 1u);           /* bit % NARCH_DATA_WIDTH */
-
-    return !!(array[group + 1u] & narch_exp2(pos));
-}
-
-/** @} *//*==================================================================*/
 /** @defgroup   nlqueue_impl Lightweight queue implementation
  *  @brief      Lightweight queue implementation
  *  @{ *//*==================================================================*/
 
-void np_lqueue_super_init(struct nlqueue * lqs, uint8_t elements)
+void np_lqueue_super_init(struct nlqueue * lqs, uint16_t elements)
 {
     lqs->head = 0u;
     lqs->tail = 1u;
@@ -395,6 +245,143 @@ void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
     }
     nlist_dll_add_after(current_list, &node->list);
 }
+
+/** @} *//*==================================================================*/
+/** @defgroup   bits_bitarray_s_impl Simple bit array implementation
+ *  @brief      Simple bit array implementation.
+ *  @{ *//*==================================================================*/
+
+/** @} *//*==================================================================*/
+/** @defgroup   bits_bitarray_x_impl Extended bit array implementation
+ *  @brief      Extended bit array implementation.
+ *  @{ *//*==================================================================*/
+
+/*
+ * 1. Set group value
+ * 2. Set group indicator.
+ */
+void nbitarray_x_set(nbitarray_x * array, uint_fast8_t bit)
+{
+	uint_fast8_t group;
+	uint_fast8_t pos;
+
+	group = bit >> NBITS_LOG2_8(NARCH_DATA_WIDTH); /* bit / NARCH_DATA_WIDTH */
+	pos = bit & (NARCH_DATA_WIDTH - 1u);           /* bit % NARCH_DATA_WIDTH */
+
+    array[group + 1u] |= narch_exp2(pos);                               /* 1 */
+    array[0] |= narch_exp2(group);                                      /* 2 */
+}
+
+void nbitarray_x_clear(nbitarray_x * array, uint_fast8_t bit)
+{
+	uint_fast8_t group;
+	uint_fast8_t pos;
+
+	group = bit >> NBITS_LOG2_8(NARCH_DATA_WIDTH); /* bit / NARCH_DATA_WIDTH */
+	pos = bit & (NARCH_DATA_WIDTH - 1u);           /* bit % NARCH_DATA_WIDTH */
+
+    array[group + 1u] &= ~narch_exp2(pos);                              /* 1 */
+
+    if (array[group + 1u] == 0u) {
+        array[0] &= ~narch_exp2(group);                                 /* 2 */
+    }
+}
+
+uint_fast8_t nbitarray_x_msbs(const nbitarray_x * array)
+{
+	uint_fast8_t group;
+	uint_fast8_t pos;
+
+	group = narch_log2(array[0]);
+	pos = narch_log2(array[group + 1u]);
+
+	return (uint_fast8_t)(group * (uint_fast8_t)NARCH_DATA_WIDTH + pos);
+}
+
+bool nbitarray_x_is_set(const nbitarray_x * array, uint_fast8_t bit)
+{
+    uint_fast8_t group;
+	uint_fast8_t pos;
+
+	group = bit >> NBITS_LOG2_8(NARCH_DATA_WIDTH); /* bit / NARCH_DATA_WIDTH */
+	pos = bit & (NARCH_DATA_WIDTH - 1u);           /* bit % NARCH_DATA_WIDTH */
+
+    return !!(array[group + 1u] & narch_exp2(pos));
+}
+
+/** @} *//*==================================================================*/
+/** @defgroup   nstdio_impl Standard IO implementation
+ *  @brief      Standard IO implementation
+ *  @{ *//*==================================================================*/
+
+#if (NBOARD_USES_STD_STREAM > 0) && (NBOARD_USES_STD_STREAM < 16)
+#include "neon_uart.h"
+
+#if (NBOARD_USES_STD_STREAM == 1)
+#define NUART_ID                        NUART_ID_1
+#define NSTREAM_ISR_CALLBACK                       nuart_callback_1
+#elif (NBOARD_USES_STD_STREAM == 2)
+#define NUART_ID                        NUART_ID_2
+#define NSTREAM_ISR_CALLBACK                       nuart_callback_2
+#elif (NBOARD_USES_STD_STREAM == 5)
+#define NUART_ID                        NUART_ID_5
+#define NSTREAM_ISR_CALLBACK                       nuart_callback_5
+#else
+#define NUART_ID                        NUART_ID_15
+#define NSTREAM_ISR_CALLBACK                       nuart_callback_15
+#endif
+    
+#define NSTREAM_INIT()                  nuart_init(NUART_ID, NULL)
+   
+#define NSTREAM_IS_INITIALIZED()        nuart_is_initialized(NUART_ID)
+    
+#define NSTREAM_SEND(buffer, size)      nuart_send(NUART_ID, (buffer), (size))
+
+#define NSTREAM_SEND_BYTE(byte)         nuart_send_byte(NUART_ID, (byte))
+
+#define NSTREAM_RECEIVE_BYTE()          nuart_receive_byte(NUART_ID)
+
+#elif (NBOARD_USES_STD_STREAM >= 16) && (NBOARD_USES_STD_STREAM < 32)
+#elif (NBOARD_USES_STD_STREAM >= 32) && (NBOARD_USES_STD_STREAM < 48)
+#endif
+
+struct nstdio_buff nstdio_buff;
+
+void nstdio_putc(struct nstdio_buff * buff, uint8_t c)
+{
+    static bool is_initialized;
+    
+    if (!is_initialized) {
+        is_initialized = true;
+        NLQUEUE_INIT(&buff->out);
+    }
+    NLQUEUE_PUT_FIFO(&buff->out, c);
+}
+
+uint8_t nstdio_getc(struct nstdio_buff * buff)
+{
+    return NSTREAM_RECEIVE_BYTE();
+}
+
+bool nstdio_flush(struct nstdio_buff * buff)
+{
+    if (!NSTREAM_IS_INITIALIZED()) {
+        return false;
+    }
+    while (!NLQUEUE_IS_EMPTY(&buff->out)) {
+        char c;
+        
+        c = NLQUEUE_GET(&buff->out);
+        NSTREAM_SEND_BYTE(c);
+    }
+    
+    return true;
+}
+
+/** @} *//*==================================================================*/
+/** @defgroup   nlogger_x_impl Extended logger module implementation
+ *  @brief      Extended logger module implementation
+ *  @{ *//*==================================================================*/
 
 /** @} *//*==================================================================*/
 /** @defgroup   nmem_pool_impl Memory pool implementation
@@ -781,11 +768,8 @@ const struct nepa nsys_epa_idle = NEPA_INITIALIZER(
 
 void nsys_init(void)
 {
-#if (NCONFIG_ENABLE_LOGGER == 1)
-    logger_init();
-#endif
     nboard_init();
-    nlogger_flush();
+    nstdio_flush(&nstdio_buff);
 }
 
 /** @} */
