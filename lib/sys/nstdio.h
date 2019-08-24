@@ -26,12 +26,16 @@
 extern "C" {
 #endif
     
+/** @brief      Standard IO buffers structure.
+ */
 struct nstdio_buff 
 {
-    struct buff_out nlqueue(uint8_t, NCONFIG_LOGGER_BUFFER_SIZE) out;
-    struct buff_in nlqueue(uint8_t, NCONFIG_LOGGER_INPUT_BUFFER_SIZE) in;
+    struct buff_out nlqueue(uint8_t, NCONFIG_STDIO_OUTPUT_BUFFER_SIZE) out;
+    struct buff_in nlqueue(uint8_t, NCONFIG_STDIO_INPUT_BUFFER_SIZE) in;
 };
 
+/** @brief      Default buffer instance.
+ */
 extern struct nstdio_buff nstdio_buff;
 
 void nstdio_putc(struct nstdio_buff * buff, uint8_t c);

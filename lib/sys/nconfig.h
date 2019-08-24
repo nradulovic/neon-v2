@@ -68,21 +68,21 @@ extern "C" {
 #define NCONFIG_ENABLE_LOGGER           1
 #endif
 
-/** @brief      Configure logger module buffer size (in bytes).
+/** @brief      Configure Standard IO output buffer size (in bytes).
  * 
- *  The logger module uses a buffer to store messages while stream interface is
- *  busy or still not avaialable (during boot process). When the stream 
- *  interface becomes available all the messages in buffer will be flushed from
- *  buffer.
+ *  The Standard IO module uses a buffer to store messages while output 
+ *  interface is busy or still not avaialable (during the boot process). When 
+ *  the output interface becomes available all the messages in buffer will be 
+ *  flushed from buffer.
  * 
  *  The value of this macro should be bigger then 10 (or 10 bytes). The maximum 
  *  value of the macro is not defined, but it should not be bigger then a few 
  *  kilobytes.
  * 
- *  Default value is 1024 (use 1kB for the buffer).
+ *  Default value is 512 (use 512 bytes for the buffer).
  * 
- *  @note       This configuration option is ignored when 
- *              @ref NCONFIG_ENABLE_LOGGER is not enabled.
+ *  @note       If this configuration option is set to value zero (0), then
+ *              the output stream compilation will be disabled.
  * 
  *  @note       If new buffer size is smaller than the default size then during 
  *              boot process (before stream is initialized) a few logger 
@@ -90,12 +90,24 @@ extern "C" {
  * 
  *  @hideinitializer
  */
-#if !defined(NCONFIG_LOGGER_BUFFER_SIZE)
-#define NCONFIG_LOGGER_BUFFER_SIZE      1024
+#if !defined(NCONFIG_STDIO_OUTPUT_BUFFER_SIZE)
+#define NCONFIG_STDIO_OUTPUT_BUFFER_SIZE 512
 #endif
     
-#if !defined(NCONFIG_LOGGER_INPUT_BUFFER_SIZE)
-#define NCONFIG_LOGGER_INPUT_BUFFER_SIZE      16
+/** @brief      Configure Standard IO input buffer size (in bytes).
+ * 
+ *  The Standard IO module uses a buffer to store input messages while CPU is 
+ *  busy or nobody is currently interested for input (during the boot process). 
+ * 
+ *  Default value is 16 (use 16 bytes for the buffer).
+ * 
+ *  @note       If this configuration option is set to value zero (0), then
+ *              the input stream compilation will be disabled.
+ * 
+ *  @hideinitializer
+ */
+#if !defined(NCONFIG_STDIO_INPUT_BUFFER_SIZE)
+#define NCONFIG_STDIO_INPUT_BUFFER_SIZE 16
 #endif
     
 /** @brief      Configure the logger level.
