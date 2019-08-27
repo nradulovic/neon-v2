@@ -187,14 +187,6 @@ NTESTSUITE_TEST(test_none_log2)
 #endif
 }
 
-#if !defined(NOS_CRITICAL_LOCK)
-#error "NOS_CRITICAL_LOCK is not defined!"
-#endif
-
-#if !defined(NOS_CRITICAL_UNLOCK)
-#error "NOS_CRITICAL_UNLOCK is not defined!"
-#endif
-
 void test_exec_narch(void)
 {
     ntestsuite_set_fixture(none, NULL, NULL);
