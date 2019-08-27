@@ -29,11 +29,8 @@
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_X86_ARCH_VARIANT_ARCH_H_
-#define NEON_X86_ARCH_VARIANT_ARCH_H_
-
-#include <stdint.h>
-#include "platform_variant/platform.h"
+#ifndef NEON_ARCH_VARIANT_X86_H_
+#define NEON_ARCH_VARIANT_X86_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -45,36 +42,20 @@ extern "C" {
  *  @{
  */
 
-#define NARCH_ID "x86"
-#define NARCH_DATA_WIDTH 32
+/** @brief		Used internally by X86 clients.
+ */
+#define X86_ARCH						1
 
-typedef uint32_t narch_uint;
+#define NARCH_ID 						"x86"
+#define NARCH_DATA_WIDTH 				32 /* sizeof(narch_uint) * 8 */
 
-NPLATFORM_INLINE
-void narch_set_bit(uint32_t * u32, uint_fast8_t bit)
-{
-    *u32 |= (uint32_t)1u << bit;
-}
+#define NARCH_ALIGN						4
+#define NARCH_HAS_ATOMICS				0
+#define NARCH_HAS_EXCLUSIVE_LS			0
 
-NPLATFORM_INLINE
-void narch_clear_bit(uint32_t * u32, uint_fast8_t bit)
-{
-    *u32 &= ~((uint32_t)1u << bit);
-}
-
-NPLATFORM_INLINE
-uint32_t narch_exp2(uint_fast8_t x)
-{
-    return (0x1u << x);
-}
-
-NPLATFORM_INLINE
-uint_fast8_t narch_log2(uint32_t x)
-{
-    return (uint_fast8_t)(31u - (uint_fast8_t)__builtin_clz(x));
-}
-
-void narch_cpu_stop(void);
+/** @brief      Used internally by x86 clients.
+ */
+void x86_arch_init(void);
 
 /** @} */
 #ifdef __cplusplus
@@ -84,4 +65,4 @@ void narch_cpu_stop(void);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_X86_ARCH_VARIANT_ARCH_H_ */
+#endif /* NEON_ARCH_VARIANT_X86_H_ */
