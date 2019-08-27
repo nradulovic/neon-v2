@@ -29,8 +29,8 @@
  */
 /*---------------------------------------------------------------------------*/
 
-#ifndef NEON_GCC_PLATFORM_VARIANT_PLATFORM_H_
-#define NEON_GCC_PLATFORM_VARIANT_PLATFORM_H_
+#ifndef NEON_VA_INCLUDE_NPORT_PLATFORM_GCC_VARIANT_PLATFORM
+#define NEON_VA_INCLUDE_NPORT_PLATFORM_GCC_VARIANT_PLATFORM
 
 #include <stddef.h>
 
@@ -43,11 +43,11 @@
 
 #if (defined(__STDC_VERSION__))
 #if (__STDC_VERSION__ >= 201112L)
-#include "variant/gcc_c11.h"
+#include "platform_variant/gcc_c11.h"
 #elif (__STDC_VERSION__ >= 199901L)
-#include "../platform_variant/gcc_c99.h"
+#include "platform_variant/gcc_c99.h"
 #elif (__STDC_VERSION__ >= 199409L)
-#include "variant/gcc_c89.h"
+#include "platform_variant/gcc_c89.h"
 #else
 #error "GCC VARIANT: Define either C89, C99, or C11 C standard."
 #endif
@@ -60,11 +60,19 @@ extern "C" {
 #endif
 /*---------------------------------------------------------------------------*/
 
-#define NPLATFORM_GCC					1
+#define NPLATFORM_ID					"gcc"
+
+#define NPLATFORM_DATE                  __DATE__
+
+#define NPLATFORM_TIME                  __TIME__
 
 #define NPLATFORM_FILE                  __FILE__
 
 #define NPLATFORM_LINE                  __LINE__
+
+/* NPLATFORM_FUNC defined by other includes. */
+
+#define NPLATFORM_UNUSED_ARG(x)         (void)x
 
 #define NPLATFORM_NAKED(x)              __attribute__((naked)) x
 
@@ -80,6 +88,8 @@ extern "C" {
 
 #define NPLATFORM_INLINE_ALWAYS 		NPLATFORM_INLINE
 
+#define NPLATFORM_BROKEN_INLINE         0
+
 #define NPLATFORM_CONTAINER_OF(ptr, type, member)                           \
     ((type *)((char *)ptr - offsetof(type, member)))
 
@@ -90,4 +100,4 @@ extern "C" {
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_GCC_PLATFORM_VARIANT_PLATFORM_H_ */
+#endif /* NEON_VA_INCLUDE_NPORT_PLATFORM_GCC_VARIANT_PLATFORM */

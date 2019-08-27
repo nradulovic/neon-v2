@@ -31,7 +31,7 @@
 #ifndef NEON_GCC_PLATFORM_VARIANT_GCC_C11_H_
 #define NEON_GCC_PLATFORM_VARIANT_GCC_C11_H_
 
-#include "../platform_variant/gcc_c99.h"
+#include "platform_variant/gcc_c99.h"
 
 /** @} */
 /** @} */
