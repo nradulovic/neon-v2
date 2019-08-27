@@ -32,9 +32,27 @@
 #ifndef NEON_LINUX_OS_VARIANT_OS_H_
 #define NEON_LINUX_OS_VARIANT_OS_H_
 
+#include <pthread.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+struct nos_critical
+{
+	int a_dummy;
+};
+
+#define NOS_CRITICAL_LOCK(local_state)                                      \
+        do {																\
+        	(void)(local_state);											\
+        	pthread_mutex_lock(&g_nglobal_mutex);							\
+        } while (0)
+
+#define NOS_CRITICAL_UNLOCK(local_state)                                    \
+		pthread_mutex_unlock(&g_nglobal_mutex)
+
+extern pthread_mutex_t g_nglobal_mutex;
 
 #ifdef __cplusplus
 }

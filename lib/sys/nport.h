@@ -38,7 +38,14 @@ extern "C" {
 #if defined(__DOXYGEN__)
 #define NPLATFORM_ID
 #endif
-    
+
+/** @brief		Defines a string containing the platform version string.
+ *  @hideinitializer
+ */
+#if defined(__DOXYGEN__)
+#define NPLATFORM_VERSION
+#endif
+
 /** @brief      Compiler directive to inline a function.
  * 
  *  Place this macro in front of function declaration to declare it as inline

@@ -44,22 +44,23 @@ void ntestsuite_print_header(void)
     const struct nconfig_entry * entry;
     uint8_t idx;
     
-    nlogger_info("\n\r\n\rBuild info: %s (%s - %s)",
+    nlogger_info("\nBuild info: %s %s (%s - %s)\n",
             nsys_platform_id,
-            nsys_build_date, 
+			nsys_platform_version,
+            nsys_build_date,
             nsys_build_time);
     
     idx = 0u;
     
     while ((entry = nconfig_record_fetch(idx++))) {
-        nlogger_info("%s %u", entry->name, entry->value);
+        nlogger_info("%s: %u\n", entry->name, entry->value);
     }
     nlogger_flush(); 
 }
         
 void ntestsuite_print_overview(void)
 {
-    nlogger_info("\n\r\n\r  Total  %u\n\rOK\n\r", 
+    nlogger_info("\nTotal tests: %u\nOK\n\n",
             g_np_testsuite_context.total_tests);
     nlogger_flush(); 
 }
@@ -88,14 +89,14 @@ void np_testsuite_run(const struct np_testsuite_test * test)
 	g_np_testsuite_context.total_tests++;
 
 	if (g_np_testsuite_context.fixture.setup) {
-		nlogger_debug("D: Setup fixture %s for test %s",
+		nlogger_debug("D: Setup fixture %s for test %s\n",
                 g_np_testsuite_context.fixture.name,
 				test->name);
 		g_np_testsuite_context.fixture.setup();
 	}
     test->test_fn();
 	if (g_np_testsuite_context.fixture.teardown) {
-		nlogger_debug("D: Teardown fixture %s for test %s",
+		nlogger_debug("D: Teardown fixture %s for test %s\n",
 				g_np_testsuite_context.fixture.name,
 				test->name);
 		g_np_testsuite_context.fixture.teardown();
@@ -175,59 +176,59 @@ void np_testsuite_actual(uint32_t line, union np_testsuite_test_val actual)
     }
     
     if (should_block) {
-        nlogger_err("\n\rTest FAILED at %s() in %s:%u",
+        nlogger_err("\nTest FAILED at %s() in %s:%u\n",
                 g_np_testsuite_context.test->name,
                 g_np_testsuite_context.fixture.name,
                 line);
         
         switch (g_np_testsuite_context.test_case.type) {
             case NP_TESTSUITE_TYPE_BOOL:
-                nlogger_err("Expected: %u\n\rActual  : %u",
+                nlogger_err("Expected: %u\nActual  : %u",
                         g_np_testsuite_context.test_case.expected.b,
                         actual.b);
                 break;
             case NP_TESTSUITE_TYPE_UINT:
-                nlogger_err("Expected: %u\n\rActual  : %u",
+                nlogger_err("Expected: %u\nActual  : %u",
                         g_np_testsuite_context.test_case.expected.ui,
                         actual.ui);
                 break;
             case NP_TESTSUITE_TYPE_INT:
-                nlogger_err("Expected: %d\n\rActual  : %d",
+                nlogger_err("Expected: %d\nActual  : %d",
                         g_np_testsuite_context.test_case.expected.si,
                         actual.si);
                 break;
             case NP_TESTSUITE_TYPE_PTR:
-                nlogger_err("Expected: %p\n\rActual  : %p",
+                nlogger_err("Expected: %p\nActual  : %p",
                         g_np_testsuite_context.test_case.expected.ptr,
                         actual.ptr);
                 break;
             case NP_TESTSUITE_TYPE_STR:
-                nlogger_err("Expected: %s\n\rActual   : %s",
+                nlogger_err("Expected: %s\nActual   : %s",
                         g_np_testsuite_context.test_case.expected.str,
                         actual.str);
                 break;
             case NP_TESTSUITE_TYPE_NOT_BOOL:
-                nlogger_err("Unexpected: %u\n\rActual    : %u",
+                nlogger_err("Unexpected: %u\nActual    : %u",
                         g_np_testsuite_context.test_case.expected.b,
                         actual.b);
                 break;
             case NP_TESTSUITE_TYPE_NOT_UINT:
-                nlogger_err("Unexpected: %u\n\rActual    : %u",
+                nlogger_err("Unexpected: %u\nActual    : %u",
                         g_np_testsuite_context.test_case.expected.ui,
                         actual.ui);
                 break;
             case NP_TESTSUITE_TYPE_NOT_INT:
-                nlogger_err("Unexpected: %d\n\rActual    : %d",
+                nlogger_err("Unexpected: %d\nActual    : %d",
                         g_np_testsuite_context.test_case.expected.si,
                         actual.si);
                 break;
             case NP_TESTSUITE_TYPE_NOT_PTR:
-                nlogger_err("Unexpected: %p\n\rActual    : %p",
+                nlogger_err("Unexpected: %p\nActual    : %p",
                         g_np_testsuite_context.test_case.expected.ptr,
                         actual.ptr);
                 break;
             case NP_TESTSUITE_TYPE_NOT_STR:
-                nlogger_err("Unexpected: %s\n\rActual    : %s",
+                nlogger_err("Unexpected: %s\nActual    : %s",
                         g_np_testsuite_context.test_case.expected.str,
                         actual.str);
                 break;

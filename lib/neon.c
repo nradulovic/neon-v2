@@ -347,6 +347,18 @@ bool nbitarray_x_is_set(const nbitarray_x * array, uint_fast8_t bit)
 
 struct nstdio_buff nstdio_buff;
 
+#if !defined(NSTREAM_RECEIVE_BYTE)
+#define NSTREAM_RECEIVE_BYTE()			getchar()
+#endif
+
+#if !defined(NSTREAM_SEND_BYTE)
+#define NSTREAM_SEND_BYTE(c)			putchar(c)
+#endif
+
+#if !defined(NSTREAM_IS_INITIALIZED)
+#define NSTREAM_IS_INITIALIZED()		true
+#endif
+
 void nstdio_putc(struct nstdio_buff * buff, uint8_t c)
 {
     static bool is_initialized;
@@ -759,6 +771,7 @@ static nsm_action idle_state_init(struct nsm * sm, const struct nevent * event)
 const char * const nsys_build_date = NPLATFORM_DATE;
 const char * const nsys_build_time = NPLATFORM_TIME;
 const char * const nsys_platform_id = NPLATFORM_ID;
+const char * const nsys_platform_version = NPLATFORM_VERSION;
 
 const struct nepa nsys_epa_idle = NEPA_INITIALIZER(
             &g_epa_queue_idle, 

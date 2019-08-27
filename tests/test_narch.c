@@ -189,6 +189,7 @@ NTESTSUITE_TEST(test_none_log2)
 
 void test_exec_narch(void)
 {
+	ntestsuite_print_header();
     ntestsuite_set_fixture(none, NULL, NULL);
     ntestsuite_run(test_none_NPLATFORM_ID);
     ntestsuite_run(test_none_NPLATFORM_FUNC);
@@ -202,4 +203,5 @@ void test_exec_narch(void)
     ntestsuite_run(test_none_atomic_set_bit);
     ntestsuite_run(test_none_exp2);
     ntestsuite_run(test_none_log2);
+    ntestsuite_print_overview();
 }

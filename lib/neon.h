@@ -48,6 +48,10 @@ extern const char * const nsys_build_time;
  */
 extern const char * const nsys_platform_id;
 
+/** @brief      Defines a constant string representing Neon build platform version.
+ */
+extern const char * const nsys_platform_version;
+
 /** @brief      Defines system Idle EPA description
  */
 extern const struct nepa nsys_epa_idle;

@@ -62,6 +62,8 @@ extern "C" {
 
 #define NPLATFORM_ID					"gcc"
 
+#define NPLATFORM_VERSION				__VERSION__
+
 #define NPLATFORM_DATE                  __DATE__
 
 #define NPLATFORM_TIME                  __TIME__
