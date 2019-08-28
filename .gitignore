@@ -27,11 +27,6 @@
 *.i*86
 *.x86_64
 *.hex
-.cproject
-.project
-.settings/
-Debug/
-Release/
 tags
 
 *~
@@ -51,13 +46,6 @@ documentation/build/
 # Ignore generated folders
 **/generated/
 **/packed/
-
-# Ignore application related folders
-apps/*
-!apps/app_hello_world
-!apps/app_template
-!apps/app_test_common
-!apps/README.md
 
 # Ignore extension related folders
 ext/*
