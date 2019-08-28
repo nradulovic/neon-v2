@@ -2,46 +2,28 @@
 ## Contents
 
 1. [Overview](#1-overview)
-
-   1.1. [Scheduler Policy](#11-scheduler-policy)
-
-   1.2. [Deterministic](#12-deterministic)
-
-   1.3. [Configurable](#13-configurable)
-
-   1.4. [Portable](#14-portable)
-
-   1.5. [Static object allocation](#15-static-object-allocation)
-
-   1.6. [Unlimited number of threads](#16-unlimited-number-of-threads)
-
-   1.7. [Optimized number of priority levels](#17-optimized-number-of-priority-levels)
-
-   1.8. [Error checking](#18-error-checking)
-
-   1.9. [Profiling](#19-profiling)
-
+   1.1. [Scheduler Policy](#1-1-scheduler-policy)
+   1.2. [Deterministic](#1-2-deterministic)
+   1.3. [Configurable](#1-3-configurable)
+   1.4. [Portable](#1-4-portable)
+   1.5. [Static object allocation](#1-5-static-object-allocation)
+   1.6. [Unlimited number of threads](#1-6-unlimited-number-of-threads)
+   1.7. [Optimized number of priority levels](#1-7-optimized-number-of-priority-levels)
+   1.8. [Error checking](#1-8-error-checking)
+   1.9. [Profiling](#1-9-profiling)
 2. [Time complexity](#2-time-complexity)
-
-   2.1. [Introduction](#21-introduction)
-
-   2.2. [Big O notation](#22-big-o-notation)
-
-   2.3. [Constant time](#23-constant-time)
-
-   2.4. [Neon time complexity](#24-neon-time-complexity)
-
+   2.1. [Introduction](#2-1-introduction)
+   2.2. [Big O notation](#2-2-big-o-notation)
+   2.3. [Constant time](#2-3-constant-time)
+   2.4. [Neon time complexity](#2-4-neon-time-complexity)
 3. [Source code organization](#3-source-code-organization)
-
 4. [Neon Core](#4-neon-core)
-
-   4.1. [Synchronization](#41-synchronization)
-
-   4.1.1. [Mutex](#411-mutex)
-
-   4.1.2. [Semaphore](#412-semaphore)
-
-5. [Ports](#5-ports)
+   4.1. [Synchronization](#4-1-synchronization)
+   4.1.1. [Mutex](#4-1-1-mutex)
+   4.1.2. [Semaphore](#4-1-2-semaphore)
+5. [Neon Portable code](#5-neon-portable-code)
+   5.1. [Available ports](#5-1-available-ports)
+   5.2. [Platform layer](#5-2-platform-layer)
 
 
 ---
@@ -55,7 +37,7 @@ Majority of algorithms used in Neon are belonging to **Constant Time
 Complexity** category. Constant Time `O(1)` functions needs fixed amount of
 time to execute an algorithm. In other words the execution time of Constant
 Time Complexity functions does not depend on number of inputs. For more
-information see [time complexity](#time-complexity).
+information see [time complexity](#2-time-complexity).
 
 ### 1.3. Configurable
 The Neon provides configuration files (TODO: specify which) which can be
@@ -111,7 +93,7 @@ validated.
 
 ---
 ## 2. Time complexity
-## 2.1 Introduction
+### 2.1 Introduction
 In computer science, the time complexity of an algorithm quantifies the amount
 of time taken by an algorithm to run as a function of the length of the input.
 The time complexity of an algorithm is commonly expressed using **big O**
@@ -174,11 +156,27 @@ Complete source code is divided into:
 
 ---
 ## 4. Neon Core
-## 4.1. Synchronization
-## 4.1.1. Mutex
-## 4.1.2. Semaphore
+### 4.1. Synchronization
+#### 4.1.1. Mutex
+#### 4.1.2. Semaphore
 
 
 ---
-## 5. Neon Ports
+## 5. Neon portable code
 
+The portable code is divided into the following layers:
+    * Platform layer
+    * Architecture layer
+    * Microcontroller layer
+    * Operating system layer
+    * Board layer
+
+### 5.1 Available ports
+
+Ports are identified by board layer name.
+
+### 5.2 Platform layer
+
+Since the Neon needs to support multiple different compilers the platform layer
+provides a compiler agnostic interface. The platform layer interface is just a
+set of macros which are hiding compiler specific keywords and attributes.
