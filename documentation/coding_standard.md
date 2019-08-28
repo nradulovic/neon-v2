@@ -1,14 +1,8 @@
 # Coding standard
 ## Contents
 1. [Naming convetions](#1-naming-convetions)
-1.1. [General](#11-general)
-1.2. [Neon Core API](#12-neon-core-api)
-1.3. [Neon Port API](#13-neon-port-api)
-1.4. [Objects](#14-objects)
-1.5. [Method classes](#15-method-classes)
 2. [Abbreviations](#2-abbreviations)
 
----
 ## 1. Naming convetions
 ### 1.1. General
 1. All objects are using underscore `_` as word delimiter.
@@ -18,48 +12,56 @@
    `[namespace_]object[_method[_attribute]][_class]`
    - Field **namespace** is mandatory only for public objects. Local object
      shall not have namespace prefix.
-   - Field **object** defines the object.
+   - Field **object** defines the object name.
    - Field **method** is optional and describes the object method.
    - Field **attribute** is optional and describes a particular object
      attribute.
-   - Field **class** specifies the method class. For details see method
-     classes.
+   - Field **class** specifies the method class. For details see [method
+     classes](#1-4-method-classes).
 
-Lets consider this function `pb_thread_get_name`. Decoding goes like this:
-- Namespace of this function is *pb* which means it belongs to
-  Neon API namespace.
-- Object is *thread*.
+Lets consider this function name `ntask_get_name`. Decoding goes like this:
+- Namespace of this function is *n* which means it belongs to Neon API 
+  namespace.
+- Object is *task*.
 - Method is *get*, get an attribute value.
 - Attribute is called *name*.
-- No class specified, which means a normal API call.
+- No class specified, which means a normal API object.
 
-### 1.2. Neon Core API
-All public objects declared in Application Programming Interface (API) are
-following this naming style:
-- Functions, structures, unions and typedefs have namespace prefix `pb_`.
-- Macros have namespace prefix `PB_`.
-- Global variables have namespace prefix `gpb_`.
+### 1.2. Neon objects naming
+All objects declared in Application Programming Interface (API) which are
+public are following this naming style:
+- Functions, structures, unions and typedefs and macros have no specific prefix.
+- Global variables have namespace prefix `global`.
 
-### 1.3. Neon Port API
-All Neon Port Interface objects are are following this naming style:
-- Functions, structures, unions and typedefs have namespace prefix `pbport_`.
-- Macros have namespace prefix `PBPORT_`.
-- Global variables have namespace prefix `gpbport_`.
+All objects declared in Application Programming Interface (API) which are
+private are following this naming style:
+- Functions, structures, unions and typedefs have object name prefix `p_`.
+- Macros have object name prefix `P_`.
+- Global variables have name prefix `pglobal_`.
 
-### 1.4. Objects
-The following groups are defined in Neon API and ports:
-- `kernel` - Kernel services.
-- `thread` - Thread management.
-- `mutex` - Mutex management.
-- `semaphore` - Semaphore management.
-- `timer` - Timer management, depending on the namespace it may be a virtual
-   timer (provided by Neon main API) or hardware timer (provided by
-   Neon port).
-- `memory_pool` - Memory Pool management.
-- `message_queue` - Message Queue management.
-- `cpu` - Used in Neon Port, CPU core.
+### 1.3. Name examples
 
-### 1.5. Method classes
+The following are a few examples:
+
+* ntask_get_name:
+    * `n` is the Neon API namespace prefix.
+    * `task` is regular object name.
+    * `get` is object method.
+    * `name` is some attribute of the object on which the method 
+      operates on.
+* nglobal_list:
+    * `n` is the Neon API namespace prefix.
+    * `global_` is object prefix which denotes that the object is of
+      global scope.
+    * `list` is the name of the object.
+* np_testsuite_run:
+    * `n` is the Neon API namespace prefix.
+    * `p_` is object prefix which denotes that the object is private. 
+      This object shall not be used by callers code.
+    * `testsuite` is the name of the object.
+    * `run` is object method.
+
+### 1.4. Method classes
 - When no class is specified the method belongs to normal API call.
 - `_i` - I class - Regular interrupts must be locked before invoking the
   function. To manage the interrupts please refer to
@@ -76,7 +78,7 @@ abbreviated using the table presented below:
 | interrupt service routine | isr  |
 | interrupt request         | irq  |
 | priority                  | prio |
-| thread                    | thd  |
+| task                      | tsk  |
 | timer                     | tmr  |
 | queue                     | q    |
 | virtual                   | v    |
