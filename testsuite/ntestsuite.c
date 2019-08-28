@@ -39,30 +39,43 @@ struct np_testsuite_context
 
 static struct np_testsuite_context g_np_testsuite_context;
 
-void ntestsuite_print_header(void)
+
+static void print_header(void)
 {
     const struct nconfig_entry * entry;
     uint8_t idx;
-    
+
     nlogger_info("\nBuild info: %s %s (%s - %s)\n",
             nsys_platform_id,
 			nsys_platform_version,
             nsys_build_date,
             nsys_build_time);
-    
+
     idx = 0u;
-    
+
     while ((entry = nconfig_record_fetch(idx++))) {
         nlogger_info("%s: %u\n", entry->name, entry->value);
     }
-    nlogger_flush(); 
+    nlogger_flush();
 }
-        
-void ntestsuite_print_overview(void)
+
+static void print_overview(void)
 {
     nlogger_info("\nTotal tests: %u\nOK\n\n",
             g_np_testsuite_context.total_tests);
-    nlogger_flush(); 
+    nlogger_flush();
+}
+
+void ntestsuite_run_tests(ntestsuite_fn * const * array)
+{
+	nboard_init();
+	print_header();
+
+	while (*array) {
+		(*array)();
+		array++;
+	}
+	print_overview();
 }
 
 void np_testsuite_set_fixture(

@@ -194,9 +194,9 @@ union np_testsuite_test_val
 #define ntestsuite_run(test)                                                \
 		np_testsuite_run(&(testsuite_ ## test))
 
-void ntestsuite_print_header(void);
+typedef void (ntestsuite_fn)(void);
 
-void ntestsuite_print_overview(void);
+void ntestsuite_run_tests(ntestsuite_fn * const * array);
 
 void np_testsuite_run(const struct np_testsuite_test * test);
 
