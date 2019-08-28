@@ -138,11 +138,11 @@ Complete source code is divided into:
 ## 5. Neon portable code
 
 The portable code is divided into the following layers:
-    * Platform layer
-    * Architecture layer
-    * Microcontroller layer
-    * Operating system layer
-    * Board layer
+* Platform layer
+* Architecture layer
+* Microcontroller layer
+* Operating system layer
+* Board layer
 
 ### 5.1 Available ports
 
