@@ -1,32 +1,13 @@
-# Neon Design
-## Contents
+# Neon v2 Design
+*Copyright (C) Real-Time Consulting*
 
+## Contents
 1. [Overview](#1-overview)
-   1.1. [Scheduler Policy](#1-1-scheduler-policy)
-   1.2. [Deterministic](#1-2-deterministic)
-   1.3. [Configurable](#1-3-configurable)
-   1.4. [Portable](#1-4-portable)
-   1.5. [Static object allocation](#1-5-static-object-allocation)
-   1.6. [Unlimited number of threads](#1-6-unlimited-number-of-threads)
-   1.7. [Optimized number of priority levels](#1-7-optimized-number-of-priority-levels)
-   1.8. [Error checking](#1-8-error-checking)
-   1.9. [Profiling](#1-9-profiling)
 2. [Time complexity](#2-time-complexity)
-   2.1. [Introduction](#2-1-introduction)
-   2.2. [Big O notation](#2-2-big-o-notation)
-   2.3. [Constant time](#2-3-constant-time)
-   2.4. [Neon time complexity](#2-4-neon-time-complexity)
 3. [Source code organization](#3-source-code-organization)
 4. [Neon Core](#4-neon-core)
-   4.1. [Synchronization](#4-1-synchronization)
-   4.1.1. [Mutex](#4-1-1-mutex)
-   4.1.2. [Semaphore](#4-1-2-semaphore)
 5. [Neon Portable code](#5-neon-portable-code)
-   5.1. [Available ports](#5-1-available-ports)
-   5.2. [Platform layer](#5-2-platform-layer)
 
-
----
 ## 1. Overview
 ### 1.1 Scheduler Policy
 Scheduler is using round-robin scheduling algorithm when there are two or more
@@ -90,8 +71,6 @@ validated.
 ### 1.9. Profiling
 **NOTE:** This feature is not implemented
 
-
----
 ## 2. Time complexity
 ### 2.1 Introduction
 In computer science, the time complexity of an algorithm quantifies the amount
@@ -146,22 +125,16 @@ argument.
 All Neon functions are using `constant time O(1)` algorithms. This is
 especially important for Real Time applications.
 
-
----
 ## 3. Source code organization
 Complete source code is divided into:
 - **Core** - Contains the generic functionality of the Neon.
 - **Port** - Portable code, depends on the used build target.
 
-
----
 ## 4. Neon Core
 ### 4.1. Synchronization
 #### 4.1.1. Mutex
 #### 4.1.2. Semaphore
 
-
----
 ## 5. Neon portable code
 
 The portable code is divided into the following layers:

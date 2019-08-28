@@ -8,79 +8,73 @@
 ## Contents
 1. [Introduction](#1-introduction)
 2. [License](#2-license)
-3. [Platforms supported](#3-platforms-supported)
+3. [Supported platforms and targets](#3-supported-platforms-and-targets)
 4. [Get and build Neon](#4-get-and-build-neon)
 5. [Coding standard](#5-coding-standard)
 6. [Documentation](#6-documentation)
 7. [Support](#7-support)
 
 ## 1. Introduction
-Neon is a real-time kernel for deply embedded microcontrollers. For
-details about Neon design refer to [documentation/neon_design.md]. It
-enforces a specific coding scheme and programming paradigm.
+Neon is a real-time library for deply embedded microcontrollers. For details 
+about Neon design refer to [documentation/neon_design.md]. It enforces a 
+specific programming paradigm.
 
-The documentation is currently minimal so refer to `app_template` application
-folder for examples how to use system. For additional examples about particular
-feature please refer to `templates` folder.
+The documentation is currently minimal so refer to `project/eclipse`
+application examples. For additional examples about particular feature please 
+refer to unit-tests `tests` folder.
 
 Neon software provides:
- - multithreaded like execution using cooperative scheduling. The mechanics to
-   provide the concurent execution is heavilly inspired by Adam Dunkels 
-   protothreads.
+ - multithreaded like execution using cooperative scheduling.
  - dynamic memory allocation. It tries not to replace the standard C library
-   malloc, but adds more algorithms of managing RAM memory which are embedded
+   malloc, but adds more algorithms for managing RAM memory which are embedded
    friendly.
- - Hardware Abstraction Layer
+ - Thin hardware abstraction layer (HAL)
  - Virtual Timers
 
----
 ## 2. License
 The software is distributed under open source GNU LESSER GENERAL PUBLIC
 LICENSE Version 3. A copy of license file is found in [LGPL-3.0.md].
 
----
-## 3. Platforms supported
-Several platforms are supported. In order to manage different
-configurations, a few build flags are available:
- - `OS` - defines which OS is being used in the target
- - `PROFILE` - defines the optimization profile which is being used during
-   compilation.
- - `PLATFORM` - describes the development platfrom being used. For example,
-   GCC or ARM CC compiler.
- - `ARCH` - describes the target MCU CPU core architecture, like x86 or 
-   ARMv7-M Cores.
- - `MCU` - describes the targer MCU as a whole unit. It will provide details
-   about the available RAM/ROM sizes, peripheral configuration etc.
- - `BOARD` - it will even describe additional peripheral devices attached to
+## 3. Supported platforms and targets
+Several different platforms and targets are supported. In order to manage
+different configurations, a few build portable layers are available:
+ - `platform` - Platform layer abstract the development platfrom being used.
+   For example, using the GCC or XC8 compiler is transparent in the code. No
+   compiler specific code is in generic part of Neon library.
+ - `arch` - Architecture layer abstracts the target CPU core architecture, 
+   like x86 or ARMv7-M Cores.
+ - `mcu` - Microcontroller layer describes the target MCU features. It will 
+   provide details about the available RAM/ROM sizes, available peripherals and
+   their limitations etc.
+ - `board` - Board layer describes additional peripheral devices attached to
    the MCU pins.
-
+ - `os` - OS layer abstract operating system services.
+ 
 For more specific details about build flags etc, please refer to the file
 [documentation/build.md]. Some platforms have different sub-maintainers,
 please refer to the file [MAINTAINERS.md] for contact details for various
 platforms.
 
----
 ## 4. Get and build Neon
-Neon source consist of a ``.c`` files located in `lib/source` and
-`lib/va_source`. The header ``.h`` files are located in `lib/include` and
-`lib/va_include` directories. The include paths are managed by build system
-according to arguments given for selected platform. Please see 
-[documentation/build.md] for instructions how to build Neon for various 
-targets.
 
----
+The best way to get the Neon library is to use github or gitlab and then 
+checkout a tagged version. All tagged versions live in master branch. If you
+want to get the most current version of Neon library then checkout 
+`development` branch.
+
+Please see [documentation/build.md] for instructions how to build Neon for
+various platforms and targets.
+
 ## 5. Coding standard
 Information on coding standard used in the project can be found in
 [documentation/coding_standard.md]
 
----
 ## 6. Documentation
 The documentations consists of multiple ``.md`` files (plain text) and Doxygen
 related files. The doxygen tools is used to generate API reference in HTML and
 PDF documents. Please, refer to [documentation/documentation.md] for
 instructions how to build additional documentation files.
 
----
 ## 7. Support
 If you've found an error, please file an issue at [issues].
 
