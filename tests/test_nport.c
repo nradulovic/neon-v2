@@ -7,8 +7,8 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <test_nport.h>
 
-#include "test_narch.h"
 #include "../testsuite/ntestsuite.h"
 #include "sys/nport.h"
 
@@ -16,6 +16,12 @@ NTESTSUITE_TEST(test_none_NPLATFORM_ID)
 {
     ntestsuite_not_expect_ptr(NULL);
     ntestsuite_actual_ptr(NPLATFORM_ID);
+}
+
+NTESTSUITE_TEST(test_none_NPLATFORM_VERSION)
+{
+    ntestsuite_not_expect_ptr(NULL);
+    ntestsuite_actual_ptr(NPLATFORM_VERSION);
 }
 
 #if !defined(NPLATFORM_INLINE)
@@ -94,6 +100,19 @@ NTESTSUITE_TEST(test_none_NARCH_DATA_WIDTH)
 {
     ntestsuite_not_expect_uint(0);
     ntestsuite_actual_uint(NARCH_DATA_WIDTH);
+
+#if (NARCH_DATA_WIDTH == 8)
+    ntestsuite_expext_uint(1);
+    ntestsuite_actual_uint(sizeof(narch_uint));
+#elif (NARCH_DATA_WIDTH == 16)
+    ntestsuite_expext_uint(2);
+	ntestsuite_actual_uint(sizeof(narch_uint));
+#elif (NARCH_DATA_WIDTH == 32)
+	ntestsuite_expect_uint(4);
+	ntestsuite_actual_uint(sizeof(narch_uint));
+#else
+#error "NARCH_DATA_WIDTH is not of standard width"
+#endif
 }
 
 #if !defined(NARCH_HAS_ATOMICS)
@@ -143,6 +162,43 @@ NTESTSUITE_TEST(test_none_atomic_set_bit)
 #endif
 }
 
+NTESTSUITE_TEST(test_none_atomic_clear_bit)
+{
+#if (NARCH_HAS_ATOMICS == 1)
+    uint32_t var;
+
+    var = (uint32_t)0x1u << 1;
+    ntestsuite_expect_uint(0u);
+    narch_atomic_clear_bit(&var, 1u);
+    ntestsuite_actual_uint(var);
+
+    var = (uint32_t)0x1u << 2u;
+    ntestsuite_expect_uint(0u);
+    narch_atomic_clear_bit(&var, 2u);
+    ntestsuite_actual_uint(var);
+
+    var = (uint32_t)0x1u << 8u;
+    ntestsuite_expect_uint(0u);
+    narch_atomic_clear_bit(&var, 8u);
+    ntestsuite_actual_uint(var);
+
+    var = (uint32_t)0x1u << 16u;
+    ntestsuite_expect_uint(0u);
+    narch_atomic_clear_bit(&var, 16u);
+    ntestsuite_actual_uint(var);
+
+    var = (uint32_t)0x1u << 24u;
+    ntestsuite_expect_uint(0u);
+    narch_atomic_clear_bit(&var, 16u);
+    ntestsuite_actual_uint(var);
+
+    var = (uint32_t)0x1u << 31u;
+    ntestsuite_expect_uint(0u);
+    narch_atomic_clear_bit(&var, 31u);
+    ntestsuite_actual_uint(var);
+#endif
+}
+
 NTESTSUITE_TEST(test_none_exp2)
 {
     ntestsuite_expect_uint(0x01u);
@@ -187,21 +243,29 @@ NTESTSUITE_TEST(test_none_log2)
 #endif
 }
 
-void test_exec_narch(void)
+#if !defined(NOS_CRITICAL_LOCK)
+#error "NOS_CRITICAL_LOCK is not defined!"
+#endif
+
+#if !defined(NOS_CRITICAL_UNLOCK)
+#error "NOS_CRITICAL_UNLOCK is not defined!"
+#endif
+
+void test_exec_nport(void)
 {
-	ntestsuite_print_header();
     ntestsuite_set_fixture(none, NULL, NULL);
     ntestsuite_run(test_none_NPLATFORM_ID);
-    ntestsuite_run(test_none_NPLATFORM_FUNC);
-    ntestsuite_run(test_none_NPLATFORM_FILE);
-    ntestsuite_run(test_none_NPLATFORM_LINE);
-    ntestsuite_run(test_none_NPLATFORM_DATE);
-    ntestsuite_run(test_none_NPLATFORM_TIME);
+	ntestsuite_run(test_none_NPLATFORM_VERSION);
+	ntestsuite_run(test_none_NPLATFORM_FUNC);
+	ntestsuite_run(test_none_NPLATFORM_FILE);
+	ntestsuite_run(test_none_NPLATFORM_LINE);
+	ntestsuite_run(test_none_NPLATFORM_DATE);
+	ntestsuite_run(test_none_NPLATFORM_TIME);
     ntestsuite_run(test_none_NARCH_ID);
     ntestsuite_run(test_none_NARCH_DATA_WIDTH);
     ntestsuite_run(test_none_NARCH_ALIGN);
     ntestsuite_run(test_none_atomic_set_bit);
+    ntestsuite_run(test_none_atomic_clear_bit);
     ntestsuite_run(test_none_exp2);
     ntestsuite_run(test_none_log2);
-    ntestsuite_print_overview();
 }

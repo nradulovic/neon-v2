@@ -5,17 +5,17 @@
  * For license information refer to LGPL-3.0.md file at the root of this project.
  */
 
-#ifndef TEST_NARCH_H_
-#define TEST_NARCH_H_
+#ifndef TEST_NPORT_H_
+#define TEST_NPORT_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void test_exec_narch(void);
+void test_exec_nport(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* TEST_NARCH_H_ */
+#endif /* TEST_NPORT_H_ */
