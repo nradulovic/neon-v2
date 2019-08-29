@@ -20,6 +20,10 @@
 #include "test_nlist_sll.h"
 #endif
 
+#if defined(NEON_TEST_NLIST_DLL)
+#include "test_nlist_dll.h"
+#endif
+
 int main(void)
 {
 	static ntestsuite_fn * const tests[] =
@@ -32,6 +36,9 @@ int main(void)
 #endif
 #if defined(NEON_TEST_NLIST_SLL)
 		test_exec_nlist_sll,
+#endif
+#if defined(NEON_TEST_NLIST_DLL)
+		test_exec_nlist_dll,
 #endif
 		NULL
 	};
