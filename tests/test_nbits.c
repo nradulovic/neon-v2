@@ -118,20 +118,20 @@ NTESTSUITE_TEST(test_none_log2_UINT32_MAX)
 
 NTESTSUITE_TEST(test_none_is_powerof2_0)
 {
-    NTESTSUITE_EXPECT_BOOL(false);
-    NTESTSUITE_ACTUAL_BOOL(NBITS_IS_POWEROF2(0));
+    ntestsuite_expect_bool(false);
+    ntestsuite_actual_bool(NBITS_IS_POWEROF2(0));
 }
 
 NTESTSUITE_TEST(test_none_is_powerof2_1)
 {
-    NTESTSUITE_EXPECT_BOOL(true);
-    NTESTSUITE_ACTUAL_BOOL(NBITS_IS_POWEROF2(1));
+    ntestsuite_expect_bool(true);
+    ntestsuite_actual_bool(NBITS_IS_POWEROF2(1));
 }
 
 NTESTSUITE_TEST(test_none_is_powerof2_4)
 {
-    NTESTSUITE_EXPECT_BOOL(true);
-    NTESTSUITE_ACTUAL_BOOL(NBITS_IS_POWEROF2(4));
+    ntestsuite_expect_bool(true);
+    ntestsuite_actual_bool(NBITS_IS_POWEROF2(4));
 }
 
 NTESTSUITE_TEST(test_none_to_mask_0)

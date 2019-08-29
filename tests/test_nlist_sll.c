@@ -41,32 +41,32 @@ NTESTSUITE_TEST(test_none_init_is_null_true)
 {
     struct nlist_sll list = {0};
 
-    NTESTSUITE_EXPECT_BOOL(true);
-    NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_null(&list));
+    ntestsuite_expect_bool(true);
+    ntestsuite_actual_bool(nlist_sll_is_null(&list));
 }
 
 NTESTSUITE_TEST(test_none_init_is_null_false)
 {
     struct nlist_sll list = {0};
 
-    NTESTSUITE_EXPECT_BOOL(false);
+    ntestsuite_expect_bool(false);
     nlist_sll_init(&list);
-    NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_null(&list));
+    ntestsuite_actual_bool(nlist_sll_is_null(&list));
 }
 
 NTESTSUITE_TEST(test_none_is_null_false)
 {
     struct nlist_sll list;
 
-    NTESTSUITE_EXPECT_BOOL(false);
+    ntestsuite_expect_bool(false);
     nlist_sll_init(&list);
-    NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_null(&list));
+    ntestsuite_actual_bool(nlist_sll_is_null(&list));
 }
 
 NTESTSUITE_TEST(test_empty_is_empty)
 {
-    NTESTSUITE_EXPECT_BOOL(true);
-    NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_empty(&g_sentinel));
+    ntestsuite_expect_bool(true);
+    ntestsuite_actual_bool(nlist_sll_is_empty(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_empty_next)
@@ -163,15 +163,15 @@ NTESTSUITE_TEST(test_empty_add_tail)
 
 NTESTSUITE_TEST(test_empty_remove)
 {
-    NTESTSUITE_EXPECT_BOOL(true);
+    ntestsuite_expect_bool(true);
     nlist_sll_remove(&g_sentinel);
-    NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_empty(&g_sentinel));
+    ntestsuite_actual_bool(nlist_sll_is_empty(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_single_is_empty)
 {
-    NTESTSUITE_EXPECT_BOOL(false);
-    NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_empty(&g_sentinel));
+    ntestsuite_expect_bool(false);
+    ntestsuite_actual_bool(nlist_sll_is_empty(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_single_next)
@@ -293,14 +293,14 @@ NTESTSUITE_TEST(test_single_add_tail)
 NTESTSUITE_TEST(test_single_remove)
 {
     nlist_sll_remove(&g_node_a.list);
-    NTESTSUITE_EXPECT_BOOL(true);
-    NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_empty(&g_sentinel));
+    ntestsuite_expect_bool(true);
+    ntestsuite_actual_bool(nlist_sll_is_empty(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_abcd_is_empty)
 {
-    NTESTSUITE_EXPECT_BOOL(false);
-    NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_empty(&g_sentinel));
+    ntestsuite_expect_bool(false);
+    ntestsuite_actual_bool(nlist_sll_is_empty(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_abcd_next)
@@ -421,12 +421,12 @@ NTESTSUITE_TEST(test_abcd_add_tail)
 
 NTESTSUITE_TEST(test_abcd_remove)
 {
-    NTESTSUITE_EXPECT_BOOL(true);
+    ntestsuite_expect_bool(true);
     nlist_sll_remove(&g_node_a.list);
     nlist_sll_remove(&g_node_b.list);
     nlist_sll_remove(&g_node_c.list);
     nlist_sll_remove(&g_node_d.list);
-    NTESTSUITE_ACTUAL_BOOL(nlist_sll_is_empty(&g_sentinel));
+    ntestsuite_actual_bool(nlist_sll_is_empty(&g_sentinel));
 }
 
 static void setup_empty(void)
