@@ -359,6 +359,11 @@ bool nlist_dll_is_empty(const struct nlist_dll * node)
     return node->next == node;
 }
 
+struct nlist_dll * nlist_dll_find(
+		struct nlist_dll * list,
+		int (* finder)(const struct nlist_dll * object, const void * arg),
+		const void * arg);
+
 #ifdef __cplusplus
 }
 #endif

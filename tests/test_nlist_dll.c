@@ -15,15 +15,28 @@
 struct node_list
 {
     struct nlist_dll list;
+    char a;
 };
 
-static struct node_list g_node_a;
+static struct node_list g_node_a =
+{
+	.a = 'a'
+};
 
-static struct node_list g_node_b;
+static struct node_list g_node_b =
+{
+	.a = 'b'
+};
 
-static struct node_list g_node_c;
+static struct node_list g_node_c =
+{
+	.a = 'c'
+};
 
-static struct node_list g_node_d;
+static struct node_list g_node_d =
+{
+	.a = 'd'
+};
 
 static struct node_list g_node_0;
 
@@ -429,6 +442,69 @@ NTESTSUITE_TEST(test_abcd_remove)
     ntestsuite_actual_bool(nlist_dll_is_empty(&g_sentinel));
 }
 
+static int node_list_find_char(const struct nlist_dll * node, const void * arg)
+{
+	struct node_list * node_list;
+
+	node_list = NPLATFORM_CONTAINER_OF(node, struct node_list, list);
+
+	if (node_list->a == *(const char *)arg) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+NTESTSUITE_TEST(test_abcd_find_a)
+{
+	char to_find = 'a';
+	struct nlist_dll * current;
+    ntestsuite_expect_ptr(&g_node_a);
+
+    current = nlist_dll_find(&g_sentinel, node_list_find_char, &to_find);
+    ntestsuite_actual_ptr(current);
+}
+
+NTESTSUITE_TEST(test_abcd_find_b)
+{
+	char to_find = 'b';
+	struct nlist_dll * current;
+    ntestsuite_expect_ptr(&g_node_b);
+
+    current = nlist_dll_find(&g_sentinel, node_list_find_char, &to_find);
+    ntestsuite_actual_ptr(current);
+}
+
+NTESTSUITE_TEST(test_abcd_find_c)
+{
+	char to_find = 'c';
+	struct nlist_dll * current;
+    ntestsuite_expect_ptr(&g_node_c);
+
+    current = nlist_dll_find(&g_sentinel, node_list_find_char, &to_find);
+    ntestsuite_actual_ptr(current);
+}
+
+NTESTSUITE_TEST(test_abcd_find_d)
+{
+	char to_find = 'd';
+	struct nlist_dll * current;
+    ntestsuite_expect_ptr(&g_node_d);
+
+    current = nlist_dll_find(&g_sentinel, node_list_find_char, &to_find);
+    ntestsuite_actual_ptr(current);
+}
+
+NTESTSUITE_TEST(test_abcd_find_sentinel)
+{
+	char to_find = 'f';
+	struct nlist_dll * current;
+    ntestsuite_expect_ptr(&g_sentinel);
+
+    current = nlist_dll_find(&g_sentinel, node_list_find_char, &to_find);
+    ntestsuite_actual_ptr(current);
+}
+
 static void setup_empty(void)
 {
     nlist_dll_init(&g_sentinel);
@@ -507,6 +583,11 @@ void test_exec_nlist_dll(void)
     ntestsuite_run(test_abcd_add_head);
     ntestsuite_run(test_abcd_add_tail);
     ntestsuite_run(test_abcd_remove);
+    ntestsuite_run(test_abcd_find_a);
+    ntestsuite_run(test_abcd_find_b);
+    ntestsuite_run(test_abcd_find_c);
+    ntestsuite_run(test_abcd_find_d);
+    ntestsuite_run(test_abcd_find_sentinel);
 }
 
 
