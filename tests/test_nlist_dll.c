@@ -33,400 +33,400 @@ NTESTSUITE_TEST(test_none_init)
 {
     struct nlist_dll list;
 
-    NTESTSUITE_EXPECT_PTR(&list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_init(&list));
+    ntestsuite_expect_ptr(&list);
+    ntestsuite_actual_ptr(nlist_dll_init(&list));
 }
 
 NTESTSUITE_TEST(test_none_init_is_null_true)
 {
     struct nlist_dll list = {0};
 
-    NTESTSUITE_EXPECT_BOOL(true);
-    NTESTSUITE_ACTUAL_BOOL(nlist_dll_is_null(&list));
+    ntestsuite_expect_bool(true);
+    ntestsuite_actual_bool(nlist_dll_is_null(&list));
 }
 
 NTESTSUITE_TEST(test_none_init_is_null_false)
 {
     struct nlist_dll list = {0};
 
-    NTESTSUITE_EXPECT_BOOL(false);
+    ntestsuite_expect_bool(false);
     nlist_dll_init(&list);
-    NTESTSUITE_ACTUAL_BOOL(nlist_dll_is_null(&list));
+    ntestsuite_actual_bool(nlist_dll_is_null(&list));
 }
 
 NTESTSUITE_TEST(test_none_is_null_false)
 {
     struct nlist_dll list;
 
-    NTESTSUITE_EXPECT_BOOL(false);
+    ntestsuite_expect_bool(false);
     nlist_dll_init(&list);
-    NTESTSUITE_ACTUAL_BOOL(nlist_dll_is_null(&list));
+    ntestsuite_actual_bool(nlist_dll_is_null(&list));
 }
 
 NTESTSUITE_TEST(test_empty_is_empty)
 {
-    NTESTSUITE_EXPECT_BOOL(true);
-    NTESTSUITE_ACTUAL_BOOL(NLIST_DLL_IS_EMPTY(&g_sentinel));
+    ntestsuite_expect_bool(true);
+    ntestsuite_actual_bool(nlist_dll_is_empty(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_empty_next)
 {
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_empty_prev)
 {
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_empty_first)
 {
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_first(&g_sentinel));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_first(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_empty_last)
 {
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_last(&g_sentinel));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_last(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_empty_add_after)
 {
     nlist_dll_add_after(&g_sentinel, &g_node_a.list);
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_a.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_a.list));
 }
 
 NTESTSUITE_TEST(test_empty_add_before)
 {
     nlist_dll_add_before(&g_sentinel, &g_node_a.list);
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_a.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_a.list));
 }
 
 NTESTSUITE_TEST(test_empty_add_head)
 {
     nlist_dll_add_head(&g_sentinel, &g_node_a.list);
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_a.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_a.list));
 }
 
 NTESTSUITE_TEST(test_empty_add_tail)
 {
     nlist_dll_add_tail(&g_sentinel, &g_node_a.list);
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_a.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_a.list));
 }
 
 NTESTSUITE_TEST(test_empty_remove)
 {
-    NTESTSUITE_EXPECT_BOOL(true);
+    ntestsuite_expect_bool(true);
     nlist_dll_remove(&g_sentinel);
-    NTESTSUITE_ACTUAL_BOOL(NLIST_DLL_IS_EMPTY(&g_sentinel));
+    ntestsuite_actual_bool(nlist_dll_is_empty(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_single_is_empty)
 {
-    NTESTSUITE_EXPECT_BOOL(false);
-    NTESTSUITE_ACTUAL_BOOL(NLIST_DLL_IS_EMPTY(&g_sentinel));
+    ntestsuite_expect_bool(false);
+    ntestsuite_actual_bool(nlist_dll_is_empty(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_single_next)
 {
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_single_prev)
 {
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_single_first)
 {
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_first(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_first(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_single_last)
 {
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_last(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_last(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_single_add_after)
 {
     nlist_dll_add_after(&g_sentinel, &g_node_b.list);
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_b.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_b.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_b.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_node_b.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_a.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_a.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_b.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_b.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_b.list));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_b.list));
 }
 
 NTESTSUITE_TEST(test_single_add_before)
 {
     nlist_dll_add_before(&g_sentinel, &g_node_b.list);
 
-    NTESTSUITE_EXPECT_PTR(&g_node_b.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_b.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_a.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_b.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_node_b.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_a.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_b.list));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_b.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_b.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_b.list));
 }
 
 NTESTSUITE_TEST(test_single_add_head)
 {
     nlist_dll_add_head(&g_sentinel, &g_node_b.list);
 
-    NTESTSUITE_EXPECT_PTR(&g_node_b.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_b.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_a.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_b.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_node_b.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_a.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_b.list));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_b.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_b.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_b.list));
 }
 
 NTESTSUITE_TEST(test_single_add_tail)
 {
     nlist_dll_add_tail(&g_sentinel, &g_node_b.list);
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_b.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_b.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_b.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_node_b.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_a.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_a.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_b.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_b.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_b.list));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_b.list));
 }
 
 NTESTSUITE_TEST(test_single_remove)
 {
     nlist_dll_remove(&g_node_a.list);
-    NTESTSUITE_EXPECT_BOOL(true);
-    NTESTSUITE_ACTUAL_BOOL(NLIST_DLL_IS_EMPTY(&g_sentinel));
+    ntestsuite_expect_bool(true);
+    ntestsuite_actual_bool(nlist_dll_is_empty(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_abcd_is_empty)
 {
-    NTESTSUITE_EXPECT_BOOL(false);
-    NTESTSUITE_ACTUAL_BOOL(NLIST_DLL_IS_EMPTY(&g_sentinel));
+    ntestsuite_expect_bool(false);
+    ntestsuite_actual_bool(nlist_dll_is_empty(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_abcd_next)
 {
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_abcd_prev)
 {
-    NTESTSUITE_EXPECT_PTR(&g_node_d.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_d.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_abcd_first)
 {
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_first(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_first(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_abcd_last)
 {
-    NTESTSUITE_EXPECT_PTR(&g_node_d.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_last(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_d.list);
+    ntestsuite_actual_ptr(nlist_dll_last(&g_sentinel));
 }
 
 NTESTSUITE_TEST(test_abcd_add_after)
 {
     nlist_dll_add_after(&g_sentinel, &g_node_0.list);
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_0.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_0.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_0.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_d.list));
+    ntestsuite_expect_ptr(&g_node_0.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_d.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_c.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_d.list));
+    ntestsuite_expect_ptr(&g_node_c.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_d.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_0.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_0.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_d.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_0.list));
+    ntestsuite_expect_ptr(&g_node_d.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_0.list));
 }
 
 NTESTSUITE_TEST(test_abcd_add_before)
 {
     nlist_dll_add_before(&g_sentinel, &g_node_0.list);
 
-    NTESTSUITE_EXPECT_PTR(&g_node_0.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_0.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_d.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_d.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_b.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_node_b.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_a.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_0.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_node_0.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_a.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_0.list));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_0.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_0.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_0.list));
 }
 
 NTESTSUITE_TEST(test_abcd_add_head)
 {
     nlist_dll_add_head(&g_sentinel, &g_node_0.list);
 
-    NTESTSUITE_EXPECT_PTR(&g_node_0.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_0.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_d.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_d.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_b.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_node_b.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_a.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_0.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_a.list));
+    ntestsuite_expect_ptr(&g_node_0.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_a.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_0.list));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_0.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_0.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_0.list));
 }
 
 NTESTSUITE_TEST(test_abcd_add_tail)
 {
     nlist_dll_add_tail(&g_sentinel, &g_node_0.list);
 
-    NTESTSUITE_EXPECT_PTR(&g_node_a.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_a.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_0.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_sentinel));
+    ntestsuite_expect_ptr(&g_node_0.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_sentinel));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_0.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_d.list));
+    ntestsuite_expect_ptr(&g_node_0.list);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_d.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_c.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_d.list));
+    ntestsuite_expect_ptr(&g_node_c.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_d.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_sentinel);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_next(&g_node_0.list));
+    ntestsuite_expect_ptr(&g_sentinel);
+    ntestsuite_actual_ptr(nlist_dll_next(&g_node_0.list));
 
-    NTESTSUITE_EXPECT_PTR(&g_node_d.list);
-    NTESTSUITE_ACTUAL_PTR(nlist_dll_prev(&g_node_0.list));
+    ntestsuite_expect_ptr(&g_node_d.list);
+    ntestsuite_actual_ptr(nlist_dll_prev(&g_node_0.list));
 }
 
 NTESTSUITE_TEST(test_abcd_remove)
 {
-    NTESTSUITE_EXPECT_BOOL(true);
+    ntestsuite_expect_bool(true);
     nlist_dll_remove(&g_node_a.list);
     nlist_dll_remove(&g_node_b.list);
     nlist_dll_remove(&g_node_c.list);
     nlist_dll_remove(&g_node_d.list);
-    NTESTSUITE_ACTUAL_BOOL(NLIST_DLL_IS_EMPTY(&g_sentinel));
+    ntestsuite_actual_bool(nlist_dll_is_empty(&g_sentinel));
 }
 
 static void setup_empty(void)
@@ -471,7 +471,6 @@ void test_exec_nlist_dll(void)
     ntestsuite_run(test_none_init_is_null_true);
     ntestsuite_run(test_none_init_is_null_false);
     ntestsuite_run(test_none_is_null_false);
-    ntestsuite_print_results();
 
     ntestsuite_set_fixture(empty, setup_empty, NULL);
     ntestsuite_run(test_empty_is_empty);
@@ -484,7 +483,6 @@ void test_exec_nlist_dll(void)
     ntestsuite_run(test_empty_add_head);
     ntestsuite_run(test_empty_add_tail);
     ntestsuite_run(test_empty_remove);
-    ntestsuite_print_results();
 
     ntestsuite_set_fixture(single, setup_single, NULL);
     ntestsuite_run(test_single_is_empty);
@@ -497,7 +495,6 @@ void test_exec_nlist_dll(void)
     ntestsuite_run(test_single_add_head);
     ntestsuite_run(test_single_add_tail);
     ntestsuite_run(test_single_remove);
-    ntestsuite_print_results();
 
     ntestsuite_set_fixture(abcd, setup_abcd, NULL);
     ntestsuite_run(test_abcd_is_empty);
@@ -510,7 +507,6 @@ void test_exec_nlist_dll(void)
     ntestsuite_run(test_abcd_add_head);
     ntestsuite_run(test_abcd_add_tail);
     ntestsuite_run(test_abcd_remove);
-    ntestsuite_print_results();
 }
 
 
