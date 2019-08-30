@@ -275,19 +275,43 @@ void npqueue_term(struct npqueue * node)
     nlist_dll_init(&node->list);
 }
 
+static int find_priority(const struct nlist_dll * object, const void * arg)
+{
+	struct npqueue * current = npqueue_from_list(object);
+
+	if (current->priority == *(uint_fast8_t *)arg) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+struct nlist_dll * nlist_dll_find(
+		struct nlist_dll * list,
+		int (* finder)(const struct nlist_dll * object, const void * arg),
+		const void * arg)
+{
+	struct nlist_dll * current_list;
+
+	for (NLIST_DLL_EACH(current_list, list)) {
+		int found;
+
+		found = finder(current_list, arg);
+
+		if (found == 1) {
+			return current_list;
+		}
+	}
+	return list;
+}
+
 void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
         struct npqueue * node)
 {
-    struct nlist_dll * current_list;
+    struct nlist_dll * current;
 
-    for (NLIST_DLL_EACH(current_list, &sentinel->list)) {
-        struct npqueue * current = npqueue_from_list(current_list);
-
-        if (current->priority < node->priority) {
-            break;
-        }
-    }
-    nlist_dll_add_after(current_list, &node->list);
+    current = nlist_dll_find(&sentinel->list, find_priority, &node->priority);
+    nlist_dll_add_after(current, &node->list);
 }
 
 /** @} *//*==================================================================*/
