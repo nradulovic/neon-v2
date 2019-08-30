@@ -24,6 +24,10 @@
 #include "test_nlist_dll.h"
 #endif
 
+#if defined(NEON_TEST_NLQUEUE)
+#include "test_nlqueue.h"
+#endif
+
 int main(void)
 {
 	static ntestsuite_fn * const tests[] =
@@ -39,6 +43,9 @@ int main(void)
 #endif
 #if defined(NEON_TEST_NLIST_DLL)
 		test_exec_nlist_dll,
+#endif
+#if defined(NEON_TEST_NLQUEUE)
+		test_exec_nlqueue,
 #endif
 		NULL
 	};
