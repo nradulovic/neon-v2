@@ -18,7 +18,7 @@
 
 #include <stdbool.h>
 
-#include "sys/nport.h"
+#include "core/nport.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,7 +50,7 @@ extern "C" {
  *  @mseffect
  */
 #define nlist_dll_entry(ptr, type, member)                                  \
-    nlist_sll_entry(ptr, type, member)
+		NPLATFORM_CONTAINER_OF(ptr, type, member)
 
 #define nlist_dll_is_null(list)         ((list)->next == NULL)
 

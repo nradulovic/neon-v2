@@ -16,10 +16,10 @@
 #ifndef NEON_LOGGER_H_
 #define NEON_LOGGER_H_
 
-#include <stdio.h>
-#include <stdbool.h>
+#include <string.h>
 
-#include "sys/nconfig.h"
+#include "core/nconfig.h"
+#include "core/nstdio.h"
 
 #ifdef __cplusplus
 extern "C" {

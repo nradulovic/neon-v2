@@ -20,11 +20,50 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "sys/nport.h"
+#include "core/nport.h"
+#include "core/nbits.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#define nbitarray_dynamic(T) \
+		{ \
+			struct nbitarray super; \
+			narch_uint * array; \
+		}
+
+#define nbitarray_dynamic_storage(T, size)                                    \
+    {                                                                       \
+        T narch_uint array[NBITS_DIVIDE_ROUNDUP((size), NARCH_DATA_WIDTH)];                                                    \
+    }
+
+#define nbitarray(T, size) \
+		{ \
+			struct nbitarray super; \
+			narch_uint array[NBITS_DIVIDE_ROUNDUP((size), NARCH_DATA_WIDTH)]; \
+		}
+
+struct nbitarray
+{
+	narch_uint group;
+};
+
+/** @brief      Initialize a dynamic queue structure
+ *  @param      Q
+ *              Pointer to dynamically allocated lightweight queue.
+ *  @param      a_size_bytes
+ *              The size of storage in bytes.
+ *  @param      a_storage
+ *              Pointer to allocated storage.
+ *  @mseffect
+ */
+#define NBITARRAY_INIT_DYNAMIC(A, a_size, a_storage)                   \
+        do {                                                                \
+            (A)->super.group = 0u; \
+            (A)->array = (a_storage);                               \
+            memset((A)->array, 0, NBITS_DIVIDE_ROUNDUP((a_size), 8u)); \
+        } while (0)
 
 /** @brief      Bitarray x type
  */

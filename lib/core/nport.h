@@ -32,6 +32,27 @@ extern "C" {
  *  @brief      Port compiler helper macros.
  *  @{ */
 
+/** @brief      Defines a constant string representing Neon build date.
+ */
+extern const char * const nsys_build_date;
+
+/** @brief      Defines a constant string representing Neon build time.
+ */
+extern const char * const nsys_build_time;
+
+/** @brief      Defines a constant string representing Neon build platform ID.
+ */
+extern const char * const nsys_platform_id;
+
+/** @brief      Defines a constant string representing Neon build platform version.
+ */
+extern const char * const nsys_platform_version;
+
+/** @} */
+/** @defgroup   nport_platform Platform compiler macros
+ *  @brief      Port compiler helper macros.
+ *  @{ */
+
 /** @brief      Defines a string containing the platform name.
  *  @hideinitializer
  */

@@ -19,7 +19,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "sys/nlist_sll.h"
+#include "core/nlist_sll.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -47,15 +47,16 @@ struct nmem_pool
                 NBITS_ARRAY_SIZE((MP)->storage));                           \
     } while (0)
         
+#define NMEM_POOL(MP)                   &(MP)->mem_pool
+
 void nmem_pool_init(
         struct nmem_pool * pool, 
         void * storage, 
         size_t storage_size, 
         uint32_t elements);
 
-#define NMEM_POOL(MP)                   &(MP)->mem_pool
-
 void * nmem_pool_alloc(struct nmem_pool * pool);
+
 void   nmem_pool_free (struct nmem_pool * pool, void * mem);
 
 #ifdef __cplusplus

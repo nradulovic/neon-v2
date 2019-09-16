@@ -13,12 +13,12 @@
  *  @{
  */
 
-#ifndef NEON_PSQUEUE_H_
-#define NEON_PSQUEUE_H_
+#ifndef NEON_PQUEUE_H_
+#define NEON_PQUEUE_H_
 
 #include <stdint.h>
 
-#include "sys/nlist_dll.h"
+#include "core/nlist_dll.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -57,7 +57,7 @@ struct npqueue_sentinel
  *  @retval     false - Queue managed by @a a_sentinel is not empty.
  *  @mseffect
  */
-#define NPQUEUE_SENTINEL_IS_EMPTY(a_sentinel)                              \
+#define NPQUEUE_SENTINEL_IS_EMPTY(a_sentinel)                              	\
         NLIST_DLL_IS_EMPTY(&(a_sentinel)->list)
 
 /** @brief      Head of the queue
@@ -65,7 +65,7 @@ struct npqueue_sentinel
  *              Pointer to priority queue sentinel.
  *  @return     Pointer to head queue node.
  */
-#define npqueue_sentinel_head(a_sentinel)                                   \
+#define npqueue_sentinel_head(a_sentinel)                                	\
         npqueue_next(a_sentinel)
 
 /** @brief      Shift the sentinel through list.
@@ -86,7 +86,7 @@ void npqueue_sentinel_shift(struct npqueue_sentinel * sentinel);
 struct npqueue
 {
     struct nlist_dll list;                      /**< Linked list of items */
-    uint_fast8_t priority;                      /**< Priotity attribute */
+    uint_fast8_t priority;                      /**< Priority attribute */
 };
 
 /** @brief      Convert a list entry to node entry.
@@ -183,4 +183,4 @@ void npqueue_insert_sort(
 /** @} */
 /** @} */
 
-#endif /* NEON_PSQUEUE_H_ */
+#endif /* NEON_PQUEUE_H_ */

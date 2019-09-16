@@ -264,13 +264,6 @@ extern const uint32_t g_np_bits_left_mask[33];
 
 #define nbits_xb1(value)                ((uint32_t)(value) & 0xffu)
 
-/** @brief      Sign extend signed 24 bit integer to signed 32 bits integer.
- * 
- *  @param      value
- *              Signed 24 bit integer.
- */
-#define nbits_ext_i24(value)            ncpu_ext_i24(value)
-
 /** @} */
 /** @defgroup   bits_conv Data convert
  *  @brief      Data convert.

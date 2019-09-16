@@ -31,9 +31,9 @@ enum nerror_id
     EARG_OUTOFRANGE,                        /**< Argument is out of range.    */
 };
 
-/** @brief      Error identifier type.
- */
 typedef enum nerror_id nerror;
+
+void nexception_raise(enum nexception_id nexception_id);
 
 #ifdef __cplusplus
 }

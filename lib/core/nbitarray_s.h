@@ -16,7 +16,7 @@
 #ifndef NEON_BITARRAY_S_H_
 #define NEON_BITARRAY_S_H_
 
-#include "sys/nport.h"
+#include "core/nport.h"
 
 #ifdef __cplusplus
 extern "C" {

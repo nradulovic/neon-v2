@@ -19,12 +19,12 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "sys/nport.h"
-#include "sys/nconfig.h"
-#include "sys/nbitarray_s.h"
-#include "sys/nbitarray_x.h"
-#include "sys/nlist_dll.h"
-#include "sys/nepa.h"
+#include "core/nport.h"
+#include "core/nconfig.h"
+#include "core/nbitarray_s.h"
+#include "core/nbitarray_x.h"
+#include "core/nlist_dll.h"
+#include "core/nepa.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -16,11 +16,10 @@
 #ifndef NEON_LQUEUE_H_
 #define NEON_LQUEUE_H_
 
-#include <stdbool.h>
 #include <stdint.h>
 
-#include "sys/nport.h"
-#include "sys/nbits.h"
+#include "core/nport.h"
+#include "core/nbits.h"
 
 #ifdef __cplusplus
 extern "C" {

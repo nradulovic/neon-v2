@@ -19,8 +19,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "sys/nconfig.h"
-#include "sys/nlqueue.h"
+#include "core/nconfig.h"
+#include "core/nlqueue.h"
 
 #ifdef __cplusplus
 extern "C" {

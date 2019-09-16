@@ -18,11 +18,9 @@
 
 #include <stdint.h>
 
-#include "sys/nconfig.h"
-#include "sys/ndebug.h"
-#include "sys/nlqueue.h"
-#include "sys/nsm.h"
-#include "sys/nerror.h"
+#include "core/nconfig.h"
+#include "core/nlqueue.h"
+#include "core/nsm.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -153,9 +151,9 @@ struct nepa
     NSIGNATURE_DECLARE
 };
 
-nerror nepa_send_signal(struct nepa * epa, uint_fast16_t signal);
+void nepa_send_signal(struct nepa * epa, uint_fast16_t signal);
 
-nerror nepa_send_event(struct nepa * epa, const struct nevent * event);
+void nepa_send_event(struct nepa * epa, const struct nevent * event);
 
 #ifdef __cplusplus
 }

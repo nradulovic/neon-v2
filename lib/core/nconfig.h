@@ -127,7 +127,7 @@ extern "C" {
  *  @hideinitializer
  */
 #if !defined(NCONFIG_LOGGER_LEVEL)
-#define NCONFIG_LOGGER_LEVEL            NLOGGER_LEVEL_INFO
+#define NCONFIG_LOGGER_LEVEL            3
 #endif
 
 /** @brief      Configure how many EPA Instances are used by application.
@@ -259,7 +259,7 @@ struct nconfig_entry
     uint32_t value;
 };
 
-const struct nconfig_entry * nconfig_record_fetch(uint8_t idx);
+const struct nconfig_entry * nconfig_record_fetch(enum nconfig_entry_id idx);
 
 #ifdef __cplusplus
 }

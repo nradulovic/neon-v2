@@ -18,7 +18,7 @@
 
 #include <stdbool.h>
 
-#include "sys/nport.h"
+#include "core/nport.h"
 
 #ifdef __cplusplus
 extern "C" {

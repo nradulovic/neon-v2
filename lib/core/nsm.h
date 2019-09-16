@@ -112,8 +112,6 @@ enum nepa_type
 struct nsm;
 struct nevent;
 
-
-
 /** @brief      State function prototype.
  * 
  *  Each state machine state is described by a single state function. A state
@@ -150,6 +148,10 @@ struct nsm
     nstate_fn *                 state;          /**< Current state. */
     void *                      ws;             /**< Pointer to workspace. */
 };
+
+void sm_init(struct nsm * sm);
+
+nsm_action nsm_dispatch(struct nsm * sm, const struct nevent * event);
 
 #ifdef __cplusplus
 }
