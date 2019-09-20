@@ -7,10 +7,10 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <test_nbits.h>
 
 #include "../testsuite/ntestsuite.h"
-#include "sys/nbits.h"
+#include "core/nbits.h"
+#include "test_nbits.h"
 
 NTESTSUITE_TEST(test_none_array_size)
 {

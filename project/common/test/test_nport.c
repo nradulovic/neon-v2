@@ -7,10 +7,10 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <test_nport.h>
 
 #include "../testsuite/ntestsuite.h"
-#include "sys/nport.h"
+#include "core/nport.h"
+#include "test_nport.h"
 
 NTESTSUITE_TEST(test_none_NPLATFORM_ID)
 {

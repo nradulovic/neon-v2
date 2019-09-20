@@ -17,6 +17,7 @@
  */
 
 #include <string.h>
+#include <stdio.h>
 
 #include "ntestsuite.h"
 
@@ -39,43 +40,14 @@ struct np_testsuite_context
 
 static struct np_testsuite_context g_np_testsuite_context;
 
-
-static void print_header(void)
-{
-    const struct nconfig_entry * entry;
-    uint8_t idx;
-
-    nlogger_info("\nBuild info: %s %s (%s - %s)\n",
-            nsys_platform_id,
-			nsys_platform_version,
-            nsys_build_date,
-            nsys_build_time);
-
-    idx = 0u;
-
-    while ((entry = nconfig_record_fetch(idx++))) {
-        nlogger_info("%s: %u\n", entry->name, entry->value);
-    }
-    nlogger_flush();
-}
-
-static void print_overview(void)
-{
-    nlogger_info("\nTotal tests: %u\nOK\n\n",
-            g_np_testsuite_context.total_tests);
-    nlogger_flush();
-}
-
 void ntestsuite_run_tests(ntestsuite_fn * const * array)
 {
-	nboard_init();
-	print_header();
-
-	while (*array) {
-		(*array)();
-		array++;
-	}
-	print_overview();
+    while (*array) {
+        (*array)();
+        array++;
+    }
+    printf("\nTotal tests: %u\nOK\n\n",
+            g_np_testsuite_context.total_tests);
 }
 
 void np_testsuite_set_fixture(
@@ -92,38 +64,27 @@ void np_testsuite_expect(
         union np_testsuite_test_val value, 
         enum np_testsuite_type type)
 {
-	g_np_testsuite_context.test_case.type = type;
+    g_np_testsuite_context.test_case.type = type;
     g_np_testsuite_context.test_case.expected = value;
 }
 
 void np_testsuite_run(const struct np_testsuite_test * test)
 {
-	g_np_testsuite_context.test = test;
-	g_np_testsuite_context.total_tests++;
+    g_np_testsuite_context.test = test;
+    g_np_testsuite_context.total_tests++;
 
-	if (g_np_testsuite_context.fixture.setup) {
-		nlogger_debug("D: Setup fixture %s for test %s\n",
-                g_np_testsuite_context.fixture.name,
-				test->name);
-		g_np_testsuite_context.fixture.setup();
-	}
+    if (g_np_testsuite_context.fixture.setup) {
+        g_np_testsuite_context.fixture.setup();
+    }
     test->test_fn();
-	if (g_np_testsuite_context.fixture.teardown) {
-		nlogger_debug("D: Teardown fixture %s for test %s\n",
-				g_np_testsuite_context.fixture.name,
-				test->name);
-		g_np_testsuite_context.fixture.teardown();
-	}
+    if (g_np_testsuite_context.fixture.teardown) {
+        g_np_testsuite_context.fixture.teardown();
+    }
 }
 
 void np_testsuite_actual(uint32_t line, union np_testsuite_test_val actual)
 {
     bool should_block = false;
-    
-    /* In case logging is disabled we need to tell compiler not to warn us 
-     * about unused argument.
-     */
-    NPLATFORM_UNUSED_ARG(line); 
 
     switch (g_np_testsuite_context.test_case.type) {
         case NP_TESTSUITE_TYPE_BOOL:
@@ -189,64 +150,66 @@ void np_testsuite_actual(uint32_t line, union np_testsuite_test_val actual)
     }
     
     if (should_block) {
-        nlogger_err("\nTest FAILED at %s() in %s:%u\n",
+        printf("\nTest FAILED at %s() in %s:%u\n",
                 g_np_testsuite_context.test->name,
                 g_np_testsuite_context.fixture.name,
                 line);
         
         switch (g_np_testsuite_context.test_case.type) {
             case NP_TESTSUITE_TYPE_BOOL:
-                nlogger_err("Expected: %u\nActual  : %u",
+                printf("Expected: %u\nActual  : %u",
                         g_np_testsuite_context.test_case.expected.b,
                         actual.b);
                 break;
             case NP_TESTSUITE_TYPE_UINT:
-                nlogger_err("Expected: %u\nActual  : %u",
+                printf("Expected: %u\nActual  : %u",
                         g_np_testsuite_context.test_case.expected.ui,
                         actual.ui);
                 break;
             case NP_TESTSUITE_TYPE_INT:
-                nlogger_err("Expected: %d\nActual  : %d",
+                printf("Expected: %d\nActual  : %d",
                         g_np_testsuite_context.test_case.expected.si,
                         actual.si);
                 break;
             case NP_TESTSUITE_TYPE_PTR:
-                nlogger_err("Expected: %p\nActual  : %p",
+                printf("Expected: %p\nActual  : %p",
                         g_np_testsuite_context.test_case.expected.ptr,
                         actual.ptr);
                 break;
             case NP_TESTSUITE_TYPE_STR:
-                nlogger_err("Expected: %s\nActual   : %s",
+                printf("Expected: %s\nActual   : %s",
                         g_np_testsuite_context.test_case.expected.str,
                         actual.str);
                 break;
             case NP_TESTSUITE_TYPE_NOT_BOOL:
-                nlogger_err("Unexpected: %u\nActual    : %u",
+                printf("Unexpected: %u\nActual    : %u",
                         g_np_testsuite_context.test_case.expected.b,
                         actual.b);
                 break;
             case NP_TESTSUITE_TYPE_NOT_UINT:
-                nlogger_err("Unexpected: %u\nActual    : %u",
+                printf("Unexpected: %u\nActual    : %u",
                         g_np_testsuite_context.test_case.expected.ui,
                         actual.ui);
                 break;
             case NP_TESTSUITE_TYPE_NOT_INT:
-                nlogger_err("Unexpected: %d\nActual    : %d",
+                printf("Unexpected: %d\nActual    : %d",
                         g_np_testsuite_context.test_case.expected.si,
                         actual.si);
                 break;
             case NP_TESTSUITE_TYPE_NOT_PTR:
-                nlogger_err("Unexpected: %p\nActual    : %p",
+                printf("Unexpected: %p\nActual    : %p",
                         g_np_testsuite_context.test_case.expected.ptr,
                         actual.ptr);
                 break;
             case NP_TESTSUITE_TYPE_NOT_STR:
-                nlogger_err("Unexpected: %s\nActual    : %s",
+                printf("Unexpected: %s\nActual    : %s",
                         g_np_testsuite_context.test_case.expected.str,
                         actual.str);
                 break;
         }
-        nlogger_flush();
-        narch_cpu_stop();
+	
+	while (true) {
+		;
+	}
     }
 }

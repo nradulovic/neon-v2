@@ -18,7 +18,7 @@
 
 #include <stdlib.h>
 
-#include "sys/nport.h"
+#include "core/nport.h"
 
 void narch_cpu_stop(void)
 {

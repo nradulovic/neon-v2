@@ -10,7 +10,7 @@
 
 #include <string.h>
 
-#include "nbits.h"
+#include "core/nbits.h"
 
 const uint32_t g_np_bits_right_mask[33] =
 {

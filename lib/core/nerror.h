@@ -33,6 +33,11 @@ enum nerror_id
 
 typedef enum nerror_id nerror;
 
+enum nexception_id
+{
+	NEXCEPTION_RUNTIME
+};
+
 void nexception_raise(enum nexception_id nexception_id);
 
 #ifdef __cplusplus

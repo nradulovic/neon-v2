@@ -138,52 +138,16 @@ void nscheduler_task_block(struct nscheduler_task * task)
 /*
  * 1. If no ready task is set then set the default idle task.
  */
-#if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
-void nscheduler_start(
-        struct nscheduler * scheduler,
-        const struct nepa * const * epa_registry)
-#else
 NPLATFORM_NORETURN(void nscheduler_start(
         struct nscheduler * scheduler, 
         const struct nepa * const * epa_registry))
-#endif
 {
     schedule_initialize_epas(scheduler, epa_registry);
 
-#if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
-                                    /* While there are ready tasks in system */
-    while (!should_exit) {
-#else
     while (true) {
-#endif
      
     }
-
-#if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
-    for (uint_fast8_t prio = 0u; prio < NCONFIG_EPA_INSTANCES; prio) {
-        struct ntask * task;
-
-        task = epa_from_prio(scheduler, prio);
-
-        ntask_stop(task);
-    }
-
-    for (uint_fast8_t prio = 0u; prio < NCONFIG_EPA_INSTANCES; prio) {
-        struct ntask * task;
-
-        task = epa_from_prio(scheduler, prio);
-
-        ntask_delete(task);
-    }
-#endif
 }
-
-#if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
-void nscheduler_stop(struct nscheduler * scheduler)
-{
-    scheduler->should_exit = true;
-}
-#endif
 
 /** @} *//*==================================================================*/
 /** @defgroup   nsys System module

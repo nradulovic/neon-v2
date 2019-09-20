@@ -25,6 +25,23 @@
 extern "C" {
 #endif
 
+#define nlqueue_dynamic(T)                                                  \
+    {                                                                       \
+        struct nlqueue super;                                               \
+        T * np_lq_storage;                                                  \
+    }
+
+/**
+ *  @code
+ *  struct event_queue_storage nlqueue_dynamic_storage(void *, 16);
+ *  @endcode
+ */
+#define nlqueue_storage(T, size)                                            \
+    {                                                                       \
+        T np_lq_storage[(((size < 2) || !NBITS_IS_POWEROF2(size)) ?         \
+            -1 : size)];                                                    \
+    }
+
 /** @brief      Lightweight queue custom structure.
  *
  *  Contains the Base structure and buffer of type @a T with @a elements
@@ -34,33 +51,23 @@ extern "C" {
  *
  *  @param      T
  *              Type of items in this queue.
- *  
+ *  @param      size
+ *              Maximum number of items in queue.
+ *
  *  @code
- *  struct event_queue nlqueue(void *, 16);
+ *  struct event_queue nlqueue(nevent *, 16);
  *  @endcode
  *
- *  @note       The macro can accept the parameter @a elements which is
- *              greater than 2 and equal to a number which is power of 2.
+ *  @note       The parameter @a size must be greater than 2.
+ *  @note       The parameter @a size must be a number which is a power of 2.
  */
-#define nlqueue_dynamic(T)                                                  \
-    {                                                                       \
-        struct nlqueue super;                                               \
-        T * np_lq_storage;                                                  \
-    }
-
-#define nlqueue_dynamic_storage(T, size)                                    \
-    {                                                                       \
-        T np_lq_storage[(((size < 2) || !NBITS_IS_POWEROF2(size)) ?         \
-            -1 : size)];                                                    \
-    }
-        
 #define nlqueue(T, size)                                                    \
     {                                                                       \
         struct nlqueue super;                                               \
         T np_lq_storage[(((size < 2) || !NBITS_IS_POWEROF2(size)) ?         \
             -1 : size)];                                                    \
     }
-        
+
 
 /** @brief      Lightweight base structure.
  *  @notapi
@@ -87,7 +94,7 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
             np_lqueue_super_init(                                           \
                     &(Q)->super,                                            \
                     (a_size_bytes) / sizeof(*(Q)->np_lq_storage));          \
-            (Q)->np_lq_storage = (a_storage);                               \
+            (Q)->np_lq_storage = &(a_storage)->np_lq_storage[0];            \
         } while (0)
 
 /** @brief      Initialize a static queue structure
@@ -173,7 +180,7 @@ struct NPLATFORM_ALIGN(NARCH_ALIGN, nlqueue)
  *
  *  Get the pointer to head item in the queue. The item is not removed from
  *  queue buffer.
- * 
+ *
  *  @param      Q
  *              Pointer to lightweight queue.
  *  @mseffect
@@ -242,10 +249,10 @@ NPLATFORM_INLINE
 int_fast8_t nlqueue_super_idx_fifo(struct nlqueue * qb)
 {
     int_fast8_t retval;
-    
+
     retval = qb->tail++;
     qb->tail &= qb->mask;
-    
+
     if (qb->empty != 0u) {
         qb->empty--;
     } else {
@@ -265,7 +272,7 @@ NPLATFORM_INLINE
 int32_t nlqueue_super_idx_lifo(struct nlqueue * qb)
 {
     int32_t retval;
-    
+
     if (qb->empty != 0u) {
         qb->empty--;
         retval = qb->head--;

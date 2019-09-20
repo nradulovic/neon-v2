@@ -27,16 +27,12 @@
  *
  *  @{
  */
-/*---------------------------------------------------------------------------*/
-
 
 #ifndef NEON_MODULE_TESTSUITE_H_
 #define NEON_MODULE_TESTSUITE_H_
 
 #include <stdint.h>
 #include <stdbool.h>
-
-#include "neon.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -127,39 +123,39 @@ extern "C" {
     do {                                                                    \
         union np_testsuite_test_val val;                                    \
         val.ui = (a_number);                                                \
-	    np_testsuite_actual(NPLATFORM_LINE, (val));                         \
+	    np_testsuite_actual(__LINE__, (val));                         \
     } while (0)
 
 #define ntestsuite_actual_int(a_number)                                     \
     do {                                                                    \
         union np_testsuite_test_val val;                                    \
         val.si = (a_number);                                                \
-	    np_testsuite_actual(NPLATFORM_LINE, (val));                         \
+	    np_testsuite_actual(__LINE__, (val));                         \
     } while (0)
                 
 #define ntestsuite_actual_ptr(a_pointer)                                    \
     do {                                                                    \
         union np_testsuite_test_val val;                                    \
         val.ptr = (a_pointer);                                              \
-        np_testsuite_actual(NPLATFORM_LINE, (val));                         \
+        np_testsuite_actual(__LINE__, (val));                         \
     } while (0)
     
 #define ntestsuite_actual_str(a_string)                                     \
     do {                                                                    \
         union np_testsuite_test_val val;                                    \
         val.str = (a_string);                                               \
-        np_testsuite_actual(NPLATFORM_LINE, (val));                         \
+        np_testsuite_actual(__LINE__, (val));                         \
     } while (0)
     
 #define ntestsuite_actual_bool(a_bool)                                      \
     do {                                                                    \
         union np_testsuite_test_val val;                                    \
         val.b = (a_bool);                                                   \
-        np_testsuite_actual(NPLATFORM_LINE, (val));                         \
+        np_testsuite_actual(__LINE__, (val));                         \
     } while (0)
 
 #define ntestsuite_set_fixture(a_name, a_setup, a_teardown)                     \
-        np_testsuite_set_fixture(a_setup, a_teardown, NPLATFORM_FILE ":" # a_name)
+        np_testsuite_set_fixture(a_setup, a_teardown, __FILE__ ":" # a_name)
 
 enum np_testsuite_type
 {
@@ -213,5 +209,4 @@ void np_testsuite_actual(uint32_t line, union np_testsuite_test_val value);
 
 /** @} */
 /** @} */
-/*---------------------------------------------------------------------------*/
 #endif /* NEON_MODULE_TESTSUITE_H_ */

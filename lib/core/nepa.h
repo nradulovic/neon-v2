@@ -148,7 +148,6 @@ struct nepa
      */
     struct nequeue nlqueue_dynamic(const struct nevent *)
                                 equeue;         
-    NSIGNATURE_DECLARE
 };
 
 void nepa_send_signal(struct nepa * epa, uint_fast16_t signal);

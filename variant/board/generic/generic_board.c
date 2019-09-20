@@ -5,7 +5,7 @@
  *      Author: nenad
  */
 
-#include "sys/nport.h"
+#include "core/nport.h"
 
 void nboard_init(void)
 {

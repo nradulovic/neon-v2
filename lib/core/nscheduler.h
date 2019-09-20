@@ -21,8 +21,7 @@
 
 #include "core/nport.h"
 #include "core/nconfig.h"
-#include "core/nbitarray_s.h"
-#include "core/nbitarray_x.h"
+#include "core/nbitarray.h"
 #include "core/nlist_dll.h"
 #include "core/nepa.h"
 
@@ -42,20 +41,10 @@ struct nscheduler
                                                  *   current thread priority. */
     struct nscheduler_queue
     {
-#if (NARCH_DATA_WIDTH < NCONFIG_SCHEDULER_PRIORITIES)
-        nbitarray_x                 bitarray
-                [NBITARRAY_X_DEF(NCONFIG_SCHEDULER_PRIORITIES)];
-        
-#else
-        nbitarray_s                 bitarray;   /**< Simple bit array is used
-                                                 * when small number of task
-                                                 * is used. */
-#endif
+        struct nscheduler_bitmap nbitarray(NCONFIG_SCHEDULER_PRIORITIES)
+		bitarray;
         struct nlist_dll * levels[NCONFIG_SCHEDULER_PRIORITIES];
     }                           ready;          /**< Ready queue */
-#if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1)
-    volatile bool               should_exit;
-#endif
 };
 
 struct nscheduler_task
@@ -100,27 +89,9 @@ void nscheduler_task_block(struct nscheduler_task * task);
  *  @param      epa_registry
  *              A registry of EPAs that application wants to be executed.
  */
-#if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1) || defined(__DOXYGEN__)
-void nscheduler_start(
-        struct nscheduler * scheduler,
-        const struct nepa * const * epa_registry);
-#else
 NPLATFORM_NORETURN(void nscheduler_start(
         struct nscheduler * scheduler, 
         const struct nepa * const * epa_registry));
-#endif
-
-/** @brief      Stop the execution of scheduler and return to main function.
- *  
- *  This function will create a request to the scheduler to stop the execution.
- *  The scheduler will exit at next iteration of schedule process.
- * 
- *  @note       This function is not available when configuration option
- *              @ref NCONFIG_SYS_EXITABLE_SCHEDULER is disabled (0).
- */
-#if (NCONFIG_SYS_EXITABLE_SCHEDULER == 1) || defined(__DOXYGEN__)
-void nscheduler_stop(struct nscheduler * scheduler);
-#endif
 
 #ifdef __cplusplus
 }
