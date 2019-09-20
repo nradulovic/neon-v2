@@ -33,7 +33,7 @@ include $(WS_DIR)/common.mk
 # Define ALL rule.
 all: $(PROJECT_FLASH) $(PROJECT_SIZE)
 
-clean: clean-size clean-flash
+clean: clean-elf clean-size clean-flash
 
 distclean: 
 	$(VERBOSE)rm -rf $(DEF_BUILD_DIR)
