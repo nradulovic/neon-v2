@@ -18,11 +18,7 @@
 
 #include <stdint.h>
 
-#include "platform_variant/platform.h"
-#include "arch_variant/arch.h"
-#include "mcu_variant/mcu.h"
-#include "board_variant/board.h"
-#include "os_variant/os.h"
+#include "nconfig.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -207,7 +203,7 @@ extern const char * const nsys_platform_version;
  *              A declaration of the variable.
  *  @hideinitializer
  */
-#if defined(__DOXYGEN__)
+#if !defined(NPLATFORM_ALIGN)
 #define NPLATFORM_ALIGN(a_align, a_decl)                                    \
         a_decl
 #endif
@@ -243,14 +239,14 @@ extern const char * const nsys_platform_version;
 
 /** @brief      Number of data bus bits of the used CPU architecture.
  */
-#if defined(__DOXYGEN__)
-#define NARCH_DATA_WIDTH                8
+#if !defined(NARCH_DATA_WIDTH)
+#define NARCH_DATA_WIDTH                NCONFIG_CPU_DATA_WIDTH
 #endif
     
 /** @brief      Natural alignment of CPU architecture.
  */
-#if defined(__DOXYGEN__)
-#define NARCH_ALIGN                     1
+#if !defined(NARCH_ALIGN)
+#define NARCH_ALIGN                     NCONFIG_CPU_DATA_ALIGN
 #endif
     
 /** @brief      This macro is defined to 1 if current architecture has exclusive
@@ -258,20 +254,6 @@ extern const char * const nsys_platform_version;
  */
 #if defined(__DOXYGEN__)
 #define NARCH_HAS_ATOMICS               0
-#endif
-
-/** @brief      Architecture native unsigned integer type.
- * 
- *  The exact size of this integer type depends on architecture data bus width.
- *  If an 8-bit CPU is being used then this type is equivalent to uint8_t data
- *  type.
- */
-#if (NARCH_DATA_WIDTH == 8u) || defined(__DOXYGEN__)
-typedef uint8_t narch_uint;
-#elif (NARCH_DATA_WIDTH == 16u)
-typedef uint16_t narch_uint;
-#elif (NARCH_DATA_WIDTH == 32u)
-typedef uint32_t narch_uint;
 #endif
 
 /** @brief      Stop the CPU execution.
@@ -316,20 +298,18 @@ void narch_atomic_clear_bit(uint32_t * u32, uint_fast8_t bit);
 /** @brief      Calculate exponent of 2.
  * 
  *  @param      x
- *              Input argument (integer which range depends on the data bus bit
- *              width). Valid range is [0, (@ref NARCH_DATA_WIDTH - 1)].
+ *              Input integer value.
  *  @return     exp2(x)
  */
-narch_uint narch_exp2(uint_fast8_t x);
+uint32_t narch_exp2(uint_fast8_t x);
 
 /** @brief      Calculate logarithm of base 2.
  * 
  *  @param      x
- *              Input argument (integer which range depends on the data bus bit
- *              width). Valid range is [0, (2^ @ref NARCH_DATA_WIDTH - 1)].
+ *              Input integer value.
  *  @return     log2(x)
  */
-uint_fast8_t narch_log2(narch_uint x);
+uint_fast8_t narch_log2(uint32_t x);
 
 /** @} */
 /** @defgroup   nport_mcu Port MCU support
@@ -340,21 +320,6 @@ uint_fast8_t narch_log2(narch_uint x);
 /** @defgroup   nport_board Port Board support
  *  @brief      Port Board support
  *  @{ */
-
-/** @brief      Board initialization.
- * 
- *  Board initialization will initialize all used peripherals needed by
- *  application. Typically, the function would initialize clock generators,
- *  interrupt controller, at least one serial peripheral (UART), timers etc.
- * 
- *  The function is defined on board portable layer, which means it is board
- *  (application) specific.
- * 
- *  @note       This function is not part of public API. The function will be
- *              called by @ref nsys_init().
- *  @notapi
- */
-extern void nboard_init(void);
 
 /** @} */
 /** @defgroup   nport_os Port OS support
@@ -367,16 +332,12 @@ struct nos_critical;
 
 /** @brief      Enter the critical code.
  */
-#if defined(__DOXYGEN__)
-#define NOS_CRITICAL_LOCK(local_state)
-#endif
+void nos_critical_lock(struct nos_critical * lock);
 
 /** @brief      Exit from critical code and restore the execution state stored
- *              in @a local_state.
+ *              in @a local.
  */
-#if defined(__DOXYGEN__)
-#define NOS_CRITICAL_UNLOCK(local_state)
-#endif
+void nos_critical_unlock(struct nos_critical * lock);
 
 /** @} */
 

@@ -2,8 +2,8 @@
 # Relative path to workspace directory.
 WS_DIR = ../..
 
-# Relative path to library directory.
-LIB_DIR = ../../../..
+# Relative path to Neon source directory.
+NEON_DIR = ../../../..
 
 # Project name, this will be used as output binary file name.
 PROJECT_NAME := test_nport

@@ -8,7 +8,35 @@
  *  @brief      Doubly linked list implementation
  *  @{ *//*==================================================================*/
 
-#include "core/nlist_dll.h"
+#include "nlist_dll.h"
+
+extern
+struct nlist_dll * nlist_dll_init(struct nlist_dll * node);
+
+extern
+void nlist_dll_term(struct nlist_dll * node);
+
+extern
+struct nlist_dll * nlist_dll_next(struct nlist_dll * node);
+
+extern
+struct nlist_dll * nlist_dll_prev(struct nlist_dll * node);
+
+extern
+struct nlist_dll * nlist_dll_add_after(
+        struct nlist_dll * current,
+        struct nlist_dll * node);
+
+extern
+struct nlist_dll * nlist_dll_add_before(
+        struct nlist_dll * current,
+        struct nlist_dll * node);
+
+extern
+void nlist_dll_remove(struct nlist_dll * node);
+
+extern
+bool nlist_dll_is_empty(const struct nlist_dll * node);
 
 struct nlist_dll * nlist_dll_find(
 		struct nlist_dll * list,

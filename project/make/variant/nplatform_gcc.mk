@@ -34,43 +34,43 @@ SIZE            = $(PREFIX)size
 AR              = $(PREFIX)ar
 
 # Rule to compile C sources to object files.
-$(DEF_BUILD_DIR)/%.o: $(LIB_DIR)/%.c
+$(DEF_BUILD_DIR)/%.o: $(NEON_DIR)/%.c
 	$(PRINT) " [CC]: $@"
 	$(VERBOSE)mkdir -p $(dir $@)
 	$(VERBOSE)$(CC) $(CC_FLAGS) \
         $(addprefix -D, $(CC_DEFINES)) \
-        $(addprefix -I$(LIB_DIR)/, $(CC_INCLUDES)) \
+        $(addprefix -I$(NEON_DIR)/, $(CC_INCLUDES)) \
         -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" \
         -o $@ \
         -c $<
 
 # Rule to compile C sources to preprocessed files.
-$(DEF_BUILD_DIR)/%.i: $(LIB_DIR)/%.c
+$(DEF_BUILD_DIR)/%.i: $(NEON_DIR)/%.c
 	$(PRINT) " [CC]: $@"
 	$(VERBOSE)mkdir -p $(dir $@)
 	$(VERBOSE)$(CC) $(CC_FLAGS) \
         $(addprefix -D, $(CC_DEFINES)) \
-        $(addprefix -I$(LIB_DIR)/, $(CC_INCLUDES)) \
+        $(addprefix -I$(NEON_DIR)/, $(CC_INCLUDES)) \
         -o $@ \
         -E $<
 
 # Rule to compile Assembly sources to preprocessed files.
-$(DEF_BUILD_DIR)/%.i: $(LIB_DIR)/%.S
+$(DEF_BUILD_DIR)/%.i: $(NEON_DIR)/%.S
 	$(PRINT) " [AS]: $@"
 	$(VERBOSE)mkdir -p $(dir $@)
 	$(VERBOSE)$(CC) $(CC_FLAGS) \
         $(addprefix -D, $(CC_DEFINES)) \
-        $(addprefix -I$(LIB_DIR)/, $(CC_INCLUDES)) \
+        $(addprefix -I$(NEON_DIR)/, $(CC_INCLUDES)) \
         -o $@ \
         -E $<
 
 # Rule to compile Assembly sources to object files.
-$(DEF_BUILD_DIR)/%.o: $(LIB_DIR)/%.S
+$(DEF_BUILD_DIR)/%.o: $(NEON_DIR)/%.S
 	$(PRINT) " [AS]: $@"
 	$(VERBOSE)mkdir -p $(dir $@)
 	$(VERBOSE)$(CC) $(CC_FLAGS) \
         $(addprefix -D, $(CC_DEFINES)) \
-        $(addprefix -I$(LIB_DIR)/, $(CC_INCLUDES)) \
+        $(addprefix -I$(NEON_DIR)/, $(CC_INCLUDES)) \
         -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@)" \
         -o $@ \
         -c $<

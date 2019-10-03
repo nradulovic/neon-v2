@@ -42,40 +42,36 @@ extern "C" {
  */
 #define NBITARRAY_X_MAX_SIZE            (NARCH_DATA_WIDTH * NARCH_DATA_WIDTH)
 
-/** @brief      Calculate the array size from desired size of bits.
- *  @notapi
- */
-#define NP_BITARRAY_ARRAY_SIZE(a_size)                                      \
-        NBITS_DIVIDE_ROUNDUP((a_size), NARCH_DATA_WIDTH)
-
 /** @brief      Template for bitarray using pointer to array.
  */
 #define nbitarray_pointer()                                                 \
         {                                                                   \
             struct np_bitarray super;                                       \
-            narch_uint * array;                                             \
+            uint32_t * array;                                               \
         }
 
 /** @brief      Template for bitarray bits storage.
  */
-#define nbitarray_storage(size)                                             \
+#define nbitarray_storage(a_size)                                           \
         {                                                                   \
-            narch_uint array[NP_BITARRAY_ARRAY_SIZE(size)];                 \
+            uint32_t array[                                                 \
+                NBITS_DIVIDE_ROUNDUP((a_size), NBITS_BIT_SIZE(uint32_t))];  \
         }
 
 /** @brief      Template for static bitarray structure.
  */
-#define nbitarray(size)                                                     \
+#define nbitarray(a_size)                                                   \
         {                                                                   \
             struct np_bitarray super;                                       \
-            narch_uint array[NP_BITARRAY_ARRAY_SIZE(size)];                 \
+            uint32_t array[                                                 \
+                NBITS_DIVIDE_ROUNDUP((a_size), NBITS_BIT_SIZE(uint32_t))];  \
         }
 
 /** @brief      Bitarray super structure.
  */
 struct np_bitarray
 {
-    narch_uint group;
+    uint32_t group;
 };
 
 /** @brief      Initialize a pointer bitarray.
@@ -146,7 +142,7 @@ struct np_bitarray
  */
 void np_bitarray_init(
         struct np_bitarray * super,
-        narch_uint * array,
+        uint32_t * array,
         uint8_t size_bits);
 
 /** @brief      Set a bit in the array.
@@ -154,7 +150,7 @@ void np_bitarray_init(
  */
 void np_bitarray_set(
         struct np_bitarray * super,
-        narch_uint * array,
+        uint32_t * array,
         uint_fast8_t bit);
 
 /** @brief      Clear a bit in the array.
@@ -162,7 +158,7 @@ void np_bitarray_set(
  */
 void np_bitarray_clear(
         struct np_bitarray * super,
-        narch_uint * array,
+        uint32_t * array,
         uint_fast8_t bit);
 
 /** @brief      Get the first set bit in the array .
@@ -170,14 +166,14 @@ void np_bitarray_clear(
  */
 uint_fast8_t np_bitarray_msbs(
         const struct np_bitarray * super,
-        const narch_uint * array);
+        const uint32_t * array);
 
 /** @brief      Evaluates if a specified bit is set in the array.
  *  @notapi
  */
 bool np_bitarray_is_set(
         const struct np_bitarray * super,
-        const narch_uint * array,
+        const uint32_t * array,
         uint_fast8_t bit);
 
 #ifdef __cplusplus

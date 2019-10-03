@@ -21,5 +21,5 @@ NPORT_FEATURES = $(NPORT_FEATURE_LIST:%=$(WS_DIR)/build/$(PLATFORM)_feature_%.mk
 
 include $(NPORT_FEATURES)
 
-CC_INCLUDES += lib
-CC_SOURCES += lib/nbits.c
+CC_INCLUDES += neon
+CC_SOURCES += source/core/nbits.c

@@ -89,9 +89,9 @@ void nscheduler_task_block(struct nscheduler_task * task);
  *  @param      epa_registry
  *              A registry of EPAs that application wants to be executed.
  */
-NPLATFORM_NORETURN(void nscheduler_start(
+void nscheduler_start(
         struct nscheduler * scheduler, 
-        const struct nepa * const * epa_registry));
+        const struct nepa * const * epa_registry);
 
 #ifdef __cplusplus
 }

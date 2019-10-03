@@ -17,8 +17,7 @@
 #define NEON_LIST_DLL_H_
 
 #include <stdbool.h>
-
-#include "core/nport.h"
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -182,7 +181,7 @@ struct nlist_dll
       +-----------+
  @endverbatim
  */
-NPLATFORM_INLINE
+inline
 struct nlist_dll * nlist_dll_init(struct nlist_dll * node)
 {
     node->next = node;
@@ -213,7 +212,7 @@ struct nlist_dll * nlist_dll_init(struct nlist_dll * node)
          +-----+
  @endverbatim
  */
-NPLATFORM_INLINE
+inline
 void nlist_dll_term(struct nlist_dll * node)
 {
     node->next = NULL;
@@ -224,7 +223,7 @@ void nlist_dll_term(struct nlist_dll * node)
  *              A list node or sentinel.
  *  @return     Next node.
  */
-NPLATFORM_INLINE
+inline
 struct nlist_dll * nlist_dll_next(struct nlist_dll * node)
 {
     return node->next;
@@ -235,7 +234,7 @@ struct nlist_dll * nlist_dll_next(struct nlist_dll * node)
  *              A list node or sentinel.
  *  @return     Previous node.
  */
-NPLATFORM_INLINE
+inline
 struct nlist_dll * nlist_dll_prev(struct nlist_dll * node)
 {
     return node->prev;
@@ -265,7 +264,7 @@ struct nlist_dll * nlist_dll_prev(struct nlist_dll * node)
         +-----+    +-----+    +-----+    +-----+
  @endverbatim
  */
-NPLATFORM_INLINE
+inline
 struct nlist_dll * nlist_dll_add_after(
         struct nlist_dll * current,
         struct nlist_dll * node)
@@ -302,7 +301,7 @@ struct nlist_dll * nlist_dll_add_after(
         +-----+    +-----+    +-----+    +-----+
  @endverbatim
  */
-NPLATFORM_INLINE
+inline
 struct nlist_dll * nlist_dll_add_before(
         struct nlist_dll * current,
         struct nlist_dll * node)
@@ -339,7 +338,7 @@ struct nlist_dll * nlist_dll_add_before(
                                     ---
  @endverbatim
  */
-NPLATFORM_INLINE
+inline
 void nlist_dll_remove(struct nlist_dll * node)
 {
     node->next->prev = node->prev;
@@ -353,7 +352,7 @@ void nlist_dll_remove(struct nlist_dll * node)
  *  @retval     true - The list is empty.
  *  @retval     false - The list contains at least one node.
  */
-NPLATFORM_INLINE
+inline
 bool nlist_dll_is_empty(const struct nlist_dll * node)
 {
     return node->next == node;

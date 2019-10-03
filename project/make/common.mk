@@ -31,6 +31,9 @@ endif
 
 include $(WS_DIR)/library.mk
 
+$(info "Sources: " $(CC_SOURCES))
+$(info "Objects: " $(OBJECTS))
+
 # This is the default target
 .PHONY: all
 all:

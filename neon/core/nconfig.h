@@ -229,6 +229,14 @@ extern "C" {
 #if !defined(NCONFIG_EVENT_USE_DYNAMIC)
 #define NCONFIG_EVENT_USE_DYNAMIC       0
 #endif
+
+#if !defined(NCONFIG_CPU_DATA_WIDTH)
+#define NCONFIG_CPU_DATA_WIDTH          8
+#endif
+
+#if !defined(NCONFIG_CPU_DATA_ALIGN)
+#define NCONFIG_CPU_DATA_ALIGN          1
+#endif
     
 #if !defined(NCONFIG_SCHEDULER_PRIORITIES)
 #define NCONFIG_SCHEDULER_PRIORITIES    32
