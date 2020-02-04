@@ -2,8 +2,8 @@
 # Relative path to workspace directory.
 WS_DIR = ../..
 
-# Relative path to library directory.
-NEON_DIR = ../../../neon
+# Relative path to Neon source directory.
+NEON_DIR = ../../../..
 
 # Project name, this will be used as output binary file name.
 PROJECT_NAME := test_nbits
@@ -20,6 +20,7 @@ CC_DEFINES += NEON_TEST_NBITS
 CC_SOURCES += project/common/test/main.c
 CC_SOURCES += project/common/test/test_nbits.c
 CC_SOURCES += project/common/testsuite/ntestsuite.c
+CC_SOURCES += neon/core/nbits.c
 
 # List additional archives. Use this when using an external static archive.
 AR_LIBS +=
@@ -28,19 +29,19 @@ AR_LIBS +=
 LD_LIBS +=
 
 # Include configurable nport feature makefiles
-include ../../common.mk
+include $(WS_DIR)/common.mk
+include $(WS_DIR)/variant.mk
 
 # Define ALL rule.
 all: $(PROJECT_FLASH) $(PROJECT_SIZE)
+	$(PRINT) "Project executable: $(PROJECT_ELF)"
+	$(PRINT) "Project flash file: $(PROJECT_FLASH)"
 
-clean: clean-elf clean-size clean-flash
-
-distclean: 
-	$(VERBOSE)rm -rf $(DEF_BUILD_DIR)
+clean: clean-size clean-flash clean-elf clean-lib clean-objects
 
 test: $(PROJECT_ELF)
-	@echo Starting $(PROJECT_ELF)
-	./$(PROJECT_ELF)
+	$(PRINT) Starting $(PROJECT_ELF)
+	$(VERBOSE) ./$(PROJECT_ELF)
 
 $(PROJECT_LIB): $(OBJECTS)
 

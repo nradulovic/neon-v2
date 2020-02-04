@@ -17,10 +17,6 @@ clean:
 distclean:
 	@for t in $(TARGETS); do $(MAKE) -C $$t distclean || exit; done
 
-.PHONY: config
-config:
-	@for t in $(TARGETS); do $(MAKE) -C $$t config || exit; done
-
 .PHONY: test
 test: all
 	@for t in $(TARGETS); do $(MAKE) -C $$t test || exit; done
