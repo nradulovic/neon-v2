@@ -11,6 +11,9 @@
 
 #include "core/nport.h"
 
+const char * const nsys_build_date = NPLATFORM_DATE;
+const char * const nsys_build_time = NPLATFORM_TIME;
+
 
 
 /** @} */

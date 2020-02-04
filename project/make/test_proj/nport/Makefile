@@ -33,15 +33,14 @@ include $(WS_DIR)/library.mk
 
 # Define ALL rule.
 all: $(PROJECT_FLASH) $(PROJECT_SIZE)
+	$(PRINT) "Project executable: $(PROJECT_ELF)"
+	$(PRINT) "Project flash file: $(PROJECT_FLASH)"
 
 clean: clean-size clean-flash clean-elf clean-lib clean-objects
 
-distclean: 
-	$(VERBOSE)$(RMDIR) $(DEF_BUILD_DIR)
-
 test: $(PROJECT_ELF)
-	@echo Starting $(PROJECT_ELF)
-	./$(PROJECT_ELF)
+	$(PRINT) Starting $(PROJECT_ELF)
+	$(VERBOSE) ./$(PROJECT_ELF)
 
 $(PROJECT_LIB): $(OBJECTS)
 

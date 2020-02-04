@@ -168,11 +168,6 @@ static nsm_action idle_state_init(struct nsm * sm, const struct nevent * event)
     return nsm_event_ignored();
 }
 
-const char * const nsys_build_date = NPLATFORM_DATE;
-const char * const nsys_build_time = NPLATFORM_TIME;
-const char * const nsys_platform_id = NPLATFORM_ID;
-const char * const nsys_platform_version = NPLATFORM_VERSION;
-
 const struct nepa nsys_epa_idle = NEPA_INITIALIZER(
             &g_epa_queue_idle, 
             NEPA_FSM_TYPE, 

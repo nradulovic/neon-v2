@@ -19,10 +19,10 @@
 # Platform description
 BUILD_PLATFORM_DESC = "GCC, the GNU Lesser Compiler Collection"
 
-CC_INCLUDES += neon/variant/platform/gcc
-
 CC_FLAGS += -std=c99 -fmessage-length=0
 CC_FLAGS += -Wall -Wextra -pedantic
+
+CC_SOURCES += neon/variant/platform/gcc/gcc_platform.c
 
 SIZ_FORMAT=Berkeley
 FLASH_FORMAT=ihex

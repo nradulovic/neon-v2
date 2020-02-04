@@ -12,16 +12,29 @@
 #include "core/nport.h"
 #include "test_nport.h"
 
-NTESTSUITE_TEST(test_none_NPLATFORM_ID)
+NTESTSUITE_TEST(test_none_nsys_build_date)
 {
     ntestsuite_not_expect_ptr(NULL);
-    ntestsuite_actual_ptr(NPLATFORM_ID);
+    ntestsuite_actual_ptr(nsys_build_date);
 }
 
-NTESTSUITE_TEST(test_none_NPLATFORM_VERSION)
+
+NTESTSUITE_TEST(test_none_nsys_build_time)
 {
     ntestsuite_not_expect_ptr(NULL);
-    ntestsuite_actual_ptr(NPLATFORM_VERSION);
+    ntestsuite_actual_ptr(nsys_build_time);
+}
+
+NTESTSUITE_TEST(test_none_nsys_platform_id)
+{
+    ntestsuite_not_expect_ptr(NULL);
+    ntestsuite_actual_ptr(nsys_platform_id);
+}
+
+NTESTSUITE_TEST(test_none_nsys_platform_version)
+{
+    ntestsuite_not_expect_ptr(NULL);
+    ntestsuite_actual_ptr(nsys_platform_version);
 }
 
 #if !defined(NPLATFORM_INLINE)
@@ -239,8 +252,10 @@ NTESTSUITE_TEST(test_none_critical_lock)
 void test_exec_nport(void)
 {
     ntestsuite_set_fixture(none, NULL, NULL);
-    ntestsuite_run(test_none_NPLATFORM_ID);
-	ntestsuite_run(test_none_NPLATFORM_VERSION);
+    ntestsuite_run(test_none_nsys_build_date);
+    ntestsuite_run(test_none_nsys_build_time);
+    ntestsuite_run(test_none_nsys_platform_id);
+    ntestsuite_run(test_none_nsys_platform_version);
 	ntestsuite_run(test_none_NPLATFORM_FUNC);
 	ntestsuite_run(test_none_NPLATFORM_FILE);
 	ntestsuite_run(test_none_NPLATFORM_LINE);

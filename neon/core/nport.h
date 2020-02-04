@@ -19,15 +19,14 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "platform_variant/platform.h"
 #include "core/nconfig.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/** @defgroup   nport_platform Platform compiler macros
- *  @brief      Port compiler helper macros.
+/** @defgroup   nport_platform_id Platform compiler identification
+ *  @brief      Port compiler identification and version information.
  *  @{ */
 
 /** @brief      Defines a constant string representing Neon build date.
@@ -51,20 +50,6 @@ extern const char * const nsys_platform_version;
  *  @brief      Port compiler helper macros.
  *  @{ */
 
-/** @brief      Defines a string containing the platform name.
- *  @hideinitializer
- */
-#if defined(__DOXYGEN__)
-#define NPLATFORM_ID
-#endif
-
-/** @brief		Defines a string containing the platform version string.
- *  @hideinitializer
- */
-#if defined(__DOXYGEN__)
-#define NPLATFORM_VERSION
-#endif
-
 /** @brief      Compiler directive to inline a function.
  * 
  *  Place this macro in front of function declaration to declare it as inline
@@ -72,8 +57,10 @@ extern const char * const nsys_platform_version;
  *  function.
  *  @hideinitializer
  */
-#if defined(__DOXYGEN__)
+#if defined(__GNUC__)
 #define NPLATFORM_INLINE                static inline
+#else
+#define NPLATFORM_INLINE
 #endif
 
 /** @brief      Another compiler directive to inline a function, but this will
@@ -82,8 +69,10 @@ extern const char * const nsys_platform_version;
  *  For further details see @ref NPLATFORM_INLINE.
  *  @hideinitializer
  */
-#if defined(__DOXYGEN__)
+#if defined(__GNUC__)
 #define NPLATFORM_INLINE_ALWAYS         NPLATFORM_INLINE
+#else
+#define NPLATFORM_INLINE_ALWAYS
 #endif
 
 /** @brief      Cast a member of a structure to the containing structure.
@@ -109,7 +98,10 @@ extern const char * const nsys_platform_version;
  *  @endcode
  *  @hideinitializer
  */
-#if defined(__DOXYGEN__)
+#if defined(__GNUC__)
+#define NPLATFORM_CONTAINER_OF(a_ptr, a_type, a_member)                     \
+    ((a_type *)((char *)a_ptr - offsetof(a_type, a_member)))
+#else
 #define NPLATFORM_CONTAINER_OF(a_ptr, a_type, a_member)
 #endif
 
@@ -118,8 +110,10 @@ extern const char * const nsys_platform_version;
  *  This macro will return a string containing the function name.
  *  @hideinitializer
  */
-#if defined(__DOXYGEN__)
+#if defined(__GNUC__)
 #define NPLATFORM_FUNC                  "unknown"
+#else
+#define NPLATFORM_FUNC
 #endif
 
 /** @brief      Provides the file's name which is being compiled.
@@ -127,8 +121,10 @@ extern const char * const nsys_platform_version;
  *  This macro will return a string containing the file name.
  *  @hideinitializer
  */
-#if defined(__DOXYGEN__)
-#define NPLATFORM_FILE                  "unknown"
+#if defined(__GNUC__)
+#define NPLATFORM_FILE                  __FILE__
+#else
+#define NPLATFORM_FILE
 #endif
 
 /** @brief      Provides the file source line where this macro is located at.
@@ -137,8 +133,10 @@ extern const char * const nsys_platform_version;
  *  number.
  *  @hideinitializer
  */
-#if defined(__DOXYGEN__)
-#define NPLATFORM_LINE                  0
+#if defined(__GNUC__)
+#define NPLATFORM_LINE                  __LINE__
+#else
+#define NPLATFORM_LINE
 #endif
 
 /** @brief      Omit function prologue/epilogue sequences.
@@ -147,28 +145,34 @@ extern const char * const nsys_platform_version;
  *              A declaration of the function.
  *  @hideinitializer
  */
-#if defined(__DOXYGEN__)
-#define NPLATFORM_NAKED(a_decl)         a_decl
+#if defined(__GNUC__)
+#define NPLATFORM_NAKED(a_decl)         __attribute__((naked)) a_decl
+#else
+#define NPLATFORM_NAKED(a_decl)
 #endif
 
 /** @brief      Omit warning about unused function.
  * 
- *  @param      x
+ *  @param      a_decl 
  *              A declaration of the function.
  *  @hideinitializer
  */  
-#if defined(__DOXYGEN__)
-#define NPLATFORM_UNUSED(x)             x
+#if defined(__GNUC__)
+#define NPLATFORM_UNUSED(a_decl)        __attribute__((unused)) a_decl
+#else
+#define NPLATFORM_UNUSED(a_decl)
 #endif
     
 /** @brief      Omit warning about unused function argument.
  * 
- *  @param      x
+ *  @param      a_decl
  *              A declaration of the function argument which is not used.
  *  @hideinitializer
  */  
-#if defined(__DOXYGEN__)
-#define NPLATFORM_UNUSED_ARG(x)         x
+#if defined(__GNUC__)
+#define NPLATFORM_UNUSED_ARG(a_decl)    (void)a_decl
+#else
+#define NPLATFORM_UNUSED_ARG(a_decl)
 #endif
 
 /** @brief      Declare a function that will never return.
@@ -182,8 +186,10 @@ extern const char * const nsys_platform_version;
  *              A declaration of the function.
  *  @hideinitializer
  */
-#if defined(__DOXYGEN__)
-#define NPLATFORM_NORETURN(a_decl)      a_decl
+#if defined(__GNUC__)
+#define NPLATFORM_NORETURN(a_decl)      __attribute__((noreturn)) a_decl
+#else
+#define NPLATFORM_NORETURN(a_decl)
 #endif
 
 /** @brief      Declare a structure as packed.
@@ -192,8 +198,10 @@ extern const char * const nsys_platform_version;
  *              A declaration of a structure.
  *  @hideinitializer
  */
-#if defined(__DOXYGEN__)
-#define NPLATFORM_PACKED(a_decl)        a_decl
+#if defined(__GNUC__)
+#define NPLATFORM_PACKED(a_decl)        __attribute__((packed)) a_decl
+#else
+#define NPLATFORM_PACKED(a_decl)
 #endif
 
 /** @brief      This attribute specifies a minimum alignment (in bytes) for
@@ -205,9 +213,11 @@ extern const char * const nsys_platform_version;
  *              A declaration of the variable.
  *  @hideinitializer
  */
-#if !defined(NPLATFORM_ALIGN)
+#if defined(__GNUC__)
 #define NPLATFORM_ALIGN(a_align, a_decl)                                    \
-        a_decl
+        __attribute__((aligned (a_align))) a_decl
+#else
+#define NPLATFORM_ALIGN(a_align, a_decl)
 #endif
 
 /** @brief      Returns current date.
@@ -215,8 +225,10 @@ extern const char * const nsys_platform_version;
  *  This macro will return a string containing the current date.
  *  @hideinitializer
  */
-#if defined(__DOXYGEN__)
-#define NPLATFORM_DATE                  "03031983"
+#if defined(__GNUC__)
+#define NPLATFORM_DATE                  __DATE__
+#else
+#define NPLATFORM_DATE
 #endif
 
 /** @brief      Returns current time.
@@ -224,8 +236,10 @@ extern const char * const nsys_platform_version;
  *  This macro will return a string containing the current time.
  *  @hideinitializer
  */
-#if defined(__DOXYGEN__)
-#define NPLATFORM_TIME                  "18:06"
+#if defined(__GNUC__)
+#define NPLATFORM_TIME                  __TIME__
+#else
+#define NPLATFORM_TIME
 #endif
     
 /** @} */
@@ -236,6 +250,11 @@ extern const char * const nsys_platform_version;
 /** @brief      Defines a string containing the architecture name.
  */
 extern const char * const narch_id;
+
+/** @brief      This macro is defined to 1 if current architecture has exclusive
+ *              load/store access.
+ */
+extern const bool narch_has_atomics;
 
 /** @brief      Number of data bus bits of the used CPU architecture.
  */
@@ -249,11 +268,6 @@ extern const char * const narch_id;
 #define NARCH_ALIGN                     NCONFIG_CPU_DATA_ALIGN
 #endif
     
-/** @brief      This macro is defined to 1 if current architecture has exclusive
- *              load/store access.
- */
-extern const bool narch_has_atomics;
-
 /** @brief      Stop the CPU execution.
  * 
  *  On embedded targets this function will actually stop the CPU execution.

@@ -22,27 +22,35 @@ endif
 # Set default rule to all
 .DEFAULT_GOAL=all
 
+.PHONY: all
+
 .PHONY: clean-size
 clean-size:
-	$(PRINT) " [RM] " $(PROJECT_SIZE)
+	$(PRINT) " [RM]:" $(PROJECT_SIZE)
 	$(VERBOSE)$(RMFILE) $(PROJECT_SIZE)
 
 .PHONY: clean-flash
 clean-flash:
-	$(PRINT) " [RM] " $(PROJECT_FLASH)
+	$(PRINT) " [RM]:" $(PROJECT_FLASH)
 	$(VERBOSE)$(RMFILE) $(PROJECT_FLASH)
 
 .PHONY: clean-elf
 clean-elf:
-	$(PRINT) " [RM] " $(PROJECT_ELF)
+	$(PRINT) " [RM]:" $(PROJECT_ELF)
 	$(VERBOSE)$(RMFILE) $(PROJECT_ELF)
 
 .PHONY: clean-lib
 clean-lib:
-	$(PRINT) " [RM] " $(PROJECT_LIB)
+	$(PRINT) " [RM]:" $(PROJECT_LIB)
 	$(VERBOSE)$(RMFILE) $(PROJECT_LIB)
 
 .PHONY: clean-objects
 clean-objects:
-	$(PRINT) " [RM] " $(OBJECTS)
+	$(PRINT) " [RM]:" $(OBJECTS)
 	$(VERBOSE)$(RMFILE) $(OBJECTS)
+
+.PHONY: distclean
+distclean: clean
+	$(PRINT) " [RM]:" $(DEF_BUILD_DIR)
+	$(VERBOSE)$(RMDIR) $(DEF_BUILD_DIR)
+

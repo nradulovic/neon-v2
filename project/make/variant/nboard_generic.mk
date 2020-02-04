@@ -24,6 +24,5 @@
 BUILD_BOARD_DESC := "Generic board"
 
 # Includes and sources
-CC_INCLUDES += neon/variant/board/generic
-#CC_SOURCES += neon/variant/board/generic/generic_board.c
+CC_SOURCES += neon/variant/board/generic/generic_board.c
 
