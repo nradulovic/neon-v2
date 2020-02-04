@@ -19,4 +19,4 @@
 # Additional OS description
 BUILD_OS_DESC = "Linux"
 
-CC_INCLUDES += variant/os/linux
+CC_SOURCES += neon/variant/os/linux/linux_os.c

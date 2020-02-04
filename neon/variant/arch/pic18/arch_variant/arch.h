@@ -41,7 +41,7 @@ extern "C" {
 #define PIC18_ARCH                      1
 
 #define NARCH_ID                        "pic18"
-#define NARCH_DATA_WIDTH                8u /* sizeof(narch_uint) * 8 */
+#define NARCH_DATA_WIDTH                8u /* sizeof(uint32_t) * 8 */
 
 #define NARCH_ALIGN                     1
 #define NARCH_HAS_ATOMICS               0

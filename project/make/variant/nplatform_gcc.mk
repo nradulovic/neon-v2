@@ -19,12 +19,24 @@
 # Platform description
 BUILD_PLATFORM_DESC = "GCC, the GNU Lesser Compiler Collection"
 
-CC_INCLUDES += variant/platform/gcc
+CC_INCLUDES += neon/variant/platform/gcc
+
 CC_FLAGS += -std=c99 -fmessage-length=0
 CC_FLAGS += -Wall -Wextra -pedantic
 
 SIZ_FORMAT=Berkeley
 FLASH_FORMAT=ihex
+
+PROJECT_ELF     = $(DEF_BUILD_DIR)/$(PROJECT_NAME).elf
+PROJECT_LIB     = $(DEF_BUILD_DIR)/$(PROJECT_NAME).a
+PROJECT_FLASH   = $(DEF_BUILD_DIR)/$(PROJECT_NAME).hex
+PROJECT_SIZE    = $(DEF_BUILD_DIR)/$(PROJECT_NAME).siz
+
+# Builder helper variables
+OBJECTS          = $(patsubst %.c,$(DEF_BUILD_DIR)/%.o,$(CC_SOURCES))
+OBJECTS         += $(patsubst %.S,$(DEF_BUILD_DIR)/%.o,$(AS_SOURCES))
+DEPENDS          = $(patsubst %.o,%.d,$(OBJECTS))
+PREPROCESSED     = $(patsubst %.o,%.i,$(OBJECTS))
 
 # Builder variables
 CC              = $(PREFIX)gcc
@@ -32,11 +44,14 @@ LD              = $(PREFIX)gcc
 OBJCOPY         = $(PREFIX)objcopy
 SIZE            = $(PREFIX)size
 AR              = $(PREFIX)ar
+MKDIR           = mkdir -p
+RMDIR           = rm -rf
+RMFILE          = rm -f
 
 # Rule to compile C sources to object files.
-$(DEF_BUILD_DIR)/%.o: $(NEON_DIR)/%.c
+$(DEF_BUILD_DIR)/%.o: $(NEON_DIR)/%.c 
 	$(PRINT) " [CC]: $@"
-	$(VERBOSE)mkdir -p $(dir $@)
+	$(VERBOSE)$(MKDIR) $(dir $@)
 	$(VERBOSE)$(CC) $(CC_FLAGS) \
         $(addprefix -D, $(CC_DEFINES)) \
         $(addprefix -I$(NEON_DIR)/, $(CC_INCLUDES)) \
@@ -47,7 +62,7 @@ $(DEF_BUILD_DIR)/%.o: $(NEON_DIR)/%.c
 # Rule to compile C sources to preprocessed files.
 $(DEF_BUILD_DIR)/%.i: $(NEON_DIR)/%.c
 	$(PRINT) " [CC]: $@"
-	$(VERBOSE)mkdir -p $(dir $@)
+	$(VERBOSE)$(MKDIR) $(dir $@)
 	$(VERBOSE)$(CC) $(CC_FLAGS) \
         $(addprefix -D, $(CC_DEFINES)) \
         $(addprefix -I$(NEON_DIR)/, $(CC_INCLUDES)) \
@@ -57,7 +72,7 @@ $(DEF_BUILD_DIR)/%.i: $(NEON_DIR)/%.c
 # Rule to compile Assembly sources to preprocessed files.
 $(DEF_BUILD_DIR)/%.i: $(NEON_DIR)/%.S
 	$(PRINT) " [AS]: $@"
-	$(VERBOSE)mkdir -p $(dir $@)
+	$(VERBOSE)$(MKDIR) $(dir $@)
 	$(VERBOSE)$(CC) $(CC_FLAGS) \
         $(addprefix -D, $(CC_DEFINES)) \
         $(addprefix -I$(NEON_DIR)/, $(CC_INCLUDES)) \
@@ -67,7 +82,7 @@ $(DEF_BUILD_DIR)/%.i: $(NEON_DIR)/%.S
 # Rule to compile Assembly sources to object files.
 $(DEF_BUILD_DIR)/%.o: $(NEON_DIR)/%.S
 	$(PRINT) " [AS]: $@"
-	$(VERBOSE)mkdir -p $(dir $@)
+	$(VERBOSE)$(MKDIR) $(dir $@)
 	$(VERBOSE)$(CC) $(CC_FLAGS) \
         $(addprefix -D, $(CC_DEFINES)) \
         $(addprefix -I$(NEON_DIR)/, $(CC_INCLUDES)) \

@@ -3,7 +3,7 @@
 WS_DIR = ../..
 
 # Relative path to library directory.
-NEON_DIR = ../../../../source
+NEON_DIR = ../../../neon
 
 # Project name, this will be used as output binary file name.
 PROJECT_NAME := test_nbits
@@ -28,7 +28,7 @@ AR_LIBS +=
 LD_LIBS +=
 
 # Include configurable nport feature makefiles
-include $(WS_DIR)/common.mk
+include ../../common.mk
 
 # Define ALL rule.
 all: $(PROJECT_FLASH) $(PROJECT_SIZE)

@@ -19,5 +19,5 @@
 # Additional board description
 BUILD_ARCH_DESC = "x86 Architecture"
 
-CC_INCLUDES += variant/arch/x86
-CC_SOURCES += variant/arch/x86/x86_arch.c
+CC_INCLUDES += neon/variant/arch/x86
+CC_SOURCES += neon/variant/arch/x86/x86_arch.c

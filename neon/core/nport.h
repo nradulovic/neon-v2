@@ -17,8 +17,10 @@
 #define NEON_PORT_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
-#include "nconfig.h"
+#include "platform_variant/platform.h"
+#include "core/nconfig.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -233,14 +235,12 @@ extern const char * const nsys_platform_version;
 
 /** @brief      Defines a string containing the architecture name.
  */
-#if defined(__DOXYGEN__)
-#define NARCH_ID
-#endif
+extern const char * const narch_id;
 
 /** @brief      Number of data bus bits of the used CPU architecture.
  */
 #if !defined(NARCH_DATA_WIDTH)
-#define NARCH_DATA_WIDTH                NCONFIG_CPU_DATA_WIDTH
+#define NARCH_DATA_WIDTH                32
 #endif
     
 /** @brief      Natural alignment of CPU architecture.
@@ -252,9 +252,7 @@ extern const char * const nsys_platform_version;
 /** @brief      This macro is defined to 1 if current architecture has exclusive
  *              load/store access.
  */
-#if defined(__DOXYGEN__)
-#define NARCH_HAS_ATOMICS               0
-#endif
+extern const bool narch_has_atomics;
 
 /** @brief      Stop the CPU execution.
  * 
@@ -328,7 +326,10 @@ uint_fast8_t narch_log2(uint32_t x);
 
 /** @brief      A critical lock state variable structure.
  */
-struct nos_critical;
+struct nos_critical 
+{
+    uint32_t state;
+};
 
 /** @brief      Enter the critical code.
  */

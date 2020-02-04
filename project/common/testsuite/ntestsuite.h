@@ -181,8 +181,8 @@ union np_testsuite_test_val
 {
 	uint32_t ui;
 	int32_t si;
-	void * ptr;
-    char * str;
+	const void * ptr;
+    const char * str;
 	bool b;
 };
 

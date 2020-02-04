@@ -20,17 +20,20 @@
 
 #include "core/nport.h"
 
+const char * const narch_id = "x86";
+const bool narch_has_atomics = false;
+
 void narch_cpu_stop(void)
 {
     exit(1);
 }
 
-narch_uint narch_exp2(uint_fast8_t x)
+uint32_t narch_exp2(uint_fast8_t x)
 {
-	return ((narch_uint)0x1u << x);
+	return ((uint32_t)0x1u << x);
 }
 
-uint_fast8_t narch_log2(narch_uint x)
+uint_fast8_t narch_log2(uint32_t x)
 {
 	return (31 - __builtin_clz(x));
 }

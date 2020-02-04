@@ -24,5 +24,5 @@
 BUILD_MCU_DESC := "Generic MCU"
 
 # Includes and sources
-CC_INCLUDES += variant/mcu/generic
+CC_INCLUDES += neon/variant/mcu/generic
 

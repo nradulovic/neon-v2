@@ -22,13 +22,14 @@
 #include "core/nlqueue.h"
 #include "core/npqueue.h"
 #include "core/nbitarray.h"
-#include "core/nstdio.h"
-#include "core/nlogger.h"
 #include "core/nmempool.h"
 #include "core/nevent.h"
 #include "core/nsm.h"
 #include "core/nepa.h"
 #include "core/nscheduler.h"
+
+#include "lib/nstdio.h"
+#include "lib/nlogger.h"
 
 #ifdef __cplusplus
 extern "C" {

@@ -48,7 +48,7 @@ extern "C" {
  */
 
 NPLATFORM_INLINE
-uint_fast8_t narch_log2(narch_uint x)
+uint_fast8_t narch_log2(uint32_t x)
 {
     uint_fast8_t clz;
 

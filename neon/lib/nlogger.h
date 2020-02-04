@@ -19,7 +19,7 @@
 #include <string.h>
 
 #include "core/nconfig.h"
-#include "core/nstdio.h"
+#include "lib/nstdio.h"
 
 #ifdef __cplusplus
 extern "C" {

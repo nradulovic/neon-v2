@@ -47,11 +47,13 @@ extern "C" {
 #define X86_ARCH						1
 
 #define NARCH_ID 						"x86"
-#define NARCH_DATA_WIDTH 				32 /* sizeof(narch_uint) * 8 */
+#define NARCH_DATA_WIDTH 				32 /* sizeof(uint32_t) * 8 */
 
 #define NARCH_ALIGN						4
 #define NARCH_HAS_ATOMICS				0
 #define NARCH_HAS_EXCLUSIVE_LS			0
+
+typedef uint32_t uint32_t;
 
 /** @brief      Used internally by x86 clients.
  */

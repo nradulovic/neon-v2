@@ -35,25 +35,25 @@
 #include <stdint.h>
 
 #define NARCH_ID "armv7_m"
-#define NARCH_DATA_WIDTH 32 /* sizeof(narch_uint) * 8 */
+#define NARCH_DATA_WIDTH 32 /* sizeof(uint32_t) * 8 */
 #define NARCH_ARMV71 1
 
-typedef uint32_t narch_uint;
+typedef uint32_t uint32_t;
 
 NPLATFORM_INLINE
-void narch_set_bit(narch_uint * u32, uint_fast8_t bit)
+void narch_set_bit(uint32_t * u32, uint_fast8_t bit)
 {
-    *u32 |= (narch_uint)1u << bit;
+    *u32 |= (uint32_t)1u << bit;
 }
 
 NPLATFORM_INLINE
-void narch_clear_bit(narch_uint * u32, uint_fast8_t bit)
+void narch_clear_bit(uint32_t * u32, uint_fast8_t bit)
 {
-    *u32 &= ~((narch_uint)1u << bit);
+    *u32 &= ~((uint32_t)1u << bit);
 }
 
 NPLATFORM_INLINE
-narch_uint narch_exp2(uint_fast8_t x)
+uint32_t narch_exp2(uint_fast8_t x)
 {
     return (0x1u << x);
 }

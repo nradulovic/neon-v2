@@ -28,7 +28,7 @@ AR_LIBS +=
 LD_LIBS +=
 
 # Include configurable nport feature makefiles
-include $(WS_DIR)/common.mk
+include common.mk
 
 # Define ALL rule.
 all: $(PROJECT_FLASH) $(PROJECT_SIZE)

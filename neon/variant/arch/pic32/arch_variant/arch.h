@@ -61,7 +61,7 @@ extern "C" {
 #endif
 
 #define NARCH_ID                        "pic32"
-#define NARCH_DATA_WIDTH                32 /* sizeof(narch_uint) * 8 */
+#define NARCH_DATA_WIDTH                32 /* sizeof(uint32_t) * 8 */
 #define NARCH_ALIGN                     4
 #define PIC32_ARCH                      1
     
@@ -94,16 +94,16 @@ extern "C" {
 #define NARCH_ENABLE_INTERRUPTS()       __builtin_enable_interrupts()
 
 
-/* TODO: Use static assert to compare NARCH_DATA_WIDTH and sizeof(narch_uint) */
+/* TODO: Use static assert to compare NARCH_DATA_WIDTH and sizeof(uint32_t) */
 
 NPLATFORM_INLINE
-narch_uint narch_exp2(uint_fast8_t x)
+uint32_t narch_exp2(uint_fast8_t x)
 {
-    return ((narch_uint)0x1u << x);
+    return ((uint32_t)0x1u << x);
 }
 
 NPLATFORM_INLINE
-uint_fast8_t narch_log2(narch_uint x)
+uint_fast8_t narch_log2(uint32_t x)
 {
     return (uint_fast8_t)((NARCH_DATA_WIDTH - 1u) - __builtin_clz(x));
 }
@@ -154,7 +154,7 @@ typedef uint32_t narch_isr_state;
 
 
 static inline
-void np_arch_isr_lock(narch_uint * local_state)
+void np_arch_isr_lock(uint32_t * local_state)
 {
     unsigned int                ipl_status;
 
@@ -166,7 +166,7 @@ void np_arch_isr_lock(narch_uint * local_state)
 }
 
 static inline
-void np_arch_isr_unlock(const narch_uint * local_state)
+void np_arch_isr_unlock(const uint32_t * local_state)
 {
     unsigned int                ipl_status;
 

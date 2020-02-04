@@ -25,16 +25,16 @@ static uint_fast8_t calculate_bit_position(uint_fast8_t bit)
 
 void np_bitarray_init(
         struct np_bitarray * super,
-        narch_uint * array,
+        uint32_t * array,
         uint8_t size_bits)
 {
     super->group = 0u;
-    memset(array, 0, sizeof(narch_uint) * NP_BITARRAY_ARRAY_SIZE(size_bits));
+    memset(array, 0, sizeof(uint32_t) * NP_BITARRAY_ARRAY_SIZE(size_bits));
 }
 
 void np_bitarray_set(
         struct np_bitarray * super,
-        narch_uint * array,
+        uint32_t * array,
         uint_fast8_t bit)
 {
     uint_fast8_t group;
@@ -49,7 +49,7 @@ void np_bitarray_set(
 
 void np_bitarray_clear(
         struct np_bitarray * super,
-        narch_uint * array,
+        uint32_t * array,
         uint_fast8_t bit);
 {
     uint_fast8_t group;
@@ -67,7 +67,7 @@ void np_bitarray_clear(
 
 uint_fast8_t np_bitarray_msbs(
         const struct np_bitarray * super,
-        const narch_uint * array)
+        const uint32_t * array)
 {
     uint_fast8_t group;
     uint_fast8_t pos;
@@ -80,7 +80,7 @@ uint_fast8_t np_bitarray_msbs(
 
 bool np_bitarray_is_set(
         const np_bitarray * super,
-        const narch_uint * array,
+        const uint32_t * array,
         uint_fast8_t bit)
 {
     uint_fast8_t group;

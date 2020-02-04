@@ -82,9 +82,9 @@ void narch_cpu_sleep(void)
     
 }
 
-narch_uint narch_exp2(uint_fast8_t x)
+uint32_t narch_exp2(uint_fast8_t x)
 {
-    static const narch_uint exp2[8] =
+    static const uint32_t exp2[8] =
     {
         0x01,
         0x02,
@@ -98,7 +98,7 @@ narch_uint narch_exp2(uint_fast8_t x)
     return exp2[x];
 }
 
-uint_fast8_t narch_log2(narch_uint x)
+uint_fast8_t narch_log2(uint32_t x)
 {
     static const uint_fast8_t log2_table[256] =
     {

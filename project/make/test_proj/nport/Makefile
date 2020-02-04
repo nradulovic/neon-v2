@@ -29,14 +29,15 @@ LD_LIBS +=
 
 # Include configurable nport feature makefiles
 include $(WS_DIR)/common.mk
+include $(WS_DIR)/library.mk
 
 # Define ALL rule.
 all: $(PROJECT_FLASH) $(PROJECT_SIZE)
 
-clean: clean-size clean-flash
+clean: clean-size clean-flash clean-elf clean-lib clean-objects
 
 distclean: 
-	$(VERBOSE)rm -rf $(DEF_BUILD_DIR)
+	$(VERBOSE)$(RMDIR) $(DEF_BUILD_DIR)
 
 test: $(PROJECT_ELF)
 	@echo Starting $(PROJECT_ELF)

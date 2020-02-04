@@ -230,10 +230,6 @@ extern "C" {
 #define NCONFIG_EVENT_USE_DYNAMIC       0
 #endif
 
-#if !defined(NCONFIG_CPU_DATA_WIDTH)
-#define NCONFIG_CPU_DATA_WIDTH          8
-#endif
-
 #if !defined(NCONFIG_CPU_DATA_ALIGN)
 #define NCONFIG_CPU_DATA_ALIGN          1
 #endif
@@ -245,7 +241,7 @@ extern "C" {
 #if !defined(NCONFIG_USE_EXCLUSIVE_ACCESS) 
 #define NCONFIG_USE_EXCLUSIVE_ACCESS    0
 #endif
-    
+
 enum nconfig_entry_id
 {
     NCONFIG_ENTRY_ENABLE_DEBUG,

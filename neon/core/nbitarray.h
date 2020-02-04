@@ -55,7 +55,7 @@ extern "C" {
 #define nbitarray_storage(a_size)                                           \
         {                                                                   \
             uint32_t array[                                                 \
-                NBITS_DIVIDE_ROUNDUP((a_size), NBITS_BIT_SIZE(uint32_t))];  \
+                NBITS_DIVIDE_ROUNDUP((a_size), NARCH_DATA_WIDTH)];  \
         }
 
 /** @brief      Template for static bitarray structure.
@@ -64,7 +64,7 @@ extern "C" {
         {                                                                   \
             struct np_bitarray super;                                       \
             uint32_t array[                                                 \
-                NBITS_DIVIDE_ROUNDUP((a_size), NBITS_BIT_SIZE(uint32_t))];  \
+                NBITS_DIVIDE_ROUNDUP((a_size), NARCH_DATA_WIDTH)];  \
         }
 
 /** @brief      Bitarray super structure.
