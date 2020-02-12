@@ -7,10 +7,11 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <test_nlist_dll.h>
+#include "test_nlist_dll.h"
 
 #include "../testsuite/ntestsuite.h"
-#include "sys/nlist_dll.h"
+#include "core/nlist_dll.h"
+#include "core/nport.h"
 
 struct node_list
 {

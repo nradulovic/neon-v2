@@ -19,6 +19,7 @@
 #include <stdint.h>
 
 #include "core/nlist_dll.h"
+#include "core/nport.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -95,7 +96,7 @@ struct npqueue
  *  @return     Pointer to priority queue node structure.
  */
 #define npqueue_from_list(a_node)                                           \
-        nlist_dll_entry((a_node), struct npqueue, list)
+		NPLATFORM_CONTAINER_OF((a_node), struct npqueue, list)
 
 /** @brief      Initialize a node and define its priority.
  *

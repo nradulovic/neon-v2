@@ -9,7 +9,7 @@
  *  @brief      Standard IO implementation
  *  @{ *//*==================================================================*/
 
-#include "core/nstdio.h"
+#include "lib/nstdio.h"
 
 #if (NBOARD_USES_STD_STREAM > 0) && (NBOARD_USES_STD_STREAM < 16)
 #include "neon_uart.h"
@@ -44,6 +44,8 @@
 
 struct nstdio_buff nstdio_buff;
 
+#include <stdio.h>
+
 #if !defined(NSTREAM_RECEIVE_BYTE)
 #define NSTREAM_RECEIVE_BYTE()			getchar()
 #endif
@@ -58,13 +60,15 @@ struct nstdio_buff nstdio_buff;
 
 void nstdio_putc(struct nstdio_buff * buff, uint8_t c)
 {
-    static bool is_initialized;
+    static bool is_buff_initialized;
     
-    if (!is_initialized) {
-        is_initialized = true;
+    if (!is_buff_initialized) {
+        is_buff_initialized = true;
         NLQUEUE_INIT(&buff->out);
     }
     NLQUEUE_PUT_FIFO(&buff->out, c);
+
+    nstdio_flush(buff);
 }
 
 uint8_t nstdio_getc(struct nstdio_buff * buff)

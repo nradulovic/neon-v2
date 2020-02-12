@@ -8,10 +8,10 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
-#include "test_nbits.h"
+#include "test_nlqueue.h"
 
 #include "../testsuite/ntestsuite.h"
-#include "sys/nlqueue.h"
+#include "core/nlqueue.h"
 
 #define QUEUE_SIZE 4
 

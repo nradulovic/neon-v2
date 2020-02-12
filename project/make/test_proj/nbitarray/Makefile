@@ -6,20 +6,21 @@ WS_DIR = ../..
 NEON_DIR = ../../../..
 
 # Project name, this will be used as output binary file name.
-PROJECT_NAME := test_nport
+PROJECT_NAME := test_nbitarray
 
 # List additional C header include paths.
 CC_INCLUDES += project/common/test
-CC_INCLUDES += project/common/test/nport
+CC_INCLUDES += project/common/test/nbitarray
 CC_INCLUDES += project/common/testsuite
 
-CC_DEFINES += NEON_TEST_NPORT
+CC_DEFINES += NEON_TEST_NBITARRAY
 
 # List additional C source files. Files which are not listed here will not be
 # compiled.
 CC_SOURCES += project/common/test/main.c
-CC_SOURCES += project/common/test/test_nport.c
+CC_SOURCES += project/common/test/test_nbitarray.c
 CC_SOURCES += project/common/testsuite/ntestsuite.c
+CC_SOURCES += neon/core/nbitarray.c
 
 # List additional archives. Use this when using an external static archive.
 AR_LIBS +=

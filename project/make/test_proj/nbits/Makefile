@@ -33,15 +33,30 @@ include $(WS_DIR)/common.mk
 include $(WS_DIR)/variant.mk
 
 # Define ALL rule.
-all: $(PROJECT_FLASH) $(PROJECT_SIZE)
-	$(PRINT) "Project executable: $(PROJECT_ELF)"
-	$(PRINT) "Project flash file: $(PROJECT_FLASH)"
+all: library executable size flash
 
-clean: clean-size clean-flash clean-elf clean-lib clean-objects
+clean: clean-flash clean-size clean-elf clean-lib clean-objects
 
-test: $(PROJECT_ELF)
-	$(PRINT) Starting $(PROJECT_ELF)
+.PHONY: test
+test: executable
+	$(PRINT) Starting test: $(PROJECT_ELF)
 	$(VERBOSE) ./$(PROJECT_ELF)
+
+.PHONY: library
+library: $(PROJECT_LIB)
+	$(PRINT) "Project library   : $(PROJECT_LIB)"
+
+.PHONY: executable
+executable: $(PROJECT_ELF)
+	$(PRINT) "Project executable: $(PROJECT_ELF)"
+
+.PHONY: size
+size: $(PROJECT_SIZE)
+	$(PRINT) "Project size info : $(PROJECT_FLASH)"
+
+.PHONY: flash
+flash: $(PROJECT_FLASH)
+	$(PRINT) "Project flash file: $(PROJECT_FLASH)"
 
 $(PROJECT_LIB): $(OBJECTS)
 

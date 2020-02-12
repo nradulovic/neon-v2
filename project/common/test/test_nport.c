@@ -206,15 +206,11 @@ NTESTSUITE_TEST(test_none_exp2)
     ntestsuite_expect_uint(0x80u);
     ntestsuite_actual_uint(narch_exp2(7));
     
-#if (NARCH_DATA_WIDTH >= 16)
     ntestsuite_expect_uint(0x8000);
     ntestsuite_actual_uint(narch_exp2(15));
-#endif
     
-#if (NARCH_DATA_WIDTH >= 32)
     ntestsuite_expect_uint(0x80000000);
     ntestsuite_actual_uint(narch_exp2(31));
-#endif
 }
 
 NTESTSUITE_TEST(test_none_log2)
@@ -228,15 +224,11 @@ NTESTSUITE_TEST(test_none_log2)
     ntestsuite_expect_uint(7);
     ntestsuite_actual_uint(narch_log2(0xff));
     
-#if (NARCH_DATA_WIDTH >= 16)
     ntestsuite_expect_uint(15);
     ntestsuite_actual_uint(narch_log2(0xffff));
-#endif
     
-#if (NARCH_DATA_WIDTH >= 32)
     ntestsuite_expect_uint(31);
     ntestsuite_actual_uint(narch_log2(0xffffffff));
-#endif
 }
 
 NTESTSUITE_TEST(test_none_critical_lock)

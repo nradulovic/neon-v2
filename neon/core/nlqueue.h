@@ -245,7 +245,7 @@ void np_lqueue_super_init(struct nlqueue * lqs, uint16_t elements);
  *  @return     Index of the item where it should be put.
  *  @notapi
  */
-inline
+static inline
 int_fast8_t nlqueue_super_idx_fifo(struct nlqueue * qb)
 {
     int_fast8_t retval;
@@ -268,7 +268,7 @@ int_fast8_t nlqueue_super_idx_fifo(struct nlqueue * qb)
  *  @return     Index of the item where it should be put.
  *  @notapi
  */
-inline
+static inline
 int32_t nlqueue_super_idx_lifo(struct nlqueue * qb)
 {
     int32_t retval;
@@ -289,7 +289,7 @@ int32_t nlqueue_super_idx_lifo(struct nlqueue * qb)
  *  @return     Index of the item which was got from the queue.
  *  @notapi
  */
-inline
+static inline
 int_fast8_t nlqueue_super_idx_get(struct nlqueue * qb)
 {
     qb->head++;

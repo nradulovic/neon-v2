@@ -16,6 +16,10 @@
 #include "test_nbits.h"
 #endif
 
+#if defined(NEON_TEST_NBITARRAY)
+#include "test_nbitarray.h"
+#endif
+
 #if defined(NEON_TEST_NLIST_SLL)
 #include "test_nlist_sll.h"
 #endif
@@ -37,6 +41,9 @@ int main(void)
 #endif
 #if defined(NEON_TEST_NBITS)
 		test_exec_nbits,
+#endif
+#if defined(NEON_TEST_NBITARRAY)
+		test_exec_nbitarray,
 #endif
 #if defined(NEON_TEST_NLIST_SLL)
 		test_exec_nlist_sll,

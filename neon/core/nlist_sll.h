@@ -19,6 +19,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "core/nport.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -202,7 +204,7 @@ struct nlist_sll
     +-----+
  @endverbatim
  */
-inline
+NPLATFORM_INLINE
 struct nlist_sll * nlist_sll_init(struct nlist_sll * node)
 {
     node->next = node;
@@ -215,7 +217,7 @@ struct nlist_sll * nlist_sll_init(struct nlist_sll * node)
  *              A list node or sentinel.
  *  @return     Next node.
  */
-inline
+NPLATFORM_INLINE
 struct nlist_sll * nlist_sll_next(struct nlist_sll * node)
 {
     return node->next;
@@ -226,7 +228,7 @@ struct nlist_sll * nlist_sll_next(struct nlist_sll * node)
  *              A list node or sentinel.
  *  @return     Previous node.
  */
-inline
+NPLATFORM_INLINE
 struct nlist_sll * nlist_sll_prev(struct nlist_sll * const node)
 {
     struct nlist_sll * tmp = node;
@@ -261,7 +263,7 @@ struct nlist_sll * nlist_sll_prev(struct nlist_sll * const node)
         +-----+    +-----+    +-----+    +-----+
  @endverbatim
  */
-inline
+NPLATFORM_INLINE
 void nlist_sll_add_after(struct nlist_sll * current, struct nlist_sll * node)
 {
     struct nlist_sll * prev = nlist_sll_prev(current);
@@ -294,7 +296,7 @@ void nlist_sll_add_after(struct nlist_sll * current, struct nlist_sll * node)
         +-----+    +-----+    +-----+    +-----+
  @endverbatim
  */
-inline
+NPLATFORM_INLINE
 struct nlist_sll * nlist_sll_add_before(
         struct nlist_sll * current,
         struct nlist_sll * node)
@@ -328,7 +330,7 @@ struct nlist_sll * nlist_sll_add_before(
         +-----+    +-----+    +-----+              +-----+
  @endverbatim
  */
-inline
+NPLATFORM_INLINE
 struct nlist_sll * nlist_sll_remove_from(struct nlist_sll * current)
 {
     struct nlist_sll * node;
@@ -362,7 +364,7 @@ struct nlist_sll * nlist_sll_remove_from(struct nlist_sll * current)
         +-----+    +-----+              +-----+
  @endverbatim
  */
-inline
+NPLATFORM_INLINE
 void nlist_sll_remove(struct nlist_sll * node)
 {
     struct nlist_sll * prev = nlist_sll_prev(node);
@@ -377,7 +379,7 @@ void nlist_sll_remove(struct nlist_sll * node)
  *  @retval     true - The list is empty.
  *  @retval     false - The list contains at least one node.
  */
-inline
+NPLATFORM_INLINE
 bool nlist_sll_is_empty(const struct nlist_sll * node)
 {
     return !!(node->next == node);

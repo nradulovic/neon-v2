@@ -3,7 +3,7 @@
 # Copyright (C) 2018   REAL-TIME CONSULTING
 #
 
-TARGETS := nport nbits
+TARGETS := nport nbits nbitarray nlist_sll nlist_dll nlqueue
 
 .PHONY: all
 all: 

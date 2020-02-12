@@ -12,6 +12,8 @@
 #include <stddef.h>
 
 #include "core/nsm.h"
+#include "core/nevent.h"
+#include "core/nport.h"
 
 #define sm_event(event)                 &g_events[(event)]
 

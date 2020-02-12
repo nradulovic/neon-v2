@@ -9,7 +9,7 @@
 #include <stdint.h>
 
 #include "../testsuite/ntestsuite.h"
-#include "sys/nlist_sll.h"
+#include "core/nlist_sll.h"
 #include "test_nlist_sll.h"
 
 struct node_list

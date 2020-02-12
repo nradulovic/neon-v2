@@ -13,6 +13,9 @@
 
 #include "core/nbitarray.h"
 
+#define NP_BITARRAY_ARRAY_SIZE(size_bits)                                   \
+        NBITS_DIVIDE_ROUNDUP(size_bits, NARCH_DATA_WIDTH)
+
 static uint_fast8_t calculate_bit_group(uint_fast8_t bit)
 {
     return bit >> NBITS_LOG2_8(NARCH_DATA_WIDTH); /* bit / NARCH_DATA_WIDTH */
@@ -23,19 +26,12 @@ static uint_fast8_t calculate_bit_position(uint_fast8_t bit)
     return bit & (NARCH_DATA_WIDTH - 1u); /* bit % NARCH_DATA_WIDTH */
 }
 
-void np_bitarray_init(
-        struct np_bitarray * super,
-        uint32_t * array,
-        uint8_t size_bits)
+void np_bitarray_init(uint32_t * array, uint8_t size_bytes)
 {
-    super->group = 0u;
-    memset(array, 0, sizeof(uint32_t) * NP_BITARRAY_ARRAY_SIZE(size_bits));
+    memset(array, 0, size_bytes);
 }
 
-void np_bitarray_set(
-        struct np_bitarray * super,
-        uint32_t * array,
-        uint_fast8_t bit)
+void np_bitarray_set(uint32_t * array, uint_fast8_t bit)
 {
     uint_fast8_t group;
     uint_fast8_t position;
@@ -43,14 +39,11 @@ void np_bitarray_set(
     group = calculate_bit_group(bit);
     position = calculate_bit_position(bit);
 
-    array[group] |= narch_exp2(position);
-    super->group |= narch_exp2(group);
+    array[group + 1] |= narch_exp2(position);
+    array[0] |= narch_exp2(group);
 }
 
-void np_bitarray_clear(
-        struct np_bitarray * super,
-        uint32_t * array,
-        uint_fast8_t bit);
+void np_bitarray_clear(uint32_t * array, uint_fast8_t bit)
 {
     uint_fast8_t group;
     uint_fast8_t position;
@@ -58,30 +51,25 @@ void np_bitarray_clear(
     group = calculate_bit_group(bit);
     position = calculate_bit_position(bit);
 
-    array[group] &= ~narch_exp2(position);
+    array[group + 1] &= ~narch_exp2(position);
 
-    if (array[group] == 0u) {
-        super->group &= ~narch_exp2(group);
+    if (array[group + 1] == 0u) {
+        array[0] &= ~narch_exp2(group);
     }
 }
 
-uint_fast8_t np_bitarray_msbs(
-        const struct np_bitarray * super,
-        const uint32_t * array)
+uint_fast8_t np_bitarray_msbs(const uint32_t * array)
 {
     uint_fast8_t group;
     uint_fast8_t pos;
 
-    group = narch_log2(super->group);
-    pos = narch_log2(array[group]);
+    group = narch_log2(array[0]);
+    pos = narch_log2(array[group + 1]);
 
     return (uint_fast8_t)(group * (uint_fast8_t)NARCH_DATA_WIDTH + pos);
 }
 
-bool np_bitarray_is_set(
-        const np_bitarray * super,
-        const uint32_t * array,
-        uint_fast8_t bit)
+bool np_bitarray_is_set(const uint32_t * array, uint_fast8_t bit)
 {
     uint_fast8_t group;
     uint_fast8_t position;
@@ -89,7 +77,7 @@ bool np_bitarray_is_set(
     group = calculate_bit_group(bit);
     position = calculate_bit_position(bit);
 
-    return !!(array[group] & narch_exp2(pos));
+    return !!(array[group + 1] & narch_exp2(position));
 }
 
 /** @} */

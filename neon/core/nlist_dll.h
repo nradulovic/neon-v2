@@ -23,34 +23,6 @@
 extern "C" {
 #endif
 
-/** @brief      Macro to get the pointer to structure which contains any struct
- *              of a list.
- *  @param[in]  ptr
- *              Pointer to structure/data that is containing a list structure.
- *  @param[in]  type
- *              Type of variable which contains a list structure.
- *  @param[in]  member
- *              Name of member in variable structure.
- *  @return     Pointer to container structure.
- *
- *  @code
- *  struct my_struct
- *  {
- *      char my_name[8];
- *      struct nlist_dll some_list;
- *      int some_stuff;
- *  };
- *
- *  struct nlist_dll * current_element;
- *  struct my_struct * current;
- *
- *  current = NLIST_DLL_ENTRY(current_element, struct my_struct, some_list);
- *  @endcode
- *  @mseffect
- */
-#define nlist_dll_entry(ptr, type, member)                                  \
-		NPLATFORM_CONTAINER_OF(ptr, type, member)
-
 #define nlist_dll_is_null(list)         ((list)->next == NULL)
 
 /** @brief      Macro to get the first element in list pointed by @a sentinel.

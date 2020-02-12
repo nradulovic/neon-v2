@@ -61,8 +61,6 @@ static void task_init(struct ntask * task, uint_fast8_t prio)
 
 static void equeue_init(struct nequeue * equeue)
 {
-    NREQUIRE((equeue->np_lq_storage != NULL) && (equeue->super.empty != 0u));
-    NREQUIRE((equeue->super.head = 0u) && (equeue->super.tail == 1u));
     NPLATFORM_UNUSED_ARG(equeue);
 }
 
@@ -76,8 +74,6 @@ nerror nepa_send_event(struct nepa * epa, const struct nevent * event)
     struct nos_critical local;
     int_fast8_t idx;
     nerror error;
-
-    NREQUIRE(NSIGNATURE_OF(epa) == NSIGNATURE_EPA);
 
     event_ref_up(event);
     NOS_CRITICAL_LOCK(&local);
