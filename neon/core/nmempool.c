@@ -38,13 +38,13 @@ void * nmem_pool_alloc(struct nmem_pool * pool)
     void * retval = NULL;
     struct nos_critical local;
 
-    NOS_CRITICAL_LOCK(&local);
+    nos_critical_lock(&local);
     if (pool->free != 0u) {
         pool->free--;
         retval = nlist_sll_next(&pool->next);
         nlist_sll_remove_from(&pool->next);
     }
-    NOS_CRITICAL_UNLOCK(&local);
+    nos_critical_unlock(&local);
 
     return retval;
 }
@@ -54,10 +54,10 @@ void nmem_pool_free(struct nmem_pool * pool, void * mem)
     struct nlist_sll * current = mem;
     struct nos_critical local;
 
-    NOS_CRITICAL_LOCK(&local);
+    nos_critical_lock(&local);
     pool->free++;
     nlist_sll_add_before(&pool->next, current);
-    NOS_CRITICAL_UNLOCK(&local);
+    nos_critical_unlock(&local);
 }
 
 /** @} */
