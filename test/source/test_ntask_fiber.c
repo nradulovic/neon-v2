@@ -19,8 +19,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "testsuite/ntestsuite.h"
-#include "task/ntask_fiber.h"
+#include "ntestsuite.h"
+#include "ntask_fiber.h"
 
 #include "test_ntask_fiber.h"
 

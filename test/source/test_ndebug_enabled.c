@@ -17,8 +17,8 @@
  */
 
 #include <stddef.h>
-#include "testsuite/ntestsuite.h"
-#include "debug/ndebug.h"
+#include "ntestsuite.h"
+#include "ndebug.h"
 #include "test_ndebug_enabled.h"
 
 #define narch_cpu_stop()        g_cpu_state_output = false
@@ -32,14 +32,6 @@ NTESTSUITE_TEST(test_empty_obligation)
     NTESTSUITE_EXPECT_UINT(1);
     NOBLIGATION(n = 1);
     NTESTSUITE_ACTUAL_UINT(n);
-    NTESTSUITE_EVALUATE();
-}
-
-NTESTSUITE_TEST(test_empty_assert)
-{
-    NTESTSUITE_EXPECT_BOOL(true);
-    NASSERT(true);
-    NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
     NTESTSUITE_EVALUATE();
 }
 
@@ -63,14 +55,6 @@ NTESTSUITE_TEST(test_empty_internal)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NASSERT_INTERNAL(true);
-    NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
-    NTESTSUITE_EVALUATE();
-}
-
-NTESTSUITE_TEST(test_empty_f_assert)
-{
-    NTESTSUITE_EXPECT_BOOL(false);
-    NASSERT(false);
     NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
     NTESTSUITE_EVALUATE();
 }
@@ -108,11 +92,9 @@ void test_ndebug_enabled(void)
 {
     NTESTSUITE_FIXTURE(empty, setup_empty, NULL);
     NTESTSUITE_RUN(empty, test_empty_obligation);
-    NTESTSUITE_RUN(empty, test_empty_assert);
     NTESTSUITE_RUN(empty, test_empty_require);
     NTESTSUITE_RUN(empty, test_empty_ensure);
     NTESTSUITE_RUN(empty, test_empty_internal);
-    NTESTSUITE_RUN(empty, test_empty_f_assert);
     NTESTSUITE_RUN(empty, test_empty_f_require);
     NTESTSUITE_RUN(empty, test_empty_f_ensure);
     NTESTSUITE_RUN(empty, test_empty_f_internal);

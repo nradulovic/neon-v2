@@ -17,8 +17,8 @@
  */
 
 #include <stddef.h>
-#include "testsuite/ntestsuite.h"
-#include "bits/nbits_bitarray.h"
+#include "ntestsuite.h"
+#include "nbits_bitarray.h"
 
 static struct nbitarray g_instance;
 

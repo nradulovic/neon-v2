@@ -1,6 +1,6 @@
 /*
  * Neon
- * Copyright (C)  2018  REAL-TIME CONSULTING
+ * Copyright (C) 2018   REAL-TIME CONSULTING
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the Free
@@ -17,32 +17,30 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Variant architecture for PIC18 header
+ *  @brief       Task header
  *
- *  @addtogroup  port
+ *  @addtogroup  lib
  *  @{
  */
-/** @defgroup    port_pic18_variant_arch Variant architecture for PIC18
- *  @brief       Variant architecture for PIC18.
+/** @defgroup    lib_task Task
+ *  @brief       Task
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_PIC18_VARIANT_ARCH_H_
-#define NEON_PIC18_VARIANT_ARCH_H_
+#ifndef NEON_MODULE_TASK_H_
+#define NEON_MODULE_TASK_H_
 
 #include <stdint.h>
+
+#include "nport_platform.h"
+#include "nqueue_pqueue.h"
+#include "ntask_fiber.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#define NARCH_ID                "pic18"
-#define NARCH_DATA_WIDTH        8
-#define NARCH_PIC18             1
-
-typedef uint8_t narch_native;
 
 #ifdef __cplusplus
 }
@@ -51,4 +49,4 @@ typedef uint8_t narch_native;
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_PIC18_VARIANT_ARCH_H_ */
+#endif /* NEON_MODULE_TASK_H_ */

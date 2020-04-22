@@ -16,7 +16,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "testsuite/ntestsuite.h"
+#include "ntestsuite.h"
 
 struct np_testsuite_context
 {

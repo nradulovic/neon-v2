@@ -16,8 +16,8 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "testsuite/ntestsuite.h"
-#include "task/ntask.h"
+#include "ntestsuite.h"
+#include "ntask.h"
 #include "test_ntask.h"
 
 static struct ntask * g_task_create;

@@ -18,8 +18,8 @@
 
 #include <stdint.h>
 
-#include "testsuite/ntestsuite.h"
-#include "bits/nbits.h"
+#include "ntestsuite.h"
+#include "nbits.h"
 #include "test_nbits.h"
 
 NTESTSUITE_TEST(test_none_array_size)
@@ -168,61 +168,6 @@ NTESTSUITE_TEST(test_none_is_powerof2_4)
     NTESTSUITE_EVALUATE();
 }
 
-NTESTSUITE_TEST(test_none_xbn)
-{
-    uint32_t i = 0xdeadbeef;
-
-    NTESTSUITE_EXPECT_UINT(0xde);
-    NTESTSUITE_ACTUAL_UINT(nbits_xb4(i));
-    NTESTSUITE_EVALUATE();
-
-    NTESTSUITE_EXPECT_UINT(0xad);
-    NTESTSUITE_ACTUAL_UINT(nbits_xb3(i));
-    NTESTSUITE_EVALUATE();
-
-    NTESTSUITE_EXPECT_UINT(0xbe);
-    NTESTSUITE_ACTUAL_UINT(nbits_xb2(i));
-    NTESTSUITE_EVALUATE();
-
-    NTESTSUITE_EXPECT_UINT(0xef);
-    NTESTSUITE_ACTUAL_UINT(nbits_xb1(i));
-    NTESTSUITE_EVALUATE();
-}
-
-NTESTSUITE_TEST(test_none_msb) 
-{
-    uint32_t i = 0xdeadbeef;
-
-    NTESTSUITE_EXPECT_UINT(0xde);
-    NTESTSUITE_ACTUAL_UINT(nbits_msb_32(i));
-    NTESTSUITE_EVALUATE();
-}
-
-NTESTSUITE_TEST(test_none_lsb) 
-{
-    uint32_t i = 0xdeadbeef;
-
-    NTESTSUITE_EXPECT_UINT(0xef);
-    NTESTSUITE_ACTUAL_UINT(nbits_lsb_32(i));
-    NTESTSUITE_EVALUATE();
-}
-
-NTESTSUITE_TEST(test_none_ftou32_u32tof)
-{
-    uint32_t itestval = 0xdeadbeef;
-    uint32_t igiven = itestval;
-    uint32_t iexpect = itestval;
-    uint32_t ioutput;
-    float intermediatte;
-
-    intermediatte = nbits_u32tof(igiven);
-    ioutput = nbits_ftou32(intermediatte);
-
-    NTESTSUITE_EXPECT_UINT(iexpect);
-    NTESTSUITE_ACTUAL_UINT(ioutput);
-    NTESTSUITE_EVALUATE();
-}
-
 void test_nbits(void)
 {
     NTESTSUITE_FIXTURE(none, NULL, NULL);
@@ -238,10 +183,6 @@ void test_nbits(void)
     NTESTSUITE_RUN(none, test_none_is_powerof2_0);
     NTESTSUITE_RUN(none, test_none_is_powerof2_1);
     NTESTSUITE_RUN(none, test_none_is_powerof2_4);
-    NTESTSUITE_RUN(none, test_none_xbn);
-    NTESTSUITE_RUN(none, test_none_msb);
-    NTESTSUITE_RUN(none, test_none_lsb);
-    NTESTSUITE_RUN(none, test_none_ftou32_u32tof);
     NTESTSUITE_PRINT_RESULTS(none);   
 }
 

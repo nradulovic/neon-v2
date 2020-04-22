@@ -202,8 +202,6 @@ help:
 	@echo "                       (default: $(PLATFORM))"
 	@echo "  ARCH               - Build for specific CPU architecture."
 	@echo "                       (default: $(ARCH))"
-	@echo "  MCU                - Build for specific MCU."
-	@echo "                       (default: not used)"
 	@echo
 	@echo "Compiler variables:"
 	@echo "  CFLAGS             - Compiler common flags."

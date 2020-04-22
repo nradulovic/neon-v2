@@ -16,29 +16,33 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "port/nport_arch.h"
+#include "nk_arch.h"
 
-void narch_cpu_stop(void)
+#ifndef NARCH_PIC18
+#error "Wrong header or source file combination."
+#endif
+
+void nk_arch_stop(void)
 {
     for (;;);
 }
 
-void narch_set_bit(uint32_t * u32, uint_fast8_t bit)
+void nk_arch_set_bit(uint32_t * u32, uint_fast8_t bit)
 {
     *u32 |= (uint32_t)1u << bit;
 }
 
-void narch_clear_bit(uint32_t * u32, uint_fast8_t bit)
+void nk_arch_clear_bit(uint32_t * u32, uint_fast8_t bit)
 {
     *u32 &= ~((uint32_t)1u << bit);
 }
 
-uint32_t narch_exp2(uint_fast8_t x)
+uint32_t nk_arch_exp2(uint_fast8_t x)
 {
     return ((uint32_t)0x1u << x);
 }
 
-uint_fast8_t narch_log2(uint32_t x)
+uint_fast8_t nl_arch_log2(uint32_t x)
 {
     static const uint_fast8_t log2_table[256] =
     {

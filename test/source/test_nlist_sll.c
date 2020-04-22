@@ -18,8 +18,8 @@
 
 #include <stddef.h>
 
-#include "testsuite/ntestsuite.h"
-#include "list/nlist_sll.h"
+#include "ntestsuite.h"
+#include "nlist_sll.h"
 #include "test_nlist_sll.h"
 
 struct node_list

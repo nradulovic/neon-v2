@@ -18,10 +18,10 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <test_nqueue_pqueue.h>
 
-#include "testsuite/ntestsuite.h"
-#include "queue/nqueue_pqueue.h"
+#include "test_nqueue_pqueue.h"
+#include "ntestsuite.h"
+#include "nqueue_pqueue.h"
 
 static struct npqueue_sentinel g_queue;
 static struct npqueue g_node1;

@@ -20,8 +20,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "testsuite/ntestsuite.h"
-#include "queue/nqueue_lqueue.h"
+#include "ntestsuite.h"
+#include "nqueue_lqueue.h"
 #include "test_nqueue_lqueue.h"
 
 #define QUEUE_SIZE 4

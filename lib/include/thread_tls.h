@@ -17,32 +17,38 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Variant architecture for PIC18 header
+ *  @brief       Thread Local Storage (TLS)
  *
- *  @addtogroup  port
+ *  @addtogroup  lib
  *  @{
  */
-/** @defgroup    port_pic18_variant_arch Variant architecture for PIC18
- *  @brief       Variant architecture for PIC18.
+/** @defgroup    lib_thread_tls Thread Local Storage (TLS)
+ *  @brief       Thread Local Storage.
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_PIC18_VARIANT_ARCH_H_
-#define NEON_PIC18_VARIANT_ARCH_H_
+#ifndef NEON_THREAD_TLS_H_
+#define NEON_THREAD_TLS_H_
 
 #include <stdint.h>
+#include "nthread_dispatch.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define NARCH_ID                "pic18"
-#define NARCH_DATA_WIDTH        8
-#define NARCH_PIC18             1
+struct nthread_tls
+{
+    int32_t error;
+}
 
-typedef uint8_t narch_native;
+NPLATFORM_INLINE
+struct nthread_tls * ng_tls(void)
+{
+    return (ng_current->tls);
+}
 
 #ifdef __cplusplus
 }
@@ -51,4 +57,4 @@ typedef uint8_t narch_native;
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_PIC18_VARIANT_ARCH_H_ */
+#endif /* NEON_THREAD_TLS_H_ */

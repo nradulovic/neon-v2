@@ -16,7 +16,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "port/nport_platform.h"
+#include "nport_platform.h"
 
 #ifndef NCONFIG_GIT_VERSION
 #define NCONFIG_GIT_VERSION "undefined"

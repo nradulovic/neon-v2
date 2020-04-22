@@ -19,15 +19,16 @@
 #define TEST_DISABLE_DEBUG
 
 #include <string.h>
-#include "testsuite/ntestsuite.h"
-#include "debug/ndebug.h"
+#include "ntestsuite.h"
+#include "ndebug.h"
 #include "test_ndebug_disabled.h"
 
 #if (NDEBUG_IS_ENABLED == 1)
 #error "Failed to disable debug for this translation module."
 #endif
 
-#define narch_cpu_stop()        g_cpu_state_output = false
+#undef assert
+#define assert(expression)          g_cpu_state_output = (!!(expression))
 
 static bool g_cpu_state_output;
 
@@ -38,14 +39,6 @@ NTESTSUITE_TEST(test_empty_obligation)
     NTESTSUITE_EXPECT_UINT(5);
     NOBLIGATION(n = 1);
     NTESTSUITE_ACTUAL_UINT(n);
-    NTESTSUITE_EVALUATE();
-}
-
-NTESTSUITE_TEST(test_empty_assert)
-{
-    NTESTSUITE_EXPECT_BOOL(true);
-    NASSERT(true);
-    NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
     NTESTSUITE_EVALUATE();
 }
 
@@ -69,14 +62,6 @@ NTESTSUITE_TEST(test_empty_internal)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NASSERT_INTERNAL(true);
-    NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
-    NTESTSUITE_EVALUATE();
-}
-
-NTESTSUITE_TEST(test_empty_f_assert)
-{
-    NTESTSUITE_EXPECT_BOOL(true);
-    NASSERT(false);
     NTESTSUITE_ACTUAL_BOOL(g_cpu_state_output);
     NTESTSUITE_EVALUATE();
 }
@@ -114,11 +99,9 @@ void test_ndebug_disabled(void)
 {
     NTESTSUITE_FIXTURE(empty, setup_empty, NULL);
     NTESTSUITE_RUN(empty, test_empty_obligation);
-    NTESTSUITE_RUN(empty, test_empty_assert);
     NTESTSUITE_RUN(empty, test_empty_require);
     NTESTSUITE_RUN(empty, test_empty_ensure);
     NTESTSUITE_RUN(empty, test_empty_internal);
-    NTESTSUITE_RUN(empty, test_empty_f_assert);
     NTESTSUITE_RUN(empty, test_empty_f_require);
     NTESTSUITE_RUN(empty, test_empty_f_ensure);
     NTESTSUITE_RUN(empty, test_empty_f_internal);
