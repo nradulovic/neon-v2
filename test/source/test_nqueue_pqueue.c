@@ -16,12 +16,13 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../../nk/test/include/test_nqueue_pqueue.h"
+
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "test_nqueue_pqueue.h"
-#include "ntestsuite.h"
-#include "nqueue_pqueue.h"
+#include "../../kernel/include/nqueue_pqueue.h"
+#include "../../kernel/include/ntestsuite.h"
 
 static struct npqueue_sentinel g_queue;
 static struct npqueue g_node1;

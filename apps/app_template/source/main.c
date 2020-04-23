@@ -2,7 +2,7 @@
  * Application template - main .c file.
  */
 
-#include "main.h"
+#include "../../../../nk/apps/app_template/include/main.h"
 
 int main(void)
 {

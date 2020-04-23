@@ -16,19 +16,18 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "ntestsuite.h"
-
-#include "test_narch.h"
-#include "test_nlist_sll.h"
-#include "test_nlist_dll.h"
-#include "test_ndebug_enabled.h"
-#include "test_ndebug_disabled.h"
-#include "test_nbits.h"
-#include "test_nbits_bitarray.h"
-#include "test_nqueue_lqueue.h"
-#include "test_nqueue_pqueue.h"
-#include "test_ntask_fiber.h"
-#include "test_ntask.h"
+#include "../../../nk/test/include/test_narch.h"
+#include "../../../nk/test/include/test_nbits.h"
+#include "../../../nk/test/include/test_nbits_bitarray.h"
+#include "../../../nk/test/include/test_ndebug_disabled.h"
+#include "../../../nk/test/include/test_ndebug_enabled.h"
+#include "../../../nk/test/include/test_nlist_dll.h"
+#include "../../../nk/test/include/test_nlist_sll.h"
+#include "../../../nk/test/include/test_nqueue_lqueue.h"
+#include "../../../nk/test/include/test_nqueue_pqueue.h"
+#include "../../../nk/test/include/test_ntask.h"
+#include "../../../nk/test/include/test_ntask_fiber.h"
+#include "../../kernel/include/ntestsuite.h"
 
 int main(void)
 {

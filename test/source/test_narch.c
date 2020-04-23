@@ -16,11 +16,12 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../../nk/test/include/test_narch.h"
+
 #include <stddef.h>
 
-#include "ntestsuite.h"
-#include "nk_arch.h"
-#include "test_narch.h"
+#include "../../kernel/include/nk_arch.h"
+#include "../../kernel/include/ntestsuite.h"
 
 NTESTSUITE_TEST(test_none_exp2_0)
 {

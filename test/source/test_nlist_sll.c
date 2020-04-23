@@ -16,11 +16,12 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../../nk/test/include/test_nlist_sll.h"
+
 #include <stddef.h>
 
-#include "ntestsuite.h"
-#include "nlist_sll.h"
-#include "test_nlist_sll.h"
+#include "../../kernel/include/nlist_sll.h"
+#include "../../kernel/include/ntestsuite.h"
 
 struct node_list
 {

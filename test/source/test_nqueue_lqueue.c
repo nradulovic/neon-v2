@@ -16,13 +16,14 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../../nk/test/include/test_nqueue_lqueue.h"
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "ntestsuite.h"
-#include "nqueue_lqueue.h"
-#include "test_nqueue_lqueue.h"
+#include "../../kernel/include/nqueue_lqueue.h"
+#include "../../kernel/include/ntestsuite.h"
 
 #define QUEUE_SIZE 4
 

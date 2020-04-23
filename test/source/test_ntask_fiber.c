@@ -16,13 +16,13 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../../nk/test/include/test_ntask_fiber.h"
+
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "ntestsuite.h"
-#include "ntask_fiber.h"
-
-#include "test_ntask_fiber.h"
+#include "../../kernel/include/ntask_fiber.h"
+#include "../../kernel/include/ntestsuite.h"
 
 static uint8_t g_output;
 static bool g_should_stop;

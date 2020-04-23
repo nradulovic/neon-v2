@@ -16,11 +16,12 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../../nk/test/include/test_nbits.h"
+
 #include <stdint.h>
 
-#include "ntestsuite.h"
-#include "nbits.h"
-#include "test_nbits.h"
+#include "../../kernel/include/nbits.h"
+#include "../../kernel/include/ntestsuite.h"
 
 NTESTSUITE_TEST(test_none_array_size)
 {

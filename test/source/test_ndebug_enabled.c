@@ -16,10 +16,12 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../../../nk/test/include/test_ndebug_enabled.h"
+
 #include <stddef.h>
-#include "ntestsuite.h"
-#include "ndebug.h"
-#include "test_ndebug_enabled.h"
+
+#include "../../kernel/include/ndebug.h"
+#include "../../kernel/include/ntestsuite.h"
 
 /*
  * Override assert macro in C standard assert.h and set g_assert_state to
