@@ -16,32 +16,34 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "test_narch.h"
-#include "test_nbits.h"
-#include "test_nbits_bitarray.h"
-#include "test_ndebug_disabled.h"
-#include "test_ndebug_enabled.h"
-#include "test_nk_list.h"
-#include "test_nqueue_lqueue.h"
-#include "test_nqueue_pqueue.h"
-#include "test_ntask.h"
-#include "test_ntask_fiber.h"
-#include "ntestsuite.h"
+#include <stdio.h>
+#include <stdarg.h>
 
-int main(void)
+#include "nlogger_x.h"
+
+struct nlogger_instance p_nlogger_global =
 {
-    NTESTSUITE_PRINT_HEADER();
-    test_narch();
-    test_nk_list();
-    test_ndebug_enabled();
-    test_ndebug_disabled();
-    test_nbits();
-    test_nbits_bitarray();
-    test_nqueue_lqueue();
-    test_nqueue_pqueue();
-    test_ntask_fiber();
-    test_ntask();
-    NTESTSUITE_PRINT_OVERVIEW();
-    
-    return 0;
+	.list =
+	{
+		.next = &p_nlogger_global.list,
+		.prev = &p_nlogger_global.list,
+		.object = &p_nlogger_global
+	},
+    .level = NLOGGER_LEVEL_INFO
+};
+
+void p_nlogger_x_print(struct nlogger_instance * instance, uint8_t level, 
+    const char * msg, ...)
+{
+    if (instance->level >= level) {
+        va_list args;
+        va_start(args, msg);
+        vprintf(msg, args);
+        va_end(args);
+    }
+}
+
+void p_nlogger_x_set_level(struct nlogger_instance * instance, uint8_t level)
+{
+    instance->level = level;
 }

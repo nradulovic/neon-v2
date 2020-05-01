@@ -27,15 +27,9 @@ PROJECT_NAME := test
 PROJECT_CONFIG := test
 
 # Include depenencies, nport is needed to import additional build rules.
-include $(WS)/lib/build/nport.mk
-include $(WS)/lib/build/nlogger.mk
-include $(WS)/lib/build/nconfig.mk
-include $(WS)/lib/build/ndebug.mk
-include $(WS)/lib/build/nbits.mk
-include $(WS)/lib/build/ntestsuite.mk
-include $(WS)/lib/build/nqueue.mk
-include $(WS)/lib/build/nerror.mk
-include $(WS)/lib/build/ntask.mk
+include $(WS)/nk/build/nlogger.mk
+include $(WS)/nk/build/ntestsuite.mk
+include $(WS)/nk/build/neon.mk
 
 # List additional C header include paths.
 CC_INCLUDES += $(PROJECT_DIR)/include
@@ -49,7 +43,6 @@ CC_SOURCES += $(PROJECT_DIR)/source/test_nbits_bitarray.c
 CC_SOURCES += $(PROJECT_DIR)/source/test_ndebug_enabled.c
 CC_SOURCES += $(PROJECT_DIR)/source/test_ndebug_disabled.c
 CC_SOURCES += $(PROJECT_DIR)/source/test_nlist_dll.c
-CC_SOURCES += $(PROJECT_DIR)/source/test_nlist_sll.c
 CC_SOURCES += $(PROJECT_DIR)/source/test_nqueue_lqueue.c
 CC_SOURCES += $(PROJECT_DIR)/source/test_nqueue_pqueue.c
 CC_SOURCES += $(PROJECT_DIR)/source/test_ntask_fiber.c

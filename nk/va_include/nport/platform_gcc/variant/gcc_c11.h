@@ -15,33 +15,25 @@
  * You should have received a copy of the GNU Lesser General Public License along
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+/** @file
+ *  @author      Nenad Radulovic
+ *  @brief       Platform header for GCC C11 standard
+ *
+ *  @addtogroup  mod_platform
+ *  @{
+ */
+/** @defgroup    platform_gcc_c11 GCC Platform for C11 standard
+ *  @brief       GCC Platform for C11 standard
+ *  @{
+ */
+/*---------------------------------------------------------------------------*/
 
-#include "test_narch.h"
-#include "test_nbits.h"
-#include "test_nbits_bitarray.h"
-#include "test_ndebug_disabled.h"
-#include "test_ndebug_enabled.h"
-#include "test_nk_list.h"
-#include "test_nqueue_lqueue.h"
-#include "test_nqueue_pqueue.h"
-#include "test_ntask.h"
-#include "test_ntask_fiber.h"
-#include "ntestsuite.h"
+#ifndef NEON_GCC_VARIANT_GCC_C11_H_
+#define NEON_GCC_VARIANT_GCC_C11_H_
 
-int main(void)
-{
-    NTESTSUITE_PRINT_HEADER();
-    test_narch();
-    test_nk_list();
-    test_ndebug_enabled();
-    test_ndebug_disabled();
-    test_nbits();
-    test_nbits_bitarray();
-    test_nqueue_lqueue();
-    test_nqueue_pqueue();
-    test_ntask_fiber();
-    test_ntask();
-    NTESTSUITE_PRINT_OVERVIEW();
-    
-    return 0;
-}
+#include "variant/gcc_c99.h"
+
+/** @} */
+/** @} */
+/*---------------------------------------------------------------------------*/
+#endif /* NEON_GCC_VARIANT_GCC_C11_H_ */

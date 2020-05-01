@@ -16,13 +16,12 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../../../nk/test/include/test_nqueue_pqueue.h"
-
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "../../kernel/include/nqueue_pqueue.h"
-#include "../../kernel/include/ntestsuite.h"
+#include "test_nqueue_pqueue.h"
+#include "nqueue_pqueue.h"
+#include "ntestsuite.h"
 
 static struct npqueue_sentinel g_queue;
 static struct npqueue g_node1;
@@ -35,7 +34,6 @@ NTESTSUITE_TEST(test_none_node_init_ptr)
 
     NTESTSUITE_EXPECT_PTR(&node);
     NTESTSUITE_ACTUAL_PTR(npqueue_init(&node, 1));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_none_node_init_prio)
@@ -45,7 +43,6 @@ NTESTSUITE_TEST(test_none_node_init_prio)
     NTESTSUITE_EXPECT_UINT(1);
     npqueue_init(&node, 1);
     NTESTSUITE_ACTUAL_UINT(npqueue_priority(&node));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_none_node_init_next)
@@ -55,7 +52,6 @@ NTESTSUITE_TEST(test_none_node_init_next)
     NTESTSUITE_EXPECT_PTR(&node);
     npqueue_init(&node, 1);
     NTESTSUITE_ACTUAL_PTR(npqueue_next(&node));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_none_node_term_prio)
@@ -66,7 +62,6 @@ NTESTSUITE_TEST(test_none_node_term_prio)
     npqueue_init(&node, 1);
     npqueue_term(&node);
     NTESTSUITE_ACTUAL_UINT(npqueue_priority(&node));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_none_node_term_next)
@@ -77,14 +72,12 @@ NTESTSUITE_TEST(test_none_node_term_next)
     npqueue_init(&node, 1);
     npqueue_term(&node);
     NTESTSUITE_ACTUAL_PTR(npqueue_next(&node));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_sentinel_init)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(npqueue_sentinel_is_empty(&g_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_sentinel_term)
@@ -92,7 +85,6 @@ NTESTSUITE_TEST(test_empty_sentinel_term)
     NTESTSUITE_EXPECT_BOOL(true);
     npqueue_sentinel_term(&g_queue);
     NTESTSUITE_ACTUAL_BOOL(npqueue_sentinel_is_empty(&g_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_insert_fifo_is_empty)
@@ -103,7 +95,6 @@ NTESTSUITE_TEST(test_empty_insert_fifo_is_empty)
     npqueue_init(&node, 1);
     npqueue_insert_fifo(&g_queue, &node);
     NTESTSUITE_ACTUAL_BOOL(npqueue_sentinel_is_empty(&g_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_insert_fifo_head)
@@ -114,7 +105,6 @@ NTESTSUITE_TEST(test_empty_insert_fifo_head)
     npqueue_init(&node, 1);
     npqueue_insert_fifo(&g_queue, &node);
     NTESTSUITE_ACTUAL_PTR(npqueue_sentinel_head(&g_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_insert_sort_is_empty)
@@ -125,7 +115,6 @@ NTESTSUITE_TEST(test_empty_insert_sort_is_empty)
     npqueue_init(&node, 1);
     npqueue_insert_sort(&g_queue, &node);
     NTESTSUITE_ACTUAL_BOOL(npqueue_sentinel_is_empty(&g_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_insert_sort_head)
@@ -136,21 +125,18 @@ NTESTSUITE_TEST(test_empty_insert_sort_head)
     npqueue_init(&node, 1);
     npqueue_insert_sort(&g_queue, &node);
     NTESTSUITE_ACTUAL_PTR(npqueue_sentinel_head(&g_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_single_is_last)
 {
     NTESTSUITE_EXPECT_BOOL(false);
     NTESTSUITE_ACTUAL_BOOL(npqueue_sentinel_is_empty(&g_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_single_first)
 {
     NTESTSUITE_EXPECT_PTR(&g_node1);
     NTESTSUITE_ACTUAL_PTR(npqueue_sentinel_head(&g_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_single_remove)
@@ -158,7 +144,6 @@ NTESTSUITE_TEST(test_single_remove)
     NTESTSUITE_EXPECT_BOOL(true);
     npqueue_remove(&g_node1);
     NTESTSUITE_ACTUAL_BOOL(npqueue_sentinel_is_empty(&g_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_single_insert_fifo_head)
@@ -169,7 +154,6 @@ NTESTSUITE_TEST(test_single_insert_fifo_head)
     npqueue_init(&node, 2);
     npqueue_insert_fifo(&g_queue, &node);
     NTESTSUITE_ACTUAL_PTR(npqueue_sentinel_head(&g_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_single_insert_sort_head)
@@ -180,21 +164,18 @@ NTESTSUITE_TEST(test_single_insert_sort_head)
     npqueue_init(&node, 2);
     npqueue_insert_sort(&g_queue, &node);
     NTESTSUITE_ACTUAL_PTR(npqueue_sentinel_head(&g_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_multi_is_empty)
 {
     NTESTSUITE_EXPECT_BOOL(false);
     NTESTSUITE_ACTUAL_BOOL(npqueue_sentinel_is_empty(&g_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_multi_first)
 {
     NTESTSUITE_EXPECT_PTR(&g_node3);
     NTESTSUITE_ACTUAL_PTR(npqueue_sentinel_head(&g_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_multi_remove)
@@ -204,7 +185,6 @@ NTESTSUITE_TEST(test_multi_remove)
     npqueue_remove(&g_node2);
     npqueue_remove(&g_node3);
     NTESTSUITE_ACTUAL_BOOL(npqueue_sentinel_is_empty(&g_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_multi_insert_fifo_head)
@@ -215,7 +195,6 @@ NTESTSUITE_TEST(test_multi_insert_fifo_head)
     npqueue_init(&node, 4);
     npqueue_insert_fifo(&g_queue, &node);
     NTESTSUITE_ACTUAL_PTR(npqueue_sentinel_head(&g_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_multi_insert_sort_head)
@@ -226,14 +205,12 @@ NTESTSUITE_TEST(test_multi_insert_sort_head)
     npqueue_init(&node, 4);
     npqueue_insert_sort(&g_queue, &node);
     NTESTSUITE_ACTUAL_PTR(npqueue_sentinel_head(&g_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_multi_sort_first)
 {
     NTESTSUITE_EXPECT_PTR(&g_node3);
     NTESTSUITE_ACTUAL_PTR(&g_node3);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_multi_sort_duplicate)
@@ -244,7 +221,6 @@ NTESTSUITE_TEST(test_multi_sort_duplicate)
     npqueue_init(&node3_1, 3);
     npqueue_insert_sort(&g_queue, &node3_1);
     NTESTSUITE_ACTUAL_PTR(&g_node3);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_multi_sort_middle_duplicate)
@@ -256,7 +232,6 @@ NTESTSUITE_TEST(test_multi_sort_middle_duplicate)
     npqueue_insert_sort(&g_queue, &node2_1);
     npqueue_remove(&g_node2);
     NTESTSUITE_ACTUAL_PTR(npqueue_sentinel_head(&g_queue));
-    NTESTSUITE_EVALUATE();
 }
 
 static void setup_empty(void)

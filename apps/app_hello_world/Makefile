@@ -26,7 +26,7 @@ PROJECT_DIR = apps/app_hello_world
 PROJECT_NAME := app_hello_world
 
 # Include depenencies, nport is needed to import additional build rules.
-include $(WS)/kernel/build/neon.mk
+include $(WS)/nk/build/neon.mk
 
 # Project configuration header file.
 PROJECT_CONFIG := $(PROJECT_DIR)/include/neon_config.h

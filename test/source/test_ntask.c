@@ -16,10 +16,9 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../../../nk/test/include/test_ntask.h"
-
-#include "../../kernel/include/ntask.h"
-#include "../../kernel/include/ntestsuite.h"
+#include "test_ntask.h"
+#include "ntask.h"
+#include "ntestsuite.h"
 
 static struct ntask * g_task_create;
 static struct ntask * g_task_yield;
@@ -46,7 +45,6 @@ NTESTSUITE_TEST(test_init_state)
     NTESTSUITE_EXPECT_UINT(NTASK_DORMANT);
     ntask_create(&g_task_create, task_create_fn, NULL, 0);
     NTESTSUITE_ACTUAL_UINT(ntask_state(g_task_create));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_init_priority)
@@ -54,7 +52,6 @@ NTESTSUITE_TEST(test_init_priority)
     NTESTSUITE_EXPECT_UINT(1);
     ntask_create(&g_task_create, task_create_fn, NULL, 1);
     NTESTSUITE_ACTUAL_UINT(ntask_priority(g_task_create));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_yield)
@@ -64,7 +61,6 @@ NTESTSUITE_TEST(test_yield)
     ntask_ready(g_task_yield);
     ntask_schedule();
     NTESTSUITE_ACTUAL_UINT(ntask_state(g_task_yield));
-    NTESTSUITE_EVALUATE();
 }
 
 void test_ntask(void)

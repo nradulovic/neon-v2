@@ -19,9 +19,9 @@
 #define TEST_DISABLE_DEBUG
 
 #include <string.h>
-#include "../../kernel/include/ntestsuite.h"
-#include "../../kernel/include/ndebug.h"
-#include "../../../nk/test/include/test_ndebug_disabled.h"
+#include "ntestsuite.h"
+#include "ndebug.h"
+#include "test_ndebug_disabled.h"
 
 #if (NDEBUG_IS_ENABLED == 1)
 #error "Failed to disable debug for this translation module."
@@ -39,7 +39,6 @@ NTESTSUITE_TEST(test_empty_obligation)
     NTESTSUITE_EXPECT_UINT(5);
     NOBLIGATION(n = 1);
     NTESTSUITE_ACTUAL_UINT(n);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_require)
@@ -47,7 +46,6 @@ NTESTSUITE_TEST(test_empty_require)
     NTESTSUITE_EXPECT_BOOL(true);
     NREQUIRE(true);
     NTESTSUITE_ACTUAL_BOOL(g_assert_state);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_ensure)
@@ -55,7 +53,6 @@ NTESTSUITE_TEST(test_empty_ensure)
     NTESTSUITE_EXPECT_BOOL(true);
     NENSURE(true);
     NTESTSUITE_ACTUAL_BOOL(g_assert_state);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_internal)
@@ -63,7 +60,6 @@ NTESTSUITE_TEST(test_empty_internal)
     NTESTSUITE_EXPECT_BOOL(true);
     NASSERT_INTERNAL(true);
     NTESTSUITE_ACTUAL_BOOL(g_assert_state);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_f_require)
@@ -71,7 +67,6 @@ NTESTSUITE_TEST(test_empty_f_require)
     NTESTSUITE_EXPECT_BOOL(true);
     NREQUIRE(false);
     NTESTSUITE_ACTUAL_BOOL(g_assert_state);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_f_ensure)
@@ -79,7 +74,6 @@ NTESTSUITE_TEST(test_empty_f_ensure)
     NTESTSUITE_EXPECT_BOOL(true);
     NENSURE(false);
     NTESTSUITE_ACTUAL_BOOL(g_assert_state);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_f_internal)
@@ -87,7 +81,6 @@ NTESTSUITE_TEST(test_empty_f_internal)
     NTESTSUITE_EXPECT_BOOL(true);
     NASSERT_INTERNAL(false);
     NTESTSUITE_ACTUAL_BOOL(g_assert_state);
-    NTESTSUITE_EVALUATE();
 }
 
 static void setup_empty(void)

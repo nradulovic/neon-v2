@@ -18,8 +18,9 @@
 
 #include <stddef.h>
 
-#include "../../kernel/include/nbits_bitarray.h"
-#include "../../kernel/include/ntestsuite.h"
+#include "test_nbits_bitarray.h"
+#include "nbits_bitarray.h"
+#include "ntestsuite.h"
 
 static struct nbitarray g_instance;
 
@@ -34,7 +35,6 @@ NTESTSUITE_TEST(test_none_init)
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(true);
     nbitarray_init(&a_instance);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_0)
@@ -42,7 +42,6 @@ NTESTSUITE_TEST(test_empty_set_0)
     NTESTSUITE_EXPECT_UINT(0);
     nbitarray_set(&g_instance, 0u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_msbs(&g_instance));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_get_1)
@@ -50,7 +49,6 @@ NTESTSUITE_TEST(test_empty_set_get_1)
     NTESTSUITE_EXPECT_UINT(1);
     nbitarray_set(&g_instance, 1u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_msbs(&g_instance));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_get_31)
@@ -58,7 +56,6 @@ NTESTSUITE_TEST(test_empty_set_get_31)
     NTESTSUITE_EXPECT_UINT(31);
     nbitarray_set(&g_instance, 31u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_msbs(&g_instance));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_m_0)
@@ -67,7 +64,6 @@ NTESTSUITE_TEST(test_empty_set_m_0)
     nbitarray_set(&g_instance, 0u);
     nbitarray_set(&g_instance, 0u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_msbs(&g_instance));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_m_1)
@@ -76,7 +72,6 @@ NTESTSUITE_TEST(test_empty_set_m_1)
     nbitarray_set(&g_instance, 0u);
     nbitarray_set(&g_instance, 1u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_msbs(&g_instance));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_m_31)
@@ -86,7 +81,6 @@ NTESTSUITE_TEST(test_empty_set_m_31)
     nbitarray_set(&g_instance, 1u);
     nbitarray_set(&g_instance, 31u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_msbs(&g_instance));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_clr_get_1)
@@ -96,7 +90,6 @@ NTESTSUITE_TEST(test_empty_set_clr_get_1)
     nbitarray_set(&g_instance, 1u);
     nbitarray_clear(&g_instance, 1u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_msbs(&g_instance));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_clr_get_31)
@@ -107,7 +100,6 @@ NTESTSUITE_TEST(test_empty_set_clr_get_31)
     nbitarray_set(&g_instance, 31u);
     nbitarray_clear(&g_instance, 31u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_msbs(&g_instance));
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_set_clr_get_31_m)
@@ -118,7 +110,6 @@ NTESTSUITE_TEST(test_empty_set_clr_get_31_m)
     nbitarray_set(&g_instance, 31u);
     nbitarray_clear(&g_instance, 1u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_msbs(&g_instance));
-    NTESTSUITE_EVALUATE();
 }
 
 static void setup_empty(void)

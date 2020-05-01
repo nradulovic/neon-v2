@@ -16,32 +16,12 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "test_narch.h"
-#include "test_nbits.h"
-#include "test_nbits_bitarray.h"
-#include "test_ndebug_disabled.h"
-#include "test_ndebug_enabled.h"
-#include "test_nk_list.h"
-#include "test_nqueue_lqueue.h"
-#include "test_nqueue_pqueue.h"
-#include "test_ntask.h"
-#include "test_ntask_fiber.h"
-#include "ntestsuite.h"
+#include "nport_platform.h"
 
-int main(void)
-{
-    NTESTSUITE_PRINT_HEADER();
-    test_narch();
-    test_nk_list();
-    test_ndebug_enabled();
-    test_ndebug_disabled();
-    test_nbits();
-    test_nbits_bitarray();
-    test_nqueue_lqueue();
-    test_nqueue_pqueue();
-    test_ntask_fiber();
-    test_ntask();
-    NTESTSUITE_PRINT_OVERVIEW();
-    
-    return 0;
-}
+#ifndef NCONFIG_GIT_VERSION
+#define NCONFIG_GIT_VERSION "undefined"
+#endif
+
+const char * nplatform_id = "gcc";
+const char * nplatform_build = NCONFIG_GIT_VERSION;
+

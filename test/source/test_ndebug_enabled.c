@@ -16,12 +16,13 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../../../nk/test/include/test_ndebug_enabled.h"
+
 
 #include <stddef.h>
 
-#include "../../kernel/include/ndebug.h"
-#include "../../kernel/include/ntestsuite.h"
+#include "test_ndebug_enabled.h"
+#include "ndebug.h"
+#include "ntestsuite.h"
 
 /*
  * Override assert macro in C standard assert.h and set g_assert_state to
@@ -40,7 +41,6 @@ NTESTSUITE_TEST(test_empty_obligation)
     NTESTSUITE_EXPECT_UINT(1);
     NOBLIGATION(n = 1);
     NTESTSUITE_ACTUAL_UINT(n);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_require)
@@ -48,7 +48,6 @@ NTESTSUITE_TEST(test_empty_require)
     NTESTSUITE_EXPECT_BOOL(true);
     NREQUIRE(true);
     NTESTSUITE_ACTUAL_BOOL(g_assert_state);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_ensure)
@@ -56,7 +55,6 @@ NTESTSUITE_TEST(test_empty_ensure)
     NTESTSUITE_EXPECT_BOOL(true);
     NENSURE(true);
     NTESTSUITE_ACTUAL_BOOL(g_assert_state);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_internal)
@@ -64,7 +62,6 @@ NTESTSUITE_TEST(test_empty_internal)
     NTESTSUITE_EXPECT_BOOL(true);
     NASSERT_INTERNAL(true);
     NTESTSUITE_ACTUAL_BOOL(g_assert_state);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_f_require)
@@ -72,7 +69,6 @@ NTESTSUITE_TEST(test_empty_f_require)
     NTESTSUITE_EXPECT_BOOL(false);
     NREQUIRE(false);
     NTESTSUITE_ACTUAL_BOOL(g_assert_state);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_f_ensure)
@@ -80,7 +76,6 @@ NTESTSUITE_TEST(test_empty_f_ensure)
     NTESTSUITE_EXPECT_BOOL(false);
     NENSURE(false);
     NTESTSUITE_ACTUAL_BOOL(g_assert_state);
-    NTESTSUITE_EVALUATE();
 }
 
 NTESTSUITE_TEST(test_empty_f_internal)
@@ -88,7 +83,6 @@ NTESTSUITE_TEST(test_empty_f_internal)
     NTESTSUITE_EXPECT_BOOL(false);
     NASSERT_INTERNAL(false);
     NTESTSUITE_ACTUAL_BOOL(g_assert_state);
-    NTESTSUITE_EVALUATE();
 }
 
 static void setup_empty(void)
