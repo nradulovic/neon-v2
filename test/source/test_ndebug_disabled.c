@@ -30,6 +30,8 @@
 #undef assert
 #define assert(expression)          g_assert_state = (!!(expression))
 
+#define INITIAL_ASSERT_STATE		-1
+
 static int g_assert_state;
 
 NTESTSUITE_TEST(test_empty_obligation)
@@ -43,49 +45,49 @@ NTESTSUITE_TEST(test_empty_obligation)
 
 NTESTSUITE_TEST(test_empty_require)
 {
-    NTESTSUITE_EXPECT_BOOL(true);
+    NTESTSUITE_EXPECT_INT(INITIAL_ASSERT_STATE);
     NREQUIRE(true);
-    NTESTSUITE_ACTUAL_BOOL(g_assert_state);
+    NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
 NTESTSUITE_TEST(test_empty_ensure)
 {
-    NTESTSUITE_EXPECT_BOOL(true);
+    NTESTSUITE_EXPECT_INT(INITIAL_ASSERT_STATE);
     NENSURE(true);
-    NTESTSUITE_ACTUAL_BOOL(g_assert_state);
+    NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
 NTESTSUITE_TEST(test_empty_internal)
 {
-    NTESTSUITE_EXPECT_BOOL(true);
+    NTESTSUITE_EXPECT_INT(INITIAL_ASSERT_STATE);
     NASSERT_INTERNAL(true);
-    NTESTSUITE_ACTUAL_BOOL(g_assert_state);
+    NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
 NTESTSUITE_TEST(test_empty_f_require)
 {
-    NTESTSUITE_EXPECT_BOOL(true);
+    NTESTSUITE_EXPECT_INT(INITIAL_ASSERT_STATE);
     NREQUIRE(false);
-    NTESTSUITE_ACTUAL_BOOL(g_assert_state);
+    NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
 NTESTSUITE_TEST(test_empty_f_ensure)
 {
-    NTESTSUITE_EXPECT_BOOL(true);
+    NTESTSUITE_EXPECT_INT(INITIAL_ASSERT_STATE);
     NENSURE(false);
-    NTESTSUITE_ACTUAL_BOOL(g_assert_state);
+    NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
 NTESTSUITE_TEST(test_empty_f_internal)
 {
-    NTESTSUITE_EXPECT_BOOL(true);
+    NTESTSUITE_EXPECT_INT(INITIAL_ASSERT_STATE);
     NASSERT_INTERNAL(false);
-    NTESTSUITE_ACTUAL_BOOL(g_assert_state);
+    NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
 static void setup_empty(void)
 {
-    g_assert_state = -1;
+    g_assert_state = INITIAL_ASSERT_STATE;
 }
 
 void test_ndebug_disabled(void)
