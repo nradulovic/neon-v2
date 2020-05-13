@@ -26,11 +26,11 @@
 
 #define QUEUE_SIZE 4
 
-static nlqueue(uint8_t, QUEUE_SIZE) g_test_queue;
+static struct my_queue_type NLQUEUE_TEMPLATE(uint8_t, QUEUE_SIZE) g_test_queue;
 
 NTESTSUITE_TEST(test_none_init)
 {
-    nlqueue(uint8_t, 16) my_queue;
+    struct my_queue_type NLQUEUE_TEMPLATE(uint8_t, 16) my_queue;
 
     /* NOTE:
      * Compile time test only. Ensure that the expected is equal to actual
@@ -44,19 +44,19 @@ NTESTSUITE_TEST(test_none_init)
 NTESTSUITE_TEST(test_empty_empty)
 {
     NTESTSUITE_EXPECT_UINT(QUEUE_SIZE);
-    NTESTSUITE_ACTUAL_UINT(NLQUEUE_EMPTY(&g_test_queue));
+    NTESTSUITE_ACTUAL_UINT(nlqueue_empty(NLQUEUE_PROXY(&g_test_queue)));
 }
 
 NTESTSUITE_TEST(test_empty_size)
 {
     NTESTSUITE_EXPECT_UINT(QUEUE_SIZE);
-    NTESTSUITE_ACTUAL_UINT(NLQUEUE_SIZE(&g_test_queue));
+    NTESTSUITE_ACTUAL_UINT(nlqueue_size(NLQUEUE_PROXY(&g_test_queue)));
 }
 
 NTESTSUITE_TEST(test_empty_is_full)
 {
     NTESTSUITE_EXPECT_BOOL(false);
-    NTESTSUITE_ACTUAL_BOOL(NLQUEUE_IS_FULL(&g_test_queue));
+    NTESTSUITE_ACTUAL_BOOL(nlqueue_is_full(NLQUEUE_PROXY(&g_test_queue)));
 }
 
 NTESTSUITE_TEST(test_empty_is_empty)
@@ -67,15 +67,19 @@ NTESTSUITE_TEST(test_empty_is_empty)
 
 NTESTSUITE_TEST(test_empty_fifo_head)
 {
+	nlqueue_idx idx;
+
     NTESTSUITE_EXPECT_UINT(234);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 234);
+    // idx = nlqueue_put_fifo(&g_test_queue.proxy);
+    // g_test_queue.items[idx] = 234;
+    NLQUEUE_PUT_FIFO(struct my_queue_type, &g_test_queue, 234);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_HEAD(&g_test_queue));
 }
 
 NTESTSUITE_TEST(test_empty_fifo_tail)
 {
     NTESTSUITE_EXPECT_UINT(234);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 234);
+    NLQUEUE_PUT_FIFO(struct my_queue_type, &g_test_queue, 234);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_TAIL(&g_test_queue));
 }
 
@@ -120,14 +124,14 @@ NTESTSUITE_TEST(test_nonempty_is_empty)
 NTESTSUITE_TEST(test_nonempty_fifo_head)
 {
     NTESTSUITE_EXPECT_UINT(1);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 233);
+    NLQUEUE_PUT_FIFO(struct my_queue_type, &g_test_queue, 233);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_HEAD(&g_test_queue));
 }
 
 NTESTSUITE_TEST(test_nonempty_fifo_tail)
 {
     NTESTSUITE_EXPECT_UINT(233);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 233);
+    NLQUEUE_PUT_FIFO(struct my_queue_type, &g_test_queue, 233);
     NTESTSUITE_ACTUAL_UINT(NLQUEUE_TAIL(&g_test_queue));
 }
 
@@ -177,17 +181,17 @@ static void setup_empty(void)
 static void setup_nonempty(void)
 {
     NLQUEUE_INIT(&g_test_queue);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 1);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 2);
+    NLQUEUE_PUT_FIFO(struct my_queue_type, &g_test_queue, 1);
+    NLQUEUE_PUT_FIFO(struct my_queue_type, &g_test_queue, 2);
 }
 
 static void setup_full(void)
 {
     NLQUEUE_INIT(&g_test_queue);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 1);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 2);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 3);
-    NLQUEUE_PUT_FIFO(&g_test_queue, 4);
+    NLQUEUE_PUT_FIFO(struct my_queue_type, &g_test_queue, 1);
+    NLQUEUE_PUT_FIFO(struct my_queue_type, &g_test_queue, 2);
+    NLQUEUE_PUT_FIFO(struct my_queue_type, &g_test_queue, 3);
+    NLQUEUE_PUT_FIFO(struct my_queue_type, &g_test_queue, 4);
 }
 
 void test_nqueue_lqueue(void)

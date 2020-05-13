@@ -149,14 +149,14 @@ struct np_testsuite_fixture
     uint8_t failed;
 };
 
-#define NTESTSUITE_TEST(test_name) \
-static void test_name(void); \
-static struct np_testsuite_test testsuite_ ## test_name = { \
-	.test_fn = test_name, \
-	.name = # test_name, \
-	.file = NPLATFORM_FILE, \
-};\
-static void test_name(void)
+#define NTESTSUITE_TEST(test_name) 											\
+	static void testsuite_ ## test_name(void); 								\
+	static struct np_testsuite_test test_name = { 							\
+		.test_fn = testsuite_ ## test_name, 								\
+		.name = # test_name, 												\
+		.file = NPLATFORM_FILE, 											\
+	};\
+	static void testsuite_ ## test_name(void)(void)
 
 struct np_testsuite_test
 {
@@ -174,7 +174,7 @@ union np_testsuite_test_val
 };
 
 #define NTESTSUITE_RUN(fixture, test) \
-		np_testsuite_run(&(fixture), &(testsuite_ ## test))
+		np_testsuite_run(&(fixture), &(test))
 
 void np_testsuite_print_overview(void);
 
