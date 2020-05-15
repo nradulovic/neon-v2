@@ -43,8 +43,7 @@ CC_SOURCES += $(PROJECT_DIR)/source/test_nbits_bitarray.c
 CC_SOURCES += $(PROJECT_DIR)/source/test_ndebug_enabled.c
 CC_SOURCES += $(PROJECT_DIR)/source/test_ndebug_disabled.c
 CC_SOURCES += $(PROJECT_DIR)/source/test_nlist_dll.c
-CC_SOURCES += $(PROJECT_DIR)/source/test_nqueue_lqueue.c
-CC_SOURCES += $(PROJECT_DIR)/source/test_nqueue_pqueue.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_nk_queue.c
 CC_SOURCES += $(PROJECT_DIR)/source/test_ntask_fiber.c
 CC_SOURCES += $(PROJECT_DIR)/source/test_ntask.c
 
