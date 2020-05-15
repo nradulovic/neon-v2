@@ -32,6 +32,7 @@
 #define NEON_QUEUE_LQUEUE_H_
 
 #include <stdint.h>
+#include <stdlib.h>
 #include <stdbool.h>
 
 #ifdef __cplusplus
@@ -46,16 +47,16 @@ extern "C" {
  *  custom @a nlqueue structure.
  *  
  *  @param    	T
- *    			Type of queue which was defined using @ref NK_QUEUE_INDEFINITE
+ *    			Type of queue which was defined using @ref NK_QUEUE__INDEFINITE
  *    			macro.
  *  @param    	no_items
  *    			Number of items in queue buffer.
  *  @api
  */
-#define NK_QUEUE_INDEFINITE(item_type)										\
+#define NK_QUEUE__INDEFINITE(item_T)										\
 		{																	\
-			struct nk_queue_index index;									\
-			item_type * items;												\
+			struct nk_queue__index index;									\
+			item_T * items;													\
 		}
 
 /**
@@ -66,16 +67,16 @@ extern "C" {
  * code which works with pointers to queues with different constraints.
  *
  * @param		T
- * 				Type of queue which was defined using @ref NK_QUEUE_INDEFINITE
+ * 				Type of queue which was defined using @ref NK_QUEUE__INDEFINITE
  *    			macro.
  * @param		qi
  * 				Pointer to indefinite queue instance.
  * @param		item_buffer
  * 				An array of type item which will hold instances of items.
  */
-#define NK_QUEUE_INDEFINITE_INIT(qi, item_buffer, item_buffer_size)			\
+#define NK_QUEUE__INDEFINITE_INIT(qi, item_buffer, item_buffer_size)		\
 		do {																\
-			nk_queue_index_init(&(qi)->index, item_buffer_size);			\
+			nk_queue__index_init(&(qi)->index, item_buffer_size);			\
 			(qi)->items = (item_buffer);									\
 		} while (0)
 
@@ -85,17 +86,17 @@ extern "C" {
  * @param		qi
  * 				Pointer to indefinite queue instance.
  * @param 		item
- * 				Pointer to item which will be pushed into the queue.
+ * 				Value of item which will be pushed into the queue.
  * @pre			The queue must be previously initialized by
- * 				@ref NK_QUEUE_INDEFINITE_INIT or by
- * 				@ref NK_QUEUE_DEFINITE_INIT macro.
+ * 				@ref NK_QUEUE__INDEFINITE_INIT or by
+ * 				@ref NK_QUEUE__DEFINITE_INIT macro.
  *    			macro.
  * @note      	Before calling this macro ensure that the queue is not full,
- * 				see @ref NK_QUEUE_INDEFINITE_IS_FULL macro.
+ * 				see @ref NK_QUEUE__INDEFINITE_IS_FULL macro.
  */
-#define NK_QUEUE_INDEFINITE_PUSH_FIFO(qi, item)								\
+#define NK_QUEUE__INDEFINITE_PUSH_FIFO(qi, item)							\
 		do {																\
-			(qi)->items[nk_queue_index_push_fifo(&(qi)->index)] = *(item);	\
+			(qi)->items[nk_queue__index_push_fifo(&(qi)->index)] = (item);	\
 		} while (0)
 
 /**
@@ -104,118 +105,127 @@ extern "C" {
  * @param		qi
  * 				Pointer to indefinite queue instance.
  * @param 		item
- * 				Pointer to item which will be pushed into the queue.
+ * 				Value of item which will be pushed into the queue.
  * @pre			The queue must be previously initialized by
- * 				@ref NK_QUEUE_INDEFINITE_INIT or by
- * 				@ref NK_QUEUE_DEFINITE_INIT macro.
+ * 				@ref NK_QUEUE__INDEFINITE_INIT or by
+ * 				@ref NK_QUEUE__DEFINITE_INIT macro.
  *    			macro.
  * @note      	Before calling this macro ensure that the queue is not full,
- * 				see @ref NK_QUEUE_INDEFINITE_IS_FULL macro.
+ * 				see @ref NK_QUEUE__INDEFINITE_IS_FULL macro.
  */
-#define NK_QUEUE_INDEFINITE_PUSH_LIFO(qi, item)								\
+#define NK_QUEUE__INDEFINITE_PUSH_LIFO(qi, item)							\
 		do {																\
-			(qi)->items[nk_queue_index_push_lifo(&(qi)->index)] = *(item);	\
+			(qi)->items[nk_queue__index_push_lifo(&(qi)->index)] = (item);	\
 		} while (0)
 
-#define NK_QUEUE_INDEFINITE_GET(qi, item)									\
+#define NK_QUEUE__INDEFINITE_GET(qi, item)									\
 		do {																\
-			*(item) = (qi)->items[nk_queue_index_get(&(qi)->index)];		\
+			*(item) = (qi)->items[nk_queue__index_get(&(qi)->index)];		\
 		} while (0)
 
-#define NK_QUEUE_INDEFINITE_PEEK_HEAD(qi, item)								\
+#define NK_QUEUE__INDEFINITE_PEEK_HEAD(qi, item)							\
 		do {																\
-			*(item) = (qi)->items[nk_queue_index_peek_head(&(qi)->index)];	\
+			*(item) = (qi)->items[nk_queue__index_peek_head(&(qi)->index)];	\
 		} while (0)
 
-#define NK_QUEUE_INDEFINITE_PEEK_TAIL(qi, item)								\
+#define NK_QUEUE__INDEFINITE_PEEK_TAIL(qi, item)							\
 		do {																\
-			*(item) = (qi)->items[nk_queue_index_peek_tail(&(qi)->index)];	\
+			*(item) = (qi)->items[nk_queue__index_peek_tail(&(qi)->index)];	\
 		} while (0)
 
-#define NK_QUEUE_INDEFINITE_SIZE(qi, size)									\
+#define NK_QUEUE__INDEFINITE_SIZE(qi, size)									\
 		do {																\
 			size_t * q_size = (size);										\
-			*q_size = nk_queue_index_size(&(qi)->index);					\
+			*q_size = nk_queue__index_size(&(qi)->index);					\
 		} while (0)
 
-#define NK_QUEUE_INDEFINITE_EMPTY(qi, empty)								\
+#define NK_QUEUE__INDEFINITE_EMPTY(qi, empty)								\
 		do {																\
 			size_t * q_empty = (empty);										\
-			*q_empty = nk_queue_index_empty(&(qi)->index);					\
+			*q_empty = nk_queue__index_empty(&(qi)->index);					\
 		} while (0)
 
-#define NK_QUEUE_INDEFINITE_IS_FULL(qi, is_full)							\
+#define NK_QUEUE__INDEFINITE_IS_FULL(qi, is_full)							\
 		do {																\
 			bool * q_is_full = (is_full);									\
 																			\
-			if (nk_queue_index_empty(&(qi)->index) == 0u) {					\
+			if (nk_queue__index_empty(&(qi)->index) == 0u) {				\
 				*q_is_full = true;											\
 			} else {														\
 				*q_is_full = false;											\
 			}																\
 		} while (0)
 
-#define NK_QUEUE_INDEFINITE_IS_EMPTY(qi, is_empty)							\
+#define NK_QUEUE__INDEFINITE_IS_EMPTY(qi, is_empty)							\
 		do {																\
 			bool * q_is_empty = (is_empty);									\
 																			\
-			if (nk_queue_index_empty(&(qi)->index) == 						\
-				nk_queue_index_size(&(qi)->index)) { 						\
+			if (nk_queue__index_empty(&(qi)->index) == 						\
+				nk_queue__index_size(&(qi)->index)) { 						\
 				*q_is_empty = true;											\
 			} else {														\
 				*q_is_empty = false;										\
 			}																\
 		} while (0)
 
-#define NK_QUEUE_DEFINITE(T, no_items)										\
+#define NK_QUEUE__DEFINITE_FROM_INDEFINITE(indefinite_T, item_T, no_items)	\
 		{																	\
-			struct nk_queue_indefinite  									\
-				NK_QUEUE_INDEFINITE(T) indefinite;							\
-			T item_buffer[no_items];										\
+			indefinite_T indefinite;										\
+			item_T item_buffer[no_items];									\
 		}
 
-#define NK_QUEUE_DEFINITE_INIT(qd)											\
+#define NK_QUEUE__TO_INDEFINITE(qd)											\
+		&((qd)->indefinite)
+
+#define NK_QUEUE__DEFINITE(item_T, no_items)								\
+		{																	\
+			struct /* unnamed structure */  								\
+				NK_QUEUE__INDEFINITE(item_T) indefinite;					\
+				item_T item_buffer[no_items];								\
+		}
+
+#define NK_QUEUE__DEFINITE_INIT(qd)											\
 		do {																\
-			NK_QUEUE_INDEFINITE_INIT(										\
-					&(qd)->indefinite, 										\
+			NK_QUEUE__INDEFINITE_INIT(										\
+					NK_QUEUE__TO_INDEFINITE(qd), 							\
 					&(qd)->item_buffer[0],									\
 					sizeof((qd)->item_buffer));								\
 		} while (0)
 
-#define NK_QUEUE_DEFINITE_PUSH_FIFO(qd, item)								\
-			NK_QUEUE_INDEFINITE_PUSH_FIFO(&(qd)->indefinite, item)
+#define NK_QUEUE__DEFINITE_PUSH_FIFO(qd, item)								\
+			NK_QUEUE__INDEFINITE_PUSH_FIFO(NK_QUEUE__TO_INDEFINITE(qd), item)
 
-#define NK_QUEUE_DEFINITE_PUSH_LIFO(qd, item)								\
-			NK_QUEUE_INDEFINITE_PUSH_LIFO(&(qd)->indefinite, item)
+#define NK_QUEUE__DEFINITE_PUSH_LIFO(qd, item)								\
+			NK_QUEUE__INDEFINITE_PUSH_LIFO(NK_QUEUE__TO_INDEFINITE(qd), item)
 
-#define NK_QUEUE_DEFINITE_GET(qd, item)										\
-			NK_QUEUE_INDEFINITE_GET(&(qd)->indefinite, item)
+#define NK_QUEUE__DEFINITE_GET(qd, item)									\
+			NK_QUEUE__INDEFINITE_GET(NK_QUEUE__TO_INDEFINITE(qd), item)
 
-#define NK_QUEUE_DEFINITE_PEEK_HEAD(qd, item)								\
-			NK_QUEUE_INDEFINITE_PEEK_HEAD(&(qd)->indefinite, item)
+#define NK_QUEUE__DEFINITE_PEEK_HEAD(qd, item)								\
+			NK_QUEUE__INDEFINITE_PEEK_HEAD(NK_QUEUE__TO_INDEFINITE(qd), item)
 
-#define NK_QUEUE_DEFINITE_PEEK_TAIL(qd, item)								\
-			NK_QUEUE_INDEFINITE_PEEK_TAIL(&(qd)->indefinite, item)
+#define NK_QUEUE__DEFINITE_PEEK_TAIL(qd, item)								\
+			NK_QUEUE__INDEFINITE_PEEK_TAIL(NK_QUEUE__TO_INDEFINITE(qd), item)
 
-#define NK_QUEUE_DEFINITE_SIZE(qd, size)									\
-			NK_QUEUE_INDEFINITE_SIZE(&(qd)->indefinite, size)
+#define NK_QUEUE__DEFINITE_SIZE(qd, size)									\
+			NK_QUEUE__INDEFINITE_SIZE(NK_QUEUE__TO_INDEFINITE(qd), size)
 
-#define NK_QUEUE_DEFINITE_EMPTY(qd, empty)									\
-			NK_QUEUE_INDEFINITE_EMPTY(&(qd)->indefinite, empty)
+#define NK_QUEUE__DEFINITE_EMPTY(qd, empty)									\
+			NK_QUEUE__INDEFINITE_EMPTY(NK_QUEUE__TO_INDEFINITE(qd), empty)
 
-#define NK_QUEUE_DEFINITE_EMPTY(qd, empty)									\
-			NK_QUEUE_INDEFINITE_EMPTY(&(qd)->indefinite, empty)
+#define NK_QUEUE__DEFINITE_EMPTY(qd, empty)									\
+			NK_QUEUE__INDEFINITE_EMPTY(NK_QUEUE__TO_INDEFINITE(qd), empty)
 
-#define NK_QUEUE_DEFINITE_IS_FULL(qd, is_full)								\
-			NK_QUEUE_INDEFINITE_IS_FULL(&(qd)->indefinite, is_full)
+#define NK_QUEUE__DEFINITE_IS_FULL(qd, is_full)								\
+			NK_QUEUE__INDEFINITE_IS_FULL(NK_QUEUE__TO_INDEFINITE(qd), is_full)
 
-#define NK_QUEUE_DEFINITE_IS_EMPTY(qd, is_empty)							\
-			NK_QUEUE_INDEFINITE_IS_EMPTY(&(qd)->indefinite, is_empty)
+#define NK_QUEUE__DEFINITE_IS_EMPTY(qd, is_empty)							\
+			NK_QUEUE__INDEFINITE_IS_EMPTY(NK_QUEUE__TO_INDEFINITE(qd), is_empty)
 
 /** @brief    	Queue index structure
  *  @api
  */
-struct nk_queue_index
+struct nk_queue__index
 {
 	size_t head;
 	size_t tail;
@@ -227,7 +237,7 @@ struct nk_queue_index
  *  @api
  */
 
-inline void nk_queue_index_init(struct nk_queue_index * qb, size_t items)
+inline void nk_queue__index_init(struct nk_queue__index * qb, size_t items)
 {
     qb->head = 0u;
     qb->tail = 0u;
@@ -235,7 +245,7 @@ inline void nk_queue_index_init(struct nk_queue_index * qb, size_t items)
     qb->mask = items - 1u;
 }
 
-inline size_t nk_queue_index_push_fifo(struct nk_queue_index * qb)
+inline size_t nk_queue__index_push_fifo(struct nk_queue__index * qb)
 {
 	qb->empty--;
 	qb->tail--;
@@ -247,7 +257,7 @@ inline size_t nk_queue_index_push_fifo(struct nk_queue_index * qb)
     return (qb->tail);
 }
 
-inline size_t nk_queue_index_push_lifo(struct nk_queue_index * qb)
+inline size_t nk_queue__index_push_lifo(struct nk_queue__index * qb)
 {
 	size_t retval;
 
@@ -263,7 +273,7 @@ inline size_t nk_queue_index_push_lifo(struct nk_queue_index * qb)
     return (retval);
 }
 
-inline size_t nk_queue_index_get(struct nk_queue_index * qb)
+inline size_t nk_queue__index_get(struct nk_queue__index * qb)
 {
 	size_t retval;
 
@@ -278,7 +288,7 @@ inline size_t nk_queue_index_get(struct nk_queue_index * qb)
     return (retval);
 }
 
-inline size_t nk_queue_index_peek_head(const struct nk_queue_index * qb)
+inline size_t nk_queue__index_peek_head(const struct nk_queue__index * qb)
 {
 	size_t real_head;
     
@@ -289,17 +299,17 @@ inline size_t nk_queue_index_peek_head(const struct nk_queue_index * qb)
     return (real_head);
 }
 
-inline size_t nk_queue_index_peek_tail(const struct nk_queue_index * qb)
+inline size_t nk_queue__index_peek_tail(const struct nk_queue__index * qb)
 {
     return (qb->tail);
 }
 
-inline size_t nk_queue_index_empty(const struct nk_queue_index * qb)
+inline size_t nk_queue__index_empty(const struct nk_queue__index * qb)
 {
 	return qb->empty;
 }
 
-inline size_t nk_queue_index_size(const struct nk_queue_index * qb)
+inline size_t nk_queue__index_size(const struct nk_queue__index * qb)
 {
 	return qb->mask + 1u;
 }

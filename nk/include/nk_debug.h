@@ -30,25 +30,21 @@
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_MODULE_DEBUG_H_
-#define NEON_MODULE_DEBUG_H_
+#ifndef NK_DEBUG_H_
+#define NK_DEBUG_H_
 
 #include <stdint.h>
 #include <stddef.h>
 #include <assert.h>
 
-#if defined(NEON_APP_CONFIG)
-#include "neon_app_config.h"
-#else
-#include "default_config.h"
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#if !defined(NDEBUG_IS_ENABLED)
-#define NDEBUG_IS_ENABLED 1
+#if !defined(NK_DEBUG__IS_ENABLED) || defined(__DOXYGEN__)
+/** @brief		Configuration setting for NK_DEBUG module.
+ */
+#define NK_DEBUG__IS_ENABLED 			1
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -62,10 +58,10 @@ extern "C" {
  *              Expression : C expression : condition which must be 'true'.
  *  @api
  */
-#if (NDEBUG_IS_ENABLED == 1)
-#define NOBLIGATION(expr)               expr
+#if (NK_DEBUG__IS_ENABLED == 1)
+#define NK_DEBUG__OBLIGATION(expr)      expr
 #else
-#define NOBLIGATION(expr)               (void)0
+#define NK_DEBUG__OBLIGATION(expr)      (void)0
 #endif
 
 /** @brief      Make sure the caller has fulfilled all contract preconditions
@@ -73,10 +69,10 @@ extern "C" {
  *              Expression : C expression : condition which must be 'true'.
  *  @api
  */
-#if (NDEBUG_IS_ENABLED == 1)
-#define NREQUIRE(expr)                  assert(expr)
+#if (NK_DEBUG__IS_ENABLED == 1)
+#define NK_DEBUG__REQUIRE(expr)         assert(expr)
 #else
-#define NREQUIRE(expr)                  (void)0
+#define NK_DEBUG__REQUIRE(expr)         (void)0
 #endif
 
 /** @brief      Make sure the callee has fulfilled all contract postconditions
@@ -84,15 +80,15 @@ extern "C" {
  *              Expression : C expression : condition which must be 'true'.
  *  @api
  */
-#if (NDEBUG_IS_ENABLED == 1)
-#define NENSURE(expr)                   assert(expr)
+#if (NK_DEBUG__IS_ENABLED == 1)
+#define NK_DEBUG__ENSURE(expr)          assert(expr)
 #else
-#define NENSURE(expr)                   (void)0
+#define NK_DEBUG__ENSURE(expr)          (void)0
 #endif
 
 /**@} */
 /*---------------------------------------------------------------------------*/
-/** @defgroup    debug_internal Internal checking
+/** @defgroup   debug_internal Internal checking
  *  @brief      These macros are enabled/disabled using the option
  *              @ref NCONFIG_ENABLE_NDEBUG.
  *  @{ */
@@ -102,48 +98,19 @@ extern "C" {
  *              Expression : C expression : condition which must be 'true'.
  *  @api
  */
-#if (NDEBUG_IS_ENABLED == 1)
-#define NASSERT_INTERNAL(expr)          assert(expr)
+#if (NK_DEBUG__IS_ENABLED == 1)
+#define NK_DEBUG__ASSERT(expr)          assert(expr)
 #else
-#define NASSERT_INTERNAL(expr)          (void)0
+#define NK_DEBUG__ASSERT(expr)          (void)0
 #endif
 
 /**@} */
-/*---------------------------------------------------------------------------*/
-/** @defgroup   Object debug signatures
- *  @brief      During debugging the objects will use the signatures.
- *  @{ */
-
-#define NSIGNATURE_HEAP                     ((unsigned int)0xdeadbee0u)
-#define NSIGNATURE_POOL                     ((unsigned int)0xdeadbee1u)
-#define NSIGNATURE_STATIC                   ((unsigned int)0xdeadbee2u)
-#define NSIGNATURE_STDHEAP                  ((unsigned int)0xdeadbee3u)
-#define NSIGNATURE_TIMER                    ((unsigned int)0xdeadcee0u)
-#define NSIGNATURE_THREAD                   ((unsigned int)0xdeaddee0u)
-#define NSIGNATURE_EPA                      ((unsigned int)0xdeadfeeau)
-#define NSIGNATURE_EQUEUE                   ((unsigned int)0xdeadfeebu)
-#define NSIGNATURE_ETIMER                   ((unsigned int)0xdeadfeecu)
-#define NSIGNATURE_EVENT                    ((unsigned int)0xdeadfeedu)
-#define NSIGNATURE_SM                       ((unsigned int)0xdeadfeeeu)
-#define NSIGNATURE_DEFER                    ((unsigned int)0xdeadfeefu)
-
-#if (NDEBUG_IS_ENABLED == 1)
-#define NSIGNATURE_DECLARE                     int _signature;
-#define NSIGNATURE_INITIALIZER(signature)   ._signature = signature,
-#else
-#define NSIGNATURE_DECLARE
-#define NSIGNATURE_INITIALIZER(signature)   
-#endif
-
-#define NSIGNATURE_OF(object)    			((object) ? (object)->_signature : 0)
-#define NSIGNATURE_IS(object, signature)    (object)->_signature = (signature)
-
-/** @} */
+/**@} */
 #ifdef __cplusplus
 }
 #endif
 
-/** @} */
-/** @} */
+/**@} */
+/**@} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_MODULE_DEBUG_H_ */
+#endif /* NK_DEBUG_H_ */

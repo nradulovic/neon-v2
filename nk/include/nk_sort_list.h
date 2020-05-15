@@ -32,7 +32,7 @@
 #ifndef NEON_QUEUE_PQUEUE_H_
 #define NEON_QUEUE_PQUEUE_H_
 
-#include <stdint.h>
+#include <stdbool.h>
 
 #include "nk_list.h"
 
@@ -48,14 +48,14 @@ extern "C" {
     
 struct npqueue_sentinel
 {
-    struct nk_list list;
+    struct nk_list__node list;
 };
 
 #define npqueue_sentinel_init(a_sentinel)                                   \
-    nk_list_init(&(a_sentinel)->list, (a_sentinel))
+    nk_list__init(&(a_sentinel)->list, (a_sentinel))
 
 #define npqueue_sentinel_term(a_sentinel)                                   \
-    npqueue_sentinel_init(a_sentinel)
+		npqueue_sentinel_init(a_sentinel)
 
 /** @brief      Test if queue is empty.
  *  @param      queue
@@ -66,7 +66,7 @@ struct npqueue_sentinel
  *  @api
  */
 #define npqueue_sentinel_is_empty(a_sentinel)                              \
-    	nk_list_is_empty(&(a_sentinel)->list)
+    	nk_list__is_empty(&(a_sentinel)->list)
 
 #define npqueue_sentinel_head(a_sentinel)                                  \
     npqueue_next(a_sentinel)
@@ -83,7 +83,7 @@ void npqueue_sentinel_shift(struct npqueue_sentinel * sentinel);
  */
 struct npqueue
 {
-    struct nk_list list;
+    struct nk_list__node list;
     uint_fast8_t priority;
 };
 
@@ -94,13 +94,20 @@ struct npqueue
  *  @{
  */
 
+typedef bool (compare_fn)(const void *, const void *);
+
+void nk_sort_list__insert(
+		struct nk_list__node * list,
+		struct nk_list__node * node,
+		compare_fn * compare);
+
 /** @brief    	Convert a list entry to node entry.
  *  @param     	a_node
  *      		Pointer to node member of priority sorted queue node structure.
  *  @return    	Pointer to priority queue node structure.
  *  @api
  */
-#define npqueue_from_list(a_node) nk_list_object(a_node)
+#define npqueue_from_list(a_node) nk_list__object(a_node)
 
 /** @brief    	Initialize a node and define its priority.
  *
@@ -115,7 +122,6 @@ struct npqueue
  *      		the value is 0.
  *  @return    	The pointer @a node.
  */
-struct npqueue * npqueue_init(struct npqueue * node, uint_fast8_t priority);
 
 /** @brief    	Terminate a node.
  *
@@ -140,7 +146,7 @@ void npqueue_term(struct npqueue * node);
     do { (a_node)->priority = (a_priority); } while (0)
 
 #define npqueue_next(a_node)                                                \
-    npqueue_from_list(nk_list_next(&(a_node)->list))
+    npqueue_from_list(nk_list__next(&(a_node)->list))
 
 /** @brief      Insert a node into the queue using sorting method.
  *  @param      queue
@@ -160,14 +166,16 @@ void npqueue_insert_sort(struct npqueue_sentinel * sentinel,
  *  @api
  */
 #define npqueue_insert_fifo(a_sentinel, a_node)                             \
-    do { nk_list_add_after(&(a_sentinel)->list, &(a_node)->list); } while (0)
+		do { 																\
+			nk_list__add_after(&(a_sentinel)->list, &(a_node)->list); 		\
+		} while (0)
 
 /** @brief      Remove the node from queue.
  *  @param      node
  *              Pointer to node structure.
  *  @api
  */
-#define npqueue_remove(a_node)  nk_list_remove(&(a_node)->list)
+#define npqueue_remove(a_node)  		nk_list__remove(&(a_node)->list)
 
 /** @} */
 #ifdef __cplusplus

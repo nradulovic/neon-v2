@@ -37,15 +37,13 @@ CC_INCLUDES += $(PROJECT_DIR)/include
 # List additional C source files. Files which are not listed here will not be
 # compiled.
 CC_SOURCES += $(PROJECT_DIR)/source/main.c
-CC_SOURCES += $(PROJECT_DIR)/source/test_narch.c
-CC_SOURCES += $(PROJECT_DIR)/source/test_nbits.c
-CC_SOURCES += $(PROJECT_DIR)/source/test_nbits_bitarray.c
-CC_SOURCES += $(PROJECT_DIR)/source/test_ndebug_enabled.c
-CC_SOURCES += $(PROJECT_DIR)/source/test_ndebug_disabled.c
-CC_SOURCES += $(PROJECT_DIR)/source/test_nlist_dll.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_nk_arch.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_nk_bits.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_nk_bitarray.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_nk_debug_enabled.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_nk_debug_disabled.c
+CC_SOURCES += $(PROJECT_DIR)/source/test_nk_list.c
 CC_SOURCES += $(PROJECT_DIR)/source/test_nk_queue.c
-CC_SOURCES += $(PROJECT_DIR)/source/test_ntask_fiber.c
-CC_SOURCES += $(PROJECT_DIR)/source/test_ntask.c
 
 # List additional archives. Use this when using an external static archive.
 AR_LIBS +=

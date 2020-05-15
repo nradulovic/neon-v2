@@ -17,25 +17,25 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Tests for nbits
+ *  @brief       Tests for ndebug (ENABLED).
  *
  *  @addtogroup  module
  *  @{
  */
-/** @defgroup    mod_test_bits Tests for nbits
- *  @brief       Tests for nbits.
+/** @defgroup    mod_test_ndebug Tests for enabled ndebug
+ *  @brief       Tests for enabled ndebug.
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
-#ifndef TEST_NBITS_H_
-#define TEST_NBITS_H_
+#ifndef TEST_NK_DEBUG_ENABLED_H_
+#define TEST_NK_DEBUG_ENABLED_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void test_nbits(void);
+void test_nk_debug_enabled(void);
 
 #ifdef __cplusplus
 }
@@ -44,4 +44,4 @@ void test_nbits(void);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif  /* TEST_NBITS_H_ */
+#endif  /* TEST_NK_DEBUG_ENABLED_H_ */

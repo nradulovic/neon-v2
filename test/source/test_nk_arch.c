@@ -16,7 +16,7 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "test_narch.h"
+#include "test_nk_arch.h"
 
 #include <stddef.h>
 
@@ -77,7 +77,7 @@ static void test_none_log2_UINT32_MAX(void)
     NTESTSUITE_ACTUAL_UINT(nk_arch_log2(0xffffffff));
 }
 
-void test_narch(void)
+void test_nk_arch(void)
 {
     static const struct nk_testsuite_test tests[] = {
     		NK_TESTSUITE_TEST(test_none_exp2_0),

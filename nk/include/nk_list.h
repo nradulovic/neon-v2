@@ -50,8 +50,8 @@ extern "C" {
  *  @note       This macro is exception to macro naming rule since it is does
  *              not have side effects.
  */
-#define nk_list_add_head(sentinel, node)                                  \
-        nk_list_add_before(sentinel, node)
+#define nk_list__add_head(sentinel, node)                                  	\
+        nk_list__add_before(sentinel, node)
 
 /** @brief      Helper macro, add a node @a node at list tail pointed by 
  *              @a sentinel.
@@ -62,8 +62,8 @@ extern "C" {
  *  @note       This macro is exception to macro naming rule since it is does
  *              not have side effects.
  */
-#define nk_list_add_tail(sentinel, node)                                  \
-        nk_list_add_after(sentinel, node)
+#define nk_list__add_tail(sentinel, node)                                  	\
+        nk_list__add_after(sentinel, node)
 
 /** @brief      Construct for @a FOR loop to iterate over each element in a
  *              list.
@@ -72,15 +72,15 @@ extern "C" {
  *  struct nk_list * current;
  *  struct nk_list * sentinel = &g_list_sentinel.list;
  *
- *  for (nk_list_EACH(current, sentinel)) {
+ *  for (NK_LIST_EACH(current, sentinel)) {
  *      ... do something with @a current (excluding remove)
  *  }
  *  @endcode
  */
-#define NK_LIST_EACH(current, sentinel)                                     \
-	    current = nk_list_next(sentinel); 								\
+#define NK_LIST__EACH(current, sentinel)                                 	\
+	    current = nk_list__next(sentinel); 									\
 	    current != (sentinel);                                              \
-	    current = nk_list_next(current)
+	    current = nk_list__next(current)
 
 /** @brief      Construct for FOR loop to iterate over each element in list
  *              backwards.
@@ -89,15 +89,15 @@ extern "C" {
  *  struct nk_list * current;
  *  struct nk_list * sentinel = &g_list_sentinel.list;
  *
- *  for (nk_list_EACH_BACKWARDS(current, sentinel)) {
+ *  for (NK_LIST_EACH_BACKWARDS(current, sentinel)) {
  *      ... do something with current (excluding remove)
  *  }
  *  @endcode
  */
-#define NK_LIST_EACH_BACKWARDS(current, sentinel)                           \
-		current = nk_list_prev(sentinel); 								\
-		current != (sentinel);                                                  \
-		current = nk_list_prev(current)
+#define NK_LIST__EACH_BACKWARDS(current, sentinel)                          \
+		current = nk_list__prev(sentinel); 									\
+		current != (sentinel);                                              \
+		current = nk_list__prev(current)
 
 /** @brief      Construct for FOR loop to iterate over each element in list
  *              which is safe against element removal.
@@ -107,22 +107,22 @@ extern "C" {
  *  struct nk_list * iterator;
  *  struct nk_list * sentinel = &g_list_sentinel.list;
  *
- *  for (nk_list_EACH_SAFE(current, iterator, sentinel)) {
+ *  for (NK_LIST_EACH_SAFE(current, iterator, sentinel)) {
  *      ... do something with current (including remove)
  *  }
  *  @endcode
  */
-#define NK_LIST_EACH_SAFE(current, iterator, sentinel)                      \
-    current = nk_list_next(sentinel), iterator = nk_list_next(current); \
+#define NK_LIST__EACH_SAFE(current, iterator, sentinel)                     \
+    current = nk_list__next(sentinel), iterator = nk_list__next(current); 	\
     current != (sentinel);                                                  \
-    current = iterator, iterator = nk_list_next(iterator)
+    current = iterator, iterator = nk_list__next(iterator)
 
 /** @brief      Linked list node structure
  */
-struct nk_list
+struct nk_list__node
 {
-    struct nk_list *        next;       /**< Next node in the list.*/
-    struct nk_list *        prev;       /**< Previous node in the list.*/
+    struct nk_list__node *  next;       /**< Next node in the list.*/
+    struct nk_list__node *  prev;       /**< Previous node in the list.*/
     void *					object;		/**< Object which is inserted in list.*/
 };
 
@@ -149,25 +149,44 @@ struct nk_list
       v
  @endverbatim
  */
-void nk_list_init(struct nk_list * node, void * object);
+inline void nk_list__init(struct nk_list__node * node, void * object)
+{
+    node->next = node;
+    node->prev = node;
+    node->object = object;
+}
 
-void nk_list_term(struct nk_list * node);
+inline void nk_list__term(struct nk_list__node * node)
+{
+	node->next = NULL;
+	node->prev = NULL;
+	node->object = NULL;
+}
 
 /** @brief      Return the next node of @a node in linked list.
  *  @param[in]  node
  *              A list node or sentinel.
  *  @return     Next node.
  */
-struct nk_list * nk_list_next(struct nk_list * node);
+inline struct nk_list__node * nk_list__next(struct nk_list__node * node)
+{
+	return node->next;
+}
 
 /** @brief      Return previous node of @a node in linked list.
  *  @param[in]  node
  *              A list node or sentinel.
  *  @return     Previous node.
  */
-struct nk_list * nk_list_prev(struct nk_list * node);
+inline struct nk_list__node * nk_list__prev(struct nk_list__node * node)
+{
+	return node->prev;
+}
 
-void * nk_list_object(struct nk_list * node);
+inline void * nk_list__object(struct nk_list__node * node)
+{
+	return node->object;
+}
 
 /** @brief      Insert node (N) before current node (C).
  *  @param[in]  current
@@ -193,7 +212,15 @@ void * nk_list_object(struct nk_list * node);
         +-----+    +-----+    +-----+    +-----+
  @endverbatim
  */
-void nk_list_add_after(struct nk_list * current, struct nk_list * node);
+inline void nk_list__add_after(
+		struct nk_list__node * current,
+		struct nk_list__node * node)
+{
+    node->next          = current;
+    node->prev          = current->prev;
+    current->prev->next = node;
+    current->prev       = node;
+}
 
 /** @brief      Insert node (N) after current node (C).
  *  @param[in]  current
@@ -219,7 +246,15 @@ void nk_list_add_after(struct nk_list * current, struct nk_list * node);
         +-----+    +-----+    +-----+    +-----+
  @endverbatim
  */
-void nk_list_add_before(struct nk_list * current, struct nk_list * node);
+inline void nk_list__add_before(
+		struct nk_list__node * current,
+		struct nk_list__node * node)
+{
+    node->prev          = current;
+    node->next          = current->next;
+    current->next->prev = node;
+    current->next       = node;
+}
 
 /** @brief      Remove a node (N)
  *  @param[in]  node
@@ -245,12 +280,30 @@ void nk_list_add_before(struct nk_list * current, struct nk_list * node);
                                     ———
  @endverbatim
  */
-void nk_list_remove(struct nk_list * node);
-
-inline bool nk_list_is_empty(struct nk_list * node)
+inline void nk_list__remove(struct nk_list__node * node)
 {
-	return nk_list_next(node) == node ? true : false;
+    node->next->prev = node->prev;
+    node->prev->next = node->next;
+
+    /* NOTE:
+     * Next pointer must point to itself, since it may be checked by
+     * nk_list__is_empty() function.
+     */
+    node->next = node;
+    node->prev = node;
 }
+
+inline bool nk_list__is_empty(struct nk_list__node * node)
+{
+	return nk_list__next(node) == node ? true : false;
+}
+
+typedef bool (nk_list__compare_fn)(const void * current, const void * new_node);
+
+void nk_list__insert_at(
+		struct nk_list__node * list,
+		struct nk_list__node * node,
+		nk_list__compare_fn * compare);
 
 #ifdef __cplusplus
 }

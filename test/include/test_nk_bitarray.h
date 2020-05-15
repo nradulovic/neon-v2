@@ -17,25 +17,25 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Tests for ndebug (ENABLED).
+ *  @brief       Tests for nbitarray
  *
  *  @addtogroup  module
  *  @{
  */
-/** @defgroup    mod_test_ndebug Tests for enabled ndebug
- *  @brief       Tests for enabled ndebug.
+/** @defgroup    mod_test_nbitarray Tests for nbitarray
+ *  @brief       Tests for nbitarray.
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
-#ifndef TEST_NDEBUG_ENABLED_H_
-#define TEST_NDEBUG_ENABLED_H_
+#ifndef TEST_NBITARRAY_H_
+#define TEST_NBITARRAY_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void test_ndebug_enabled(void);
+void test_nk_bitarray(void);
 
 #ifdef __cplusplus
 }
@@ -44,4 +44,4 @@ void test_ndebug_enabled(void);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif  /* TEST_NDEBUG_ENABLED_H_ */
+#endif  /* TEST_NBITARRAY_H_ */

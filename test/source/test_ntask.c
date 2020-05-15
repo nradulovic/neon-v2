@@ -20,10 +20,10 @@
 #include "ntask.h"
 #include "ntestsuite.h"
 
-static struct ntask * g_task_create;
-static struct ntask * g_task_yield;
+static struct nk_sched__task_cb * g_task_create;
+static struct nk_sched__task_cb * g_task_yield;
 
-static NTASK(task_create_fn(struct ntask * task, void * arg))
+static NTASK(task_create_fn(struct nk_sched__task_cb * task, void * arg))
 {
     (void)arg;
 
@@ -31,7 +31,7 @@ static NTASK(task_create_fn(struct ntask * task, void * arg))
     NTASK_END();
 }
 
-static NTASK(task_yield_fn(struct ntask * task, void * arg))
+static NTASK(task_yield_fn(struct nk_sched__task_cb * task, void * arg))
 {
     (void)arg;
 

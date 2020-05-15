@@ -16,16 +16,16 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define NDEBUG_IS_ENABLED 1
+#define NK_DEBUG__IS_ENABLED 1
 
-#include "test_ndebug_enabled.h"
+#include "test_nk_debug_enabled.h"
 
 #include <stdint.h>
 
-#include "ndebug.h"
+#include "nk_debug.h"
 #include "ntestsuite.h"
 
-#if (NDEBUG_IS_ENABLED != 1)
+#if (NK_DEBUG__IS_ENABLED != 1)
 #error "Failed to enable debug for this translation module."
 #endif
 
@@ -44,49 +44,49 @@ static void test_empty_obligation(void)
     uint32_t n = 0;
 
     NTESTSUITE_EXPECT_UINT(1);
-    NOBLIGATION(n = 1);
+    NK_DEBUG__OBLIGATION(n = 1);
     NTESTSUITE_ACTUAL_UINT(n);
 }
 
 static void test_empty_require(void)
 {
     NTESTSUITE_EXPECT_INT(1);
-    NREQUIRE(true);
+    NK_DEBUG__REQUIRE(true);
     NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
 static void test_empty_ensure(void)
 {
     NTESTSUITE_EXPECT_INT(1);
-    NENSURE(true);
+    NK_DEBUG__ENSURE(true);
     NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
 static void test_empty_internal(void)
 {
     NTESTSUITE_EXPECT_INT(1);
-    NASSERT_INTERNAL(true);
+    NK_DEBUG__ASSERT(true);
     NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
 static void test_empty_f_require(void)
 {
     NTESTSUITE_EXPECT_BOOL(false);
-    NREQUIRE(false);
+    NK_DEBUG__REQUIRE(false);
     NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
 static void test_empty_f_ensure(void)
 {
     NTESTSUITE_EXPECT_BOOL(false);
-    NENSURE(false);
+    NK_DEBUG__ENSURE(false);
     NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
 static void test_empty_f_internal(void)
 {
     NTESTSUITE_EXPECT_BOOL(false);
-    NASSERT_INTERNAL(false);
+    NK_DEBUG__ASSERT(false);
     NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
@@ -95,7 +95,7 @@ static void setup_empty(void)
     g_assert_state = -1;
 }
 
-void test_ndebug_enabled(void)
+void test_nk_debug_enabled(void)
 {
 	static const struct nk_testsuite_test tests_empty[] =
 	{

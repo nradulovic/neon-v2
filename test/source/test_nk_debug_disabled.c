@@ -16,16 +16,16 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define NDEBUG_IS_ENABLED 0
+#define NK_DEBUG__IS_ENABLED 		0
 
-#include "test_ndebug_disabled.h"
+#include "test_nk_debug_disabled.h"
 
 #include <stdint.h>
 
-#include "ndebug.h"
+#include "nk_debug.h"
 #include "ntestsuite.h"
 
-#if (NDEBUG_IS_ENABLED == 1)
+#if (NK_DEBUG__IS_ENABLED == 1)
 #error "Failed to disable debug for this translation module."
 #endif
 
@@ -41,49 +41,49 @@ static void test_empty_obligation(void)
     uint32_t n = 5;
 
     NTESTSUITE_EXPECT_UINT(5);
-    NOBLIGATION(n = 1);
+    NK_DEBUG__OBLIGATION(n = 1);
     NTESTSUITE_ACTUAL_UINT(n);
 }
 
 static void test_empty_require(void)
 {
     NTESTSUITE_EXPECT_INT(INITIAL_ASSERT_STATE);
-    NREQUIRE(true);
+    NK_DEBUG__REQUIRE(true);
     NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
 static void test_empty_ensure(void)
 {
     NTESTSUITE_EXPECT_INT(INITIAL_ASSERT_STATE);
-    NENSURE(true);
+    NK_DEBUG__ENSURE(true);
     NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
 static void test_empty_internal(void)
 {
     NTESTSUITE_EXPECT_INT(INITIAL_ASSERT_STATE);
-    NASSERT_INTERNAL(true);
+    NK_DEBUG__ASSERT(true);
     NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
 static void test_empty_f_require(void)
 {
     NTESTSUITE_EXPECT_INT(INITIAL_ASSERT_STATE);
-    NREQUIRE(false);
+    NK_DEBUG__REQUIRE(false);
     NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
 static void test_empty_f_ensure(void)
 {
     NTESTSUITE_EXPECT_INT(INITIAL_ASSERT_STATE);
-    NENSURE(false);
+    NK_DEBUG__ENSURE(false);
     NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
 static void test_empty_f_internal(void)
 {
     NTESTSUITE_EXPECT_INT(INITIAL_ASSERT_STATE);
-    NASSERT_INTERNAL(false);
+    NK_DEBUG__ASSERT(false);
     NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
@@ -92,7 +92,7 @@ static void setup_empty(void)
     g_assert_state = INITIAL_ASSERT_STATE;
 }
 
-void test_ndebug_disabled(void)
+void test_nk_debug_disabled(void)
 {
 	static const struct nk_testsuite_test tests_empty[] =
 	{

@@ -16,30 +16,24 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "test_narch.h"
-#include "test_nbits.h"
-#include "test_nbits_bitarray.h"
-#include "test_ndebug_disabled.h"
-#include "test_ndebug_enabled.h"
+#include "test_nk_arch.h"
+#include "test_nk_bits.h"
+#include "test_nk_bitarray.h"
+#include "test_nk_debug_disabled.h"
+#include "test_nk_debug_enabled.h"
 #include "test_nk_list.h"
 #include "test_nk_queue.h"
-#include "test_nqueue_pqueue.h"
-#include "test_ntask.h"
-#include "test_ntask_fiber.h"
 #include "ntestsuite.h"
 
 int main(void)
 {
-    test_narch();
+    test_nk_arch();
     test_nk_list();
-    test_ndebug_enabled();
-    test_ndebug_disabled();
-    test_nbits();
-    test_nbits_bitarray();
+    test_nk_debug_enabled();
+    test_nk_debug_disabled();
+    test_nk_bits();
+    test_nk_bitarray();
     test_nk_queue();
-    //test_nqueue_pqueue();
-    test_ntask_fiber();
-    test_ntask();
     
     return 0;
 }

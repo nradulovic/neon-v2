@@ -17,25 +17,25 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Tests for ndebug (DISABLED).
+ *  @brief       Tests for nk_arch
  *
  *  @addtogroup  module
  *  @{
  */
-/** @defgroup    mod_test_ndebug Tests for disabled ndebug
- *  @brief       Tests for disabled ndebug.
+/** @defgroup    mod_test_nk_arch Tests for nk_arch
+ *  @brief       Tests for nk_arch.
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
-#ifndef TEST_NDEBUG_DISABLED_H_
-#define TEST_NDEBUG_DISABLED_H_
+#ifndef TEST_NK_ARCH_H_
+#define TEST_NK_ARCH_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void test_ndebug_disabled(void);
+void test_nk_arch(void);
 
 #ifdef __cplusplus
 }
@@ -44,4 +44,4 @@ void test_ndebug_disabled(void);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif  /* TEST_NDEBUG_DISABLED_H_ */
+#endif  /* TEST_NK_ARCH_H_ */

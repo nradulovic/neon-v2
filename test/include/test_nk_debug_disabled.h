@@ -1,6 +1,6 @@
 /*
  * Neon
- * Copyright (C)  2018  REAL-TIME CONSULTING
+ * Copyright (C) 2018   REAL-TIME CONSULTING
  *
  * This program is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the Free
@@ -16,38 +16,26 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 /** @file
- *  @author      Developer name
- *  @brief       Template description header
+ *  @author      Nenad Radulovic
+ *  @brief       Tests for ndebug (DISABLED).
  *
  *  @addtogroup  module
  *  @{
  */
-/** @defgroup    mod_template Template
- *  @brief       Template.
+/** @defgroup    mod_test_ndebug Tests for disabled ndebug
+ *  @brief       Tests for disabled ndebug.
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
-
-#ifndef NEON_MODULE_TEMPLATE_H_
-#define NEON_MODULE_TEMPLATE_H_
-
-#include <stdint.h>
+#ifndef TEST_NK_DEBUG_DISABLED_H_
+#define TEST_NK_DEBUG_DISABLED_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-struct ntask;
-
-struct np_thread_dispatch
-{
-    struct ntask * current;
-};
-
-extern struct np_thread_dispatch ng_thread_dispatch;
-
-#define ng_current  ng_thread_dispath.current
+void test_nk_debug_disabled(void);
 
 #ifdef __cplusplus
 }
@@ -56,4 +44,4 @@ extern struct np_thread_dispatch ng_thread_dispatch;
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_MODULE_TEMPLATE_H_ */
+#endif  /* TEST_NK_DEBUG_DISABLED_H_ */

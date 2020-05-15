@@ -22,7 +22,7 @@
  *  @addtogroup  lib
  *  @{
  */
-/** @defgroup    lib_bits Common bitwise operations
+/** @defgroup    nk_bits Common bitwise operations
  *  @brief       Common bitwise operations.
  *
  *  @{
@@ -30,11 +30,8 @@
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_MODULE_BITS_H_
-#define NEON_MODULE_BITS_H_
-
-#include <stdbool.h>
-#include <stdint.h>
+#ifndef NK_BITS_H_
+#define NK_BITS_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,12 +48,13 @@ extern "C" {
  *              An array : type unspecified
  *  @mseffect
  */
-#define NBITS_ARRAY_SIZE(array) (sizeof(array) / sizeof(array[0]))
+#define NK_BITS__ARRAY_SIZE(array) 											\
+		(sizeof(array) / sizeof(array[0]))
 
 /** @brief      Returns the sizeof @c type in bits.
  *  @mseffect
  */
-#define NBITS_BIT_SIZE(type)    (sizeof(type) * 8u)    
+#define NK_BITS__BIT_SIZE(type)    		(sizeof(type) * 8u)
 
 /** @} */
 /*---------------------------------------------------------------------------*/
@@ -89,8 +87,8 @@ extern "C" {
  *              Float division  : 27 / 5 = 5.4
  *              Rounded division: 27 / 5 = 5
  */
-#define NBITS_DIVIDE_ROUND(numerator, denominator)                          \
-    (((numerator) + ((denominator) / 2u)) / (denominator))
+#define NK_BITS__DIVIDE_ROUND(numerator, denominator)                     	\
+		(((numerator) + ((denominator) / 2u)) / (denominator))
 
 /** @brief      Round up a division
  *  @param      numerator
@@ -117,8 +115,8 @@ extern "C" {
  *              Float division     : 27 / 5 = 5.4
  *              Rounded up division: 27 / 5 = 6
  */
-#define NBITS_DIVIDE_ROUNDUP(numerator, denominator)                        \
-    (((numerator) + (denominator) - 1u) / (denominator))
+#define NK_BITS__DIVIDE_ROUNDUP(numerator, denominator)                    	\
+		(((numerator) + (denominator) - 1u) / (denominator))
 
 /** @} */
 /*---------------------------------------------------------------------------*/
@@ -139,7 +137,7 @@ extern "C" {
  *              align: 00000100 = 4
  *              Result is 148.
  */
-#define NBITS_ALIGN(num, align) ((num) & ~((align) - 1u))
+#define NK_BITS__ALIGN(num, align) 		((num) & ~((align) - 1u))
 
 /** @brief      Do the alignment of @a num value as specified by @a align.
  *
@@ -156,8 +154,8 @@ extern "C" {
  *              align: 00000100 = 4
  *              Result is 152.
  */
-#define NBITS_ALIGN_UP(num, align)                                          \
-    (((num) + (align) - 1u) & ~((align) - 1u))
+#define NK_BITS__ALIGN_UP(num, align)                                      	\
+		(((num) + (align) - 1u) & ~((align) - 1u))
 
 /** @} */
 /*---------------------------------------------------------------------------*/
@@ -174,7 +172,7 @@ extern "C" {
  *  @note       The @c x argument has to be in 0 - 255 range.
  *  @mseffect
  */
-#define NBITS_LOG2_8(x)                                                     \
+#define NK_BITS__LOG2_8(x)                                                  \
     ((x) <   2u ? 0u :                                                      \
      ((x) <   4u ? 1u :                                                     \
       ((x) <   8u ? 2u :                                                    \
@@ -190,7 +188,7 @@ extern "C" {
  *  @{
  */
 
-#define NBITS_IS_POWEROF2(num)    										    \
+#define NK_BITS__IS_POWEROF2(num)    										\
     (((num) != 0u) && (((num) & ((num) - 1)) == 0u))
 
 /** @} */
@@ -201,5 +199,5 @@ extern "C" {
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_MODULE_BITS_H_ */
+#endif /* NK_BITS_H_ */
 

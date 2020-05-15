@@ -17,25 +17,25 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Tests for narch
+ *  @brief       Tests for nbits
  *
  *  @addtogroup  module
  *  @{
  */
-/** @defgroup    mod_test_narch Tests for narch
- *  @brief       Tests for narch.
+/** @defgroup    mod_test_bits Tests for nbits
+ *  @brief       Tests for nbits.
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
-#ifndef TEST_NARCH_H_
-#define TEST_NARCH_H_
+#ifndef TEST_NBITS_H_
+#define TEST_NBITS_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void test_narch(void);
+void test_nk_bits(void);
 
 #ifdef __cplusplus
 }
@@ -44,4 +44,4 @@ void test_narch(void);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif  /* TEST_NARCH_H_ */
+#endif  /* TEST_NBITS_H_ */

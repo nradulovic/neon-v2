@@ -40,7 +40,7 @@ NPLATFORM_INLINE
 void nsem_init(struct nsem * sem, uint32_t count)
 {
     sem->count = count;
-    npqueue_init(&sem->queue);
+    nk_sort_list__insert(&sem->queue);
     sem->state = NSEM_STATE_ACTIVE;
 }
 

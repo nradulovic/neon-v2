@@ -107,7 +107,7 @@ extern "C" {
 
 struct nlogger_instance
 {
-    struct nk_list list;
+    struct nk_list__node list;
     const char * name;
     uint8_t level;
 };

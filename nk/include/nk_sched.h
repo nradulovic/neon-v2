@@ -17,25 +17,52 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Tests for nbitarray
+ *  @brief       Task header
  *
- *  @addtogroup  module
+ *  @addtogroup  lib
  *  @{
  */
-/** @defgroup    mod_test_nbitarray Tests for nbitarray
- *  @brief       Tests for nbitarray.
+/** @defgroup    lib_task Task
+ *  @brief       Task
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
-#ifndef TEST_NBITARRAY_H_
-#define TEST_NBITARRAY_H_
+
+#ifndef NK_SCHED_H_
+#define NK_SCHED_H_
+
+#include <stdint.h>
+
+#include "nk_list.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-void test_nbits_bitarray(void);
+struct nk_sched__task_cb;
+
+typedef uint_fast8_t (nk_sched__task_fn)(void * ws, void * arg);
+
+typedef uint_fast8_t nk_sched__task_prio;
+
+struct nk_sched__task_cb;
+
+struct nk_sched__task_cb
+{
+    struct nk_list__node node;
+    nk_sched__task_fn * fn;
+    void * tls;
+    void * arg;
+};
+
+void nk_sched__task_init(
+		struct nk_sched__task_cb * tcb,
+		nk_sched__task_fn * task_fn,
+		void * tls,
+		void * arg);
+
+void nk_sched__task_ready(struct nk_sched__task_cb * tcb);
 
 #ifdef __cplusplus
 }
@@ -44,4 +71,4 @@ void test_nbits_bitarray(void);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif  /* TEST_NBITARRAY_H_ */
+#endif /* NK_SCHED_H_ */
