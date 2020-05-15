@@ -108,16 +108,13 @@ void nk_bitarray__indefinite_init(struct nk_bitarray__indefinite * ba, uint32_t 
 	ba->rows = rows;
 }
 
-#define BITARRAY__BIT_POSITIONS   	5u
-#define BITARRAY__BIT_MASK			0x1f
-
 void nk_bitarray__indefinite_set(struct nk_bitarray__indefinite * ba, uint_fast8_t a_bit)
 {
 	uint_fast8_t column_idx;
 	uint_fast8_t row_idx;
 
-	column_idx = a_bit >> BITARRAY__BIT_POSITIONS;
-	row_idx = a_bit & BITARRAY__BIT_MASK;
+	column_idx = a_bit / NK_BITS__BIT_SIZE(*ba->rows);
+	row_idx = a_bit % NK_BITS__BIT_SIZE(*ba->rows);
 
 	ba->rows[column_idx] |= 0x1u << row_idx;
 	ba->column |= 0x1u << column_idx;
@@ -128,8 +125,8 @@ void nk_bitarray__indefinite_clear(struct nk_bitarray__indefinite * ba, uint_fas
 	uint_fast8_t column_idx;
 	uint_fast8_t row_idx;
 
-	column_idx = a_bit >> BITARRAY__BIT_POSITIONS;
-	row_idx = a_bit & BITARRAY__BIT_MASK;
+	column_idx = a_bit / NK_BITS__BIT_SIZE(*ba->rows);
+	row_idx = a_bit % NK_BITS__BIT_SIZE(*ba->rows);
 
 	ba->rows[column_idx] &= ~(0x1u << row_idx);
 
@@ -145,7 +142,8 @@ uint_fast8_t nk_bitarray__indefinite_msbs(const struct nk_bitarray__indefinite *
 
 	column_idx = nk_arch_log2(ba->column);
 
-	msbs = (uint_fast8_t)(nk_arch_log2(ba->rows[column_idx]) + (column_idx << BITARRAY__BIT_POSITIONS));
+	msbs = (uint_fast8_t)(nk_arch_log2(ba->rows[column_idx]) +
+						 (column_idx * NK_BITS__BIT_SIZE(*ba->rows)));
 	return msbs;
 }
 
@@ -154,8 +152,8 @@ bool nk_bitarray__indefinite_is_set(const struct nk_bitarray__indefinite * ba, u
 	uint_fast8_t column_idx;
 	uint_fast8_t row_idx;
 
-	column_idx = a_bit >> BITARRAY__BIT_POSITIONS;
-	row_idx = a_bit & BITARRAY__BIT_MASK;
+	column_idx = a_bit / NK_BITS__BIT_SIZE(*ba->rows);
+	row_idx = a_bit % NK_BITS__BIT_SIZE(*ba->rows);
 
 	if ((ba->rows[column_idx] & (0x1u << row_idx)) != 0u) {
 		return true;
