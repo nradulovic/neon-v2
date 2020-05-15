@@ -27,164 +27,180 @@
  *
  *  @{
  */
-/*---------------------------------------------------------------------------*/
-
 
 #ifndef NEON_MODULE_TESTSUITE_H_
 #define NEON_MODULE_TESTSUITE_H_
 
+#include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
-
-#include "nport_platform.h"
-#include "nk_arch.h"
-#include "nlogger.h"
-
-#if defined(NEON_APP_CONFIG)
-#include "neon_app_config.h"
-#else
-#include "default_config.h"
-#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define NTESTSUITE_PRINT_RESULTS(a_fixture)                                 \
-	np_testsuite_print_results(&(a_fixture))
+#define NK_TESTSUITE_TEST(test_name)                                        \
+	{       																\
+    	.test_fn = test_name,                                 				\
+    	.name = # test_name                                                 \
+    }
 
-#define NTESTSUITE_PRINT_OVERVIEW()                                         \
-	np_testsuite_print_overview()
-
-#define NTESTSUITE_PRINT_HEADER()                                           \
-    nlogger_info("Build info: %s - %s\n", NPLATFORM_DATE, NPLATFORM_TIME);  \
-    nlogger_info("Port platform ID: %s\n", nplatform_id);                   \
-    nlogger_info("Port platform build: %s\n", nplatform_build);
-
+#define NK_TESTSUITE_TEST_TERMINATE()										\
+	{																		\
+		.test_fn = NULL,													\
+		.name = NULL														\
+	}
 
 #define NTESTSUITE_EXPECT_UINT(a_number)                                    \
-    do {\
-        union np_testsuite_test_val val; \
-        val.ui = (a_number); \
-        np_testsuite_expect(val, NP_TESTSUITE_TYPE_UINT); \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.ui = (a_number);                                                \
+        np_testsuite_expect(val, NP_TESTSUITE_TYPE_UINT);                   \
     } while (0)
 
 #define NTESTSUITE_EXPECT_INT(a_number)                                     \
-    do {\
-        union np_testsuite_test_val val; \
-        val.si = (a_number); \
-	    np_testsuite_expect(val, NP_TESTSUITE_TYPE_INT); \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.si = (a_number);                                                \
+	    np_testsuite_expect(val, NP_TESTSUITE_TYPE_INT);                    \
     } while (0)
 
 #define NTESTSUITE_EXPECT_PTR(a_pointer)                                    \
-    do {\
-        union np_testsuite_test_val val; \
-        val.ptr = (a_pointer); \
-        np_testsuite_expect(val, NP_TESTSUITE_TYPE_PTR); \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.ptr = (a_pointer);                                              \
+        np_testsuite_expect(val, NP_TESTSUITE_TYPE_PTR);                    \
+    } while (0)
+    
+#define NTESTSUITE_EXPECT_STR(a_string)                                     \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.str = (a_string);                                               \
+        np_testsuite_expect(val, NP_TESTSUITE_TYPE_STR);                    \
     } while (0)
 
 #define NTESTSUITE_EXPECT_BOOL(a_bool)                                      \
-    do {\
-        union np_testsuite_test_val val; \
-        val.b = (a_bool); \
-	    np_testsuite_expect(val, NP_TESTSUITE_TYPE_BOOL); \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.b = (a_bool);                                                   \
+	    np_testsuite_expect(val, NP_TESTSUITE_TYPE_BOOL);                   \
+    } while (0)
+
+#define NTESTSUITE_NOT_EXPECT_UINT(a_number)                                \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.ui = (a_number);                                                \
+        np_testsuite_expect(val, NP_TESTSUITE_TYPE_NOT_UINT);               \
+    } while (0)
+
+#define NTESTSUITE_NOT_EXPECT_INT(a_number)                                 \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.si = (a_number);                                                \
+	    np_testsuite_expect(val, NP_TESTSUITE_TYPE_NOT_INT);                \
+    } while (0)
+
+#define NTESTSUITE_NOT_EXPECT_PTR(a_pointer)                                \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.ptr = (a_pointer);                                              \
+        np_testsuite_expect(val, NP_TESTSUITE_TYPE_NOT_PTR);                \
     } while (0)
     
-#define NTESTSUITE_ACTUAL_UINT(a_number)                                       \
-    do {\
-        union np_testsuite_test_val val; \
-        val.ui = (a_number); \
-	    NP_TESTSUITE_EVALUATE(val); \
+#define NTESTSUITE_NOT_EXPECT_STR(a_string)                                 \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.str = (a_string);                                               \
+        np_testsuite_expect(val, NP_TESTSUITE_TYPE_NOT_STR);                \
     } while (0)
 
-#define NTESTSUITE_ACTUAL_INT(a_number)                                        \
-    do {\
-        union np_testsuite_test_val val; \
-        val.si = (a_number); \
-	    NP_TESTSUITE_EVALUATE(val); \
+#define NTESTSUITE_NOT_EXPECT_BOOL(a_bool)                                  \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.b = (a_bool);                                                   \
+	    np_testsuite_expect(val, NP_TESTSUITE_TYPE_NOT_BOOL);               \
+    } while (0)
+    
+#define NTESTSUITE_ACTUAL_UINT(a_number)                                    \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.ui = (a_number);                                                \
+	    np_testsuite_actual(__LINE__, (val));                         \
+    } while (0)
+
+#define NTESTSUITE_ACTUAL_INT(a_number)                                     \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.si = (a_number);                                                \
+	    np_testsuite_actual(__LINE__, (val));                         \
     } while (0)
                 
-#define NTESTSUITE_ACTUAL_PTR(a_pointer)                                        \
-    do {\
-        union np_testsuite_test_val val; \
-        val.ptr = (a_pointer); \
-        NP_TESTSUITE_EVALUATE(val); \
+#define NTESTSUITE_ACTUAL_PTR(a_pointer)                                    \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.ptr = (a_pointer);                                              \
+        np_testsuite_actual(__LINE__, (val));                         \
+    } while (0)
+    
+#define NTESTSUITE_ACTUAL_STR(a_string)                                     \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.str = (a_string);                                               \
+        np_testsuite_actual(__LINE__, (val));                         \
+    } while (0)
+    
+#define NTESTSUITE_ACTUAL_BOOL(a_bool)                                      \
+    do {                                                                    \
+        union np_testsuite_test_val val;                                    \
+        val.b = (a_bool);                                                   \
+        np_testsuite_actual(__LINE__, (val));                         \
     } while (0)
 
-#define NTESTSUITE_ACTUAL_BOOL(a_bool)                                       \
-    do {\
-        union np_testsuite_test_val val; \
-        val.b = (a_bool); \
-        NP_TESTSUITE_EVALUATE(val); \
-    } while (0)
-
-#define NTESTSUITE_FIXTURE(a_name, a_setup, a_teardown)                     \
-    struct np_testsuite_fixture a_name = {                                  \
-        .setup = a_setup,                                                   \
-        .teardown = a_teardown,                                             \
-        .name = # a_name,                                                   \
-        .total = 0u,                                                        \
-        .failed = 0u,                                                       \
-    }
-
-#define NP_TESTSUITE_EVALUATE(val)                                               \
-        if (np_testsuite_actual(NPLATFORM_LINE, (val))) { \
-            return; \
-        }
+#define NK_TESTSUITE_FIXTURE_NAME(a_name)									\
+		__FILE__ ":" # a_name
 
 enum np_testsuite_type
 {
     NP_TESTSUITE_TYPE_UINT,
     NP_TESTSUITE_TYPE_INT,
     NP_TESTSUITE_TYPE_PTR,
-    NP_TESTSUITE_TYPE_BOOL
+    NP_TESTSUITE_TYPE_BOOL,
+    NP_TESTSUITE_TYPE_STR,
+    NP_TESTSUITE_TYPE_NOT_UINT,
+    NP_TESTSUITE_TYPE_NOT_INT,
+    NP_TESTSUITE_TYPE_NOT_PTR,
+    NP_TESTSUITE_TYPE_NOT_BOOL,
+    NP_TESTSUITE_TYPE_NOT_STR,
 };
 
-struct np_testsuite_fixture
-{
-    void (* setup)(void);
-    void (* teardown)(void);
-    const char * name;
-    uint8_t total;
-    uint8_t failed;
-};
-
-#define NTESTSUITE_TEST(test_name) 											\
-	static void testsuite_ ## test_name(void); 								\
-	static struct np_testsuite_test test_name = { 							\
-		.test_fn = testsuite_ ## test_name, 								\
-		.name = # test_name, 												\
-		.file = NPLATFORM_FILE, 											\
-	};\
-	static void testsuite_ ## test_name(void)(void)
-
-struct np_testsuite_test
+struct nk_testsuite_test
 {
 	void (*test_fn)(void);
 	const char * name;
-	const char * file;
 };
 
 union np_testsuite_test_val
 {
 	uint32_t ui;
 	int32_t si;
-	void * ptr;
+	const void * ptr;
+    const char * str;
 	bool b;
 };
 
-#define NTESTSUITE_RUN(fixture, test) \
-		np_testsuite_run(&(fixture), &(test))
 
-void np_testsuite_print_overview(void);
+void nk_testsuite_run_tests(const struct nk_testsuite_test * array);
 
-void np_testsuite_print_results(const struct np_testsuite_fixture * fixture);
+void nk_testsuite_set_fixture(
+        void (* setup)(void),
+        void (* teardown)(void),
+        const char * name);
 
-void np_testsuite_run(struct np_testsuite_fixture * fixture,
-		const struct np_testsuite_test * test);
-void np_testsuite_expect(union np_testsuite_test_val value, enum np_testsuite_type type);
+void np_testsuite_expect(
+        union np_testsuite_test_val value, 
+        enum np_testsuite_type type);
 
-bool np_testsuite_actual(uint32_t line, union np_testsuite_test_val value);
+void np_testsuite_actual(uint32_t line, union np_testsuite_test_val value);
 
 #ifdef __cplusplus
 }
@@ -192,5 +208,4 @@ bool np_testsuite_actual(uint32_t line, union np_testsuite_test_val value);
 
 /** @} */
 /** @} */
-/*---------------------------------------------------------------------------*/
 #endif /* NEON_MODULE_TESTSUITE_H_ */

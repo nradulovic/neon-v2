@@ -24,7 +24,7 @@
 
 static struct nbitarray g_instance;
 
-NTESTSUITE_TEST(test_none_init)
+static void test_none_init(void)
 {
     struct nbitarray a_instance;
 
@@ -37,28 +37,28 @@ NTESTSUITE_TEST(test_none_init)
     nbitarray_init(&a_instance);
 }
 
-NTESTSUITE_TEST(test_empty_set_0)
+static void test_empty_set_0(void)
 {
     NTESTSUITE_EXPECT_UINT(0);
     nbitarray_set(&g_instance, 0u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_msbs(&g_instance));
 }
 
-NTESTSUITE_TEST(test_empty_set_get_1)
+static void test_empty_set_get_1(void)
 {
     NTESTSUITE_EXPECT_UINT(1);
     nbitarray_set(&g_instance, 1u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_msbs(&g_instance));
 }
 
-NTESTSUITE_TEST(test_empty_set_get_31)
+static void test_empty_set_get_31(void)
 {
     NTESTSUITE_EXPECT_UINT(31);
     nbitarray_set(&g_instance, 31u);
     NTESTSUITE_ACTUAL_UINT(nbitarray_msbs(&g_instance));
 }
 
-NTESTSUITE_TEST(test_empty_set_m_0)
+static void test_empty_set_m_0(void)
 {
     NTESTSUITE_EXPECT_UINT(0);
     nbitarray_set(&g_instance, 0u);
@@ -66,7 +66,7 @@ NTESTSUITE_TEST(test_empty_set_m_0)
     NTESTSUITE_ACTUAL_UINT(nbitarray_msbs(&g_instance));
 }
 
-NTESTSUITE_TEST(test_empty_set_m_1)
+static void test_empty_set_m_1(void)
 {
     NTESTSUITE_EXPECT_UINT(1);
     nbitarray_set(&g_instance, 0u);
@@ -74,7 +74,7 @@ NTESTSUITE_TEST(test_empty_set_m_1)
     NTESTSUITE_ACTUAL_UINT(nbitarray_msbs(&g_instance));
 }
 
-NTESTSUITE_TEST(test_empty_set_m_31)
+static void test_empty_set_m_31(void)
 {
     NTESTSUITE_EXPECT_UINT(31);
     nbitarray_set(&g_instance, 0u);
@@ -83,7 +83,7 @@ NTESTSUITE_TEST(test_empty_set_m_31)
     NTESTSUITE_ACTUAL_UINT(nbitarray_msbs(&g_instance));
 }
 
-NTESTSUITE_TEST(test_empty_set_clr_get_1)
+static void test_empty_set_clr_get_1(void)
 {
     NTESTSUITE_EXPECT_UINT(0);
     nbitarray_set(&g_instance, 0u);
@@ -92,7 +92,7 @@ NTESTSUITE_TEST(test_empty_set_clr_get_1)
     NTESTSUITE_ACTUAL_UINT(nbitarray_msbs(&g_instance));
 }
 
-NTESTSUITE_TEST(test_empty_set_clr_get_31)
+static void test_empty_set_clr_get_31(void)
 {
     NTESTSUITE_EXPECT_UINT(1);
     nbitarray_set(&g_instance, 0u);
@@ -102,7 +102,7 @@ NTESTSUITE_TEST(test_empty_set_clr_get_31)
     NTESTSUITE_ACTUAL_UINT(nbitarray_msbs(&g_instance));
 }
 
-NTESTSUITE_TEST(test_empty_set_clr_get_31_m)
+static void test_empty_set_clr_get_31_m(void)
 {
     NTESTSUITE_EXPECT_UINT(31);
     nbitarray_set(&g_instance, 0u);
@@ -117,24 +117,43 @@ static void setup_empty(void)
     nbitarray_init(&g_instance);
 }
 
+static void test_nbits_bitarray_none()
+{
+	static const struct nk_testsuite_test none_tests[] =
+	{
+		NK_TESTSUITE_TEST(test_none_init),
+		NK_TESTSUITE_TEST_TERMINATE()
+	};
+
+	nk_testsuite_set_fixture(NULL, NULL, NK_TESTSUITE_FIXTURE_NAME(none));
+	nk_testsuite_run_tests(none_tests);
+}
+
+static void test_nbits_bitarray_empty(void)
+{
+	static const struct nk_testsuite_test empty_tests[] =
+	{
+		NK_TESTSUITE_TEST(test_empty_set_0),
+		NK_TESTSUITE_TEST(test_empty_set_get_1),
+		NK_TESTSUITE_TEST(test_empty_set_get_31),
+		NK_TESTSUITE_TEST(test_empty_set_m_0),
+		NK_TESTSUITE_TEST(test_empty_set_m_1),
+		NK_TESTSUITE_TEST(test_empty_set_m_31),
+		NK_TESTSUITE_TEST(test_empty_set_clr_get_1),
+		NK_TESTSUITE_TEST(test_empty_set_clr_get_31),
+		NK_TESTSUITE_TEST(test_empty_set_clr_get_31_m),
+		NK_TESTSUITE_TEST_TERMINATE()
+	};
+
+	nk_testsuite_set_fixture(
+			setup_empty, NULL, NK_TESTSUITE_FIXTURE_NAME(empty));
+	nk_testsuite_run_tests(empty_tests);
+}
+
 void test_nbits_bitarray(void)
 {
-    NTESTSUITE_FIXTURE(none, NULL, NULL);
-    NTESTSUITE_FIXTURE(empty, setup_empty, NULL);
-
-    NTESTSUITE_RUN(none, test_none_init);
-    NTESTSUITE_PRINT_RESULTS(none);   
-
-    NTESTSUITE_RUN(empty, test_empty_set_0);
-    NTESTSUITE_RUN(empty, test_empty_set_get_1);
-    NTESTSUITE_RUN(empty, test_empty_set_get_31);
-    NTESTSUITE_RUN(empty, test_empty_set_m_0);
-    NTESTSUITE_RUN(empty, test_empty_set_m_1);
-    NTESTSUITE_RUN(empty, test_empty_set_m_31);
-    NTESTSUITE_RUN(empty, test_empty_set_clr_get_1);
-    NTESTSUITE_RUN(empty, test_empty_set_clr_get_31);
-    NTESTSUITE_RUN(empty, test_empty_set_clr_get_31_m);
-    NTESTSUITE_PRINT_RESULTS(empty);   
+	test_nbits_bitarray_none();
+	test_nbits_bitarray_empty();
 }
 
 

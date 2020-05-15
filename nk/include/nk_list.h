@@ -247,15 +247,10 @@ void nk_list_add_before(struct nk_list * current, struct nk_list * node);
  */
 void nk_list_remove(struct nk_list * node);
 
-/** @brief      Check if a list @a node is empty or not.
- *  @param[in]  node
- *              A list sentinel.
- *  @return     List state:
- *  @retval     true - The list is empty.
- *  @retval     false - The list contains at least one node.
- */
-#define NLIST_DLL_IS_EMPTY(a_node)                                          \
-    ((a_node)->next == (a_node))
+inline bool nk_list_is_empty(struct nk_list * node)
+{
+	return nk_list_next(node) == node ? true : false;
+}
 
 #ifdef __cplusplus
 }

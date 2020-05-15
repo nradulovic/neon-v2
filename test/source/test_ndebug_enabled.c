@@ -16,13 +16,18 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
-#include <stddef.h>
+#define NDEBUG_IS_ENABLED 1
 
 #include "test_ndebug_enabled.h"
+
+#include <stdint.h>
+
 #include "ndebug.h"
 #include "ntestsuite.h"
+
+#if (NDEBUG_IS_ENABLED != 1)
+#error "Failed to enable debug for this translation module."
+#endif
 
 /*
  * Override assert macro in C standard assert.h and set g_assert_state to
@@ -34,7 +39,7 @@
 
 static int g_assert_state;
 
-NTESTSUITE_TEST(test_empty_obligation)
+static void test_empty_obligation(void)
 {
     uint32_t n = 0;
 
@@ -43,46 +48,46 @@ NTESTSUITE_TEST(test_empty_obligation)
     NTESTSUITE_ACTUAL_UINT(n);
 }
 
-NTESTSUITE_TEST(test_empty_require)
+static void test_empty_require(void)
 {
-    NTESTSUITE_EXPECT_BOOL(true);
+    NTESTSUITE_EXPECT_INT(1);
     NREQUIRE(true);
-    NTESTSUITE_ACTUAL_BOOL(g_assert_state);
+    NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
-NTESTSUITE_TEST(test_empty_ensure)
+static void test_empty_ensure(void)
 {
-    NTESTSUITE_EXPECT_BOOL(true);
+    NTESTSUITE_EXPECT_INT(1);
     NENSURE(true);
-    NTESTSUITE_ACTUAL_BOOL(g_assert_state);
+    NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
-NTESTSUITE_TEST(test_empty_internal)
+static void test_empty_internal(void)
 {
-    NTESTSUITE_EXPECT_BOOL(true);
+    NTESTSUITE_EXPECT_INT(1);
     NASSERT_INTERNAL(true);
-    NTESTSUITE_ACTUAL_BOOL(g_assert_state);
+    NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
-NTESTSUITE_TEST(test_empty_f_require)
+static void test_empty_f_require(void)
 {
     NTESTSUITE_EXPECT_BOOL(false);
     NREQUIRE(false);
-    NTESTSUITE_ACTUAL_BOOL(g_assert_state);
+    NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
-NTESTSUITE_TEST(test_empty_f_ensure)
+static void test_empty_f_ensure(void)
 {
     NTESTSUITE_EXPECT_BOOL(false);
     NENSURE(false);
-    NTESTSUITE_ACTUAL_BOOL(g_assert_state);
+    NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
-NTESTSUITE_TEST(test_empty_f_internal)
+static void test_empty_f_internal(void)
 {
     NTESTSUITE_EXPECT_BOOL(false);
     NASSERT_INTERNAL(false);
-    NTESTSUITE_ACTUAL_BOOL(g_assert_state);
+    NTESTSUITE_ACTUAL_INT(g_assert_state);
 }
 
 static void setup_empty(void)
@@ -92,15 +97,21 @@ static void setup_empty(void)
 
 void test_ndebug_enabled(void)
 {
-    NTESTSUITE_FIXTURE(empty, setup_empty, NULL);
-    NTESTSUITE_RUN(empty, test_empty_obligation);
-    NTESTSUITE_RUN(empty, test_empty_require);
-    NTESTSUITE_RUN(empty, test_empty_ensure);
-    NTESTSUITE_RUN(empty, test_empty_internal);
-    NTESTSUITE_RUN(empty, test_empty_f_require);
-    NTESTSUITE_RUN(empty, test_empty_f_ensure);
-    NTESTSUITE_RUN(empty, test_empty_f_internal);
-    NTESTSUITE_PRINT_RESULTS(empty);   
+	static const struct nk_testsuite_test tests_empty[] =
+	{
+		NK_TESTSUITE_TEST(test_empty_obligation),
+		NK_TESTSUITE_TEST(test_empty_require),
+		NK_TESTSUITE_TEST(test_empty_ensure),
+		NK_TESTSUITE_TEST(test_empty_internal),
+		NK_TESTSUITE_TEST(test_empty_f_require),
+		NK_TESTSUITE_TEST(test_empty_f_ensure),
+		NK_TESTSUITE_TEST(test_empty_f_internal),
+		NK_TESTSUITE_TEST_TERMINATE()
+	};
+
+	nk_testsuite_set_fixture(
+			setup_empty, NULL, NK_TESTSUITE_FIXTURE_NAME(empty));
+	nk_testsuite_run_tests(tests_empty);
 }
 
 

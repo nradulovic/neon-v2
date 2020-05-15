@@ -131,7 +131,7 @@ static NFIBER(fiber_wait_0(struct nfiber * fb))
     NFIBER_END();
 }
 
-NTESTSUITE_TEST(test_none_empty)
+static void test_none_empty(void)
 {
     struct nfiber empty;
 
@@ -140,7 +140,7 @@ NTESTSUITE_TEST(test_none_empty)
     NTESTSUITE_ACTUAL_UINT(nfiber_dispatch(fiber_empty(&empty)));
 }
 
-NTESTSUITE_TEST(test_none_exit)
+static void test_none_exit(void)
 {
     struct nfiber exit;
 
@@ -150,7 +150,7 @@ NTESTSUITE_TEST(test_none_exit)
     NTESTSUITE_ACTUAL_UINT(g_output);
 }
 
-NTESTSUITE_TEST(test_none_until)
+static void test_none_until(void)
 {
     struct nfiber until;
 
@@ -160,7 +160,7 @@ NTESTSUITE_TEST(test_none_until)
     NTESTSUITE_ACTUAL_UINT(g_output);
 }
 
-NTESTSUITE_TEST(test_none_while)
+static void test_none_while(void)
 {
     struct nfiber while_ctx;
 
@@ -170,7 +170,7 @@ NTESTSUITE_TEST(test_none_while)
     NTESTSUITE_ACTUAL_UINT(g_output);
 }
 
-NTESTSUITE_TEST(test_none_wait)
+static void test_none_wait(void)
 {
     struct nfiber wait;
 
@@ -180,7 +180,7 @@ NTESTSUITE_TEST(test_none_wait)
     NTESTSUITE_ACTUAL_UINT(g_output);
 }
 
-NTESTSUITE_TEST(test_none_yield)
+static void test_none_yield(void)
 {
     struct nfiber yielded_0;
     struct nfiber yielded_1;
@@ -207,15 +207,19 @@ static void setup_none(void)
 
 void test_ntask_fiber(void)
 {
-    NTESTSUITE_FIXTURE(none, setup_none, NULL);
-    NTESTSUITE_RUN(none, test_none_empty);
-    NTESTSUITE_RUN(none, test_none_exit);
-    NTESTSUITE_RUN(none, test_none_until);
-    NTESTSUITE_RUN(none, test_none_while);
-    NTESTSUITE_RUN(none, test_none_wait);
-    NTESTSUITE_RUN(none, test_none_yield);
-    NTESTSUITE_RUN(none, test_none_yield);
-    NTESTSUITE_PRINT_RESULTS(none);   
+	static const struct nk_testsuite_test none_tests[] =
+	{
+		NK_TESTSUITE_TEST(test_none_empty),
+		NK_TESTSUITE_TEST(test_none_exit),
+	    NK_TESTSUITE_TEST(test_none_until),
+	    NK_TESTSUITE_TEST(test_none_while),
+	    NK_TESTSUITE_TEST(test_none_wait),
+	    NK_TESTSUITE_TEST(test_none_yield),
+	    NK_TESTSUITE_TEST(test_none_yield),
+		NK_TESTSUITE_TEST_TERMINATE()
+	};
+    nk_testsuite_set_fixture(setup_none, NULL, NK_TESTSUITE_FIXTURE_NAME(none));
+    nk_testsuite_run_tests(none_tests);
 }
 
 

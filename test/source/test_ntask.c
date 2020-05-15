@@ -40,21 +40,21 @@ static NTASK(task_yield_fn(struct ntask * task, void * arg))
     NTASK_END();
 }
 
-NTESTSUITE_TEST(test_init_state)
+static void test_init_state(void)
 {
     NTESTSUITE_EXPECT_UINT(NTASK_DORMANT);
     ntask_create(&g_task_create, task_create_fn, NULL, 0);
     NTESTSUITE_ACTUAL_UINT(ntask_state(g_task_create));
 }
 
-NTESTSUITE_TEST(test_init_priority)
+static void test_init_priority(void)
 {
     NTESTSUITE_EXPECT_UINT(1);
     ntask_create(&g_task_create, task_create_fn, NULL, 1);
     NTESTSUITE_ACTUAL_UINT(ntask_priority(g_task_create));
 }
 
-NTESTSUITE_TEST(test_yield)
+static void test_yield(void)
 {
     NTESTSUITE_EXPECT_UINT(NTASK_DORMANT);
     ntask_create(&g_task_yield, task_yield_fn, NULL, 2);
@@ -65,12 +65,15 @@ NTESTSUITE_TEST(test_yield)
 
 void test_ntask(void)
 {
-    NTESTSUITE_FIXTURE(none, NULL, NULL);
-
-    NTESTSUITE_RUN(none, test_init_state);
-    NTESTSUITE_RUN(none, test_init_priority);
-    NTESTSUITE_RUN(none, test_yield);
-    NTESTSUITE_PRINT_RESULTS(none);   
+	static const struct nk_testsuite_test none_tests[] =
+	{
+		NK_TESTSUITE_TEST(test_init_state),
+		NK_TESTSUITE_TEST(test_init_priority),
+		NK_TESTSUITE_TEST(test_yield),
+		NK_TESTSUITE_TEST_TERMINATE()
+	};
+	nk_testsuite_set_fixture(NULL, NULL, NK_TESTSUITE_FIXTURE_NAME(none));
+	nk_testsuite_run_tests(none_tests);
 }
 
 

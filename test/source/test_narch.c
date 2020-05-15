@@ -23,55 +23,55 @@
 #include "nk_arch.h"
 #include "ntestsuite.h"
 
-NTESTSUITE_TEST(test_none_exp2_0)
+static void test_none_exp2_0(void)
 {
     NTESTSUITE_EXPECT_UINT(0x01u);
     NTESTSUITE_ACTUAL_UINT(nk_arch_exp2(0));
 }
 
-NTESTSUITE_TEST(test_none_exp2_1)
+static void test_none_exp2_1(void)
 {
     NTESTSUITE_EXPECT_UINT(0x02u);
     NTESTSUITE_ACTUAL_UINT(nk_arch_exp2(1));
 }
 
-NTESTSUITE_TEST(test_none_exp2_7)
+static void test_none_exp2_7(void)
 {
     NTESTSUITE_EXPECT_UINT(0x80u);
     NTESTSUITE_ACTUAL_UINT(nk_arch_exp2(7));
 }
 
-NTESTSUITE_TEST(test_none_exp2_31)
+static void test_none_exp2_31(void)
 {
     NTESTSUITE_EXPECT_UINT(0x80000000);
     NTESTSUITE_ACTUAL_UINT(nk_arch_exp2(31));
 }
 
-NTESTSUITE_TEST(test_none_log2_1)
+static void test_none_log2_1(void)
 {
     NTESTSUITE_EXPECT_UINT(0);
     NTESTSUITE_ACTUAL_UINT(nk_arch_log2(0x01));
 }
 
-NTESTSUITE_TEST(test_none_log2_3)
+static void test_none_log2_3(void)
 {
     NTESTSUITE_EXPECT_UINT(1);
     NTESTSUITE_ACTUAL_UINT(nk_arch_log2(0x03));
 }
 
-NTESTSUITE_TEST(test_none_log2_UINT8_MAX)
+static void test_none_log2_UINT8_MAX(void)
 {
     NTESTSUITE_EXPECT_UINT(7);
     NTESTSUITE_ACTUAL_UINT(nk_arch_log2(0xff));
 }
 
-NTESTSUITE_TEST(test_none_log2_UINT16_MAX)
+static void test_none_log2_UINT16_MAX(void)
 {
     NTESTSUITE_EXPECT_UINT(15);
     NTESTSUITE_ACTUAL_UINT(nk_arch_log2(0xffff));
 }
 
-NTESTSUITE_TEST(test_none_log2_UINT32_MAX)
+static void test_none_log2_UINT32_MAX(void)
 {
     NTESTSUITE_EXPECT_UINT(31);
     NTESTSUITE_ACTUAL_UINT(nk_arch_log2(0xffffffff));
@@ -79,17 +79,21 @@ NTESTSUITE_TEST(test_none_log2_UINT32_MAX)
 
 void test_narch(void)
 {
-    NTESTSUITE_FIXTURE(none, NULL, NULL);
-    NTESTSUITE_RUN(none, test_none_exp2_0);
-    NTESTSUITE_RUN(none, test_none_exp2_1);
-    NTESTSUITE_RUN(none, test_none_exp2_7);
-    NTESTSUITE_RUN(none, test_none_exp2_31);
-    NTESTSUITE_RUN(none, test_none_log2_1);
-    NTESTSUITE_RUN(none, test_none_log2_3);
-    NTESTSUITE_RUN(none, test_none_log2_UINT8_MAX);
-    NTESTSUITE_RUN(none, test_none_log2_UINT16_MAX);
-    NTESTSUITE_RUN(none, test_none_log2_UINT32_MAX);
-    NTESTSUITE_PRINT_RESULTS(none);
+    static const struct nk_testsuite_test tests[] = {
+    		NK_TESTSUITE_TEST(test_none_exp2_0),
+			NK_TESTSUITE_TEST(test_none_exp2_1),
+			NK_TESTSUITE_TEST(test_none_exp2_7),
+			NK_TESTSUITE_TEST(test_none_exp2_31),
+			NK_TESTSUITE_TEST(&test_none_log2_1),
+			NK_TESTSUITE_TEST(&test_none_log2_3),
+			NK_TESTSUITE_TEST(&test_none_log2_UINT8_MAX),
+			NK_TESTSUITE_TEST(&test_none_log2_UINT16_MAX),
+			NK_TESTSUITE_TEST(&test_none_log2_UINT32_MAX),
+			NK_TESTSUITE_TEST_TERMINATE()
+    };
+
+    nk_testsuite_set_fixture(NULL, NULL, NK_TESTSUITE_FIXTURE_NAME(none));
+    nk_testsuite_run_tests(tests);
 }
 
 

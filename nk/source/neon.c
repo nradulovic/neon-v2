@@ -78,6 +78,26 @@ void nk_list_remove(struct nk_list * node)
     node->prev = node;
 }
 
+extern inline bool nk_list_is_empty(struct nk_list * node);
+
+#include "nk_queue.h"
+
+extern inline void nk_queue_index_init(struct nk_queue_index * qb, size_t items);
+
+extern inline size_t nk_queue_index_push_fifo(struct nk_queue_index * qb);
+
+extern inline size_t nk_queue_index_push_lifo(struct nk_queue_index * qb);
+
+extern inline size_t nk_queue_index_get(struct nk_queue_index * qb);
+
+extern inline size_t nk_queue_index_peek_head(const struct nk_queue_index * qb);
+
+extern inline size_t nk_queue_index_peek_tail(const struct nk_queue_index * qb);
+
+extern inline size_t nk_queue_index_empty(const struct nk_queue_index * qb);
+
+extern inline size_t nk_queue_index_size(const struct nk_queue_index * qb);
+
 #include "nqueue_pqueue.h"
 
 void npqueue_sentinel_shift(struct npqueue_sentinel * sentinel)

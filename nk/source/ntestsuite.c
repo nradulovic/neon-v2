@@ -16,147 +16,211 @@
  * with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <string.h>
+#include <stdio.h>
+
 #include "ntestsuite.h"
 
 struct np_testsuite_context
 {
-    const struct np_testsuite_test * test;
+    const struct nk_testsuite_test * test;
+    struct np_testsuite_fixture
+    {
+        void (* setup)(void);
+        void (* teardown)(void);
+        const char * name;
+    } fixture;
     struct np_testsuite_test_case
     {
         union np_testsuite_test_val expected;
         enum np_testsuite_type type;
     } test_case;
     uint16_t total_tests;
-    uint16_t total_failed_tests;
-    bool should_exit;
 };
 
 static struct np_testsuite_context g_np_testsuite_context;
 
-static void testsuite_test_failed(uint32_t line)
-{
-    (void)line; /* Suppress compiler warning when nlogger is not enabled. */
-                /*
-                 * When nlogger is not enabled, all the arguments which are 
-                 * normally used by nlogger will not be used. This will make
-                 * the compiler complain about unused variables.
-                 */
-    nlogger_err("Test FAILED at %s() in %s:%u\n", 
-        g_np_testsuite_context.test->name, 
-        g_np_testsuite_context.test->file, line);
-}
+static void testsuite_run(const struct nk_testsuite_test * test);
 
-void np_testsuite_print_overview(void)
+void nk_testsuite_run_tests(const struct nk_testsuite_test * array)
 {
-	if (g_np_testsuite_context.total_failed_tests != 0u) {
-		nlogger_info("\n\n  Total tests  : %u\n  Total FAILED : %u\n",
-			g_np_testsuite_context.total_tests,
-			g_np_testsuite_context.total_failed_tests);
-	} else {
-		nlogger_info("\n\n  Total tests  : %u\n",
-			g_np_testsuite_context.total_tests);
+	if (array == NULL) {
+		return;
 	}
+	printf("Fixture: %s\n", g_np_testsuite_context.fixture.name);
+
+    for (uint32_t i = 0u;
+		(array[i].test_fn != NULL) && (array[i].name != NULL);
+		i++) {
+        testsuite_run(&array[i]);
+    }
+    printf("Total tests: %u\nOK\n\n",
+            g_np_testsuite_context.total_tests);
 }
 
-void np_testsuite_print_results(const struct np_testsuite_fixture * fixture)
+void nk_testsuite_set_fixture(
+        void (* setup)(void),
+        void (* teardown)(void),
+        const char * name)
 {
-	if (fixture->failed != 0u) {
-		nlogger_info("  Total  %u\n  FAILED %u\n", fixture->total,
-				fixture->failed);
-	} else {
-		nlogger_info("  Total %u  OK\n", fixture->total);
-	}
+    g_np_testsuite_context.fixture.setup = setup;
+    g_np_testsuite_context.fixture.teardown = teardown;
+    g_np_testsuite_context.fixture.name = name;
 }
 
-void np_testsuite_expect(union np_testsuite_test_val value, enum np_testsuite_type type)
+void np_testsuite_expect(
+        union np_testsuite_test_val value, 
+        enum np_testsuite_type type)
 {
-	g_np_testsuite_context.test_case.type = type;
+    g_np_testsuite_context.test_case.type = type;
     g_np_testsuite_context.test_case.expected = value;
 }
 
-void np_testsuite_run(struct np_testsuite_fixture * fixture,
-		const struct np_testsuite_test * test)
+void np_testsuite_actual(uint32_t line, union np_testsuite_test_val actual)
 {
-	g_np_testsuite_context.test = test;
-	g_np_testsuite_context.should_exit = false;
-    if (fixture->total == 0u) {
-        nlogger_info("Test %s:%s\n", test->file, fixture->name);
-    }
-	g_np_testsuite_context.total_tests++;
-	fixture->total++;
-
-	if (fixture->setup) {
-		nlogger_debug("D: Setup fixture %s for test %s.\n", fixture->name,
-				test->name);
-		fixture->setup();
-	}
-    test->test_fn();
-	if (g_np_testsuite_context.should_exit == true) {
-		g_np_testsuite_context.total_failed_tests++;
-		fixture->failed++;
-	}
-	if (fixture->teardown) {
-		nlogger_debug("D: Teardown fixture %s for test %s\n",
-				fixture->name,
-				test->name);
-		fixture->teardown();
-	}
-}
-
-bool np_testsuite_actual(uint32_t line, union np_testsuite_test_val actual)
-{
-	bool retval = false;
+    bool should_block = false;
 
     switch (g_np_testsuite_context.test_case.type) {
         case NP_TESTSUITE_TYPE_BOOL:
             if (actual.b !=
                 g_np_testsuite_context.test_case.expected.b) {
-                testsuite_test_failed(line);
-		        nlogger_err("  Expected : %s\n"
-                            "  Actual   : %s\n",
-                            g_np_testsuite_context.test_case.expected.b ?
-                                "true" : "false",
-                            actual.b ?
-                                "true" : "false");
-		        retval = true;
+                should_block = true;
             }
             break;
         case NP_TESTSUITE_TYPE_UINT:
             if (actual.ui !=
                 g_np_testsuite_context.test_case.expected.ui) {
-                testsuite_test_failed(line);
-		        nlogger_err("  Expected : %u\n"
-                            "  Actual   : %u\n",
-                            g_np_testsuite_context.test_case.expected.ui,
-                            actual.ui);
-		        retval = true;
+                should_block = true;
             }
             break;
         case NP_TESTSUITE_TYPE_INT:
             if (actual.si !=
                 g_np_testsuite_context.test_case.expected.si) {
-                testsuite_test_failed(line);
-		        nlogger_err("  Expected : %d\n"
-                            "  Actual   : %d\n",
-                            g_np_testsuite_context.test_case.expected.si,
-                            actual.si);
-		        retval = true;
+                should_block = true;
             }
             break;
         case NP_TESTSUITE_TYPE_PTR:
             if (actual.ptr !=
                 g_np_testsuite_context.test_case.expected.ptr) {
-                testsuite_test_failed(line);
-		        nlogger_err("  Expected : %p\n"
-                            "  Actual   : %p\n",
-                            g_np_testsuite_context.test_case.expected.ptr,
-                            actual.ptr);
-		        retval = true;
+                should_block = true;
             }
             break;
-        default:
-        	break;
+        case NP_TESTSUITE_TYPE_STR:
+            if (strcmp(actual.str,
+                g_np_testsuite_context.test_case.expected.str) != 0) {
+                should_block = true;
+            }
+            break;
+        case NP_TESTSUITE_TYPE_NOT_BOOL:
+            if (actual.b ==
+                g_np_testsuite_context.test_case.expected.b) {
+                should_block = true;
+            }
+            break;
+        case NP_TESTSUITE_TYPE_NOT_UINT:
+            if (actual.ui ==
+                g_np_testsuite_context.test_case.expected.ui) {
+                should_block = true;
+            }
+            break;
+        case NP_TESTSUITE_TYPE_NOT_INT:
+            if (actual.si ==
+                g_np_testsuite_context.test_case.expected.si) {
+                should_block = true;
+            }
+            break;
+        case NP_TESTSUITE_TYPE_NOT_PTR:
+            if (actual.ptr ==
+                g_np_testsuite_context.test_case.expected.ptr) {
+                should_block = true;
+            }
+            break;
+        case NP_TESTSUITE_TYPE_NOT_STR:
+            if (strcmp(actual.str,
+                g_np_testsuite_context.test_case.expected.str) == 0) {
+                should_block = true;
+            }
+            break;
     }
-    g_np_testsuite_context.should_exit = retval;
-    return retval;
+    
+    if (should_block) {
+        printf("\nTest FAILED at %s() in %s:%u\n",
+                g_np_testsuite_context.test->name,
+                g_np_testsuite_context.fixture.name,
+                line);
+        
+        switch (g_np_testsuite_context.test_case.type) {
+            case NP_TESTSUITE_TYPE_BOOL:
+                printf("Expected: %u\nActual  : %u\n",
+                        g_np_testsuite_context.test_case.expected.b,
+                        actual.b);
+                break;
+            case NP_TESTSUITE_TYPE_UINT:
+                printf("Expected: %u\nActual  : %u\n",
+                        g_np_testsuite_context.test_case.expected.ui,
+                        actual.ui);
+                break;
+            case NP_TESTSUITE_TYPE_INT:
+                printf("Expected: %d\nActual  : %d\n",
+                        g_np_testsuite_context.test_case.expected.si,
+                        actual.si);
+                break;
+            case NP_TESTSUITE_TYPE_PTR:
+                printf("Expected: %p\nActual  : %p\n",
+                        g_np_testsuite_context.test_case.expected.ptr,
+                        actual.ptr);
+                break;
+            case NP_TESTSUITE_TYPE_STR:
+                printf("Expected: %s\nActual   : %s\n",
+                        g_np_testsuite_context.test_case.expected.str,
+                        actual.str);
+                break;
+            case NP_TESTSUITE_TYPE_NOT_BOOL:
+                printf("Unexpected: %u\nActual    : %u\n",
+                        g_np_testsuite_context.test_case.expected.b,
+                        actual.b);
+                break;
+            case NP_TESTSUITE_TYPE_NOT_UINT:
+                printf("Unexpected: %u\nActual    : %u\n",
+                        g_np_testsuite_context.test_case.expected.ui,
+                        actual.ui);
+                break;
+            case NP_TESTSUITE_TYPE_NOT_INT:
+                printf("Unexpected: %d\nActual    : %d\n",
+                        g_np_testsuite_context.test_case.expected.si,
+                        actual.si);
+                break;
+            case NP_TESTSUITE_TYPE_NOT_PTR:
+                printf("Unexpected: %p\nActual    : %p\n",
+                        g_np_testsuite_context.test_case.expected.ptr,
+                        actual.ptr);
+                break;
+            case NP_TESTSUITE_TYPE_NOT_STR:
+                printf("Unexpected: %s\nActual    : %s\n",
+                        g_np_testsuite_context.test_case.expected.str,
+                        actual.str);
+                break;
+        }
+        printf("Test FAILED\n\nTotal tests: %d\n",
+				g_np_testsuite_context.total_tests);
+	
+		while (true) {
+			;
+		}
+    }
 }
+
+static void testsuite_run(const struct nk_testsuite_test * test)
+{
+    g_np_testsuite_context.test = test;
+    g_np_testsuite_context.total_tests++;
+
+    if (g_np_testsuite_context.fixture.setup) {
+        g_np_testsuite_context.fixture.setup();
+    }
+    test->test_fn();
+    if (g_np_testsuite_context.fixture.teardown) {
+        g_np_testsuite_context.fixture.teardown();
+    }
+}
+

@@ -66,7 +66,7 @@ struct npqueue_sentinel
  *  @api
  */
 #define npqueue_sentinel_is_empty(a_sentinel)                              \
-    NLIST_DLL_IS_EMPTY(&(a_sentinel)->list)
+    	nk_list_is_empty(&(a_sentinel)->list)
 
 #define npqueue_sentinel_head(a_sentinel)                                  \
     npqueue_next(a_sentinel)

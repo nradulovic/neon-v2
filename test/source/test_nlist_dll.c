@@ -40,25 +40,25 @@ static struct node_list g_node_0;
 
 static struct nk_list g_sentinel;
 
-NTESTSUITE_TEST(test_empty_is_empty)
+static void test_empty_is_empty(void)
 {
     NTESTSUITE_EXPECT_BOOL(true);
-    NTESTSUITE_ACTUAL_BOOL(NLIST_DLL_IS_EMPTY(&g_sentinel));
+    NTESTSUITE_ACTUAL_BOOL(nk_list_is_empty(&g_sentinel));
 }
 
-NTESTSUITE_TEST(test_empty_next)
+static void test_empty_next(void)
 {
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nk_list_next(&g_sentinel));
 }
 
-NTESTSUITE_TEST(test_empty_prev)
+static void test_empty_prev(void)
 {
     NTESTSUITE_EXPECT_PTR(&g_sentinel);
     NTESTSUITE_ACTUAL_PTR(nk_list_prev(&g_sentinel));
 }
 
-NTESTSUITE_TEST(test_empty_add_after)
+static void test_empty_add_after(void)
 {
     nk_list_add_after(&g_sentinel, &g_node_a.list);
 
@@ -75,7 +75,7 @@ NTESTSUITE_TEST(test_empty_add_after)
     NTESTSUITE_ACTUAL_PTR(nk_list_prev(&g_node_a.list));
 }
 
-NTESTSUITE_TEST(test_empty_add_before)
+static void test_empty_add_before(void)
 {
     nk_list_add_before(&g_sentinel, &g_node_a.list);
 
@@ -92,7 +92,7 @@ NTESTSUITE_TEST(test_empty_add_before)
     NTESTSUITE_ACTUAL_PTR(nk_list_prev(&g_node_a.list));
 }
 
-NTESTSUITE_TEST(test_empty_add_head)
+static void test_empty_add_head(void)
 {
     nk_list_add_head(&g_sentinel, &g_node_a.list);
    
@@ -109,7 +109,7 @@ NTESTSUITE_TEST(test_empty_add_head)
     NTESTSUITE_ACTUAL_PTR(nk_list_prev(&g_node_a.list));
 }
 
-NTESTSUITE_TEST(test_empty_add_tail)
+static void test_empty_add_tail(void)
 {
     nk_list_add_tail(&g_sentinel, &g_node_a.list);
     
@@ -126,32 +126,32 @@ NTESTSUITE_TEST(test_empty_add_tail)
     NTESTSUITE_ACTUAL_PTR(nk_list_prev(&g_node_a.list));
 }
 
-NTESTSUITE_TEST(test_empty_remove)
+static void test_empty_remove(void)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     nk_list_remove(&g_sentinel);
-    NTESTSUITE_ACTUAL_BOOL(NLIST_DLL_IS_EMPTY(&g_sentinel));
+    NTESTSUITE_ACTUAL_BOOL(nk_list_is_empty(&g_sentinel));
 }
 
-NTESTSUITE_TEST(test_single_is_empty)
+static void test_single_is_empty(void)
 {
     NTESTSUITE_EXPECT_BOOL(false);
-    NTESTSUITE_ACTUAL_BOOL(NLIST_DLL_IS_EMPTY(&g_sentinel));
+    NTESTSUITE_ACTUAL_BOOL(nk_list_is_empty(&g_sentinel));
 }
 
-NTESTSUITE_TEST(test_single_next)
+static void test_single_next(void)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nk_list_next(&g_sentinel));
 }
 
-NTESTSUITE_TEST(test_single_prev)
+static void test_single_prev(void)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nk_list_prev(&g_sentinel));
 }
 
-NTESTSUITE_TEST(test_single_add_after)
+static void test_single_add_after(void)
 {
     nk_list_add_after(&g_sentinel, &g_node_b.list);
     
@@ -174,7 +174,7 @@ NTESTSUITE_TEST(test_single_add_after)
     NTESTSUITE_ACTUAL_PTR(nk_list_prev(&g_node_b.list));
 }
 
-NTESTSUITE_TEST(test_single_add_before)
+static void test_single_add_before(void)
 {
     nk_list_add_before(&g_sentinel, &g_node_b.list);
     
@@ -197,7 +197,7 @@ NTESTSUITE_TEST(test_single_add_before)
     NTESTSUITE_ACTUAL_PTR(nk_list_prev(&g_node_b.list));
 }
 
-NTESTSUITE_TEST(test_single_add_head)
+static void test_single_add_head(void)
 {
     nk_list_add_head(&g_sentinel, &g_node_b.list);
     
@@ -220,7 +220,7 @@ NTESTSUITE_TEST(test_single_add_head)
     NTESTSUITE_ACTUAL_PTR(nk_list_prev(&g_node_b.list));
 }
 
-NTESTSUITE_TEST(test_single_add_tail)
+static void test_single_add_tail(void)
 {
     nk_list_add_tail(&g_sentinel, &g_node_b.list);
     
@@ -243,32 +243,32 @@ NTESTSUITE_TEST(test_single_add_tail)
     NTESTSUITE_ACTUAL_PTR(nk_list_prev(&g_node_b.list));
 }
 
-NTESTSUITE_TEST(test_single_remove)
+static void test_single_remove(void)
 {
     nk_list_remove(&g_node_a.list);
     NTESTSUITE_EXPECT_BOOL(true);
-    NTESTSUITE_ACTUAL_BOOL(NLIST_DLL_IS_EMPTY(&g_sentinel));
+    NTESTSUITE_ACTUAL_BOOL(nk_list_is_empty(&g_sentinel));
 }
 
-NTESTSUITE_TEST(test_abcd_is_empty)
+static void test_abcd_is_empty(void)
 {
     NTESTSUITE_EXPECT_BOOL(false);
-    NTESTSUITE_ACTUAL_BOOL(NLIST_DLL_IS_EMPTY(&g_sentinel));
+    NTESTSUITE_ACTUAL_BOOL(nk_list_is_empty(&g_sentinel));
 }
 
-NTESTSUITE_TEST(test_abcd_next)
+static void test_abcd_next(void)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_a.list);
     NTESTSUITE_ACTUAL_PTR(nk_list_next(&g_sentinel));
 }
 
-NTESTSUITE_TEST(test_abcd_prev)
+static void test_abcd_prev(void)
 {
     NTESTSUITE_EXPECT_PTR(&g_node_d.list);
     NTESTSUITE_ACTUAL_PTR(nk_list_prev(&g_sentinel));
 }
 
-NTESTSUITE_TEST(test_abcd_add_after)
+static void test_abcd_add_after(void)
 {
     nk_list_add_after(&g_sentinel, &g_node_0.list);
     
@@ -291,7 +291,7 @@ NTESTSUITE_TEST(test_abcd_add_after)
     NTESTSUITE_ACTUAL_PTR(nk_list_prev(&g_node_0.list));
 }
 
-NTESTSUITE_TEST(test_abcd_add_before)
+static void test_abcd_add_before(void)
 {
     nk_list_add_before(&g_sentinel, &g_node_0.list);
     
@@ -314,7 +314,7 @@ NTESTSUITE_TEST(test_abcd_add_before)
     NTESTSUITE_ACTUAL_PTR(nk_list_prev(&g_node_0.list));
 }
 
-NTESTSUITE_TEST(test_abcd_add_head)
+static void test_abcd_add_head(void)
 {
     nk_list_add_head(&g_sentinel, &g_node_0.list);
     
@@ -337,7 +337,7 @@ NTESTSUITE_TEST(test_abcd_add_head)
     NTESTSUITE_ACTUAL_PTR(nk_list_prev(&g_node_0.list));
 }
 
-NTESTSUITE_TEST(test_abcd_add_tail)
+static void test_abcd_add_tail(void)
 {
     nk_list_add_tail(&g_sentinel, &g_node_0.list);
     
@@ -360,14 +360,14 @@ NTESTSUITE_TEST(test_abcd_add_tail)
     NTESTSUITE_ACTUAL_PTR(nk_list_prev(&g_node_0.list));
 }
 
-NTESTSUITE_TEST(test_abcd_remove)
+static void test_abcd_remove(void)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     nk_list_remove(&g_node_a.list);
     nk_list_remove(&g_node_b.list);
     nk_list_remove(&g_node_c.list);
     nk_list_remove(&g_node_d.list);
-    NTESTSUITE_ACTUAL_BOOL(NLIST_DLL_IS_EMPTY(&g_sentinel));
+    NTESTSUITE_ACTUAL_BOOL(nk_list_is_empty(&g_sentinel));
 }
 
 static void setup_empty(void)
@@ -405,41 +405,68 @@ static void setup_abcd(void)
     nk_list_add_tail(&g_sentinel, &g_node_d.list);
 }
 
+static void test_nk_list_empty(void)
+{
+	static const struct nk_testsuite_test tests_empty[] =
+	{
+		NK_TESTSUITE_TEST(test_empty_is_empty),
+		NK_TESTSUITE_TEST(test_empty_next),
+		NK_TESTSUITE_TEST(test_empty_prev),
+		NK_TESTSUITE_TEST(test_empty_add_after),
+		NK_TESTSUITE_TEST(test_empty_add_before),
+		NK_TESTSUITE_TEST(test_empty_add_head),
+		NK_TESTSUITE_TEST(test_empty_add_tail),
+		NK_TESTSUITE_TEST(test_empty_remove),
+		NK_TESTSUITE_TEST_TERMINATE()
+	};
+	nk_testsuite_set_fixture(
+			setup_empty, NULL, NK_TESTSUITE_FIXTURE_NAME(empty));
+	nk_testsuite_run_tests(tests_empty);
+}
+
+static void test_nk_list_single(void)
+{
+	static const struct nk_testsuite_test tests_single[] =
+	{
+		NK_TESTSUITE_TEST(test_single_is_empty),
+		NK_TESTSUITE_TEST(test_single_next),
+		NK_TESTSUITE_TEST(test_single_prev),
+		NK_TESTSUITE_TEST(test_single_add_after),
+		NK_TESTSUITE_TEST(test_single_add_before),
+		NK_TESTSUITE_TEST(test_single_add_head),
+		NK_TESTSUITE_TEST(test_single_add_tail),
+		NK_TESTSUITE_TEST(test_single_remove),
+		NK_TESTSUITE_TEST_TERMINATE()
+	};
+	nk_testsuite_set_fixture(
+			setup_single, NULL, NK_TESTSUITE_FIXTURE_NAME(single));
+	nk_testsuite_run_tests(tests_single);
+}
+
+static void test_nk_list_abcd(void)
+{
+	static const struct nk_testsuite_test tests_abcd[] =
+	{
+		NK_TESTSUITE_TEST(test_abcd_is_empty),
+		NK_TESTSUITE_TEST(test_abcd_next),
+		NK_TESTSUITE_TEST(test_abcd_prev),
+		NK_TESTSUITE_TEST(test_abcd_add_after),
+		NK_TESTSUITE_TEST(test_abcd_add_before),
+		NK_TESTSUITE_TEST(test_abcd_add_head),
+		NK_TESTSUITE_TEST(test_abcd_add_tail),
+		NK_TESTSUITE_TEST(test_abcd_remove),
+		NK_TESTSUITE_TEST_TERMINATE()
+	};
+	nk_testsuite_set_fixture(
+			setup_abcd, NULL, NK_TESTSUITE_FIXTURE_NAME(abcd));
+	nk_testsuite_run_tests(tests_abcd);
+}
+
 void test_nk_list(void)
 {
-    NTESTSUITE_FIXTURE(empty, setup_empty, NULL);
-    NTESTSUITE_FIXTURE(single, setup_single, NULL);
-    NTESTSUITE_FIXTURE(abcd, setup_abcd, NULL);
-
-    NTESTSUITE_RUN(empty, test_empty_is_empty);
-    NTESTSUITE_RUN(empty, test_empty_next);
-    NTESTSUITE_RUN(empty, test_empty_prev);
-    NTESTSUITE_RUN(empty, test_empty_add_after);
-    NTESTSUITE_RUN(empty, test_empty_add_before);
-    NTESTSUITE_RUN(empty, test_empty_add_head);
-    NTESTSUITE_RUN(empty, test_empty_add_tail);
-    NTESTSUITE_RUN(empty, test_empty_remove);
-    NTESTSUITE_PRINT_RESULTS(empty);   
-
-    NTESTSUITE_RUN(single, test_single_is_empty);
-    NTESTSUITE_RUN(single, test_single_next);
-    NTESTSUITE_RUN(single, test_single_prev);
-    NTESTSUITE_RUN(single, test_single_add_after);
-    NTESTSUITE_RUN(single, test_single_add_before);
-    NTESTSUITE_RUN(single, test_single_add_head);
-    NTESTSUITE_RUN(single, test_single_add_tail);
-    NTESTSUITE_RUN(single, test_single_remove);
-    NTESTSUITE_PRINT_RESULTS(single);   
-    
-    NTESTSUITE_RUN(abcd, test_abcd_is_empty);
-    NTESTSUITE_RUN(abcd, test_abcd_next);
-    NTESTSUITE_RUN(abcd, test_abcd_prev);
-    NTESTSUITE_RUN(abcd, test_abcd_add_after);
-    NTESTSUITE_RUN(abcd, test_abcd_add_before);
-    NTESTSUITE_RUN(abcd, test_abcd_add_head);
-    NTESTSUITE_RUN(abcd, test_abcd_add_tail);
-    NTESTSUITE_RUN(abcd, test_abcd_remove);
-    NTESTSUITE_PRINT_RESULTS(abcd);   
+	test_nk_list_empty();
+	test_nk_list_single();
+	test_nk_list_abcd();
 }
 
 

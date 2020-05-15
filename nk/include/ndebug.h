@@ -47,12 +47,8 @@
 extern "C" {
 #endif
 
-#if defined(NCONFIG_ENABLE_DEBUG) && (NCONFIG_ENABLE_DEBUG == 1)
+#if !defined(NDEBUG_IS_ENABLED)
 #define NDEBUG_IS_ENABLED 1
-#else
-/** @brief      Macro that returns current ndebug configuration
- */
-#define NDEBUG_IS_ENABLED 0
 #endif
 
 /*---------------------------------------------------------------------------*/
@@ -77,14 +73,22 @@ extern "C" {
  *              Expression : C expression : condition which must be 'true'.
  *  @api
  */
+#if (NDEBUG_IS_ENABLED == 1)
 #define NREQUIRE(expr)                  assert(expr)
+#else
+#define NREQUIRE(expr)                  (void)0
+#endif
 
 /** @brief      Make sure the callee has fulfilled all contract postconditions
  *  @param      expr
  *              Expression : C expression : condition which must be 'true'.
  *  @api
  */
+#if (NDEBUG_IS_ENABLED == 1)
 #define NENSURE(expr)                   assert(expr)
+#else
+#define NENSURE(expr)                   (void)0
+#endif
 
 /**@} */
 /*---------------------------------------------------------------------------*/
@@ -98,7 +102,11 @@ extern "C" {
  *              Expression : C expression : condition which must be 'true'.
  *  @api
  */
+#if (NDEBUG_IS_ENABLED == 1)
 #define NASSERT_INTERNAL(expr)          assert(expr)
+#else
+#define NASSERT_INTERNAL(expr)          (void)0
+#endif
 
 /**@} */
 /*---------------------------------------------------------------------------*/

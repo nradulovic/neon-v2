@@ -22,7 +22,7 @@
 #include "test_ndebug_disabled.h"
 #include "test_ndebug_enabled.h"
 #include "test_nk_list.h"
-#include "test_nqueue_lqueue.h"
+#include "test_nk_queue.h"
 #include "test_nqueue_pqueue.h"
 #include "test_ntask.h"
 #include "test_ntask_fiber.h"
@@ -30,18 +30,16 @@
 
 int main(void)
 {
-    NTESTSUITE_PRINT_HEADER();
     test_narch();
     test_nk_list();
     test_ndebug_enabled();
     test_ndebug_disabled();
     test_nbits();
     test_nbits_bitarray();
-    test_nqueue_lqueue();
-    test_nqueue_pqueue();
+    test_nk_queue();
+    //test_nqueue_pqueue();
     test_ntask_fiber();
     test_ntask();
-    NTESTSUITE_PRINT_OVERVIEW();
     
     return 0;
 }

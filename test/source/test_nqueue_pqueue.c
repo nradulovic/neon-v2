@@ -28,7 +28,7 @@ static struct npqueue g_node1;
 static struct npqueue g_node2;
 static struct npqueue g_node3;
 
-NTESTSUITE_TEST(test_none_node_init_ptr)
+static void test_none_node_init_ptr)
 {
     struct npqueue node;
 
@@ -36,7 +36,7 @@ NTESTSUITE_TEST(test_none_node_init_ptr)
     NTESTSUITE_ACTUAL_PTR(npqueue_init(&node, 1));
 }
 
-NTESTSUITE_TEST(test_none_node_init_prio)
+static void test_none_node_init_prio)
 {
     struct npqueue node;
 
@@ -45,7 +45,7 @@ NTESTSUITE_TEST(test_none_node_init_prio)
     NTESTSUITE_ACTUAL_UINT(npqueue_priority(&node));
 }
 
-NTESTSUITE_TEST(test_none_node_init_next)
+static void test_none_node_init_next)
 {
     struct npqueue node;
     
@@ -54,7 +54,7 @@ NTESTSUITE_TEST(test_none_node_init_next)
     NTESTSUITE_ACTUAL_PTR(npqueue_next(&node));
 }
 
-NTESTSUITE_TEST(test_none_node_term_prio)
+static void test_none_node_term_prio)
 {
     struct npqueue node;
 
@@ -64,7 +64,7 @@ NTESTSUITE_TEST(test_none_node_term_prio)
     NTESTSUITE_ACTUAL_UINT(npqueue_priority(&node));
 }
 
-NTESTSUITE_TEST(test_none_node_term_next)
+static void test_none_node_term_next)
 {
     struct npqueue node;
 
@@ -74,20 +74,20 @@ NTESTSUITE_TEST(test_none_node_term_next)
     NTESTSUITE_ACTUAL_PTR(npqueue_next(&node));
 }
 
-NTESTSUITE_TEST(test_empty_sentinel_init)
+static void test_empty_sentinel_init)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(npqueue_sentinel_is_empty(&g_queue));
 }
 
-NTESTSUITE_TEST(test_empty_sentinel_term)
+static void test_empty_sentinel_term)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     npqueue_sentinel_term(&g_queue);
     NTESTSUITE_ACTUAL_BOOL(npqueue_sentinel_is_empty(&g_queue));
 }
 
-NTESTSUITE_TEST(test_empty_insert_fifo_is_empty)
+static void test_empty_insert_fifo_is_empty)
 {
     struct npqueue node;
     
@@ -97,7 +97,7 @@ NTESTSUITE_TEST(test_empty_insert_fifo_is_empty)
     NTESTSUITE_ACTUAL_BOOL(npqueue_sentinel_is_empty(&g_queue));
 }
 
-NTESTSUITE_TEST(test_empty_insert_fifo_head)
+static void test_empty_insert_fifo_head)
 {
     struct npqueue node;
     
@@ -107,7 +107,7 @@ NTESTSUITE_TEST(test_empty_insert_fifo_head)
     NTESTSUITE_ACTUAL_PTR(npqueue_sentinel_head(&g_queue));
 }
 
-NTESTSUITE_TEST(test_empty_insert_sort_is_empty)
+static void test_empty_insert_sort_is_empty)
 {
     struct npqueue node;
     
@@ -117,7 +117,7 @@ NTESTSUITE_TEST(test_empty_insert_sort_is_empty)
     NTESTSUITE_ACTUAL_BOOL(npqueue_sentinel_is_empty(&g_queue));
 }
 
-NTESTSUITE_TEST(test_empty_insert_sort_head)
+static void test_empty_insert_sort_head)
 {
     struct npqueue node;
     
@@ -127,26 +127,26 @@ NTESTSUITE_TEST(test_empty_insert_sort_head)
     NTESTSUITE_ACTUAL_PTR(npqueue_sentinel_head(&g_queue));
 }
 
-NTESTSUITE_TEST(test_single_is_last)
+static void test_single_is_last)
 {
     NTESTSUITE_EXPECT_BOOL(false);
     NTESTSUITE_ACTUAL_BOOL(npqueue_sentinel_is_empty(&g_queue));
 }
 
-NTESTSUITE_TEST(test_single_first)
+static void test_single_first)
 {
     NTESTSUITE_EXPECT_PTR(&g_node1);
     NTESTSUITE_ACTUAL_PTR(npqueue_sentinel_head(&g_queue));
 }
 
-NTESTSUITE_TEST(test_single_remove)
+static void test_single_remove)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     npqueue_remove(&g_node1);
     NTESTSUITE_ACTUAL_BOOL(npqueue_sentinel_is_empty(&g_queue));
 }
 
-NTESTSUITE_TEST(test_single_insert_fifo_head)
+static void test_single_insert_fifo_head)
 {
     struct npqueue node;
 
@@ -156,7 +156,7 @@ NTESTSUITE_TEST(test_single_insert_fifo_head)
     NTESTSUITE_ACTUAL_PTR(npqueue_sentinel_head(&g_queue));
 }
 
-NTESTSUITE_TEST(test_single_insert_sort_head)
+static void test_single_insert_sort_head)
 {
     struct npqueue node;
 
@@ -166,19 +166,19 @@ NTESTSUITE_TEST(test_single_insert_sort_head)
     NTESTSUITE_ACTUAL_PTR(npqueue_sentinel_head(&g_queue));
 }
 
-NTESTSUITE_TEST(test_multi_is_empty)
+static void test_multi_is_empty)
 {
     NTESTSUITE_EXPECT_BOOL(false);
     NTESTSUITE_ACTUAL_BOOL(npqueue_sentinel_is_empty(&g_queue));
 }
 
-NTESTSUITE_TEST(test_multi_first)
+static void test_multi_first)
 {
     NTESTSUITE_EXPECT_PTR(&g_node3);
     NTESTSUITE_ACTUAL_PTR(npqueue_sentinel_head(&g_queue));
 }
 
-NTESTSUITE_TEST(test_multi_remove)
+static void test_multi_remove)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     npqueue_remove(&g_node1);
@@ -187,7 +187,7 @@ NTESTSUITE_TEST(test_multi_remove)
     NTESTSUITE_ACTUAL_BOOL(npqueue_sentinel_is_empty(&g_queue));
 }
 
-NTESTSUITE_TEST(test_multi_insert_fifo_head)
+static void test_multi_insert_fifo_head)
 {
     struct npqueue node;
 
@@ -197,7 +197,7 @@ NTESTSUITE_TEST(test_multi_insert_fifo_head)
     NTESTSUITE_ACTUAL_PTR(npqueue_sentinel_head(&g_queue));
 }
 
-NTESTSUITE_TEST(test_multi_insert_sort_head)
+static void test_multi_insert_sort_head)
 {
     struct npqueue node;
 
@@ -207,13 +207,13 @@ NTESTSUITE_TEST(test_multi_insert_sort_head)
     NTESTSUITE_ACTUAL_PTR(npqueue_sentinel_head(&g_queue));
 }
 
-NTESTSUITE_TEST(test_multi_sort_first)
+static void test_multi_sort_first)
 {
     NTESTSUITE_EXPECT_PTR(&g_node3);
     NTESTSUITE_ACTUAL_PTR(&g_node3);
 }
 
-NTESTSUITE_TEST(test_multi_sort_duplicate)
+static void test_multi_sort_duplicate)
 {
     struct npqueue node3_1;
 
@@ -223,7 +223,7 @@ NTESTSUITE_TEST(test_multi_sort_duplicate)
     NTESTSUITE_ACTUAL_PTR(&g_node3);
 }
 
-NTESTSUITE_TEST(test_multi_sort_middle_duplicate)
+static void test_multi_sort_middle_duplicate)
 {
     struct npqueue node2_1;
 

@@ -19,11 +19,12 @@
 #include "test_nbits.h"
 
 #include <stdint.h>
+#include <stddef.h>
 
 #include "nbits.h"
 #include "ntestsuite.h"
 
-NTESTSUITE_TEST(test_none_array_size)
+static void test_none_array_size(void)
 {
     char small_array[1];
     char big_array[10];
@@ -35,7 +36,7 @@ NTESTSUITE_TEST(test_none_array_size)
     NTESTSUITE_ACTUAL_UINT(NBITS_ARRAY_SIZE(big_array));
 }
 
-NTESTSUITE_TEST(test_none_bit_size)
+static void test_none_bit_size(void)
 {
     uint8_t small_var;
     uint32_t big_var;
@@ -47,7 +48,7 @@ NTESTSUITE_TEST(test_none_bit_size)
     NTESTSUITE_ACTUAL_UINT(NBITS_BIT_SIZE(big_var));
 }
 
-NTESTSUITE_TEST(test_none_divide_round)
+static void test_none_divide_round(void)
 {
     NTESTSUITE_EXPECT_UINT(15);
     NTESTSUITE_ACTUAL_UINT(NBITS_DIVIDE_ROUND(15, 1));
@@ -59,7 +60,7 @@ NTESTSUITE_TEST(test_none_divide_round)
     NTESTSUITE_ACTUAL_UINT(NBITS_DIVIDE_ROUND(28, 5));
 }
 
-NTESTSUITE_TEST(test_none_divide_roundup)
+static void test_none_divide_roundup(void)
 {
     NTESTSUITE_EXPECT_UINT(15);
     NTESTSUITE_ACTUAL_UINT(NBITS_DIVIDE_ROUNDUP(15, 1));
@@ -71,25 +72,25 @@ NTESTSUITE_TEST(test_none_divide_roundup)
     NTESTSUITE_ACTUAL_UINT(NBITS_DIVIDE_ROUNDUP(28, 5));
 }
 
-NTESTSUITE_TEST(test_none_align)
+static void test_none_align(void)
 {
     NTESTSUITE_EXPECT_UINT(148);
     NTESTSUITE_ACTUAL_UINT(NBITS_ALIGN(149, 4));
 }
 
-NTESTSUITE_TEST(test_none_alignup)
+static void test_none_alignup(void)
 {
     NTESTSUITE_EXPECT_UINT(152);
     NTESTSUITE_ACTUAL_UINT(NBITS_ALIGN_UP(149, 4));
 }
 
-NTESTSUITE_TEST(test_none_log2_0)
+static void test_none_log2_0(void)
 {
     NTESTSUITE_EXPECT_UINT(0);
     NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(0));
 }
 
-NTESTSUITE_TEST(test_none_log2_x)
+static void test_none_log2_x(void)
 {
     NTESTSUITE_EXPECT_UINT(0);
     NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(1));
@@ -113,25 +114,25 @@ NTESTSUITE_TEST(test_none_log2_x)
     NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(64));
 }
 
-NTESTSUITE_TEST(test_none_log2_UINT32_MAX)
+static void test_none_log2_UINT32_MAX(void)
 {
     NTESTSUITE_EXPECT_UINT(7);
     NTESTSUITE_ACTUAL_UINT(NBITS_LOG2_8(UINT32_MAX));
 }
 
-NTESTSUITE_TEST(test_none_is_powerof2_0)
+static void test_none_is_powerof2_0(void)
 {
     NTESTSUITE_EXPECT_BOOL(false);
     NTESTSUITE_ACTUAL_BOOL(NBITS_IS_POWEROF2(0));
 }
 
-NTESTSUITE_TEST(test_none_is_powerof2_1)
+static void test_none_is_powerof2_1(void)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(NBITS_IS_POWEROF2(1));
 }
 
-NTESTSUITE_TEST(test_none_is_powerof2_4)
+static void test_none_is_powerof2_4(void)
 {
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(NBITS_IS_POWEROF2(4));
@@ -139,20 +140,24 @@ NTESTSUITE_TEST(test_none_is_powerof2_4)
 
 void test_nbits(void)
 {
-    NTESTSUITE_FIXTURE(none, NULL, NULL);
-    NTESTSUITE_RUN(none, test_none_array_size);
-    NTESTSUITE_RUN(none, test_none_bit_size);
-    NTESTSUITE_RUN(none, test_none_divide_round);
-    NTESTSUITE_RUN(none, test_none_divide_roundup);
-    NTESTSUITE_RUN(none, test_none_align);
-    NTESTSUITE_RUN(none, test_none_alignup);
-    NTESTSUITE_RUN(none, test_none_log2_0);
-    NTESTSUITE_RUN(none, test_none_log2_x);
-    NTESTSUITE_RUN(none, test_none_log2_UINT32_MAX);
-    NTESTSUITE_RUN(none, test_none_is_powerof2_0);
-    NTESTSUITE_RUN(none, test_none_is_powerof2_1);
-    NTESTSUITE_RUN(none, test_none_is_powerof2_4);
-    NTESTSUITE_PRINT_RESULTS(none);   
+	static const struct nk_testsuite_test none_tests[] =
+	{
+		NK_TESTSUITE_TEST(test_none_array_size),
+		NK_TESTSUITE_TEST(test_none_bit_size),
+		NK_TESTSUITE_TEST(test_none_divide_round),
+		NK_TESTSUITE_TEST(test_none_divide_roundup),
+		NK_TESTSUITE_TEST(test_none_align),
+		NK_TESTSUITE_TEST(test_none_alignup),
+		NK_TESTSUITE_TEST(test_none_log2_0),
+		NK_TESTSUITE_TEST(test_none_log2_x),
+		NK_TESTSUITE_TEST(test_none_log2_UINT32_MAX),
+		NK_TESTSUITE_TEST(test_none_is_powerof2_0),
+		NK_TESTSUITE_TEST(test_none_is_powerof2_1),
+		NK_TESTSUITE_TEST(test_none_is_powerof2_4),
+		NK_TESTSUITE_TEST_TERMINATE()
+	};
+    nk_testsuite_set_fixture(NULL, NULL, NK_TESTSUITE_FIXTURE_NAME(none));
+    nk_testsuite_run_tests(none_tests);
 }
 
 

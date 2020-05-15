@@ -35,7 +35,7 @@
 extern "C" {
 #endif
 
-void test_nqueue_lqueue(void);
+void test_nk_queue(void);
 
 #ifdef __cplusplus
 }
