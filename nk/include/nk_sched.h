@@ -32,37 +32,52 @@
 #ifndef NK_SCHED_H_
 #define NK_SCHED_H_
 
-#include <stdint.h>
-
-#include "nk_list.h"
+#include "nk_bitarray.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-struct nk_sched__task_cb;
+struct nk_task__cb;
 
-typedef uint_fast8_t (nk_sched__task_fn)(void * ws, void * arg);
-
-typedef uint_fast8_t nk_sched__task_prio;
-
-struct nk_sched__task_cb;
-
-struct nk_sched__task_cb
+struct nk_ready_queue__indefinite
 {
-    struct nk_list__node node;
-    nk_sched__task_fn * fn;
-    void * tls;
-    void * arg;
+	struct nk_bitarray__indefinite * bitarray;
+	struct nk_task__cb * task_cb;
 };
 
-void nk_sched__task_init(
-		struct nk_sched__task_cb * tcb,
-		nk_sched__task_fn * task_fn,
-		void * tls,
-		void * arg);
+#define NK_READY_QUEUE__DEFINITE_T(no_tasks) \
+		{ \
+			struct nk_sched__indefinite__ready_queue indefinite; \
+			struct /* unnamed */ NK_BITARRAY__DEFINITE(no_tasks) bitarray; \
+			struct nk_task__cb * task_cb[no_tasks]; \
+		}
 
-void nk_sched__task_ready(struct nk_sched__task_cb * tcb);
+#define NK_READY_QUEUE__TO_INDEFINITE(rq) \
+		(&(rq)->indefinite)
+
+#define NK_READY_QUEUE__DEFINITE_INIT(rqd) \
+		nk_ready_queue__indefinite__init(	\
+				NK_READY_QUEUE__TO_INDEFINITE(rqd), \
+				&(rqd)->bitarray, 			\
+				&(rqd)->task_cb[0])
+
+void nk_ready_queue__indefinite__init(
+		struct nk_ready_queue__indefinite * rq,
+		struct nk_bitarray__indefinite * bitarray,
+		struct nk_task__cb * task_cb);
+
+void nk_ready_queue__indefinite__ready(
+		struct nk_ready_queue__indefinite * rq,
+		struct nk_task__cb * task_cb,
+		uint_fast8_t prio);
+
+void nk_ready_queue__indefinite__block(
+		struct nk_ready_queue__indefinite * rq,
+		uint_fast8_t prio);
+
+struct nk_task__cb * nk_ready_queue__indefinite__get(
+		const struct nk_ready_queue__indefinite * rq);
 
 #ifdef __cplusplus
 }

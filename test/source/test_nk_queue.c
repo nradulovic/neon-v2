@@ -29,22 +29,16 @@
 #define TEST_PREDEFINED_ID_3 			4u
 #define TEST_ITEM_ID 					234u
 
-struct my_queue_base NK_QUEUE__INDEFINITE(uint8_t);
-struct my_queue_type NK_QUEUE__DEFINITE_FROM_INDEFINITE(struct my_queue_base, uint8_t, QUEUE_SIZE);
-
-static struct my_queue_type g_test_queue;
+static struct nk_queue * g_test_queue;
 
 static void test_none_init(void)
 {
-    struct my_queue_type NK_QUEUE__DEFINITE(uint8_t, 16) my_queue;
-
     /* NOTE:
      * Compile time test only. Ensure that the expected is equal to actual
      * value.
      */
     NTESTSUITE_EXPECT_BOOL(true);
     NTESTSUITE_ACTUAL_BOOL(true);
-    NK_QUEUE__DEFINITE_INIT(&my_queue);
 }
 
 static void test_empty_empty(void)
@@ -52,7 +46,7 @@ static void test_empty_empty(void)
 	size_t empty = 0u;
 
     NTESTSUITE_EXPECT_UINT(QUEUE_SIZE);
-    NK_QUEUE__DEFINITE_EMPTY(&g_test_queue, &empty);
+    empty = nk_queue__empty(g_test_queue);
     NTESTSUITE_ACTUAL_UINT((uint32_t)empty);
 }
 
@@ -61,7 +55,7 @@ static void test_empty_size(void)
 	size_t size = 0u;
 
     NTESTSUITE_EXPECT_UINT(QUEUE_SIZE);
-    NK_QUEUE__DEFINITE_SIZE(&g_test_queue, &size);
+    size = nk_queue__size(g_test_queue);
     NTESTSUITE_ACTUAL_UINT((uint32_t)size);
 }
 
@@ -70,7 +64,7 @@ static void test_empty_is_full(void)
 	bool is_full = true;
 
     NTESTSUITE_EXPECT_BOOL(false);
-    NK_QUEUE__DEFINITE_IS_FULL(&g_test_queue, &is_full);
+    is_full = nk_queue__is_full(g_test_queue);
     NTESTSUITE_ACTUAL_BOOL(is_full);
 }
 
@@ -79,57 +73,52 @@ static void test_empty_is_empty(void)
 	bool is_empty = false;
 
     NTESTSUITE_EXPECT_BOOL(true);
-    NK_QUEUE__DEFINITE_IS_EMPTY(&g_test_queue, &is_empty);
+    is_empty = nk_queue__is_empty(g_test_queue);
     NTESTSUITE_ACTUAL_BOOL(is_empty);
 }
 
 static void test_empty_fifo_head(void)
 {
-	uint8_t item;
+	uint8_t * item;
 
-	item = TEST_ITEM_ID;
-    NK_QUEUE__DEFINITE_PUSH_FIFO(&g_test_queue, item);
-    NTESTSUITE_EXPECT_UINT(item);
-    item = 0u;
-    NK_QUEUE__DEFINITE_PEEK_HEAD(&g_test_queue, &item);
-    NTESTSUITE_ACTUAL_UINT(item);
+    item = nk_queue__put_fifo(g_test_queue);
+    *item = TEST_ITEM_ID;
+    NTESTSUITE_EXPECT_UINT(TEST_ITEM_ID);
+    item = nk_queue__peek_head(g_test_queue);
+    NTESTSUITE_ACTUAL_UINT(*item);
 }
 
 static void test_empty_fifo_tail(void)
 {
-	uint8_t item;
+	uint8_t * item;
 
-
-    item = TEST_ITEM_ID;
-    NK_QUEUE__DEFINITE_PUSH_FIFO(&g_test_queue, item);
-    NTESTSUITE_EXPECT_UINT(item);
-	item = 0u;
-	NK_QUEUE__DEFINITE_PEEK_TAIL(&g_test_queue, &item);
-	NTESTSUITE_ACTUAL_UINT(item);
+    item = nk_queue__put_fifo(g_test_queue);
+    *item = TEST_ITEM_ID;
+    NTESTSUITE_EXPECT_UINT(TEST_ITEM_ID);
+	item = nk_queue__peek_tail(g_test_queue);
+	NTESTSUITE_ACTUAL_UINT(*item);
 }
 
 static void test_empty_lifo_head(void)
 {
-	uint8_t item;
+	uint8_t * item;
 
-    item = TEST_ITEM_ID;
-    NK_QUEUE__DEFINITE_PUSH_LIFO(&g_test_queue, item);
+	item = nk_queue__put_lifo(g_test_queue);
+    *item = TEST_ITEM_ID;
     NTESTSUITE_EXPECT_UINT(TEST_ITEM_ID);
-    item = 0u;
-    NK_QUEUE__DEFINITE_PEEK_HEAD(&g_test_queue, &item);
-    NTESTSUITE_ACTUAL_UINT(item);
+    item = nk_queue__peek_head(g_test_queue);
+    NTESTSUITE_ACTUAL_UINT(*item);
 }
 
 static void test_empty_lifo_tail(void)
 {
-	uint8_t item;
+	uint8_t * item;
 
-	item = TEST_ITEM_ID;
-	NK_QUEUE__DEFINITE_PUSH_LIFO(&g_test_queue, item);
-    NTESTSUITE_EXPECT_UINT(item);
-	item = 0u;
-	NK_QUEUE__DEFINITE_PEEK_TAIL(&g_test_queue, &item);
-	NTESTSUITE_ACTUAL_UINT(item);
+	item = nk_queue__put_lifo(g_test_queue);
+	*item = TEST_ITEM_ID;
+    NTESTSUITE_EXPECT_UINT(TEST_ITEM_ID);
+	item = nk_queue__peek_tail(g_test_queue);
+	NTESTSUITE_ACTUAL_UINT(*item);
 }
 
 static void test_nonempty_empty(void)
@@ -137,7 +126,7 @@ static void test_nonempty_empty(void)
 	size_t empty = 0u;
 
     NTESTSUITE_EXPECT_UINT(QUEUE_SIZE - 2u);
-    NK_QUEUE__DEFINITE_EMPTY(&g_test_queue, &empty);
+    empty = nk_queue__empty(g_test_queue);
     NTESTSUITE_ACTUAL_UINT((uint32_t)empty);
 }
 
@@ -146,7 +135,7 @@ static void test_nonempty_size(void)
 	size_t size = 0u;
 
 	NTESTSUITE_EXPECT_UINT(QUEUE_SIZE);
-	NK_QUEUE__DEFINITE_SIZE(&g_test_queue, &size);
+	size = nk_queue__size(g_test_queue);
 	NTESTSUITE_ACTUAL_UINT((uint32_t)size);
 }
 
@@ -155,7 +144,7 @@ static void test_nonempty_is_full(void)
 	bool is_full = true;
 
 	NTESTSUITE_EXPECT_BOOL(false);
-	NK_QUEUE__DEFINITE_IS_FULL(&g_test_queue, &is_full);
+	is_full = nk_queue__is_full(g_test_queue);
 	NTESTSUITE_ACTUAL_BOOL(is_full);
 }
 
@@ -164,56 +153,52 @@ static void test_nonempty_is_empty(void)
 	bool is_empty = true;
 
 	NTESTSUITE_EXPECT_BOOL(false);
-	NK_QUEUE__DEFINITE_IS_EMPTY(&g_test_queue, &is_empty);
+	is_empty = nk_queue__is_empty(g_test_queue);
 	NTESTSUITE_ACTUAL_BOOL(is_empty);
 }
 
 static void test_nonempty_fifo_head(void)
 {
-	uint8_t item;
+	uint8_t * item;
 
-	item = TEST_ITEM_ID;
-	NK_QUEUE__DEFINITE_PUSH_FIFO(&g_test_queue, item);
-    NTESTSUITE_EXPECT_UINT(1u);
-    item = 0u;
-    NK_QUEUE__DEFINITE_PEEK_HEAD(&g_test_queue, &item);
-    NTESTSUITE_ACTUAL_UINT(item);
+	item = nk_queue__put_fifo(g_test_queue);
+	*item = TEST_ITEM_ID;
+    NTESTSUITE_EXPECT_UINT(TEST_ITEM_ID);
+    item = nk_queue__peek_head(g_test_queue);
+    NTESTSUITE_ACTUAL_UINT(*item);
 }
 
 static void test_nonempty_fifo_tail(void)
 {
-	uint8_t item;
+	uint8_t * item;
 
-	item = TEST_ITEM_ID;
-	NK_QUEUE__DEFINITE_PUSH_FIFO(&g_test_queue, item);
-    NTESTSUITE_EXPECT_UINT(item);
-    item = 0u;
-    NK_QUEUE__DEFINITE_PEEK_TAIL(&g_test_queue, &item);
-    NTESTSUITE_ACTUAL_UINT(item);
+	item = nk_queue__put_fifo(g_test_queue);
+	*item = TEST_ITEM_ID;
+    NTESTSUITE_EXPECT_UINT(TEST_PREDEFINED_ID_0);
+    item = nk_queue__peek_tail(g_test_queue);
+    NTESTSUITE_ACTUAL_UINT(*item);
 }
 
 static void test_nonempty_lifo_head(void)
 {
-	uint8_t item;
+	uint8_t * item;
 
-	item = TEST_ITEM_ID;
-	NK_QUEUE__DEFINITE_PUSH_LIFO(&g_test_queue, item);
-    NTESTSUITE_EXPECT_UINT(item);
-    item = 0u;
-    NK_QUEUE__DEFINITE_PEEK_HEAD(&g_test_queue, &item);
-    NTESTSUITE_ACTUAL_UINT(item);
+	item = nk_queue__put_lifo(g_test_queue);
+	*item = TEST_ITEM_ID;
+    NTESTSUITE_EXPECT_UINT(TEST_PREDEFINED_ID_1);
+    item = nk_queue__peek_head(g_test_queue);
+    NTESTSUITE_ACTUAL_UINT(*item);
 }
 
 static void test_nonempty_lifo_tail(void)
 {
-	uint8_t item;
+	uint8_t * item;
 
-	item = TEST_ITEM_ID;
-	NK_QUEUE__DEFINITE_PUSH_LIFO(&g_test_queue, item);
-    NTESTSUITE_EXPECT_UINT(2u);
-    item = 0u;
-    NK_QUEUE__DEFINITE_PEEK_TAIL(&g_test_queue, &item);
-    NTESTSUITE_ACTUAL_UINT(item);
+	item = nk_queue__put_lifo(g_test_queue);
+	* item = TEST_ITEM_ID;
+    NTESTSUITE_EXPECT_UINT(TEST_ITEM_ID);
+    item = nk_queue__peek_tail(g_test_queue);
+    NTESTSUITE_ACTUAL_UINT(*item);
 }
 
 static void test_full_empty(void)
@@ -221,7 +206,7 @@ static void test_full_empty(void)
     size_t empty = QUEUE_SIZE;
 
 	NTESTSUITE_EXPECT_UINT(0u);
-	NK_QUEUE__DEFINITE_EMPTY(&g_test_queue, &empty);
+	empty = nk_queue__empty(g_test_queue);
 	NTESTSUITE_ACTUAL_UINT((uint32_t)empty);
 }
 
@@ -230,7 +215,7 @@ static void test_full_size(void)
     size_t size = 0u;
 
 	NTESTSUITE_EXPECT_UINT(QUEUE_SIZE);
-	NK_QUEUE__DEFINITE_SIZE(&g_test_queue, &size);
+	size = nk_queue__size(g_test_queue);
 	NTESTSUITE_ACTUAL_UINT((uint32_t)size);
 }
 
@@ -239,7 +224,7 @@ static void test_full_is_full(void)
 	bool is_full = false;
 
 	NTESTSUITE_EXPECT_BOOL(true);
-	NK_QUEUE__DEFINITE_IS_FULL(&g_test_queue, &is_full);
+	is_full = nk_queue__is_full(g_test_queue);
 	NTESTSUITE_ACTUAL_BOOL(is_full);
 }
 
@@ -248,29 +233,44 @@ static void test_full_is_empty(void)
 	bool is_empty = true;
 
 	NTESTSUITE_EXPECT_BOOL(false);
-	NK_QUEUE__DEFINITE_IS_EMPTY(&g_test_queue, &is_empty);
+	is_empty = nk_queue__is_empty(g_test_queue);
 	NTESTSUITE_ACTUAL_BOOL(is_empty);
 }
 
 static void setup_empty(void)
 {
-    NK_QUEUE__DEFINITE_INIT(&g_test_queue);
+	g_test_queue = nk_queue__create(sizeof(uint8_t), QUEUE_SIZE);
+}
+
+static void teardown_empty(void)
+{
+	nk_queue__delete(g_test_queue);
 }
 
 static void setup_nonempty(void)
 {
-	NK_QUEUE__DEFINITE_INIT(&g_test_queue);
-	NK_QUEUE__DEFINITE_PUSH_FIFO(&g_test_queue, TEST_PREDEFINED_ID_0);
-	NK_QUEUE__DEFINITE_PUSH_FIFO(&g_test_queue, TEST_PREDEFINED_ID_1);
+	g_test_queue = nk_queue__create(sizeof(uint8_t), QUEUE_SIZE);
+	*(uint8_t *)nk_queue__put_fifo(g_test_queue) = TEST_PREDEFINED_ID_0;
+	*(uint8_t *)nk_queue__put_fifo(g_test_queue) = TEST_PREDEFINED_ID_1;
+}
+
+static void teardown_nonempty(void)
+{
+	nk_queue__delete(g_test_queue);
 }
 
 static void setup_full(void)
 {
-	NK_QUEUE__DEFINITE_INIT(&g_test_queue);
-	NK_QUEUE__DEFINITE_PUSH_FIFO(&g_test_queue, TEST_PREDEFINED_ID_0);
-	NK_QUEUE__DEFINITE_PUSH_FIFO(&g_test_queue, TEST_PREDEFINED_ID_1);
-	NK_QUEUE__DEFINITE_PUSH_FIFO(&g_test_queue, TEST_PREDEFINED_ID_2);
-	NK_QUEUE__DEFINITE_PUSH_FIFO(&g_test_queue, TEST_PREDEFINED_ID_3);
+	g_test_queue = nk_queue__create(sizeof(uint8_t), QUEUE_SIZE);
+	*(uint8_t *)nk_queue__put_fifo(g_test_queue) = TEST_PREDEFINED_ID_0;
+	*(uint8_t *)nk_queue__put_fifo(g_test_queue) = TEST_PREDEFINED_ID_1;
+	*(uint8_t *)nk_queue__put_fifo(g_test_queue) = TEST_PREDEFINED_ID_2;
+	*(uint8_t *)nk_queue__put_fifo(g_test_queue) = TEST_PREDEFINED_ID_3;
+}
+
+static void teardown_full(void)
+{
+	nk_queue__delete(g_test_queue);
 }
 
 static void test_nk_queue_none(void)
@@ -299,7 +299,7 @@ static void test_nk_queue_empty(void)
 		NK_TESTSUITE_TEST_TERMINATE()
 	};
 	nk_testsuite_set_fixture(
-			setup_empty, NULL, NK_TESTSUITE_FIXTURE_NAME(empty));
+			setup_empty, teardown_empty, NK_TESTSUITE_FIXTURE_NAME(empty));
 	nk_testsuite_run_tests(empty_tests);
 }
 
@@ -318,7 +318,9 @@ static void test_nk_queue_nonempty(void)
 		NK_TESTSUITE_TEST_TERMINATE()
 	};
 	nk_testsuite_set_fixture(
-			setup_nonempty, NULL, NK_TESTSUITE_FIXTURE_NAME(nonempty));
+			setup_nonempty,
+			teardown_nonempty,
+			NK_TESTSUITE_FIXTURE_NAME(nonempty));
 	nk_testsuite_run_tests(non_empty_tests);
 }
 
@@ -333,7 +335,7 @@ static void test_nk_queue_full(void)
 		NK_TESTSUITE_TEST_TERMINATE()
 	};
 	nk_testsuite_set_fixture(
-			setup_full, NULL, NK_TESTSUITE_FIXTURE_NAME(full));
+			setup_full, teardown_full, NK_TESTSUITE_FIXTURE_NAME(full));
 	nk_testsuite_run_tests(full_tests);
 }
 

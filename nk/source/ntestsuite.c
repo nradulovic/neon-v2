@@ -141,6 +141,9 @@ void np_testsuite_actual(uint32_t line, union np_testsuite_test_val actual)
                 should_block = true;
             }
             break;
+        default:
+        	should_block = true;
+        	break;
     }
     
     if (should_block) {
@@ -200,6 +203,9 @@ void np_testsuite_actual(uint32_t line, union np_testsuite_test_val actual)
                         g_np_testsuite_context.test_case.expected.str,
                         actual.str);
                 break;
+            default:
+            	printf("Inconsistent test case\n");
+				break;
         }
         printf("Test FAILED\n\nTotal tests: %d\n",
 				g_np_testsuite_context.total_tests);

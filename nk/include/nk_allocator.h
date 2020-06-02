@@ -17,51 +17,33 @@
  */
 /** @file
  *  @author      Nenad Radulovic
- *  @brief       Error support header.
+ *  @brief       Architecture header
  *
  *  @addtogroup  lib
  *  @{
  */
-/** @defgroup    lib_error Error support.
- *  @brief       Error support.
- *
+/** @defgroup    lib_arch Architecture
+ *  @brief       Architecture
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_MODULE_ERROR_H_
-#define NEON_MODULE_ERROR_H_
+#ifndef NK_ALLOCATOR_H_
+#define NK_ALLOCATOR_H_
+
+#include <stddef.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/*---------------------------------------------------------------------------*/
-/** @defgroup   debug_errorcheck Error checking
- *  @brief      These features are enabled/disabled using the option
- *              @ref NCONFIG_ENABLE_NDEBUG.
- *  @{ */
+void * nk_allocator__alloc(size_t size);
 
-/** @brief      Generic assert macro.
- *  @param      msg
- *              Message : a standard error message, see
- *              @ref standard_error_messages.
- *  @param      expr
- *              Expression : C expression : condition which must be 'true'.
- *  @api
- */
+void * nk_allocator__alloc_safe(size_t size);
 
-enum nk_exception__type
-{
-	NK_EXCEPTION__TYPE__NO_MEM,
-	NK_EXCEPTION__OUT_OF_BOUNDS,
-};
+void nk_allocator__free(void * mem);
 
-
-void nk_exception__raise(enum nk_exception__type type);
-
-/** @} */
 /** @} */
 #ifdef __cplusplus
 }
@@ -70,4 +52,4 @@ void nk_exception__raise(enum nk_exception__type type);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_MODULE_ERROR_H_ */
+#endif /* NK_ALLOCATOR_H_ */

@@ -59,26 +59,200 @@ void nk_list__insert_at(
 	nk_list__add_after(current, node);
 }
 
+#include "nerror.h"
+#include <stdlib.h>
+
+void nk_exception__raise(enum nk_exception__type type)
+{
+	int status;
+
+	/*
+	 * According to C99/11 standard enum can be any of char, int or unsigned int
+	 * type. It is implementation-defined which type is compatible with any
+	 * given enumerated type. Because we don't know which type will be chosen
+	 * we will explicitly cast to int type.
+	 */
+	status = -(int)type - 1;
+
+	exit(status);
+}
+
+#include "nk_allocator.h"
+#include "stdlib.h"
+
+void * nk_allocator__alloc(size_t size)
+{
+	void * mem;
+
+	mem = malloc(size);
+
+	if (mem == NULL) {
+		nk_exception__raise(NK_EXCEPTION__TYPE__NO_MEM);
+	}
+	return mem;
+}
+
+void nk_allocator__free(void * mem)
+{
+	free(mem);
+}
+
+#include "nk_array.h"
+
+struct nk_array
+{
+	size_t item_size;
+	size_t buffer_size;
+	void * item_buffer;
+};
+
+struct nk_array * nk_array__create(
+		size_t item_size,
+		size_t buffer_size)
+{
+	struct nk_array * array;
+
+	array = nk_allocator__alloc(sizeof(struct nk_array));
+	array->item_size = item_size;
+	array->buffer_size = buffer_size;
+	array->item_buffer = nk_allocator__alloc(item_size * buffer_size);
+
+	return array;
+}
+
+void nk_array__delete(struct nk_array * array)
+{
+	nk_allocator__free(array->item_buffer);
+	nk_allocator__free(array);
+}
+
+void * nk_array__buffer(struct nk_array * array)
+{
+	return array->item_buffer;
+}
+
+void * nk_array__refence(struct nk_array * array, size_t index)
+{
+	char * buffer = array->item_buffer;
+
+	if (index >= array->buffer_size) {
+		nk_exception__raise(NK_EXCEPTION__OUT_OF_BOUNDS);
+	}
+
+	return &buffer[index * array->item_size];
+}
+
 #include "nk_queue.h"
 
-extern inline void nk_queue__index_init(
-		struct nk_queue__index * qb, size_t items);
+struct nk_queue
+{
+	size_t head;
+	size_t tail;
+	size_t empty;
+	size_t mask;
+	struct nk_array * array;
+};
 
-extern inline size_t nk_queue__index_push_fifo(struct nk_queue__index * qb);
+struct nk_queue * nk_queue__create(
+		size_t item_size,
+		size_t buffer_size)
+{
+	struct nk_queue * q;
 
-extern inline size_t nk_queue__index_push_lifo(struct nk_queue__index * qb);
+	q = nk_allocator__alloc(sizeof(struct nk_queue));
+	q->head = 0u;
+	q->tail = 0u;
+	q->empty = buffer_size;
+	q->mask = buffer_size - 1u;
+	q->array = nk_array__create(item_size, buffer_size);
 
-extern inline size_t nk_queue__index_get(struct nk_queue__index * qb);
+	return q;
+}
 
-extern inline size_t nk_queue__index_peek_head(
-		const struct nk_queue__index * qb);
+void nk_queue__delete(struct nk_queue * q)
+{
+	nk_array__delete(q->array);
+	nk_allocator__free(q);
+}
 
-extern inline size_t nk_queue__index_peek_tail(
-		const struct nk_queue__index * qb);
+void * nk_queue__put_fifo(struct nk_queue * q)
+{
+	size_t retval;
 
-extern inline size_t nk_queue__index_empty(const struct nk_queue__index * qb);
+	q->empty--;
+	retval = q->head;
 
-extern inline size_t nk_queue__index_size(const struct nk_queue__index * qb);
+	q->head++;
+
+	if (q->head > q->mask) {
+		q->head = 0u;
+	}
+
+	return nk_array__refence(q->array, retval);
+}
+
+void * nk_queue__put_lifo(struct nk_queue * q)
+{
+	q->empty--;
+	q->tail--;
+
+	if (q->tail > q->mask) {
+		q->tail = q->mask;
+	}
+
+	return nk_array__refence(q->array, q->tail);
+}
+
+void * nk_queue__get(struct nk_queue * q)
+{
+	size_t retval;
+
+    retval = q->tail;
+    q->tail++;
+
+    if (q->tail > q->mask) {
+		q->tail = 0u;
+	}
+    q->empty++;
+
+    return nk_array__refence(q->array, retval);
+}
+
+void * nk_queue__peek_head(const struct nk_queue * q)
+{
+	size_t real_head;
+
+    real_head = q->head;
+    real_head--;
+    real_head &= q->mask;
+
+    return nk_array__refence(q->array, real_head);
+}
+
+void * nk_queue__peek_tail(const struct nk_queue * q)
+{
+    return nk_array__refence(q->array, q->tail);
+}
+
+size_t nk_queue__empty(const struct nk_queue * q)
+{
+	return q->empty;
+}
+
+size_t nk_queue__size(const struct nk_queue * q)
+{
+	return q->mask + 1u;
+}
+
+bool nk_queue__is_empty(const struct nk_queue * q)
+{
+	return q->empty == (q->mask + 1u);
+}
+
+bool nk_queue__is_full(const struct nk_queue * q)
+{
+	return q->empty == 0u;
+}
 
 #include "nk_sort_list.h"
 
@@ -167,24 +341,3 @@ bool nk_bitarray__indefinite_is_set(const struct nk_bitarray__indefinite * ba, u
 #include "ntask_fiber.h"
 #include "nk_sched.h"
 
-struct sched__ready_queue
-{
-
-};
-
-void nk_sched__task_init(
-		struct nk_sched__task_cb * tcb,
-		nk_sched__task_fn * task_fn,
-		void * tls,
-		void * arg)
-{
-	nk_list__init(&tcb->node, tcb);
-	tcb->fn = task_fn;
-	tcb->tls = tls;
-	tcb->arg = arg;
-}
-
-void nk_sched__task_ready(struct nk_sched__task_cb * tcb)
-{
-
-}
