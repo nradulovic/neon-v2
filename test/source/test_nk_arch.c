@@ -23,6 +23,35 @@
 #include "nk_arch.h"
 #include "ntestsuite.h"
 
+static void test_none_NK_ARCH_ID(void)
+{
+	/*
+	 * This test is a compile time only test. We can't actually test for the
+	 * contents of NK_ARCH_ID but we can test if it exists and is of type
+	 * const char *. If the macro deviates from this, it will either generate a
+	 * warning or fail to compile.
+	 */
+	const char * name;
+
+	name = NK_ARCH_ID;
+
+	NTESTSUITE_EXPECT_PTR(name);
+	NTESTSUITE_ACTUAL_PTR(name);
+}
+
+static void test_none_NK_ARCH_DATA_WIDTH(void)
+{
+	/*
+	 * This test is a compile time only test. We can't actually test for the
+	 * contents of NK_ARCH_DATA_WIDTH but we can test if it exists.
+	 */
+
+	size_t data_width = NK_ARCH_DATA_WIDTH;
+
+	NTESTSUITE_EXPECT_UINT((uint32_t)data_width);
+	NTESTSUITE_ACTUAL_UINT((uint32_t)data_width);
+}
+
 static void test_none_exp2_0(void)
 {
     NTESTSUITE_EXPECT_UINT(0x01u);
@@ -80,6 +109,8 @@ static void test_none_log2_UINT32_MAX(void)
 void test_nk_arch(void)
 {
     static const struct nk_testsuite_test tests[] = {
+    		NK_TESTSUITE_TEST(test_none_NK_ARCH_ID),
+			NK_TESTSUITE_TEST(test_none_NK_ARCH_DATA_WIDTH),
     		NK_TESTSUITE_TEST(test_none_exp2_0),
 			NK_TESTSUITE_TEST(test_none_exp2_1),
 			NK_TESTSUITE_TEST(test_none_exp2_7),
