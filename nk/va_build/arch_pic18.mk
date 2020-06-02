@@ -23,4 +23,4 @@ BUILD_ARCH_DESC = "Microchip PIC18 arhitecture"
 PLATFORM := xc8
 
 # Includes and sources
-CC_INCLUDES += nk/va_include/nport/arch_pic18
+CC_INCLUDES += nk/va_include/arch_pic18

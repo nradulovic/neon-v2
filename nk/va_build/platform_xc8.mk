@@ -19,7 +19,7 @@
 # Platform description
 BUILD_PLATFORM_DESC = "Microchip XC8"
 
-CC_INCLUDES += nk/va_include/nport/platform_xc8
+CC_INCLUDES += nk/va_include/platform_xc8
 # CC_SOURCES += lib/va_source/nport_platform_xc8.c
 
 # Rule to compile C sources to object files.

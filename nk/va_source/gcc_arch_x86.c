@@ -18,29 +18,37 @@
 
 #include "nk_arch.h"
 
+#include <unistd.h>
+#include <stdint.h>
+
+#define LOG2_TABLE_SIZE 256
+
 void nk_arch_stop(void)
 {
-    for (;;);
+    for (;;) {
+    	nk_arch_sleep();
+    }
 }
 
-void nk_arch_set_bit(uint32_t * u32, uint_fast8_t bit)
+void nk_arch_sleep(void)
 {
-    *u32 |= (uint32_t)1u << bit;
-}
-
-void nk_arch_clear_bit(uint32_t * u32, uint_fast8_t bit)
-{
-    *u32 &= ~((uint32_t)1u << bit);
-}
-
-uint32_t nk_arch_exp2(uint_fast8_t x)
-{
-    return ((uint32_t)0x1u << x);
+	/* From sleep manual:
+	 *
+	 * Application writers should note that the type of the argument seconds and
+	 * the return value of sleep() is unsigned. That means that a Strictly
+	 * Conforming POSIX System Interfaces Application cannot pass a value
+	 * greater than the minimum guaranteed value for {UINT_MAX}, which the ISO C
+	 * standard sets as 65535, and any application passing a larger value is
+	 * restricting its portability. A different type was considered, but
+	 * historical implementations, including those with a 16-bit int type,
+	 * consistently use either unsigned or int.
+	 */
+	sleep(UINT16_MAX);
 }
 
 uint_fast8_t nk_arch_log2(uint32_t x)
 {
-    static const uint_fast8_t log2_table[256] =
+    static const uint_fast8_t log2_table[LOG2_TABLE_SIZE] =
     {
 #define LT(n) n, n, n, n, n, n, n, n, n, n, n, n, n, n, n, n
         0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3,

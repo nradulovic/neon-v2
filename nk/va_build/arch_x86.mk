@@ -19,6 +19,6 @@
 # Additional board description
 BUILD_ARCH_DESC = "x86 Architecture"
 
-CC_INCLUDES += nk/va_include/nport/arch_x86
+CC_INCLUDES += nk/va_include/arch_x86
 
 CC_SOURCES += nk/va_source/gcc_arch_x86.c

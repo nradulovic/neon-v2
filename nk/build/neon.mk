@@ -36,23 +36,23 @@ PROFILE ?= debug
 OS ?= linux
 
 # NOTE: Load specified CPU
-include $(WS)/nk/va_build/nport_cpu_$(CPU).mk
+include $(WS)/nk/va_build/cpu_$(CPU).mk
 -include $(WS)/nk/va_build/$(PLATFORM)_cpu_$(CPU).mk
 
 # NOTE: Load specified ARCH
-include $(WS)/nk/va_build/nport_arch_$(ARCH).mk
+include $(WS)/nk/va_build/arch_$(ARCH).mk
 -include $(WS)/nk/va_build/$(PLATFORM)_arch_$(ARCH).mk
 
 # NOTE: Load specified OS
-include $(WS)/nk/va_build/nport_os_$(OS).mk
+include $(WS)/nk/va_build/os_$(OS).mk
 -include $(WS)/nk/va_build/$(PLATFORM)_os_$(OS).mk
 
 # NOTE: Load specified PROFILE
-include $(WS)/nk/va_build/nport_profile_$(PROFILE).mk
+include $(WS)/nk/va_build/profile_$(PROFILE).mk
 -include $(WS)/nk/va_build/$(PLATFORM)_profile_$(PROFILE).mk
 
 # NOTE: Load specified PLATFORM
-include $(WS)/nk/va_build/nport_platform_$(PLATFORM).mk
+include $(WS)/nk/va_build/platform_$(PLATFORM).mk
 
 # From ADD_NPORT_FEATURE set substract DEL_NPORT_FEATURE set
 NPORT_FEATURE_LIST = $(filter-out $(sort $(DEL_NPORT_FEATURE)), $(sort $(ADD_NPORT_FEATURE)))

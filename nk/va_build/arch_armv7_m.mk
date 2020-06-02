@@ -20,5 +20,5 @@
 BUILD_ARCH_DESC = "ARMv7-M Architecture"
 
 # Includes and sources
-CC_INCLUDES += nk/va_include/nport/arch_armv7_m
+CC_INCLUDES += nk/va_include/arch_armv7_m
 

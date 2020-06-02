@@ -38,8 +38,8 @@
 extern "C" {
 #endif
 
-#define NARCH_ID                "pic18"
-#define NARCH_DATA_WIDTH        8
+#define NK_ARCH_ID                "pic18"
+#define NK_ARCH_DATA_WIDTH        8
 #define NARCH_PIC18             1
 
 typedef uint8_t narch_native;

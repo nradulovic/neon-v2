@@ -2,35 +2,24 @@
  * Neon
  * Copyright (C) 2018   REAL-TIME CONSULTING
  *
- * This program is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option)
- * any later version.
- *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
- * more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along
- * with this program. If not, see <http://www.gnu.org/licenses/>.
+ * For license details please refer to LGPL-3.0.md
  */
 /** @file
  *  @author      Nenad Radulovic
  *  @brief       Architecture header
  *
- *  @addtogroup  lib
+ *  @addtogroup  nk
  *  @{
  */
-/** @defgroup    lib_arch Architecture
+/** @defgroup    nk_arch Architecture
  *  @brief       Architecture
  *  @{
  */
 /*---------------------------------------------------------------------------*/
 
 
-#ifndef NEON_MODULE_ARCH_H_
-#define NEON_MODULE_ARCH_H_
+#ifndef NK_INCLUDE_ARCH_H_
+#define NK_INCLUDE_ARCH_H_
 
 #include <stdint.h>
 
@@ -41,12 +30,18 @@ extern "C" {
 #endif
 
 /*---------------------------------------------------------------------------*/
-/** @defgroup   archid Architecture identification information
+/** @defgroup   nk_arch_id Architecture identification information
  *  @brief      Port identification macros.
  *  @{
  */
-#ifndef NARCH_ID
-#define NARCH_ID                "unknown"
+
+/** @brief		This macro is defined for each of supported architecture
+ *
+ *  The macro will expand to human readable text containing the name of the
+ *  underlying architecture.
+ */
+#if !defined(NARCH_ID) || defined(__DOXYGEN__)
+#define NK_ARCH_ID            	"unknown"
 #endif
 
 /** @brief      Each port defines a macro named NARCH_xxx.
@@ -54,15 +49,21 @@ extern "C" {
  *  For example, the ARM based architectures will define 'NARCH_ARM'. In 
  *  addition to this macro it will probably define macros like 'NARCH_ARM_V7M'
  *  which identifies a subset of architecture information.
+ *
+ *  This macro can be used for conditional code compilation:
+ *
+ *  @code
+ *  #if defined(NARCH_ARM)
+ *      Some code related to ARM architecture.
+ *      ...
+ *  #endif
+ *  @endcode
  */
-#define NARCH_xxx
+#define NK_ARCH_xxx
 
-/** @brief      Number of bits of the used architecture
- *  @api
+/** @brief      Number of bits of the used architecture.
  */
-#ifdef __DOXYGEN__
-#define NARCH_DATA_WIDTH              8
-#endif
+#define NK_ARCH_DATA_WIDTH		(sizeof(unsigned int) * 8u)
     
 /** @} */
 /*---------------------------------------------------------------------------*/
@@ -73,44 +74,35 @@ extern "C" {
 
 /** @brief      Stop the CPU execution.
  *  
- *  On embedded targets this function will actually stop the CPU execution.
+ *  On embedded targets this function will actually stop the CPU execution,
+ *  probably by executing a NOP instruction in indefinite loop or by executing
+ *  the sleep instruction if the CPU supports it.
+ *
  *  Usually you want to stop the execution in case of some serious error. When
- *  a High Level OS is used, this function will terminate the current process.
- * 
- *  @api
+ *  a High Level OS is used, this function will terminate the current process
+ *  (ie it will call POSIX exit function with '0' error return value).
  */
 void nk_arch_stop(void);
 
-/** @brief      Set a bit in unsigned 32-bit integer variable
- *  @param      u32
- *              Pointer to unsigned 32-bit integer.
- *  @param      bit
- *              Argument specifying which bit to set.
- *  @note       Do not use bit >= 32 since it will result in undefined
- *              behaviour.
- *  @api
+/** @brief		Stop the CPU execution and wait for interrupt.
+ *
+ *  On supported architectures the function will put the CPU to sleep while the
+ *  peripherals still have the ability to operate. It is up to caller to
+ *  properly configure the system for such a power mode. This function will
+ *  merely execute the sleep instruction on the CPU.
  */
-void nk_arch_set_bit(uint32_t * u32, uint_fast8_t bit);
-
-/** @brief      Clear a bit in unsigned integer 32-bit variable
- *  @param      u32
- *              Pointer to unsigned 32-bit integer.
- *  @param      bit
- *              Argument specifying which bit to clear.
- *  @note       Do not use bit >= 32 since it will result in undefined
- *              behaviour.
- *  @api
- */
-void nk_arch_clear_bit(uint32_t * u32, uint_fast8_t bit);
+void nk_arch_sleep(void);
 
 /** @brief      Calculate exponent of 2.
- *  @api
  */
-uint32_t nk_arch_exp2(uint_fast8_t x);
+static inline
+uint32_t nk_arch_exp2(uint_fast8_t x)
+{
+	return (UINT32_C(0x1) << x);
+}
 
 /** @brief      Calculate logarithm of base 2.
  *  @example    log2(2) = 1, log2(10) = 4
- *  @api
  */
 uint_fast8_t nk_arch_log2(uint32_t x);
 
@@ -122,4 +114,4 @@ uint_fast8_t nk_arch_log2(uint32_t x);
 /** @} */
 /** @} */
 /*---------------------------------------------------------------------------*/
-#endif /* NEON_MODULE_ARCH_H_ */
+#endif /* NK_INCLUDE_ARCH_H_ */
